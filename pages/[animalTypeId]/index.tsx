@@ -1,12 +1,12 @@
-import { LayoutDashboard } from '@/components/layouts/dashboard';
-
 import { GetOneAnimalTypeAPI } from '@/api-site/animal-type';
 import { GetAnimalsAPI } from '@/api-site/animals';
 import { GetEggHarvestingsAPI } from '@/api-site/eggharvesting';
+import { TabAnalytics } from '@/components/analytics/tab-analytics';
 import { TabAnimals } from '@/components/animals/tab-animals';
 import { TabAvesDeaths } from '@/components/aves-deaths/tab-aves-deaths';
 import { TabAvesFeedings } from '@/components/aves-feeding/tab-aves-feedings';
 import { TabAvesIsolations } from '@/components/aves-isolations/tab-aves-isolations';
+import { TabAvesSales } from '@/components/aves-sales/tab-aves-sales';
 import { TabAvesTreatments } from '@/components/aves-treatments/tab-aves-treatment';
 import { TabBreedings } from '@/components/breedings/tab-breedings';
 import { TabDeaths } from '@/components/deaths/tab-deaths';
@@ -17,8 +17,9 @@ import { TabFeedings } from '@/components/feedings/tab-feedings';
 import { TabGestations } from '@/components/gestations/tab-gestations';
 import { TabIncubations } from '@/components/incubations/tab-incubations';
 import { TabIsolations } from '@/components/isolations/tab-isolations';
-import TabLocations from '@/components/layouts/pages/tabLocations';
-import TabMilkings from '@/components/layouts/pages/tabMilking';
+import { LayoutDashboard } from '@/components/layouts/dashboard';
+import { TabLocations } from '@/components/locations/tab-locations';
+import { TabMilkings } from '@/components/milkings/tab-milkings';
 import { TabSales } from '@/components/sales/tab-sales';
 import { TabTreatments } from '@/components/treatments/tab-treatment';
 import {
@@ -32,6 +33,7 @@ import { PrivateComponent } from '@/components/util/private-component';
 import { TabWeanings } from '@/components/weanings/tab-weanings';
 import { useRouter } from 'next/router';
 import { useIntl } from 'react-intl';
+import { AvesStatistics } from './aves-statistics';
 
 export function Index() {
   const t = useIntl();
@@ -353,6 +355,7 @@ export function Index() {
                     <CardTitle className="text-4xl">{sumEggs}</CardTitle>
                   </CardHeader>
                 </Card>
+                <AvesStatistics />
               </div>
             ) : ['Canards'].includes(animalType?.name) ? (
               <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
@@ -393,6 +396,7 @@ export function Index() {
                     <CardTitle className="text-4xl">{sumEggs}</CardTitle>
                   </CardHeader>
                 </Card>
+                <AvesStatistics />
               </div>
             ) : ['Dinde'].includes(animalType?.name) ? (
               <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
@@ -433,6 +437,7 @@ export function Index() {
                     <CardTitle className="text-4xl">{sumEggs}</CardTitle>
                   </CardHeader>
                 </Card>
+                <AvesStatistics />
               </div>
             ) : ['Poulets Goliaths'].includes(animalType?.name) ? (
               <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
@@ -473,6 +478,7 @@ export function Index() {
                     <CardTitle className="text-4xl">{sumEggs}</CardTitle>
                   </CardHeader>
                 </Card>
+                <AvesStatistics />
               </div>
             ) : ['Poulets Brahma'].includes(animalType?.name) ? (
               <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
@@ -513,6 +519,7 @@ export function Index() {
                     <CardTitle className="text-4xl">{sumEggs}</CardTitle>
                   </CardHeader>
                 </Card>
+                <AvesStatistics />
               </div>
             ) : ['Poulet de chair'].includes(animalType?.name) ? (
               <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
@@ -704,11 +711,10 @@ export function Index() {
                       {t.formatMessage({ id: 'ANIMALTYPE.ISOLATIONS' })}
                     </TabsTrigger>
                     <TabsTrigger value="treatments">
-                      Soins
-                      {/* {t.formatMessage({ id: 'ANIMALTYPE.DEATHS' })} */}
+                      {t.formatMessage({ id: 'ANIMALTYPE.CARE' })}
                     </TabsTrigger>
                     <TabsTrigger value="sales">
-                      {t.formatMessage({ id: 'SALE.TITLE.PAGE' })}
+                      {t.formatMessage({ id: 'MENU.SALES' })}
                     </TabsTrigger>
                     <TabsTrigger value="analytics">Analytics</TabsTrigger>
                   </TabsList>
@@ -743,13 +749,11 @@ export function Index() {
                       {t.formatMessage({ id: 'ANIMALTYPE.ISOLATIONS' })}
                     </TabsTrigger>
                     <TabsTrigger value="aves-treatments">
-                      Soins
-                      {/* {t.formatMessage({ id: 'ANIMALTYPE.DEATHS' })} */}
+                      {t.formatMessage({ id: 'ANIMALTYPE.CARE' })}
                     </TabsTrigger>
                     <TabsTrigger value="aves-sales">
-                      {t.formatMessage({ id: 'SALE.TITLE.PAGE' })}
+                      {t.formatMessage({ id: 'MENU.SALES' })}
                     </TabsTrigger>
-                    <TabsTrigger value="analytics">Analytics</TabsTrigger>
                   </TabsList>
                 ) : (
                   <TabsList>
@@ -777,13 +781,11 @@ export function Index() {
                       {t.formatMessage({ id: 'ANIMALTYPE.ISOLATIONS' })}
                     </TabsTrigger>
                     <TabsTrigger value="aves-treatments">
-                      Soins
-                      {/* {t.formatMessage({ id: 'ANIMALTYPE.DEATHS' })} */}
+                      {t.formatMessage({ id: 'ANIMALTYPE.CARE' })}
                     </TabsTrigger>
                     <TabsTrigger value="aves-sales">
                       {t.formatMessage({ id: 'SALE.TITLE.PAGE' })}
                     </TabsTrigger>
-                    <TabsTrigger value="analytics">Analytics</TabsTrigger>
                   </TabsList>
                 )}
               </div>
@@ -915,22 +917,6 @@ export function Index() {
                   <TabAvesIsolations animalTypeId={animalTypeId} />
                 </Card>
               </TabsContent>
-              <TabsContent value="aves-isolations">
-                <Card
-                  x-chunk="dashboard-06-chunk-0"
-                  className="dark:border-gray-800"
-                >
-                  <TabAvesIsolations animalTypeId={animalTypeId} />
-                </Card>
-              </TabsContent>
-              <TabsContent value="aves-isolations">
-                <Card
-                  x-chunk="dashboard-06-chunk-0"
-                  className="dark:border-gray-800"
-                >
-                  <TabAvesIsolations animalTypeId={animalTypeId} />
-                </Card>
-              </TabsContent>
               <TabsContent value="treatments">
                 <Card
                   x-chunk="dashboard-06-chunk-0"
@@ -952,7 +938,7 @@ export function Index() {
                   x-chunk="dashboard-06-chunk-0"
                   className="dark:border-gray-800"
                 >
-                  <TabAvesTreatments animalTypeId={animalTypeId} />
+                  <TabAvesSales animalTypeId={animalTypeId} />
                 </Card>
               </TabsContent>
               <TabsContent value="sales">
@@ -961,6 +947,14 @@ export function Index() {
                   className="dark:border-gray-800"
                 >
                   <TabSales animalTypeId={animalTypeId} />
+                </Card>
+              </TabsContent>
+              <TabsContent value="analytics">
+                <Card
+                  x-chunk="dashboard-06-chunk-0"
+                  className="dark:border-gray-800"
+                >
+                  <TabAnalytics animalTypeId={animalTypeId} />
                 </Card>
               </TabsContent>
             </Tabs>

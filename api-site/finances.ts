@@ -3,6 +3,7 @@ import { makeApiCall, PaginationRequest } from '@/utils';
 import {
   useInfiniteQuery,
   useMutation,
+  useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
 
@@ -82,4 +83,26 @@ export const GetFinancesAPI = (
     staleTime: 60_000,
     initialPageParam: 1,
   });
+};
+
+export const GetOneFinanceAPI = (payload: { financeId: string }) => {
+  const { financeId } = payload;
+  const { data, isError, isLoading, status, isPending, refetch } = useQuery({
+    queryKey: ['finance', financeId],
+    queryFn: async () =>
+      await makeApiCall({
+        action: 'getOneFinance',
+        urlParams: { financeId },
+      }),
+    refetchOnWindowFocus: false,
+  });
+
+  return {
+    data: data?.data as any,
+    isError,
+    isLoading,
+    status,
+    isPending,
+    refetch,
+  };
 };

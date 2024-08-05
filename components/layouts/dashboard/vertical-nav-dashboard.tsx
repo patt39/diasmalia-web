@@ -10,7 +10,6 @@ import {
   ImageIcon,
   MailQuestion,
   MessageCircleQuestion,
-  Stethoscope,
   Wallet,
   Webhook,
 } from 'lucide-react';
@@ -61,11 +60,6 @@ const VerticalNavDashboard = ({ user }: Props) => {
       title: `${t.formatMessage({ id: 'MENU.ANIMALTYPE' })}`,
       href: '/animal-types',
       icon: <Fence className={classIcon} />,
-    },
-    {
-      title: `${t.formatMessage({ id: 'MENU.TREATEMENT' })}`,
-      href: '/treatments',
-      icon: <Stethoscope className={classIcon} />,
     },
     {
       title: `${t.formatMessage({ id: 'MENU.SALES' })}`,

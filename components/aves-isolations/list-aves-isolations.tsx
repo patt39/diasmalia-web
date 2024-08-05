@@ -14,15 +14,17 @@ import {
   AlertSuccessNotification,
   formatDateDDMMYY,
 } from '@/utils';
-import { MoreHorizontal, PencilIcon, TrashIcon } from 'lucide-react';
+import { Eye, MoreHorizontal, PencilIcon, TrashIcon } from 'lucide-react';
 import { useState } from 'react';
 import { ActionModalDialog } from '../ui-setting/shadcn';
 import { TableCell, TableRow } from '../ui/table';
 import { CreateOrUpdateAvesIsolations } from './create-or-update-aves-isolations';
+import { ViewAvesIsolation } from './view-isolation';
 
 const ListAvesIsolations = ({ item, index }: { item: any; index: number }) => {
   const { t, isOpen, loading, setIsOpen, setLoading } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
+  const [isView, setIsView] = useState(false);
 
   const { mutateAsync: deleteMutation } = DeleteOneIsolationAPI({
     onSuccess: () => {},
@@ -53,7 +55,11 @@ const ListAvesIsolations = ({ item, index }: { item: any; index: number }) => {
       <TableRow key={index} className="dark:border-gray-800">
         <TableCell className="font-medium">{item.animal.code}</TableCell>
         <TableCell className="font-medium">{item.number}</TableCell>
-        <TableCell>{item.note}</TableCell>
+        <TableCell>
+          {item?.note?.length > 20
+            ? item?.note?.substring(0, 20) + '...'
+            : item?.note}
+        </TableCell>
         <TableCell>{formatDateDDMMYY(item?.createdAt as Date)}</TableCell>
         <TableCell>
           <DropdownMenu>
@@ -65,12 +71,18 @@ const ListAvesIsolations = ({ item, index }: { item: any; index: number }) => {
                 </span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="dark:border-gray-800">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem onClick={() => setIsEdit(true)}>
                 <PencilIcon className="size-4 text-gray-600 hover:text-indigo-600" />
                 <span className="ml-2 cursor-pointer hover:text-indigo-600">
                   {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
+                </span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setIsView(true)}>
+                <Eye className="size-4 text-gray-600 hover:text-indigo-600" />
+                <span className="ml-2 cursor-pointer hover:text-indigo-600">
+                  {t.formatMessage({ id: 'TABANIMAL.VIEW' })}
                 </span>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setIsOpen(true)}>
@@ -95,6 +107,11 @@ const ListAvesIsolations = ({ item, index }: { item: any; index: number }) => {
         isolation={item}
         showModal={isEdit}
         setShowModal={setIsEdit}
+      />
+      <ViewAvesIsolation
+        isolation={item}
+        showModal={isView}
+        setShowModal={setIsView}
       />
     </>
   );

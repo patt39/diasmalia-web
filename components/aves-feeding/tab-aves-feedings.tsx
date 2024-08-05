@@ -29,7 +29,8 @@ import { ListAvesFeedings } from './list-aves-feedings';
 const TabAvesFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { userStorage } = useInputState();
-  const { t, search, handleSetSearch, setLoading } = useInputState();
+  const [periode, setPeriode] = useState('');
+  const { t, search, handleSetSearch } = useInputState();
 
   const {
     isLoading: isLoadingFeedings,
@@ -37,6 +38,7 @@ const TabAvesFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
     data: dataFeedings,
   } = GetFeedingsAPI({
     search,
+    periode,
     take: 10,
     sort: 'desc',
     sortBy: 'createdAt',
@@ -64,13 +66,23 @@ const TabAvesFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
                   </span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>
-                  {t.formatMessage({ id: 'ANIMALTYPE.FILTER' })}
-                </DropdownMenuLabel>
+              <DropdownMenuContent align="end" className="dark:border-gray-800">
+                <DropdownMenuLabel>Filter by</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuCheckboxItem>
-                  {t.formatMessage({ id: 'ANIMALTYPE.FEEDTYPE' })}
+                <DropdownMenuCheckboxItem
+                  onClick={() => setPeriode('')}
+                  checked
+                >
+                  {t.formatMessage({ id: 'ACTIVITY.FILTERALL' })}
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem onClick={() => setPeriode('7')}>
+                  {t.formatMessage({ id: 'ACTIVITY.LAST7DAYS' })}
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem onClick={() => setPeriode('15')}>
+                  {t.formatMessage({ id: 'ACTIVITY.LAST15DAYS' })}
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem onClick={() => setPeriode('30')}>
+                  {t.formatMessage({ id: 'ACTIVITY.LAST30DAYS' })}
                 </DropdownMenuCheckboxItem>
               </DropdownMenuContent>
             </DropdownMenu>

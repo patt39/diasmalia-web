@@ -3,8 +3,31 @@ import { makeApiCall, PaginationRequest } from '@/utils';
 import {
   useInfiniteQuery,
   useMutation,
+  useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
+
+export const GetOneGestationAPI = (payload: { gestationId: string }) => {
+  const { gestationId } = payload;
+  const { data, isError, isLoading, status, isPending, refetch } = useQuery({
+    queryKey: ['gestation', gestationId],
+    queryFn: async () =>
+      await makeApiCall({
+        action: 'getOneGestation',
+        urlParams: { gestationId },
+      }),
+    refetchOnWindowFocus: false,
+  });
+
+  return {
+    data: data?.data as any,
+    isError,
+    isLoading,
+    status,
+    isPending,
+    refetch,
+  };
+};
 
 export const UpdateOneGestationAPI = ({
   onSuccess,
@@ -18,10 +41,17 @@ export const UpdateOneGestationAPI = ({
   const result = useMutation({
     mutationKey: queryKey,
     mutationFn: async (payload: GestationsModel & { gestationId: string }) => {
-      return await makeApiCall({
-        action: 'updateOneGestation',
-        body: { ...payload },
-      });
+      const { gestationId } = payload;
+      return gestationId
+        ? await makeApiCall({
+            action: 'updateOneGestation',
+            body: payload,
+            urlParams: { gestationId },
+          })
+        : await makeApiCall({
+            action: 'createOneIncubation',
+            body: { ...payload },
+          });
     },
     onError: async (error) => {
       await queryClient.invalidateQueries({ queryKey });
@@ -51,11 +81,13 @@ export const GetGestationsAPI = (
     search?: string;
     take: number;
     sortBy: string;
+    periode?: string;
     animalTypeId?: string;
     organizationId?: string;
   } & PaginationRequest,
 ) => {
-  const { take, sort, search, animalTypeId, sortBy, organizationId } = payload;
+  const { take, sort, search, periode, animalTypeId, sortBy, organizationId } =
+    payload;
   return useInfiniteQuery({
     queryKey: ['gestations', 'infinite', { ...payload }],
     getNextPageParam: (lastPage: any) => lastPage.data.next_page,
@@ -67,6 +99,7 @@ export const GetGestationsAPI = (
           sort,
           search,
           sortBy,
+          periode,
           animalTypeId,
           page: pageParam,
           organizationId,

@@ -2,8 +2,31 @@ import { makeApiCall, PaginationRequest } from '@/utils';
 import {
   useInfiniteQuery,
   useMutation,
+  useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
+
+export const GetOneBreedingAPI = (payload: { breedingId: string }) => {
+  const { breedingId } = payload;
+  const { data, isError, isLoading, status, isPending, refetch } = useQuery({
+    queryKey: ['breeding', breedingId],
+    queryFn: async () =>
+      await makeApiCall({
+        action: 'getOneBreeding',
+        urlParams: { breedingId },
+      }),
+    refetchOnWindowFocus: false,
+  });
+
+  return {
+    data: data?.data as any,
+    isError,
+    isLoading,
+    status,
+    isPending,
+    refetch,
+  };
+};
 
 export const CreateOrUpdateOneBreedingAPI = ({
   onSuccess,
@@ -52,15 +75,102 @@ export const CreateOrUpdateOneBreedingAPI = ({
   return result;
 };
 
+export const CreateOneCheckAPI = ({
+  onSuccess,
+  onError,
+}: {
+  onSuccess?: () => void;
+  onError?: (error: any) => void;
+} = {}) => {
+  const queryKey = ['breedings'];
+  const queryClient = useQueryClient();
+  const result = useMutation({
+    mutationKey: queryKey,
+    mutationFn: async (payload: any & { breedingId: string }) => {
+      const { breedingId } = payload;
+      console.log('payload ===>', payload);
+      return await makeApiCall({
+        action: 'createOneCheck',
+        body: { ...payload },
+        urlParams: { breedingId },
+      });
+    },
+    onError: async (error) => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onError) {
+        onError(error);
+      }
+    },
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+  });
+
+  return result;
+};
+
+export const UpdateOneCheckAPI = ({
+  onSuccess,
+  onError,
+}: {
+  onSuccess?: () => void;
+  onError?: (error: any) => void;
+} = {}) => {
+  const queryKey = ['breedings'];
+  const queryClient = useQueryClient();
+  const result = useMutation({
+    mutationKey: queryKey,
+    mutationFn: async (payload: any & { checkPregnancyId: string }) => {
+      const { checkPregnancyId } = payload;
+      return await makeApiCall({
+        action: 'updateOneCheck',
+        body: { ...payload },
+        urlParams: { checkPregnancyId },
+      });
+    },
+    onError: async (error) => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onError) {
+        onError(error);
+      }
+    },
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+  });
+
+  return result;
+};
+
 export const GetBreedingsAPI = (
   payload: {
     search?: string;
     take?: number;
+    periode?: string;
     animalTypeId?: string;
     organizationId?: string;
   } & PaginationRequest,
 ) => {
-  const { take, sort, search, sortBy, animalTypeId, organizationId } = payload;
+  const { take, sort, search, periode, sortBy, animalTypeId, organizationId } =
+    payload;
   return useInfiniteQuery({
     queryKey: ['breedings', 'infinite', { ...payload }],
     getNextPageParam: (lastPage: any) => lastPage.data.next_page,
@@ -72,6 +182,7 @@ export const GetBreedingsAPI = (
           sort,
           search,
           sortBy,
+          periode,
           animalTypeId,
           page: pageParam,
           organizationId,

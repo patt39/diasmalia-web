@@ -100,6 +100,7 @@
   "ANIMALTYPE.FEMALE": "Females",
   "ANIMALTYPE.MALE": "Males",
   "ANIMALTYPE.FEEDINGS": "Feedings",
+  "ANIMALTYPE.FEEDING": "feed consumed",
   "ANIMALTYPE.FATTENING": "Fattenings",
   "ANIMALTYPE.BREEDING": "Breedings",
   "ANIMALTYPE.GESTATIONS": "Gestations",
@@ -107,6 +108,7 @@
   "ANIMALTYPE.WEANINGS": "Weanings",
   "ANIMALTYPE.MILKINGS": "Milkings",
   "ANIMALTYPE.DEATHS": "Deaths",
+  "ANIMALTYPE.CARE": "Care",
   "ANIMALTYPE.ISOLATIONS": "Isolations",
   "ANIMALTYPE.INCUBATION": "Incubation",
   "ANIMALTYPE.EGGHAVESTING": "Egg havesting",
@@ -144,6 +146,8 @@
   "ANIMALTYPE.ANIMALS.BREEDINGS.CREATE": "Add a breeding",
   "ANIMALTYPE.ANIMALS.FARROWINGS.CREATE": "Add a farrowing",
   "ANIMALTYPE.ANIMALS.SALES.CREATE": "Add a sale",
+  "ANIMALTYPE.MALE.REPRODUCTION": "Reproductive males",
+  "ANIMALTYPE.FEMALE.REPRODUCTION": "Reproductive females",
   "ANIMALTYPE.BROILERS.DESCRIPTION": "Create your chicken coops, raise your poultry, fatten them, take inventory of your dead and make analysis to monitor growth and efficiency in your farm.",
   "ANIMALTYPE.EGGHAVESTING.DESCRIPTION": "Harvest eggs everyday and calibrate them according to thier size",
   "ANIMALTYPE.LAYERS.DESCRIPTION": "Create your chicken coops, raise your poultry, fatten them, collect eggs, incubate, take inventory of your dead and make analysis to monitor growth and efficiency in your farm.",
@@ -189,7 +193,7 @@
   "TABANIMAL.INSERVICE": "In service",
   "TABANIMAL.OUTSERVICE": "Out of service",
   "ANIMALTYPE.PRODUCTIONPHASE": "Production Phase",
-  "ANIMALTYPE.BREEDING.DESCRIPTION": "Monitor your animals breeding schedule preventing inbreeding by avoiding breeding animals with very close relations",
+  "ANIMALTYPE.BREEDING.DESCRIPTION": "Monitor the breeding schedule of your animals to avoid inbreeding by crossing breeders with very close relatives without forgetting to do a test to find out if the female is pregnant.",
   "ANIMALTYPE.WEANING.DESCRIPTION": "Wean your animals and select the females with high parenting ability to increase reproduction rate.",
   "ANIMALTYPE.ISOLATION.DESCRIPTION": "Isolate your animals in the event of illness, infection or newly arrived to avoid contamination and the spread of disease in your farm.",
 
@@ -213,6 +217,12 @@
 
   "FINANCE.INCOME": "Income",
   "FINANCE.EXPENSES": "Expenses",
+
+  "BREEDING.POSITIVE": "Positive",
+  "BREEDING.NEGATIVE": "Negative",
+  "BREEDING.CHECK": "Check",
+  "BREEDING.RECHECK": "Recheck",
+
 
   "DASHBOARD.FEATURE.1.TITLE": "Secured Payments",
   "DASHBOARD.FEATURE.1.DESCRIPTION": "Make payment with ease",

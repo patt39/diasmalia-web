@@ -3,8 +3,31 @@ import { makeApiCall, PaginationRequest } from '@/utils';
 import {
   useInfiniteQuery,
   useMutation,
+  useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
+
+export const GetOneIsolationAPI = (payload: { isolationId: string }) => {
+  const { isolationId } = payload;
+  const { data, isError, isLoading, status, isPending, refetch } = useQuery({
+    queryKey: ['isolation', isolationId],
+    queryFn: async () =>
+      await makeApiCall({
+        action: 'getOneIsolation',
+        urlParams: { isolationId },
+      }),
+    refetchOnWindowFocus: false,
+  });
+
+  return {
+    data: data?.data as any,
+    isError,
+    isLoading,
+    status,
+    isPending,
+    refetch,
+  };
+};
 
 export const CreateOrUpdateOneIsolationAPI = ({
   onSuccess,
@@ -104,11 +127,13 @@ export const GetIsolationsAPI = (
   payload: {
     search?: string;
     take?: number;
+    periode?: string;
     animalTypeId?: string;
     organizationId?: string;
   } & PaginationRequest,
 ) => {
-  const { take, sort, search, sortBy, animalTypeId, organizationId } = payload;
+  const { take, sort, search, periode, sortBy, animalTypeId, organizationId } =
+    payload;
   return useInfiniteQuery({
     queryKey: ['isolations', 'infinite', { ...payload }],
     getNextPageParam: (lastPage: any) => lastPage.data.next_page,
@@ -120,6 +145,7 @@ export const GetIsolationsAPI = (
           sort,
           search,
           sortBy,
+          periode,
           animalTypeId,
           page: pageParam,
           organizationId,

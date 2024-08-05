@@ -16,14 +16,16 @@ import {
   AlertSuccessNotification,
   formatDateDDMMYY,
 } from '@/utils';
-import { MoreHorizontal, PencilIcon, TrashIcon } from 'lucide-react';
+import { Eye, MoreHorizontal, PencilIcon, TrashIcon } from 'lucide-react';
 import { useState } from 'react';
 import { ActionModalDialog } from '../ui-setting/shadcn';
 import { CreateOrUpdateSales } from './create-or-update-sales';
+import { ViewSale } from './view-sale';
 
 const ListSales = ({ item, index }: { item: any; index: number }) => {
   const { t, loading, isOpen, setIsOpen, setLoading } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
+  const [isView, setIsView] = useState(false);
   const { data: user } = GetOneUserMeAPI();
 
   const { mutateAsync: saveMutation } = DeleteOneSaleAPI({
@@ -57,7 +59,9 @@ const ListSales = ({ item, index }: { item: any; index: number }) => {
         <TableCell className="font-medium">
           <div className="font-medium">{item?.phone || 'N/A'}</div>
           <div className="hidden text-sm text-muted-foreground md:inline">
-            {item?.email || 'N/A'}
+            {item?.email?.length > 20
+              ? item?.email?.substring(0, 20) + '...'
+              : item?.email || 'N/A'}
           </div>
         </TableCell>
         <TableCell className="font-medium">{item.method}</TableCell>
@@ -76,12 +80,18 @@ const ListSales = ({ item, index }: { item: any; index: number }) => {
                 <span className="sr-only">Toggle menu</span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="dark:border-gray-800">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem onClick={() => setIsEdit(true)}>
                 <PencilIcon className="size-4 text-gray-600 hover:text-indigo-600" />
                 <span className="ml-2 cursor-pointer hover:text-indigo-600">
                   {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
+                </span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setIsView(true)}>
+                <Eye className="size-4 text-gray-600 hover:text-indigo-600" />
+                <span className="ml-2 cursor-pointer hover:text-indigo-600">
+                  {t.formatMessage({ id: 'TABANIMAL.VIEW' })}
                 </span>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setIsOpen(true)}>
@@ -105,6 +115,7 @@ const ListSales = ({ item, index }: { item: any; index: number }) => {
         showModal={isEdit}
         setShowModal={setIsEdit}
       />
+      <ViewSale sale={item} showModal={isView} setShowModal={setIsView} />
     </>
   );
 };

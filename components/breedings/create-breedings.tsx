@@ -32,7 +32,7 @@ const schema = yup.object({
   note: yup.string().required('note is a required field'),
 });
 
-const CreateOrUpdateBreedings = ({
+const CreateBreedings = ({
   showModal,
   setShowModal,
   breeding,
@@ -42,7 +42,7 @@ const CreateOrUpdateBreedings = ({
   breeding?: any;
 }) => {
   const {
-    watch,
+    t,
     control,
     setValue,
     handleSubmit,
@@ -158,95 +158,92 @@ const CreateOrUpdateBreedings = ({
                   </div>
                 )}
 
-                {!breeding?.id ? (
-                  <div className="mb-4 flex items-center space-x-4">
-                    <Controller
-                      control={control}
-                      name="codeMale"
-                      render={({ field: { value, onChange } }) => (
-                        <Select
-                          onValueChange={onChange}
-                          name={'codeMale'}
-                          value={value}
-                        >
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select a male code" />
-                          </SelectTrigger>
-                          <SelectContent className="dark:border-gray-800">
-                            <SelectGroup>
-                              <SelectLabel>Codes</SelectLabel>
-                              {isLoadingAnimals ? (
-                                <LoadingFile />
-                              ) : isErrorAnimals ? (
-                                <ErrorFile
-                                  title="404"
-                                  description="Error finding data please try again..."
-                                />
-                              ) : Number(
-                                  dataMaleAnimals?.pages[0]?.data?.total,
-                                ) <= 0 ? (
-                                <ErrorFile description="Don't have male animals created yet please do" />
-                              ) : (
-                                dataMaleAnimals?.pages
-                                  .flatMap((page: any) => page?.data?.value)
-                                  .map((item, index) => (
-                                    <>
-                                      <SelectItem key={index} value={item.code}>
-                                        {item.code}
-                                      </SelectItem>
-                                    </>
-                                  ))
-                              )}
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
-                    <Controller
-                      control={control}
-                      name="codeFemale"
-                      render={({ field: { value, onChange } }) => (
-                        <Select
-                          onValueChange={onChange}
-                          name={'codeFemale'}
-                          value={value}
-                        >
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select a female code" />
-                          </SelectTrigger>
-                          <SelectContent className="dark:border-gray-800">
-                            <SelectGroup>
-                              <SelectLabel>Codes</SelectLabel>
-                              {isLoadingMaleAnimals ? (
-                                <LoadingFile />
-                              ) : isErrorMaleAnimals ? (
-                                <ErrorFile
-                                  title="404"
-                                  description="Error finding data please try again..."
-                                />
-                              ) : Number(
-                                  dataFemaleAnimals?.pages[0]?.data?.total,
-                                ) <= 0 ? (
-                                <ErrorFile description="Don't have female animals created yet please do" />
-                              ) : (
-                                dataFemaleAnimals?.pages
-                                  .flatMap((page: any) => page?.data?.value)
-                                  .map((item, index) => (
-                                    <>
-                                      <SelectItem key={index} value={item.code}>
-                                        {item.code}
-                                      </SelectItem>
-                                    </>
-                                  ))
-                              )}
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
-                  </div>
-                ) : null}
-
+                <div className="mb-4 flex items-center space-x-4">
+                  <Controller
+                    control={control}
+                    name="codeMale"
+                    render={({ field: { value, onChange } }) => (
+                      <Select
+                        onValueChange={onChange}
+                        name={'codeMale'}
+                        value={value}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select a male code" />
+                        </SelectTrigger>
+                        <SelectContent className="dark:border-gray-800">
+                          <SelectGroup>
+                            <SelectLabel>Codes</SelectLabel>
+                            {isLoadingAnimals ? (
+                              <LoadingFile />
+                            ) : isErrorAnimals ? (
+                              <ErrorFile
+                                title="404"
+                                description="Error finding data please try again..."
+                              />
+                            ) : Number(
+                                dataMaleAnimals?.pages[0]?.data?.total,
+                              ) <= 0 ? (
+                              <ErrorFile description="Don't have male animals created yet please do" />
+                            ) : (
+                              dataMaleAnimals?.pages
+                                .flatMap((page: any) => page?.data?.value)
+                                .map((item, index) => (
+                                  <>
+                                    <SelectItem key={index} value={item.code}>
+                                      {item.code}
+                                    </SelectItem>
+                                  </>
+                                ))
+                            )}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  <Controller
+                    control={control}
+                    name="codeFemale"
+                    render={({ field: { value, onChange } }) => (
+                      <Select
+                        onValueChange={onChange}
+                        name={'codeFemale'}
+                        value={value}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select a female code" />
+                        </SelectTrigger>
+                        <SelectContent className="dark:border-gray-800">
+                          <SelectGroup>
+                            <SelectLabel>Codes</SelectLabel>
+                            {isLoadingMaleAnimals ? (
+                              <LoadingFile />
+                            ) : isErrorMaleAnimals ? (
+                              <ErrorFile
+                                title="404"
+                                description="Error finding data please try again..."
+                              />
+                            ) : Number(
+                                dataFemaleAnimals?.pages[0]?.data?.total,
+                              ) <= 0 ? (
+                              <ErrorFile description="Don't have female animals created yet please do" />
+                            ) : (
+                              dataFemaleAnimals?.pages
+                                .flatMap((page: any) => page?.data?.value)
+                                .map((item, index) => (
+                                  <>
+                                    <SelectItem key={index} value={item.code}>
+                                      {item.code}
+                                    </SelectItem>
+                                  </>
+                                ))
+                            )}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                </div>
                 <div className="mb-4">
                   <SelectInput
                     firstOptionName="Choose a method"
@@ -262,7 +259,6 @@ const CreateOrUpdateBreedings = ({
                     ]}
                   />
                 </div>
-
                 <div className="mb-4">
                   <TextAreaInput
                     control={control}
@@ -272,7 +268,6 @@ const CreateOrUpdateBreedings = ({
                     errors={errors}
                   />
                 </div>
-
                 <div className="mt-4 flex items-center space-x-4">
                   <ButtonInput
                     type="button"
@@ -280,9 +275,8 @@ const CreateOrUpdateBreedings = ({
                     variant="outline"
                     onClick={() => setShowModal(false)}
                   >
-                    Cancel
+                    {t.formatMessage({ id: 'ALERT.CANCEL' })}
                   </ButtonInput>
-
                   <ButtonInput
                     type="submit"
                     className="w-full"
@@ -290,7 +284,7 @@ const CreateOrUpdateBreedings = ({
                     disabled={loading}
                     loading={loading}
                   >
-                    Save
+                    {t.formatMessage({ id: 'ALERT.CONTINUE' })}
                   </ButtonInput>
                 </div>
               </div>
@@ -302,4 +296,4 @@ const CreateOrUpdateBreedings = ({
   );
 };
 
-export { CreateOrUpdateBreedings };
+export { CreateBreedings };

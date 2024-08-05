@@ -19,16 +19,25 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { Eclipse } from 'lucide-react';
+import { Eclipse, ListFilter } from 'lucide-react';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '../ui/dropdown-menu';
 import { CreateOrUpdateAvesIsolations } from './create-or-update-aves-isolations';
 import { ListAvesIsolations } from './list-aves-isolations';
 
 const TabAvesIsolations = ({ animalTypeId }: { animalTypeId: string }) => {
   const t = useIntl();
   const [isOpen, setIsOpen] = useState(false);
-  const { search, handleSetSearch, setLoading } = useInputState();
+  const [periode, setPeriode] = useState('');
+  const { search, handleSetSearch } = useInputState();
 
   const {
     isLoading: isLoadingIsolations,
@@ -36,6 +45,7 @@ const TabAvesIsolations = ({ animalTypeId }: { animalTypeId: string }) => {
     data: dataIsolations,
   } = GetIsolationsAPI({
     search,
+    periode,
     take: 10,
     sort: 'desc',
     sortBy: 'createdAt',
@@ -60,7 +70,7 @@ const TabAvesIsolations = ({ animalTypeId }: { animalTypeId: string }) => {
                     {dataIsolations?.pages[0]?.data?.total}
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>
+                <TooltipContent className="dark:border-gray-800">
                   <p>
                     {t.formatMessage({ id: 'ANIMALTYPE.TOOLTIP' })}{' '}
                     {dataIsolations?.pages[0]?.data?.total}{' '}
@@ -70,6 +80,35 @@ const TabAvesIsolations = ({ animalTypeId }: { animalTypeId: string }) => {
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="h-8 gap-1">
+                  <ListFilter className="h-3.5 w-3.5" />
+                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                    Filter
+                  </span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="dark:border-gray-800">
+                <DropdownMenuLabel>Filter by</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuCheckboxItem
+                  onClick={() => setPeriode('')}
+                  checked
+                >
+                  {t.formatMessage({ id: 'ACTIVITY.FILTERALL' })}
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem onClick={() => setPeriode('7')}>
+                  {t.formatMessage({ id: 'ACTIVITY.LAST7DAYS' })}
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem onClick={() => setPeriode('15')}>
+                  {t.formatMessage({ id: 'ACTIVITY.LAST15DAYS' })}
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem onClick={() => setPeriode('30')}>
+                  {t.formatMessage({ id: 'ACTIVITY.LAST30DAYS' })}
+                </DropdownMenuCheckboxItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             <Button
               size="sm"
               className="h-8 gap-1"

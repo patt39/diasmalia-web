@@ -1,38 +1,32 @@
-import { CreateOrUpdateOneBreedingAPI } from '@/api-site/breedings';
+import { UpdateOneCheckAPI } from '@/api-site/breedings';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
-import { TextAreaInput } from '@/components/ui-setting/shadcn';
-import { BreedingsModel } from '@/types/breeding';
+import { SelectInput } from '@/components/ui-setting/shadcn';
+import { CheckPregnancysModel } from '@/types/breeding';
 import {
   AlertDangerNotification,
   AlertSuccessNotification,
 } from '@/utils/alert-notification';
 import { XIcon } from 'lucide-react';
-import { useRouter } from 'next/router';
-import { useEffect } from 'react';
 import { SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
 
 const schema = yup.object({
-  codeMale: yup.string().optional(),
-  codeFemale: yup.string().optional(),
   method: yup.string().required('method is required'),
-  note: yup.string().required('note is a required field'),
+  result: yup.string().required('result is required'),
 });
 
-const CheckOrUpdatePregnancy = ({
+const ReCheckPregnancy = ({
   showModal,
   setShowModal,
-  breeding,
+  gestation,
 }: {
   showModal: boolean;
   setShowModal: any;
-  breeding?: any;
+  gestation?: any;
 }) => {
   const {
-    watch,
     control,
-    setValue,
     handleSubmit,
     errors,
     loading,
@@ -40,18 +34,9 @@ const CheckOrUpdatePregnancy = ({
     hasErrors,
     setHasErrors,
   } = useReactHookForm({ schema });
-  const { query, push } = useRouter();
-  const animalTypeId = String(query?.animalTypeId);
 
-  useEffect(() => {
-    if (breeding) {
-      const fields = ['codeMale', 'codeFemale', 'method', 'note'];
-      fields?.forEach((field: any) => setValue(field, breeding[field]));
-    }
-  }, [breeding, setValue]);
-
-  // Create or Update data
-  const { mutateAsync: saveMutation } = CreateOrUpdateOneBreedingAPI({
+  //Update data
+  const { mutateAsync: saveMutation } = UpdateOneCheckAPI({
     onSuccess: () => {
       setHasErrors(false);
       setLoading(false);
@@ -62,20 +47,20 @@ const CheckOrUpdatePregnancy = ({
     },
   });
 
-  const onSubmit: SubmitHandler<BreedingsModel> = async (
-    payload: BreedingsModel,
+  const onSubmit: SubmitHandler<CheckPregnancysModel> = async (
+    payload: CheckPregnancysModel,
   ) => {
     setLoading(true);
     setHasErrors(undefined);
     try {
       await saveMutation({
         ...payload,
-        breedingId: breeding?.id,
+        checkPregnancyId: gestation?.checkPregnancyId,
       });
       setHasErrors(false);
       setLoading(false);
       AlertSuccessNotification({
-        text: 'Breeding saved successfully',
+        text: 'Breeding rechecked successfully',
       });
       setShowModal(false);
     } catch (error: any) {
@@ -117,13 +102,34 @@ const CheckOrUpdatePregnancy = ({
                     </div>
                   </div>
                 )}
-                <div className="mb-4">
-                  <TextAreaInput
+                <div className="mb-4 flex items-center space-x-4 cursor-pointer">
+                  <SelectInput
+                    firstOptionName="Choose a size"
                     control={control}
-                    label="Description"
-                    name="note"
-                    placeholder="Note"
                     errors={errors}
+                    placeholder="Select method"
+                    valueType="text"
+                    name="method"
+                    dataItem={[
+                      { id: 1, name: 'BLOOD_TEST' },
+                      { id: 1, name: 'RECTAL_PALPATION' },
+                      { id: 1, name: 'OBSERVATION' },
+                      { id: 1, name: 'ULTRASOUND' },
+                      { id: 1, name: 'ECHOGRAPHY' },
+                      { id: 1, name: 'PALPATION' },
+                    ]}
+                  />
+                  <SelectInput
+                    firstOptionName="Choose a size"
+                    control={control}
+                    errors={errors}
+                    placeholder="Select result"
+                    valueType="text"
+                    name="result"
+                    dataItem={[
+                      { id: 1, name: 'OPEN' },
+                      { id: 2, name: 'PREGNANT' },
+                    ]}
                   />
                 </div>
                 <div className="mt-4 flex items-center space-x-4">
@@ -135,7 +141,6 @@ const CheckOrUpdatePregnancy = ({
                   >
                     Cancel
                   </ButtonInput>
-
                   <ButtonInput
                     type="submit"
                     className="w-full"
@@ -155,4 +160,4 @@ const CheckOrUpdatePregnancy = ({
   );
 };
 
-export { CheckOrUpdatePregnancy };
+export { ReCheckPregnancy };

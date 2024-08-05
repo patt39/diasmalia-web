@@ -2,21 +2,14 @@ export type GestationsModel = {
   createdAt: string;
   id: string;
   note: string;
+  farrowingDate: Date;
   animal: {
-    select: {
-      code: string;
-      productionPhase: string;
-      electronicCode: string;
-      status: string;
-      gender: string;
-    };
+    code: string;
+    electronicCode: string;
   };
   animalTypeId: string;
   animalType: {
-    select: {
-      icon: string;
-      name: string;
-    };
+    name: string;
   };
   userCreatedId: string;
 };

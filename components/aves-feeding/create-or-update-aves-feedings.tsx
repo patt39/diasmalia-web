@@ -41,7 +41,7 @@ const CreateOrUpdateAvesFeedings = ({
   feeding?: any;
 }) => {
   const {
-    watch,
+    t,
     control,
     setValue,
     handleSubmit,
@@ -222,9 +222,8 @@ const CreateOrUpdateAvesFeedings = ({
                     variant="outline"
                     onClick={() => setShowModal(false)}
                   >
-                    Cancel
+                    {t.formatMessage({ id: 'ALERT.CANCEL' })}
                   </ButtonInput>
-
                   <ButtonInput
                     type="submit"
                     className="w-full"
@@ -232,7 +231,7 @@ const CreateOrUpdateAvesFeedings = ({
                     disabled={loading}
                     loading={loading}
                   >
-                    Save
+                    {t.formatMessage({ id: 'ALERT.CONTINUE' })}
                   </ButtonInput>
                 </div>
               </div>

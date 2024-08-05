@@ -38,6 +38,7 @@ const CreateOrUpdateDeaths = ({
   death?: any;
 }) => {
   const {
+    t,
     control,
     setValue,
     handleSubmit,
@@ -192,7 +193,6 @@ const CreateOrUpdateDeaths = ({
                     </div>
                   ) : null}
                 </div>
-
                 <div className="mb-4">
                   <TextAreaInput
                     control={control}
@@ -202,7 +202,6 @@ const CreateOrUpdateDeaths = ({
                     errors={errors}
                   />
                 </div>
-
                 <div className="mt-4 flex items-center space-x-4">
                   <ButtonInput
                     type="button"
@@ -210,9 +209,8 @@ const CreateOrUpdateDeaths = ({
                     variant="outline"
                     onClick={() => setShowModal(false)}
                   >
-                    Cancel
+                    {t.formatMessage({ id: 'ALERT.CANCEL' })}
                   </ButtonInput>
-
                   <ButtonInput
                     type="submit"
                     className="w-full"
@@ -220,7 +218,7 @@ const CreateOrUpdateDeaths = ({
                     disabled={loading}
                     loading={loading}
                   >
-                    Save
+                    {t.formatMessage({ id: 'ALERT.CONTINUE' })}
                   </ButtonInput>
                 </div>
               </div>

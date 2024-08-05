@@ -3,8 +3,31 @@ import { makeApiCall, PaginationRequest } from '@/utils';
 import {
   useInfiniteQuery,
   useMutation,
+  useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
+
+export const GetOneSaleAPI = (payload: { saleId: string }) => {
+  const { saleId } = payload;
+  const { data, isError, isLoading, status, isPending, refetch } = useQuery({
+    queryKey: ['sale', saleId],
+    queryFn: async () =>
+      await makeApiCall({
+        action: 'getOneSale',
+        urlParams: { saleId },
+      }),
+    refetchOnWindowFocus: false,
+  });
+
+  return {
+    data: data?.data as any,
+    isError,
+    isLoading,
+    status,
+    isPending,
+    refetch,
+  };
+};
 
 export const CreateOrUpdateOneSaleAPI = ({
   onSuccess,
@@ -27,6 +50,53 @@ export const CreateOrUpdateOneSaleAPI = ({
           })
         : await makeApiCall({
             action: 'createOneSale',
+            body: { ...payload },
+          });
+    },
+    onError: async (error) => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onError) {
+        onError(error);
+      }
+    },
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+  });
+
+  return result;
+};
+
+export const CreateOrUpdateAvesSaleAPI = ({
+  onSuccess,
+  onError,
+}: {
+  onSuccess?: () => void;
+  onError?: (error: any) => void;
+} = {}) => {
+  const queryKey = ['sales'];
+  const queryClient = useQueryClient();
+  const result = useMutation({
+    mutationKey: queryKey,
+    mutationFn: async (payload: SalesModel & { saleId: string }) => {
+      const { saleId } = payload;
+      return saleId
+        ? await makeApiCall({
+            action: 'updateOneAvesSale',
+            body: payload,
+            urlParams: { saleId },
+          })
+        : await makeApiCall({
+            action: 'createOneAvesSale',
             body: { ...payload },
           });
     },
@@ -78,14 +148,25 @@ export const GetSalesAPI = (
   payload: {
     search?: string;
     take: number;
+    periode?: string;
     animalTypeId?: string;
     method?: string;
+    detail?: string;
     sortBy?: string;
     organizationId?: string;
   } & PaginationRequest,
 ) => {
-  const { take, sort, search, sortBy, method, animalTypeId, organizationId } =
-    payload;
+  const {
+    take,
+    sort,
+    search,
+    sortBy,
+    method,
+    detail,
+    periode,
+    animalTypeId,
+    organizationId,
+  } = payload;
   return useInfiniteQuery({
     queryKey: ['sales', 'infinite', { ...payload }],
     getNextPageParam: (lastPage: any) => lastPage.data.next_page,
@@ -98,6 +179,8 @@ export const GetSalesAPI = (
           method,
           search,
           sortBy,
+          detail,
+          periode,
           animalTypeId,
           page: pageParam,
           organizationId,

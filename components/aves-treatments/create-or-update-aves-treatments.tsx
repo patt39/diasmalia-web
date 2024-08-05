@@ -1,6 +1,6 @@
 import { GetAnimalsAPI } from '@/api-site/animals';
 import { CreateOrUpdateOneAvesTreatmentAPI } from '@/api-site/treatment';
-import { useInputState, useReactHookForm } from '@/components/hooks';
+import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
 import {
   SelectInput,
@@ -32,8 +32,10 @@ import {
 const schema = yup.object({
   code: yup.string().optional(),
   note: yup.string().optional(),
+  dose: yup.number().optional(),
   diagnosis: yup.string().optional(),
   name: yup.string().required('name is required'),
+  method: yup.string().required('method is required'),
   medication: yup.string().required('medication is required'),
 });
 
@@ -47,6 +49,7 @@ const CreateOrUpdateAvestreatments = ({
   treatment?: any;
 }) => {
   const {
+    t,
     control,
     setValue,
     handleSubmit,
@@ -58,12 +61,19 @@ const CreateOrUpdateAvestreatments = ({
   } = useReactHookForm({ schema });
 
   const { query } = useRouter();
-  const { userStorage } = useInputState();
   const animalTypeId = String(query?.animalTypeId);
 
   useEffect(() => {
     if (treatment) {
-      const fields = ['code', 'note', 'name', 'diagnosis', 'medication'];
+      const fields = [
+        'code',
+        'note',
+        'name',
+        'diagnosis',
+        'medication',
+        'method',
+        'dose',
+      ];
       fields?.forEach((field: any) => setValue(field, treatment[field]));
     }
   }, [treatment, setValue]);
@@ -237,6 +247,31 @@ const CreateOrUpdateAvestreatments = ({
                   />
                 </div>
                 <div className="mb-4">
+                  <TextInput
+                    control={control}
+                    type="number"
+                    name="dose"
+                    placeholder="Give a dose"
+                    errors={errors}
+                  />
+                </div>
+                <div className="mb-4">
+                  <SelectInput
+                    firstOptionName="Give a method"
+                    control={control}
+                    errors={errors}
+                    placeholder="Select method"
+                    valueType="text"
+                    name="method"
+                    dataItem={[
+                      { id: 1, name: 'EYE' },
+                      { id: 2, name: 'ORAL' },
+                      { id: 1, name: 'NASAL' },
+                      { id: 2, name: 'INJECTION' },
+                    ]}
+                  />
+                </div>
+                <div className="mb-4">
                   <TextAreaInput
                     control={control}
                     label="Feedback"
@@ -252,9 +287,8 @@ const CreateOrUpdateAvestreatments = ({
                     variant="outline"
                     onClick={() => setShowModal(false)}
                   >
-                    Cancel
+                    {t.formatMessage({ id: 'ALERT.CANCEL' })}
                   </ButtonInput>
-
                   <ButtonInput
                     type="submit"
                     className="w-full"
@@ -262,7 +296,7 @@ const CreateOrUpdateAvestreatments = ({
                     disabled={loading}
                     loading={loading}
                   >
-                    Save
+                    {t.formatMessage({ id: 'ALERT.CONTINUE' })}
                   </ButtonInput>
                 </div>
               </div>

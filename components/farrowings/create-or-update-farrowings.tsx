@@ -41,6 +41,7 @@ const CreateOrUpdateFarrowings = ({
   farrowing?: any;
 }) => {
   const {
+    t,
     control,
     setValue,
     handleSubmit,
@@ -204,7 +205,6 @@ const CreateOrUpdateFarrowings = ({
                     errors={errors}
                   />
                 </div>
-
                 <div className="mt-4 flex items-center space-x-4">
                   <ButtonInput
                     type="button"
@@ -212,9 +212,8 @@ const CreateOrUpdateFarrowings = ({
                     variant="outline"
                     onClick={() => setShowModal(false)}
                   >
-                    Cancel
+                    {t.formatMessage({ id: 'ALERT.CANCEL' })}
                   </ButtonInput>
-
                   <ButtonInput
                     type="submit"
                     className="w-full"
@@ -222,7 +221,7 @@ const CreateOrUpdateFarrowings = ({
                     disabled={loading}
                     loading={loading}
                   >
-                    Save
+                    {t.formatMessage({ id: 'ALERT.CONTINUE' })}
                   </ButtonInput>
                 </div>
               </div>

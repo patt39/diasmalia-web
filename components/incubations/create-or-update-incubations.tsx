@@ -46,6 +46,7 @@ const CreateOrUpdateIncubations = ({
   incubation?: any;
 }) => {
   const {
+    t,
     control,
     errors,
     setValue,
@@ -233,7 +234,6 @@ const CreateOrUpdateIncubations = ({
                     />
                   </div>
                 )}
-
                 <div className="mt-4 flex items-center space-x-4">
                   <ButtonInput
                     type="button"
@@ -241,9 +241,8 @@ const CreateOrUpdateIncubations = ({
                     variant="outline"
                     onClick={() => setShowModal(false)}
                   >
-                    Cancel
+                    {t.formatMessage({ id: 'ALERT.CANCEL' })}
                   </ButtonInput>
-
                   <ButtonInput
                     type="submit"
                     className="w-full"
@@ -251,7 +250,7 @@ const CreateOrUpdateIncubations = ({
                     disabled={loading}
                     loading={loading}
                   >
-                    Save
+                    {t.formatMessage({ id: 'ALERT.CONTINUE' })}
                   </ButtonInput>
                 </div>
               </div>

@@ -20,3 +20,15 @@ export type BreedingsModel = {
     };
   };
 };
+
+export type CheckPregnancysModel = {
+  createdAt: string;
+  id: string;
+  method: string;
+  result: string;
+  farrowingDate: Date;
+  organizationId: string;
+  organization: {
+    name: string;
+  };
+};

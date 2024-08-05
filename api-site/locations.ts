@@ -1,9 +1,57 @@
+import { LocationModel } from '@/types/location';
 import { makeApiCall, PaginationRequest } from '@/utils';
 import {
   useInfiniteQuery,
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
+
+export const CreateOrUpdateOneLocationAPI = ({
+  onSuccess,
+  onError,
+}: {
+  onSuccess?: () => void;
+  onError?: (error: any) => void;
+} = {}) => {
+  const queryKey = ['location'];
+  const queryClient = useQueryClient();
+  const result = useMutation({
+    mutationKey: queryKey,
+    mutationFn: async (payload: LocationModel & { locationId: string }) => {
+      const { locationId } = payload;
+      return locationId
+        ? await makeApiCall({
+            action: 'updateOneLocation',
+            body: payload,
+            urlParams: { locationId },
+          })
+        : await makeApiCall({
+            action: 'createOneLocation',
+            body: { ...payload },
+          });
+    },
+    onError: async (error) => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onError) {
+        onError(error);
+      }
+    },
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+  });
+
+  return result;
+};
 
 export const GetLocationsAPI = (
   payload: {

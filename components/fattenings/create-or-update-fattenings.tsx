@@ -38,6 +38,7 @@ const CreateOrUpdateFattenings = ({
   fattening?: any;
 }) => {
   const {
+    t,
     control,
     errors,
     setValue,
@@ -213,7 +214,7 @@ const CreateOrUpdateFattenings = ({
                     variant="outline"
                     onClick={() => setShowModal(false)}
                   >
-                    Cancel
+                    {t.formatMessage({ id: 'ALERT.CANCEL' })}
                   </ButtonInput>
                   <ButtonInput
                     type="submit"
@@ -222,7 +223,7 @@ const CreateOrUpdateFattenings = ({
                     disabled={loading}
                     loading={loading}
                   >
-                    Save
+                    {t.formatMessage({ id: 'ALERT.CONTINUE' })}
                   </ButtonInput>
                 </div>
               </div>

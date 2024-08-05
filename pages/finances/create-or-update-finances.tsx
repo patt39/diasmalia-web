@@ -116,7 +116,6 @@ const CreateOrUpdateFinances = ({
                     </div>
                   </div>
                 )}
-
                 <div className="mb-4">
                   <TextInput
                     control={control}
@@ -126,7 +125,6 @@ const CreateOrUpdateFinances = ({
                     errors={errors}
                   />
                 </div>
-
                 <div className="mb-4">
                   <SelectInput
                     firstOptionName="Choose a transaction type"
@@ -141,7 +139,6 @@ const CreateOrUpdateFinances = ({
                     ]}
                   />
                 </div>
-
                 <div className="mb-4">
                   <TextAreaInput
                     control={control}
@@ -151,7 +148,6 @@ const CreateOrUpdateFinances = ({
                     errors={errors}
                   />
                 </div>
-
                 <div className="mt-4 flex items-center space-x-4">
                   <ButtonInput
                     type="button"

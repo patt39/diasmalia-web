@@ -11,6 +11,7 @@ interface Props {
   autoComplete?: 'on' | 'off';
   required?: boolean;
   defaultValue?: string;
+  disabled?: boolean;
 }
 
 const TextAreaInput: React.FC<Props> = ({
@@ -22,6 +23,7 @@ const TextAreaInput: React.FC<Props> = ({
   defaultValue,
   autoComplete,
   required,
+  disabled,
 }) => {
   return (
     <>
@@ -34,7 +36,6 @@ const TextAreaInput: React.FC<Props> = ({
       <Controller
         name={name}
         control={control}
-        defaultValue={defaultValue}
         render={({ field: { ref, ...field } }) => (
           <>
             <Textarea
@@ -43,6 +44,8 @@ const TextAreaInput: React.FC<Props> = ({
               maxLength={6000}
               style={{ height: 120 }}
               required={required}
+              disabled={disabled}
+              defaultValue={defaultValue}
               placeholder={placeholder}
               autoComplete={autoComplete}
               {...field}

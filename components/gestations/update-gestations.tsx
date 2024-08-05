@@ -1,32 +1,23 @@
-import { GetAnimalsAPI } from '@/api-site/animals';
 import { UpdateOneGestationAPI } from '@/api-site/gestation';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
-import { LoadingFile } from '@/components/ui-setting/ant';
-import { ErrorFile } from '@/components/ui-setting/ant/error-file';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { GestationsModel } from '@/types/gestation';
 import {
   AlertDangerNotification,
   AlertSuccessNotification,
 } from '@/utils/alert-notification';
 import { XIcon } from 'lucide-react';
-import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
-import { TextInput } from '../ui-setting/shadcn';
+import { DateInput } from '../ui-setting/ant';
+import { SelectInput, TextAreaInput } from '../ui-setting/shadcn';
+import { Label } from '../ui/label';
 
 const schema = yup.object({
-  animals: yup.array().optional(),
-  quantity: yup.number().required('quantity is required'),
-  feedType: yup.string().required('feedType is required'),
+  note: yup.string().optional(),
+  method: yup.string().optional(),
+  farrowingDate: yup.date().optional(),
 });
 
 const UpdateGestations = ({
@@ -49,12 +40,11 @@ const UpdateGestations = ({
     setHasErrors,
     register,
   } = useReactHookForm({ schema });
-  const { query } = useRouter();
-  const animalTypeId = String(query?.animalTypeId);
+  const [date, setDate] = React.useState<Date>();
 
   useEffect(() => {
     if (gestation) {
-      const fields = ['animals', 'quantity', 'feedType'];
+      const fields = ['note', 'method', 'farrowingDate'];
       fields?.forEach((field: any) => setValue(field, gestation[field]));
     }
   }, [gestation, setValue]);
@@ -97,18 +87,6 @@ const UpdateGestations = ({
     }
   };
 
-  const {
-    isLoading: isLoadingAnimals,
-    isError: isErrorAnimals,
-    data: dataAnimals,
-  } = GetAnimalsAPI({
-    take: 10,
-    sort: 'desc',
-    status: 'ACTIVE',
-    sortBy: 'createdAt',
-    animalTypeId: animalTypeId,
-  });
-
   return (
     <>
       {showModal ? (
@@ -139,64 +117,37 @@ const UpdateGestations = ({
                   </div>
                 )}
 
-                <div className="mb-4 w-full mt-2">
-                  <Select>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select animals" />
-                    </SelectTrigger>
-                    <SelectContent className="dark:border-gray-800">
-                      <SelectGroup>
-                        {isLoadingAnimals ? (
-                          <LoadingFile />
-                        ) : isErrorAnimals ? (
-                          <ErrorFile
-                            title="404"
-                            description="Error finding data please try again..."
-                          />
-                        ) : Number(dataAnimals?.pages[0]?.data?.total) <= 0 ? (
-                          <ErrorFile description="Don't have active animals at the moment" />
-                        ) : (
-                          dataAnimals?.pages
-                            .flatMap((page: any) => page?.data?.value)
-                            .map((item, index) => (
-                              <>
-                                <div key={index}>
-                                  <label
-                                    htmlFor={item?.id}
-                                    className="flex cursor-pointer items-start gap-4 rounded-lg border border-gray-200 p-4 transition hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-900"
-                                  >
-                                    <div className="flex items-center">
-                                      &#8203;
-                                      <input
-                                        type="checkbox"
-                                        className="size-4 rounded cursor-pointer border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:ring-offset-gray-900"
-                                        id={item?.id}
-                                        {...register('animals')}
-                                        value={item?.code}
-                                      />
-                                    </div>
-
-                                    <div>
-                                      <strong className="font-medium text-gray-900 dark:text-white">
-                                        {item?.code}
-                                      </strong>
-                                    </div>
-                                  </label>
-                                </div>
-                              </>
-                            ))
-                        )}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="mb-4">
-                  <TextInput
+                <div className="mb-4 flex items-center space-x-4">
+                  <SelectInput
+                    firstOptionName="Choose a size"
                     control={control}
-                    type="number"
-                    name="quantity"
-                    placeholder="Give a quantity"
+                    errors={errors}
+                    placeholder="Select method"
+                    valueType="text"
+                    name="method"
+                    dataItem={[
+                      { id: 1, name: 'BLOOD_TEST' },
+                      { id: 1, name: 'RECTAL_PALPATION' },
+                      { id: 1, name: 'OBSERVATION' },
+                      { id: 1, name: 'ULTRASOUND' },
+                    ]}
+                  />
+                  <div className="mb-4">
+                    <Label>Farrowing date</Label>
+                    <DateInput
+                      control={control}
+                      errors={errors}
+                      placeholder="Pick a date"
+                      name="farrowingDate"
+                    />
+                  </div>
+                </div>
+                <div className="mb-4">
+                  <TextAreaInput
+                    control={control}
+                    label="Description"
+                    name="note"
+                    placeholder="Note about animal state"
                     errors={errors}
                   />
                 </div>

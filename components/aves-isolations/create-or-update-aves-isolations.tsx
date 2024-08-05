@@ -41,6 +41,7 @@ const CreateOrUpdateAvesIsolations = ({
   isolation?: any;
 }) => {
   const {
+    t,
     control,
     setValue,
     handleSubmit,
@@ -194,7 +195,6 @@ const CreateOrUpdateAvesIsolations = ({
                     errors={errors}
                   />
                 </div>
-
                 <div className="mb-4">
                   <TextAreaInput
                     control={control}
@@ -204,7 +204,6 @@ const CreateOrUpdateAvesIsolations = ({
                     errors={errors}
                   />
                 </div>
-
                 <div className="mt-4 flex items-center space-x-4">
                   <ButtonInput
                     type="button"
@@ -212,9 +211,8 @@ const CreateOrUpdateAvesIsolations = ({
                     variant="outline"
                     onClick={() => setShowModal(false)}
                   >
-                    Cancel
+                    {t.formatMessage({ id: 'ALERT.CANCEL' })}
                   </ButtonInput>
-
                   <ButtonInput
                     type="submit"
                     className="w-full"
@@ -222,7 +220,7 @@ const CreateOrUpdateAvesIsolations = ({
                     disabled={loading}
                     loading={loading}
                   >
-                    Save
+                    {t.formatMessage({ id: 'ALERT.CONTINUE' })}
                   </ButtonInput>
                 </div>
               </div>

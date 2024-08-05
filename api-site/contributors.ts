@@ -8,7 +8,7 @@ export const GetContributorsAPI = (
     organizationId?: string;
   } & PaginationRequest,
 ) => {
-  const { take, sort, search, organizationId } = payload;
+  const { take, sort, sortBy, search, organizationId } = payload;
   return useInfiniteQuery({
     queryKey: ['contributors', 'infinite', { ...payload }],
     getNextPageParam: (lastPage: any) => lastPage.data.next_page,
@@ -18,6 +18,7 @@ export const GetContributorsAPI = (
         queryParams: {
           take,
           sort,
+          sortBy,
           search,
           organizationId,
           page: pageParam,

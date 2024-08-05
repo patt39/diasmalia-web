@@ -19,13 +19,23 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { File, Stethoscope } from 'lucide-react';
+import { File, HeartHandshakeIcon, ListFilter } from 'lucide-react';
+import { useState } from 'react';
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '../ui/dropdown-menu';
 import { CreateOrUpdateSales } from './create-or-update-sales';
 import { ListSales } from './list-sales';
 
 const TabSales = ({ animalTypeId }: { animalTypeId: string }) => {
   const { search, handleSetSearch } = useInputState();
   const { t, isOpen, setIsOpen } = useInputState();
+  const [periode, setPeriode] = useState('');
 
   const handleExport = async () => {
     try {
@@ -45,6 +55,7 @@ const TabSales = ({ animalTypeId }: { animalTypeId: string }) => {
     data: dataSales,
   } = GetSalesAPI({
     search,
+    periode,
     take: 10,
     sort: 'desc',
     sortBy: 'createdAt',
@@ -91,17 +102,46 @@ const TabSales = ({ animalTypeId }: { animalTypeId: string }) => {
                     <span className="sr-only sm:not-sr-only">Export</span>
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>
+                <TooltipContent className="dark:border-gray-800">
                   <p>{t.formatMessage({ id: 'SALES.EXPORT' })}</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="h-8 gap-1">
+                  <ListFilter className="h-3.5 w-3.5" />
+                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                    Filter
+                  </span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="dark:border-gray-800">
+                <DropdownMenuLabel>Filter by</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuCheckboxItem
+                  onClick={() => setPeriode('')}
+                  checked
+                >
+                  {t.formatMessage({ id: 'ACTIVITY.FILTERALL' })}
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem onClick={() => setPeriode('7')}>
+                  {t.formatMessage({ id: 'ACTIVITY.LAST7DAYS' })}
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem onClick={() => setPeriode('15')}>
+                  {t.formatMessage({ id: 'ACTIVITY.LAST15DAYS' })}
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem onClick={() => setPeriode('30')}>
+                  {t.formatMessage({ id: 'ACTIVITY.LAST30DAYS' })}
+                </DropdownMenuCheckboxItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             <Button
               size="sm"
               className="h-8 gap-1"
               onClick={() => setIsOpen(true)}
             >
-              <Stethoscope className="h-3.5 w-3.5  hover:shadow-xxl" />
+              <HeartHandshakeIcon className="h-3.5 w-3.5  hover:shadow-xxl" />
               <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                 {t.formatMessage({
                   id: 'ANIMALTYPE.ANIMALS.SALES.CREATE',

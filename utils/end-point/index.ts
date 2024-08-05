@@ -98,6 +98,8 @@ export const apiEndpoints: ClientApiMethods = {
   getOneSale: GET(`${baseUrl}/sales/view/:saleId`),
   createOneSale: POST(`${baseUrl}/sales/bulk/create`),
   updateOneSale: PUT(`${baseUrl}/sales/:saleId/edit`),
+  createOneAvesSale: POST(`${baseUrl}/sales/create/aves`),
+  updateOneAvesSale: PUT(`${baseUrl}/sales/:saleId/edit`),
   deleteOneSale: DELETE(`${baseUrl}/sales/:saleId/delete`),
 
   /****************** User route */
@@ -117,6 +119,7 @@ export const apiEndpoints: ClientApiMethods = {
   /****************** Finances route */
   getFinances: GET(`${baseUrl}/finances`),
   createOneFinance: POST(`${baseUrl}/finances/create`),
+  getOneFinance: GET(`${baseUrl}/finances/:financeId/view`),
   updateOneFinance: PUT(`${baseUrl}/finances/:financeId/edit`),
 
   /****************** Locations route */
@@ -145,6 +148,7 @@ export const apiEndpoints: ClientApiMethods = {
 
   /****************** Deaths route */
   getDeaths: GET(`${baseUrl}/deaths`),
+  getOneDeath: GET(`${baseUrl}/deaths/:deathId/view`),
   createOneDeath: POST(`${baseUrl}/deaths/bulk/create`),
   updateOneDeath: PUT(`${baseUrl}/deaths/:deathId/edit`),
   createOneAvesDeath: POST(`${baseUrl}/deaths/create/aves`),
@@ -154,8 +158,11 @@ export const apiEndpoints: ClientApiMethods = {
   /****************** Breedings route */
   getBreedings: GET(`${baseUrl}/breedings`),
   createOneBreeding: POST(`${baseUrl}/breedings/create`),
+  getOneBreeding: GET(`${baseUrl}/breedings/:breedingId/view`),
   updateOneBreeding: PUT(`${baseUrl}/breedings/:breedingId/edit`),
   deleteOneBreeding: DELETE(`${baseUrl}/breedings/:breedingId/delete`),
+  createOneCheck: POST(`${baseUrl}/check-pregnancies/:breedingId/check`),
+  updateOneCheck: PUT(`${baseUrl}/check-pregnancies/:checkPregnancyId/recheck`),
 
   /****************** Egg-harvestings route */
   getEggharvestings: GET(`${baseUrl}/egg-harvestings`),
@@ -170,12 +177,14 @@ export const apiEndpoints: ClientApiMethods = {
   /****************** Farrowings route */
   getFarrowings: GET(`${baseUrl}/farrowings`),
   createOneFarrowing: POST(`${baseUrl}/farrowings/create/`),
+  getOneFarrowing: GET(`${baseUrl}/farrowings/:farrowingId/view`),
   updateOneFarrowing: PUT(`${baseUrl}/farrowings/:farrowingId/edit`),
   deleteOneFarrowing: DELETE(`${baseUrl}/farrowings/:farrowingId/delete`),
 
   /****************** Isolations route */
   getIsolations: GET(`${baseUrl}/isolations`),
   createOneIsolation: POST(`${baseUrl}/isolations/bulk/create`),
+  getOneIsolation: GET(`${baseUrl}/isolations/:isolationId/view`),
   updateOneIsolation: PUT(`${baseUrl}/isolations/:isolationId/edit`),
   createOneAvesIsolation: POST(`${baseUrl}/isolations/create/aves`),
   updateOneAvesIsolation: PUT(`${baseUrl}/isolations/:isolationId/edit`),
@@ -183,6 +192,8 @@ export const apiEndpoints: ClientApiMethods = {
 
   /****************** Milkings route */
   getMilkings: GET(`${baseUrl}/milkings`),
+  createOneMilking: POST(`${baseUrl}/milkings/create`),
+  updateOneMilking: GET(`${baseUrl}/milkings/:milkingId/edit`),
   deleteOneMilking: DELETE(`${baseUrl}/milkings/:milkingId/delete`),
 
   /****************** Incubations route */
@@ -199,13 +210,15 @@ export const apiEndpoints: ClientApiMethods = {
 
   /****************** Gestation route */
   getGestations: GET(`${baseUrl}/gestations`),
-  updateOneGestation: GET(`${baseUrl}/gestations/:gestationId/edit`),
-  deleteOneGestation: DELETE(`${baseUrl}/weanings/:weaningId/delete`),
+  getOneGestation: GET(`${baseUrl}/gestations/:gestationId/view`),
+  updateOneGestation: PUT(`${baseUrl}/gestations/:gestationId/edit`),
+  deleteOneGestation: DELETE(`${baseUrl}/gestations/:gestationId/delete`),
 
   /****************** Treatment route */
   getTreatments: GET(`${baseUrl}/treatments`),
   createOneTreatment: POST(`${baseUrl}/treatments/bulk/create`),
-  updateOneTreatment: GET(`${baseUrl}/treatments/:treatmentId/edit`),
+  getOneTreatment: GET(`${baseUrl}/treatments/:treatmentId/view`),
+  updateOneTreatment: PUT(`${baseUrl}/treatments/:treatmentId/edit`),
   createOneAvesTreatment: POST(`${baseUrl}/treatments/create/aves`),
   updateOneAvesTreatment: PUT(`${baseUrl}/treatments/:treatmentId/edit`),
   deleteOneTreatment: DELETE(`${baseUrl}/treatments/:treatmentId/delete`),

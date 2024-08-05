@@ -1,6 +1,7 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useIntl } from 'react-intl';
 import * as yup from 'yup';
 
 type SchemaData<T> = {
@@ -12,6 +13,7 @@ type HookOptions<T> = {
 };
 
 const useReactHookForm = <T>({ schema }: HookOptions<T>) => {
+  const t = useIntl();
   const [loading, setLoading] = useState(false);
   const [hasSuccess, setHasSuccess] = useState<boolean | string | undefined>(
     undefined,
@@ -33,6 +35,7 @@ const useReactHookForm = <T>({ schema }: HookOptions<T>) => {
   });
 
   return {
+    t,
     reset,
     watch,
     control,

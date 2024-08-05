@@ -32,6 +32,7 @@ export const GetAnimalsAPI = (
     take?: number;
     status?: string;
     gender?: string;
+    isCastrated?: Boolean;
     animalTypeId?: string;
     productionPhase?: string;
     organizationId?: string;
@@ -44,6 +45,7 @@ export const GetAnimalsAPI = (
     status,
     sortBy,
     gender,
+    isCastrated,
     productionPhase,
     animalTypeId,
     organizationId,
@@ -61,6 +63,7 @@ export const GetAnimalsAPI = (
           status,
           sortBy,
           gender,
+          isCastrated,
           animalTypeId,
           productionPhase,
           page: pageParam,

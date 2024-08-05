@@ -12,19 +12,6 @@ export type LocationModel = {
   squareMeter: number;
   through: number;
   manger: number;
-  animalTypeId: string;
-  animalType: {
-    select: {
-      icon: string;
-      name: string;
-    };
-  };
   userCreatedId: string;
   productionPhase: string;
-  organizationId: string;
-  organization: {
-    select: {
-      name: string;
-    };
-  };
 };

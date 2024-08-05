@@ -34,11 +34,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
-import { CreateOrUpdateBreedings } from './create-or-update-breedings';
+import { CreateBreedings } from './create-breedings';
 import { ListBreedings } from './list-breedings';
 
 const TabBreedings = ({ animalTypeId }: { animalTypeId: string }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [periode, setPeriode] = useState('');
   const { t, search, handleSetSearch } = useInputState();
 
   const {
@@ -47,6 +48,7 @@ const TabBreedings = ({ animalTypeId }: { animalTypeId: string }) => {
     data: dataBreedings,
   } = GetBreedingsAPI({
     search,
+    periode,
     take: 10,
     sort: 'desc',
     sortBy: 'createdAt',
@@ -71,7 +73,7 @@ const TabBreedings = ({ animalTypeId }: { animalTypeId: string }) => {
                     {dataBreedings?.pages[0]?.data?.total}
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>
+                <TooltipContent className="dark:border-gray-800">
                   <p>
                     {t.formatMessage({ id: 'ANIMALTYPE.TOOLTIP' })}{' '}
                     {dataBreedings?.pages[0]?.data?.total}{' '}
@@ -89,13 +91,24 @@ const TabBreedings = ({ animalTypeId }: { animalTypeId: string }) => {
                   </span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>
-                  {t.formatMessage({ id: 'ANIMALTYPE.FILTER' })}
-                </DropdownMenuLabel>
+              <DropdownMenuContent align="end" className="dark:border-gray-800">
+                <DropdownMenuLabel>Filter by</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuCheckboxItem>status </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem>Method</DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem
+                  onClick={() => setPeriode('')}
+                  checked
+                >
+                  {t.formatMessage({ id: 'ACTIVITY.FILTERALL' })}
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem onClick={() => setPeriode('7')}>
+                  {t.formatMessage({ id: 'ACTIVITY.LAST7DAYS' })}
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem onClick={() => setPeriode('15')}>
+                  {t.formatMessage({ id: 'ACTIVITY.LAST15DAYS' })}
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem onClick={() => setPeriode('30')}>
+                  {t.formatMessage({ id: 'ACTIVITY.LAST30DAYS' })}
+                </DropdownMenuCheckboxItem>
               </DropdownMenuContent>
             </DropdownMenu>
             <Button
@@ -161,7 +174,7 @@ const TabBreedings = ({ animalTypeId }: { animalTypeId: string }) => {
           </div>
         </CardFooter>
       </main>
-      <CreateOrUpdateBreedings
+      <CreateBreedings
         breeding={animalTypeId}
         showModal={isOpen}
         setShowModal={setIsOpen}

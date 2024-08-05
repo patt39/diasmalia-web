@@ -23,11 +23,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
-import { CreateOrUpdateFeedings } from './create-or-update-feedings';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '../ui/tooltip';
+import { CreateFeedings } from './create-feedings';
 import { ListFeedings } from './list-feedings';
 
 const TabFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [periode, setPeriode] = useState('');
   const { t, search, handleSetSearch, userStorage } = useInputState();
 
   const {
@@ -36,12 +43,20 @@ const TabFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
     data: dataFeedings,
   } = GetFeedingsAPI({
     search,
+    periode,
     take: 10,
     sort: 'desc',
     sortBy: 'createdAt',
     animalTypeId: animalTypeId,
     organizationId: userStorage?.organizationId,
   });
+
+  const initialValue = 0;
+  const sumAmountFeed = dataFeedings?.pages[0]?.data?.value.reduce(
+    (accumulator: any, currentValue: any) =>
+      accumulator + currentValue.quantity,
+    initialValue,
+  );
 
   return (
     <>
@@ -54,6 +69,20 @@ const TabFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
             />
           </div>
           <div className="ml-auto flex items-center gap-2">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="outline">{sumAmountFeed}</Button>
+                </TooltipTrigger>
+                <TooltipContent className="dark:border-gray-800">
+                  <p>
+                    {t.formatMessage({ id: 'ANIMALTYPE.TOOLTIP' })}{' '}
+                    {sumAmountFeed}kg{' '}
+                    {t.formatMessage({ id: 'ANIMALTYPE.FEEDING' })}
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="h-8 gap-1">
@@ -63,13 +92,23 @@ const TabFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
                   </span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>
-                  {t.formatMessage({ id: 'ANIMALTYPE.FILTER' })}
-                </DropdownMenuLabel>
+              <DropdownMenuContent align="end" className="dark:border-gray-800">
+                <DropdownMenuLabel>Filter by</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuCheckboxItem>
-                  {t.formatMessage({ id: 'ANIMALTYPE.FEEDTYPE' })}
+                <DropdownMenuCheckboxItem
+                  onClick={() => setPeriode('')}
+                  checked
+                >
+                  {t.formatMessage({ id: 'ACTIVITY.FILTERALL' })}
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem onClick={() => setPeriode('7')}>
+                  {t.formatMessage({ id: 'ACTIVITY.LAST7DAYS' })}
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem onClick={() => setPeriode('15')}>
+                  {t.formatMessage({ id: 'ACTIVITY.LAST15DAYS' })}
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem onClick={() => setPeriode('30')}>
+                  {t.formatMessage({ id: 'ACTIVITY.LAST30DAYS' })}
                 </DropdownMenuCheckboxItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -135,7 +174,7 @@ const TabFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
           </div>
         </CardFooter>
       </main>
-      <CreateOrUpdateFeedings
+      <CreateFeedings
         feeding={animalTypeId}
         showModal={isOpen}
         setShowModal={setIsOpen}

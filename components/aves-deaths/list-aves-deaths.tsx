@@ -14,15 +14,17 @@ import {
   AlertSuccessNotification,
   formatDateDDMMYY,
 } from '@/utils';
-import { MoreHorizontal, PencilIcon, TrashIcon } from 'lucide-react';
+import { Eye, MoreHorizontal, PencilIcon, TrashIcon } from 'lucide-react';
 import { useState } from 'react';
 import { ActionModalDialog } from '../ui-setting/shadcn';
 import { TableCell, TableRow } from '../ui/table';
 import { CreateOrUpdateAvesDeaths } from './create-or-update-aves-deaths';
+import { ViewAvesDeath } from './view-death';
 
 const ListAvesDeaths = ({ item, index }: { item: any; index: number }) => {
   const { t, loading, isOpen, setIsOpen, setLoading } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
+  const [isView, setIsView] = useState(false);
 
   const { mutateAsync: deleteMutation } = DeleteOneDeathAPI({
     onSuccess: () => {},
@@ -54,8 +56,8 @@ const ListAvesDeaths = ({ item, index }: { item: any; index: number }) => {
         <TableCell className="font-medium">{item.animal.code}</TableCell>
         <TableCell className="font-medium">{item.number}</TableCell>
         <TableCell>
-          {item?.note?.length > 60
-            ? item?.note?.substring(0, 60) + '...'
+          {item?.note?.length > 20
+            ? item?.note?.substring(0, 20) + '...'
             : item?.note}
         </TableCell>
         <TableCell>{formatDateDDMMYY(item?.createdAt as Date)}</TableCell>
@@ -69,10 +71,16 @@ const ListAvesDeaths = ({ item, index }: { item: any; index: number }) => {
                 </span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="dark:border-gray-800">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem onClick={() => setIsEdit(true)}>
                 <PencilIcon className="size-4 text-gray-600 hover:text-indigo-600" />
+                <span className="ml-2 cursor-pointer hover:text-indigo-600">
+                  {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
+                </span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setIsEdit(true)}>
+                <Eye className="size-4 text-gray-600 hover:text-indigo-600" />
                 <span className="ml-2 cursor-pointer hover:text-indigo-600">
                   {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
                 </span>
@@ -100,6 +108,7 @@ const ListAvesDeaths = ({ item, index }: { item: any; index: number }) => {
         showModal={isEdit}
         setShowModal={setIsEdit}
       />
+      <ViewAvesDeath death={item} showModal={isView} setShowModal={setIsView} />
     </>
   );
 };

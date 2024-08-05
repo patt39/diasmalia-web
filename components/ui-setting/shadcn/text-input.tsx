@@ -5,6 +5,7 @@ import { Control, Controller } from 'react-hook-form';
 interface Props {
   control: Control<any>;
   label?: string;
+  value?: string;
   name: string;
   min?: number;
   max?: number;

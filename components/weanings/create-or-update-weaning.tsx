@@ -48,7 +48,7 @@ const CreateOrUpdateWeanings = ({
     setLoading,
     hasErrors,
     setHasErrors,
-    register,
+    t,
   } = useReactHookForm({ schema });
   const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
@@ -202,9 +202,8 @@ const CreateOrUpdateWeanings = ({
                     variant="outline"
                     onClick={() => setShowModal(false)}
                   >
-                    Cancel
+                    {t.formatMessage({ id: 'ALERT.CANCEL' })}
                   </ButtonInput>
-
                   <ButtonInput
                     type="submit"
                     className="w-full"
@@ -212,7 +211,7 @@ const CreateOrUpdateWeanings = ({
                     disabled={loading}
                     loading={loading}
                   >
-                    Save
+                    {t.formatMessage({ id: 'ALERT.CONTINUE' })}
                   </ButtonInput>
                 </div>
               </div>

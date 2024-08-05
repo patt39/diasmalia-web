@@ -18,6 +18,7 @@ import { MoreHorizontal, PencilIcon, TrashIcon } from 'lucide-react';
 import { useState } from 'react';
 import { ActionModalDialog } from '../ui-setting/shadcn';
 import { TableCell, TableRow } from '../ui/table';
+import { CreateOrUpdateIncubations } from './create-or-update-incubations';
 
 const ListIncubations = ({ item, index }: { item: any; index: number }) => {
   const { t, isOpen, loading, setIsOpen, setLoading } = useInputState();
@@ -64,7 +65,7 @@ const ListIncubations = ({ item, index }: { item: any; index: number }) => {
                 </span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="dark:border-gray-800">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem onClick={() => setIsEdit(true)}>
                 <PencilIcon className="size-4 text-gray-600 hover:text-indigo-600" />
@@ -87,6 +88,11 @@ const ListIncubations = ({ item, index }: { item: any; index: number }) => {
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         onClick={() => deleteItem(item)}
+      />
+      <CreateOrUpdateIncubations
+        incubation={item}
+        showModal={isEdit}
+        setShowModal={setIsEdit}
       />
     </>
   );

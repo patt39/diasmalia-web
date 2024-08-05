@@ -48,6 +48,7 @@ const CreateOrUpdateSales = ({
   sale?: any;
 }) => {
   const {
+    t,
     control,
     setValue,
     handleSubmit,
@@ -155,62 +156,60 @@ const CreateOrUpdateSales = ({
                   </div>
                 )}
 
-                <div className="mb-4 flex items-center space-x-4 w-full">
-                  {!sale?.id ? (
-                    <div className="mb-4 w-full mt-2">
-                      <Select>
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select animals" />
-                        </SelectTrigger>
-                        <SelectContent className="dark:border-gray-800">
-                          <SelectGroup>
-                            {isLoadingAnimals ? (
-                              <LoadingFile />
-                            ) : isErrorAnimals ? (
-                              <ErrorFile
-                                title="404"
-                                description="Error finding data please try again..."
-                              />
-                            ) : Number(dataAnimals?.pages[0]?.data?.total) <=
-                              0 ? (
-                              <ErrorFile description="Don't have active animals created yet please do" />
-                            ) : (
-                              dataAnimals?.pages
-                                .flatMap((page: any) => page?.data?.value)
-                                .map((item, index) => (
-                                  <>
-                                    <div key={index}>
-                                      <label
-                                        htmlFor={item?.id}
-                                        className="flex cursor-pointer items-start gap-4 rounded-lg border border-gray-200 p-4 transition hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-900"
-                                      >
-                                        <div className="flex items-center">
-                                          &#8203;
-                                          <input
-                                            type="checkbox"
-                                            className="size-4 rounded cursor-pointer border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:ring-offset-gray-900"
-                                            id={item?.id}
-                                            {...register('animals')}
-                                            value={item?.code}
-                                          />
-                                        </div>
+                {!sale.id ? (
+                  <div className="mb-4 w-full mt-2">
+                    <Select>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select animals" />
+                      </SelectTrigger>
+                      <SelectContent className="dark:border-gray-800">
+                        <SelectGroup>
+                          {isLoadingAnimals ? (
+                            <LoadingFile />
+                          ) : isErrorAnimals ? (
+                            <ErrorFile
+                              title="404"
+                              description="Error finding data please try again..."
+                            />
+                          ) : Number(dataAnimals?.pages[0]?.data?.total) <=
+                            0 ? (
+                            <ErrorFile description="Don't have active animals created yet please do" />
+                          ) : (
+                            dataAnimals?.pages
+                              .flatMap((page: any) => page?.data?.value)
+                              .map((item, index) => (
+                                <>
+                                  <div key={index}>
+                                    <label
+                                      htmlFor={item?.id}
+                                      className="flex cursor-pointer items-start gap-4 rounded-lg border border-gray-200 p-4 transition hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-900"
+                                    >
+                                      <div className="flex items-center">
+                                        &#8203;
+                                        <input
+                                          type="checkbox"
+                                          className="size-4 rounded cursor-pointer border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:ring-offset-gray-900"
+                                          id={item?.id}
+                                          {...register('animals')}
+                                          value={item?.code}
+                                        />
+                                      </div>
 
-                                        <div>
-                                          <strong className="font-medium text-gray-900 dark:text-white">
-                                            {item?.code}
-                                          </strong>
-                                        </div>
-                                      </label>
-                                    </div>
-                                  </>
-                                ))
-                            )}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  ) : null}
-                </div>
+                                      <div>
+                                        <strong className="font-medium text-gray-900 dark:text-white">
+                                          {item?.code}
+                                        </strong>
+                                      </div>
+                                    </label>
+                                  </div>
+                                </>
+                              ))
+                          )}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                ) : null}
                 <div className="mb-4">
                   <TextInput
                     control={control}
@@ -290,7 +289,7 @@ const CreateOrUpdateSales = ({
                     variant="outline"
                     onClick={() => setShowModal(false)}
                   >
-                    Cancel
+                    {t.formatMessage({ id: 'ALERT.CANCEL' })}
                   </ButtonInput>
                   <ButtonInput
                     type="submit"
@@ -299,7 +298,7 @@ const CreateOrUpdateSales = ({
                     disabled={loading}
                     loading={loading}
                   >
-                    Save
+                    {t.formatMessage({ id: 'ALERT.CONTINUE' })}
                   </ButtonInput>
                 </div>
               </div>

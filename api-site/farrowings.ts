@@ -3,8 +3,31 @@ import { makeApiCall, PaginationRequest } from '@/utils';
 import {
   useInfiniteQuery,
   useMutation,
+  useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
+
+export const GetOneFarrowingAPI = (payload: { farrowingId: string }) => {
+  const { farrowingId } = payload;
+  const { data, isError, isLoading, status, isPending, refetch } = useQuery({
+    queryKey: ['farrowing', farrowingId],
+    queryFn: async () =>
+      await makeApiCall({
+        action: 'getOneFarrowing',
+        urlParams: { farrowingId },
+      }),
+    refetchOnWindowFocus: false,
+  });
+
+  return {
+    data: data?.data as any,
+    isError,
+    isLoading,
+    status,
+    isPending,
+    refetch,
+  };
+};
 
 export const CreateOrUpdateOneFarrowingAPI = ({
   onSuccess,
@@ -57,11 +80,13 @@ export const GetFarrowingsAPI = (
   payload: {
     search?: string;
     take?: number;
+    periode?: string;
     animalTypeId?: string;
     organizationId?: string;
   } & PaginationRequest,
 ) => {
-  const { take, sort, search, sortBy, animalTypeId, organizationId } = payload;
+  const { take, sort, search, sortBy, periode, animalTypeId, organizationId } =
+    payload;
   return useInfiniteQuery({
     queryKey: ['farrowings', 'infinite', { ...payload }],
     getNextPageParam: (lastPage: any) => lastPage.data.next_page,
@@ -73,6 +98,7 @@ export const GetFarrowingsAPI = (
           sort,
           search,
           sortBy,
+          periode,
           animalTypeId,
           page: pageParam,
           organizationId,

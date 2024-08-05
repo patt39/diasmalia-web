@@ -41,7 +41,7 @@ const CreateOrUpdateAvesDeaths = ({
   death?: any;
 }) => {
   const {
-    watch,
+    t,
     control,
     setValue,
     handleSubmit,
@@ -51,7 +51,7 @@ const CreateOrUpdateAvesDeaths = ({
     hasErrors,
     setHasErrors,
   } = useReactHookForm({ schema });
-  const { query, push } = useRouter();
+  const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
 
   useEffect(() => {
@@ -209,7 +209,7 @@ const CreateOrUpdateAvesDeaths = ({
                     variant="outline"
                     onClick={() => setShowModal(false)}
                   >
-                    Cancel
+                    {t.formatMessage({ id: 'ALERT.CANCEL' })}
                   </ButtonInput>
                   <ButtonInput
                     type="submit"
@@ -218,7 +218,7 @@ const CreateOrUpdateAvesDeaths = ({
                     disabled={loading}
                     loading={loading}
                   >
-                    Save
+                    {t.formatMessage({ id: 'ALERT.CONTINUE' })}
                   </ButtonInput>
                 </div>
               </div>

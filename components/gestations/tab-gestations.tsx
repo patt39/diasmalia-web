@@ -2,12 +2,7 @@
 import { GetGestationsAPI } from '@/api-site/gestation';
 import { useInputState } from '@/components/hooks';
 import { Button } from '@/components/ui/button';
-import {
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-} from '@/components/ui/card';
+import { CardContent, CardFooter, CardHeader } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -15,10 +10,19 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { ListFilter } from 'lucide-react';
 import { useState } from 'react';
 import { SearchInput } from '../ui-setting';
 import { LoadingFile } from '../ui-setting/ant';
 import { ErrorFile } from '../ui-setting/ant/error-file';
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '../ui/dropdown-menu';
 import {
   Tooltip,
   TooltipContent,
@@ -30,6 +34,7 @@ import { UpdateGestations } from './update-gestations';
 
 const TabGestations = ({ animalTypeId }: { animalTypeId: string }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [periode, setPeriode] = useState('');
   const { t, search, handleSetSearch } = useInputState();
 
   const {
@@ -37,6 +42,8 @@ const TabGestations = ({ animalTypeId }: { animalTypeId: string }) => {
     isError: isErrorGestations,
     data: dataGestations,
   } = GetGestationsAPI({
+    search,
+    periode,
     take: 10,
     sort: 'desc',
     sortBy: 'createdAt',
@@ -48,11 +55,11 @@ const TabGestations = ({ animalTypeId }: { animalTypeId: string }) => {
       <CardHeader>
         <div className="flex items-center">
           <div className="mr-auto items-center gap-2">
-            <CardDescription>
-              {t.formatMessage({ id: 'ANIMALTYPE.GESTATION.DESCRIPTION' })}
-            </CardDescription>
+            <SearchInput
+              placeholder="Search by code"
+              onChange={handleSetSearch}
+            />
           </div>
-
           <div className="ml-auto flex items-center gap-2">
             <TooltipProvider>
               <Tooltip>
@@ -71,10 +78,35 @@ const TabGestations = ({ animalTypeId }: { animalTypeId: string }) => {
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-            <SearchInput
-              placeholder="Search by code"
-              onChange={handleSetSearch}
-            />
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="h-8 gap-1">
+                  <ListFilter className="h-3.5 w-3.5" />
+                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                    Filter
+                  </span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="dark:border-gray-800">
+                <DropdownMenuLabel>Filter by</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuCheckboxItem
+                  onClick={() => setPeriode('')}
+                  checked
+                >
+                  {t.formatMessage({ id: 'ACTIVITY.FILTERALL' })}
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem onClick={() => setPeriode('7')}>
+                  {t.formatMessage({ id: 'ACTIVITY.LAST7DAYS' })}
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem onClick={() => setPeriode('15')}>
+                  {t.formatMessage({ id: 'ACTIVITY.LAST15DAYS' })}
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem onClick={() => setPeriode('30')}>
+                  {t.formatMessage({ id: 'ACTIVITY.LAST30DAYS' })}
+                </DropdownMenuCheckboxItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </CardHeader>
@@ -84,6 +116,7 @@ const TabGestations = ({ animalTypeId }: { animalTypeId: string }) => {
             <TableHeader>
               <TableRow className="dark:border-gray-800">
                 <TableHead>Code</TableHead>
+                <TableHead>Method</TableHead>
                 <TableHead>
                   {t.formatMessage({ id: 'TABGESTATION.FARROWING' })}
                 </TableHead>

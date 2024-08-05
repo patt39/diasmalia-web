@@ -3,8 +3,31 @@ import { makeApiCall, PaginationRequest } from '@/utils';
 import {
   useInfiniteQuery,
   useMutation,
+  useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
+
+export const GetOneDeathAPI = (payload: { deathId: string }) => {
+  const { deathId } = payload;
+  const { data, isError, isLoading, status, isPending, refetch } = useQuery({
+    queryKey: ['death', deathId],
+    queryFn: async () =>
+      await makeApiCall({
+        action: 'getOneDeath',
+        urlParams: { deathId },
+      }),
+    refetchOnWindowFocus: false,
+  });
+
+  return {
+    data: data?.data as any,
+    isError,
+    isLoading,
+    status,
+    isPending,
+    refetch,
+  };
+};
 
 export const CreateOrUpdateOneAvesDeathAPI = ({
   onSuccess,
@@ -104,11 +127,13 @@ export const GetDeathsAPI = (
   payload: {
     search?: string;
     take?: number;
+    periode?: string;
     animalTypeId?: string;
     organizationId?: string;
   } & PaginationRequest,
 ) => {
-  const { take, sort, search, sortBy, animalTypeId, organizationId } = payload;
+  const { take, sort, search, periode, sortBy, animalTypeId, organizationId } =
+    payload;
   return useInfiniteQuery({
     queryKey: ['deaths', 'infinite', { ...payload }],
     getNextPageParam: (lastPage: any) => lastPage.data.next_page,
@@ -120,6 +145,7 @@ export const GetDeathsAPI = (
           sort,
           search,
           sortBy,
+          periode,
           animalTypeId,
           page: pageParam,
           organizationId,

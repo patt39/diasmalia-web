@@ -11,10 +11,18 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Stethoscope } from 'lucide-react';
+import { Eclipse, ListFilter } from 'lucide-react';
 import { useState } from 'react';
 import { LoadingFile } from '../ui-setting/ant';
 import { ErrorFile } from '../ui-setting/ant/error-file';
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '../ui/dropdown-menu';
 import {
   Tooltip,
   TooltipContent,
@@ -26,7 +34,8 @@ import { ListTreatments } from './list-treatments';
 
 const TabTreatments = ({ animalTypeId }: { animalTypeId: string }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { t, search, handleSetSearch, userStorage } = useInputState();
+  const [periode, setPeriode] = useState('');
+  const { t, search, handleSetSearch } = useInputState();
 
   const {
     isLoading: isLoadingTreatments,
@@ -34,6 +43,7 @@ const TabTreatments = ({ animalTypeId }: { animalTypeId: string }) => {
     data: dataTreatments,
   } = GetTreatmentsAPI({
     search,
+    periode,
     take: 10,
     sort: 'desc',
     sortBy: 'createdAt',
@@ -58,7 +68,7 @@ const TabTreatments = ({ animalTypeId }: { animalTypeId: string }) => {
                     {dataTreatments?.pages[0]?.data?.total}
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent>
+                <TooltipContent className="dark:border-gray-800">
                   <p>
                     {t.formatMessage({ id: 'ANIMALTYPE.TOOLTIP' })}{' '}
                     {dataTreatments?.pages[0]?.data?.total}{' '}
@@ -68,15 +78,44 @@ const TabTreatments = ({ animalTypeId }: { animalTypeId: string }) => {
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="h-8 gap-1">
+                  <ListFilter className="h-3.5 w-3.5" />
+                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                    Filter
+                  </span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="dark:border-gray-800">
+                <DropdownMenuLabel>Filter by</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuCheckboxItem
+                  onClick={() => setPeriode('')}
+                  checked
+                >
+                  {t.formatMessage({ id: 'ACTIVITY.FILTERALL' })}
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem onClick={() => setPeriode('7')}>
+                  {t.formatMessage({ id: 'ACTIVITY.LAST7DAYS' })}
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem onClick={() => setPeriode('15')}>
+                  {t.formatMessage({ id: 'ACTIVITY.LAST15DAYS' })}
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem onClick={() => setPeriode('30')}>
+                  {t.formatMessage({ id: 'ACTIVITY.LAST30DAYS' })}
+                </DropdownMenuCheckboxItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             <Button
               size="sm"
               className="h-8 gap-1"
               onClick={() => setIsOpen(true)}
             >
-              <Stethoscope className="h-3.5 w-3.5  hover:shadow-xxl" />
+              <Eclipse className="h-3.5 w-3.5  hover:shadow-xxl" />
               <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                 {t.formatMessage({
-                  id: 'ANIMALTYPE.ANIMALS.ISOLATIONS.CREATE',
+                  id: 'ANIMALTYPE.ANIMALS.TREATMENT.CREATE',
                 })}
               </span>
             </Button>

@@ -10,13 +10,15 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { formatDateDDMMYY } from '@/utils';
-import { MoreHorizontal, PencilIcon } from 'lucide-react';
+import { Eye, MoreHorizontal, PencilIcon } from 'lucide-react';
 import { useState } from 'react';
 import { CreateOrUpdateFinances } from './create-or-update-finances';
+import { ViewFinance } from './view-finance';
 
 const ListFinances = ({ item, index }: { item: any; index: number }) => {
-  const { t, loading, isOpen, setIsOpen, setLoading } = useInputState();
+  const { t } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
+  const [isView, setIsView] = useState(false);
 
   return (
     <>
@@ -30,8 +32,8 @@ const ListFinances = ({ item, index }: { item: any; index: number }) => {
             : t.formatMessage({ id: 'FINANCE.EXPENSES' })}
         </TableCell>
         <TableCell>
-          {item?.detail?.length > 60
-            ? item?.detail?.substring(0, 60) + '...'
+          {item?.detail?.length > 20
+            ? item?.detail?.substring(0, 20) + '...'
             : item?.detail}
         </TableCell>
         {item?.type === 'INCOME' ? (
@@ -67,6 +69,12 @@ const ListFinances = ({ item, index }: { item: any; index: number }) => {
                   })}
                 </span>
               </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setIsView(true)}>
+                <Eye className="size-4 text-gray-600 hover:text-indigo-600" />
+                <span className="ml-2 cursor-pointer hover:text-indigo-600">
+                  {t.formatMessage({ id: 'TABANIMAL.VIEW' })}
+                </span>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </TableCell>
@@ -76,6 +84,7 @@ const ListFinances = ({ item, index }: { item: any; index: number }) => {
         showModal={isEdit}
         setShowModal={setIsEdit}
       />
+      <ViewFinance finance={item} showModal={isView} setShowModal={setIsView} />
     </>
   );
 };

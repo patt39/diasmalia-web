@@ -58,11 +58,13 @@ export const GetFatteningsAPI = (
     search?: string;
     take: number;
     sortBy: string;
+    periode?: string;
     animalTypeId?: string;
     organizationId?: string;
   } & PaginationRequest,
 ) => {
-  const { take, sort, search, sortBy, animalTypeId, organizationId } = payload;
+  const { take, sort, search, sortBy, periode, animalTypeId, organizationId } =
+    payload;
   return useInfiniteQuery({
     queryKey: ['fattenings', 'infinite', { ...payload }],
     getNextPageParam: (lastPage: any) => lastPage.data.next_page,
@@ -74,6 +76,7 @@ export const GetFatteningsAPI = (
           sort,
           search,
           sortBy,
+          periode,
           animalTypeId,
           page: pageParam,
           organizationId,

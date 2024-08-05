@@ -3,8 +3,31 @@ import { makeApiCall, PaginationRequest } from '@/utils';
 import {
   useInfiniteQuery,
   useMutation,
+  useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
+
+export const GetOneTreatmentAPI = (payload: { treatmentId: string }) => {
+  const { treatmentId } = payload;
+  const { data, isError, isLoading, status, isPending, refetch } = useQuery({
+    queryKey: ['treatment', treatmentId],
+    queryFn: async () =>
+      await makeApiCall({
+        action: 'getOneTreatment',
+        urlParams: { treatmentId },
+      }),
+    refetchOnWindowFocus: false,
+  });
+
+  return {
+    data: data?.data as any,
+    isError,
+    isLoading,
+    status,
+    isPending,
+    refetch,
+  };
+};
 
 export const CreateOrUpdateOneTreatmentAPI = ({
   onSuccess,
@@ -57,11 +80,13 @@ export const GetTreatmentsAPI = (
   payload: {
     search?: string;
     take: number;
+    periode?: string;
     animalTypeId?: string;
     organizationId?: string;
   } & PaginationRequest,
 ) => {
-  const { take, sort, search, sortBy, animalTypeId, organizationId } = payload;
+  const { take, sort, search, periode, sortBy, animalTypeId, organizationId } =
+    payload;
   return useInfiniteQuery({
     queryKey: ['treatments', 'infinite', { ...payload }],
     getNextPageParam: (lastPage: any) => lastPage.data.next_page,
@@ -73,6 +98,7 @@ export const GetTreatmentsAPI = (
           sort,
           search,
           sortBy,
+          periode,
           animalTypeId,
           organizationId,
           page: pageParam,

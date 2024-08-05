@@ -1,5 +1,4 @@
 /* eslint-disable @next/next/no-img-element */
-import { DeleteOneBreedingAPI } from '@/api-site/breedings';
 import { useInputState } from '@/components/hooks';
 import { Button } from '@/components/ui/button';
 import {
@@ -9,47 +8,20 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-  AlertDangerNotification,
-  AlertSuccessNotification,
-  formatDateDDMMYY,
-} from '@/utils';
-import { Check, MoreHorizontal, PencilIcon, TrashIcon } from 'lucide-react';
+import { formatDateDDMMYY } from '@/utils';
+import { Check, Eye, MoreHorizontal, PencilIcon } from 'lucide-react';
 import { useState } from 'react';
-import { ActionModalDialog } from '../ui-setting/shadcn';
 import { Badge } from '../ui/badge';
 import { TableCell, TableRow } from '../ui/table';
-import { CheckOrUpdatePregnancy } from './check-or-update-pregnancy';
-import { CreateOrUpdateBreedings } from './create-or-update-breedings';
+import { CheckPregnancy } from './check-pregnancy';
+import { UpdateBreedings } from './update-breedings';
+import { ViewBreeding } from './view-breeding';
 
 const ListBreedings = ({ item, index }: { item: any; index: number }) => {
-  const { t, isOpen, loading, setIsOpen, setLoading } = useInputState();
+  const { t } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
   const [isCheck, setIsCheck] = useState(false);
-
-  const { mutateAsync: deleteMutation } = DeleteOneBreedingAPI({
-    onSuccess: () => {},
-    onError: (error?: any) => {},
-  });
-
-  const deleteItem = async (item: any) => {
-    setLoading(true);
-    setIsOpen(true);
-    try {
-      await deleteMutation({ breedingId: item.id });
-      AlertSuccessNotification({
-        text: 'Breeding deleted successfully',
-      });
-      setLoading(false);
-      setIsOpen(false);
-    } catch (error: any) {
-      setLoading(false);
-      setIsOpen(true);
-      AlertDangerNotification({
-        text: `${error.response.data.message}`,
-      });
-    }
-  };
+  const [isView, setIsView] = useState(false);
 
   return (
     <>
@@ -58,13 +30,17 @@ const ListBreedings = ({ item, index }: { item: any; index: number }) => {
         <TableCell className="font-medium">{item.femaleCode}</TableCell>
         <TableCell>{item.method.toLowerCase()}</TableCell>
         <TableCell>
-          {item.checkStatus === false ? (
-            <Badge className="text-xs" variant="destructive">
-              Check
+          {item.checkStatus === true && item?.result === 'PREGNANT' ? (
+            <Badge className="text-xs" variant="secondary">
+              {t.formatMessage({ id: 'BREEDING.POSITIVE' })}
+            </Badge>
+          ) : item.checkStatus === true && item?.result === 'OPEN' ? (
+            <Badge className="text-xs" variant="default">
+              {t.formatMessage({ id: 'BREEDING.NEGATIVE' })}
             </Badge>
           ) : (
-            <Badge className="text-xs" variant="secondary">
-              Checked
+            <Badge className="text-xs" variant="destructive">
+              {t.formatMessage({ id: 'BREEDING.CHECK' })}
             </Badge>
           )}
         </TableCell>
@@ -77,7 +53,7 @@ const ListBreedings = ({ item, index }: { item: any; index: number }) => {
                 <span className="sr-only">Toggle menu</span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="dark:border-gray-800">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem onClick={() => setIsEdit(true)}>
                 <PencilIcon className="size-4 text-gray-600 hover:text-indigo-600" />
@@ -85,37 +61,40 @@ const ListBreedings = ({ item, index }: { item: any; index: number }) => {
                   {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
                 </span>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setIsCheck(true)}>
-                <Check className="size-4 text-gray-600 hover:text-red-400" />
-                <span className="ml-2 cursor-pointer hover:text-red-400">
-                  Check
-                </span>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setIsOpen(true)}>
-                <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
-                <span className="ml-2 cursor-pointer hover:text-red-600">
-                  {t.formatMessage({ id: 'TABANIMAL.DELETE' })}
+              {item.checkStatus === false ? (
+                <DropdownMenuItem onClick={() => setIsCheck(true)}>
+                  <Check className="size-4 text-gray-600 hover:text-red-400 cursor-pointer" />
+                  <span className="ml-2 cursor-pointer hover:text-red-400">
+                    {t.formatMessage({ id: 'BREEDING.CHECK' })}
+                  </span>
+                </DropdownMenuItem>
+              ) : (
+                ''
+              )}
+              <DropdownMenuItem onClick={() => setIsView(true)}>
+                <Eye className="size-4 text-gray-600 hover:text-indigo-600" />
+                <span className="ml-2 cursor-pointer hover:text-indigo-600">
+                  {t.formatMessage({ id: 'TABANIMAL.VIEW' })}
                 </span>
               </DropdownMenuItem>
             </DropdownMenuContent>
-            <ActionModalDialog
-              loading={loading}
-              isOpen={isOpen}
-              setIsOpen={setIsOpen}
-              onClick={() => deleteItem(item)}
-            />
           </DropdownMenu>
         </TableCell>
       </TableRow>
-      <CreateOrUpdateBreedings
+      <UpdateBreedings
         breeding={item}
         showModal={isEdit}
         setShowModal={setIsEdit}
       />
-      <CheckOrUpdatePregnancy
+      <CheckPregnancy
         breeding={item}
         showModal={isCheck}
         setShowModal={setIsCheck}
+      />
+      <ViewBreeding
+        breeding={item}
+        showModal={isView}
+        setShowModal={setIsView}
       />
     </>
   );
