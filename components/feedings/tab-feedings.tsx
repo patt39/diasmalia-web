@@ -51,13 +51,6 @@ const TabFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
     organizationId: userStorage?.organizationId,
   });
 
-  const initialValue = 0;
-  const sumAmountFeed = dataFeedings?.pages[0]?.data?.value.reduce(
-    (accumulator: any, currentValue: any) =>
-      accumulator + currentValue.quantity,
-    initialValue,
-  );
-
   return (
     <>
       <CardHeader>
@@ -72,12 +65,11 @@ const TabFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button variant="outline">{sumAmountFeed}</Button>
+                  <Button variant="outline">2</Button>
                 </TooltipTrigger>
                 <TooltipContent className="dark:border-gray-800">
                   <p>
-                    {t.formatMessage({ id: 'ANIMALTYPE.TOOLTIP' })}{' '}
-                    {sumAmountFeed}kg{' '}
+                    {t.formatMessage({ id: 'ANIMALTYPE.TOOLTIP' })} 2kg
                     {t.formatMessage({ id: 'ANIMALTYPE.FEEDING' })}
                   </p>
                 </TooltipContent>
@@ -159,7 +151,7 @@ const TabFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
               ) : (
                 dataFeedings?.pages
                   .flatMap((page: any) => page?.data?.value)
-                  .map((item, index) => (
+                  .map((item: any, index: any) => (
                     <>
                       <ListFeedings index={index} item={item} key={index} />
                     </>

@@ -24,6 +24,7 @@ import { useEffect } from 'react';
 import { Controller, SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
 import { TextAreaInput, TextInput } from '../ui-setting/shadcn';
+import { Label } from '../ui/label';
 
 const schema = yup.object({
   codeFemale: yup.string().optional(),
@@ -188,6 +189,9 @@ const CreateOrUpdateFarrowings = ({
                   </div>
                 ) : null}
                 <div className="mb-4">
+                  <Label>
+                    Portée: <span className="text-red-600">*</span>
+                  </Label>
                   <TextInput
                     control={control}
                     type="number"

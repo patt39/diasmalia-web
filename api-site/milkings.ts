@@ -10,6 +10,7 @@ export const GetMilkingsAPI = (
   payload: {
     search?: string;
     take?: number;
+    sortBy?: string;
     animalTypeId?: string;
     organizationId?: string;
   } & PaginationRequest,

@@ -1,10 +1,8 @@
 import { GetOneGestationAPI } from '@/api-site/gestation';
 import { useReactHookForm } from '@/components/hooks';
 import { TextAreaInput } from '@/components/ui-setting/shadcn';
-import { formatDateDDMMYY } from '@/utils';
 import { XIcon } from 'lucide-react';
 import * as yup from 'yup';
-import { Input } from '../ui/input';
 
 const schema = yup.object({});
 
@@ -39,21 +37,6 @@ const ViewGestation = ({
             </button>
             <form className="mt-4">
               <div className="flex-auto justify-center p-2">
-                <div className="mb-4 flex items-center space-x-4">
-                  <Input
-                    disabled
-                    type="text"
-                    value={getOneGestation.animal.code}
-                  />
-                  <Input
-                    disabled
-                    type="date"
-                    value={formatDateDDMMYY(getOneGestation.farrowingDate)}
-                  />
-                </div>
-                <div className="mb-4">
-                  <Input disabled type="text" value={getOneGestation.method} />
-                </div>
                 <div className="mb-4 disabled">
                   <TextAreaInput
                     control={control}

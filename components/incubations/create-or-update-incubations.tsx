@@ -2,24 +2,20 @@ import { GetAnimalsAPI } from '@/api-site/animals';
 import { CreateOrUpdateOneIncubationAPI } from '@/api-site/incubations';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
-import { cn } from '@/lib/utils';
 import { IncubationsModel } from '@/types/incubation';
 import {
   AlertDangerNotification,
   AlertSuccessNotification,
 } from '@/utils/alert-notification';
-import { format } from 'date-fns';
-import { CalendarIcon, XIcon } from 'lucide-react';
+import { XIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { Controller, SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
-import { LoadingFile } from '../ui-setting/ant';
+import { DateInput, LoadingFile } from '../ui-setting/ant';
 import { ErrorFile } from '../ui-setting/ant/error-file';
 import { TextInput } from '../ui-setting/shadcn';
-import { Button } from '../ui/button';
-import { Calendar } from '../ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import { Label } from '../ui/label';
 import {
   Select,
   SelectContent,
@@ -56,7 +52,6 @@ const CreateOrUpdateIncubations = ({
     hasErrors,
     setHasErrors,
   } = useReactHookForm({ schema });
-  const [date, setDate] = React.useState<Date>();
   const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
 
@@ -114,6 +109,7 @@ const CreateOrUpdateIncubations = ({
     sort: 'desc',
     status: 'ACTIVE',
     sortBy: 'createdAt',
+    productionPhase: 'LAYING',
     animalTypeId: animalTypeId,
   });
 
@@ -147,7 +143,10 @@ const CreateOrUpdateIncubations = ({
                   </div>
                 )}
 
-                <div className="mb-4 flex items-center space-x-4">
+                <div className="mb-4 flex items-center space-x-2">
+                  <Label>
+                    Code:<span className="text-red-600">*</span>
+                  </Label>
                   <Controller
                     control={control}
                     name="code"
@@ -172,7 +171,7 @@ const CreateOrUpdateIncubations = ({
                               />
                             ) : Number(dataAnimals?.pages[0]?.data?.total) <=
                               0 ? (
-                              <ErrorFile description="Don't have active animals yet" />
+                              <ErrorFile description="Don't have active animals in LAYING phase yet" />
                             ) : (
                               dataAnimals?.pages
                                 .flatMap((page: any) => page?.data?.value)
@@ -189,51 +188,58 @@ const CreateOrUpdateIncubations = ({
                       </Select>
                     )}
                   />
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant={'outline'}
-                        className={cn(
-                          'w-[240px] justify-start text-left font-normal',
-                          !date && 'text-muted-foreground',
-                        )}
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {date ? format(date, 'PPP') : <span>Pick a date</span>}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={date}
-                        onSelect={setDate}
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
+                  <Label className="mr-2">
+                    Date éclosion:<span className="text-red-600">*</span>
+                  </Label>
+                  <DateInput
+                    control={control}
+                    errors={errors}
+                    placeholder="Hatching date"
+                    name="dueDate"
+                  />
                 </div>
-
-                {incubation?.id ? (
-                  <div className="mb-4">
-                    <TextInput
-                      control={control}
-                      type="number"
-                      name="quantityEnd"
-                      placeholder="Quantity hatched"
-                      errors={errors}
-                    />
+                {incubation.id ? (
+                  <div className="mb-4 flex items-center">
+                    <div className="flex items-center">
+                      <Label className="mr-2">
+                        Oeufs incubés:<span className="text-red-600">*</span>
+                      </Label>
+                      <div className="mr-2">
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="quantityStart"
+                          placeholder="Number eggs incubated"
+                          errors={errors}
+                        />
+                      </div>
+                      <Label className="mr-4 space-x-2">Oeufs éclos:</Label>
+                      <div className="mr-2">
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="quantityEnd"
+                          placeholder="Number hatched"
+                          errors={errors}
+                        />
+                      </div>
+                    </div>
                   </div>
                 ) : (
-                  <div className="mb-4">
+                  <div className="mr-2 flex items-center">
+                    <Label className="mr-2 flex items-center">
+                      Incubés:<span className="text-red-600">*</span>
+                    </Label>
                     <TextInput
                       control={control}
                       type="number"
                       name="quantityStart"
-                      placeholder="Quantity start"
+                      placeholder="Number of eggs incubated"
                       errors={errors}
                     />
                   </div>
                 )}
+
                 <div className="mt-4 flex items-center space-x-4">
                   <ButtonInput
                     type="button"

@@ -1,7 +1,7 @@
 import { GetAnimalsAPI } from '@/api-site/animals';
 import { CreateOrUpdateOneSaleAPI } from '@/api-site/sales';
 import { useReactHookForm } from '@/components/hooks';
-import { ButtonInput } from '@/components/ui-setting';
+import { ButtonInput, ButtonLoadMore } from '@/components/ui-setting';
 import {
   SelectInput,
   TextAreaInput,
@@ -16,9 +16,11 @@ import { XIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { SubmitHandler } from 'react-hook-form';
+import { useInView } from 'react-intersection-observer';
 import * as yup from 'yup';
 import { LoadingFile } from '../ui-setting/ant';
 import { ErrorFile } from '../ui-setting/ant/error-file';
+import { Label } from '../ui/label';
 import {
   Select,
   SelectContent,
@@ -61,6 +63,7 @@ const CreateOrUpdateSales = ({
   } = useReactHookForm({ schema });
   const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
+  const { ref, inView } = useInView();
 
   useEffect(() => {
     if (sale) {
@@ -118,6 +121,9 @@ const CreateOrUpdateSales = ({
     isLoading: isLoadingAnimals,
     isError: isErrorAnimals,
     data: dataAnimals,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
   } = GetAnimalsAPI({
     take: 10,
     sort: 'asc',
@@ -125,6 +131,28 @@ const CreateOrUpdateSales = ({
     sortBy: 'createdAt',
     animalTypeId: animalTypeId,
   });
+
+  useEffect(() => {
+    let fetching = false;
+    if (inView) {
+      fetchNextPage();
+    }
+    const onScroll = async (event: any) => {
+      const { scrollHeight, scrollTop, clientHeight } =
+        event.target.scrollingElement;
+
+      if (!fetching && scrollHeight - scrollTop <= clientHeight * 1.5) {
+        fetching = true;
+        if (hasNextPage) await fetchNextPage();
+        fetching = false;
+      }
+    };
+
+    document.addEventListener('scroll', onScroll);
+    return () => {
+      document.removeEventListener('scroll', onScroll);
+    };
+  }, [fetchNextPage, hasNextPage, inView]);
 
   return (
     <>
@@ -157,10 +185,13 @@ const CreateOrUpdateSales = ({
                 )}
 
                 {!sale.id ? (
-                  <div className="mb-4 w-full mt-2">
+                  <div className="flex mb-4 w-full  mt-2 space-x-2">
+                    <Label className="pt-3">
+                      Codes:<span className="text-red-600">*</span>
+                    </Label>
                     <Select>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select animals" />
+                        <SelectValue placeholder="Select animals for sale / Choisissez les animaux à vendre " />
                       </SelectTrigger>
                       <SelectContent className="dark:border-gray-800">
                         <SelectGroup>
@@ -194,7 +225,6 @@ const CreateOrUpdateSales = ({
                                           value={item?.code}
                                         />
                                       </div>
-
                                       <div>
                                         <strong className="font-medium text-gray-900 dark:text-white">
                                           {item?.code}
@@ -205,21 +235,23 @@ const CreateOrUpdateSales = ({
                                 </>
                               ))
                           )}
+                          {hasNextPage && (
+                            <div className="mx-auto mt-4 justify-center text-center">
+                              <ButtonLoadMore
+                                ref={ref}
+                                isFetchingNextPage={isFetchingNextPage}
+                                onClick={() => fetchNextPage()}
+                              />
+                            </div>
+                          )}
                         </SelectGroup>
                       </SelectContent>
                     </Select>
                   </div>
                 ) : null}
-                <div className="mb-4">
-                  <TextInput
-                    control={control}
-                    type="number"
-                    name="price"
-                    placeholder="Give a price"
-                    errors={errors}
-                  />
-                </div>
-                <div className="mb-4">
+
+                <div className="mb-4 flex items-center space-x-1">
+                  <Label>Client:</Label>
                   <TextInput
                     control={control}
                     type="text"
@@ -228,7 +260,8 @@ const CreateOrUpdateSales = ({
                     errors={errors}
                   />
                 </div>
-                <div className="mb-4">
+                <div className="mb-4 flex items-center space-x-1">
+                  <Label>Email:</Label>
                   <TextInput
                     control={control}
                     type="text"
@@ -237,16 +270,8 @@ const CreateOrUpdateSales = ({
                     errors={errors}
                   />
                 </div>
-                <div className="mb-4">
-                  <TextInput
-                    control={control}
-                    type="number"
-                    name="phone"
-                    placeholder="Customer phone number"
-                    errors={errors}
-                  />
-                </div>
-                <div className="mb-4">
+                <div className="mb-4 flex items-center space-x-1">
+                  <Label>Address:</Label>
                   <TextInput
                     control={control}
                     type="text"
@@ -255,12 +280,34 @@ const CreateOrUpdateSales = ({
                     errors={errors}
                   />
                 </div>
-                <div className="mb-4">
+                <div className="mb-4 flex items-center space-x-2">
+                  <Label>
+                    Prix:<span className="text-red-600">*</span>
+                  </Label>
+                  <TextInput
+                    control={control}
+                    type="number"
+                    name="price"
+                    placeholder="Give a price"
+                    errors={errors}
+                  />
+                  <Label>Phone:</Label>
+                  <TextInput
+                    control={control}
+                    type="number"
+                    name="phone"
+                    placeholder="Customer phone number"
+                    errors={errors}
+                  />
+                </div>
+                <Label>Canal de vente:</Label>
+                <span className="text-red-600">*</span>
+                <div className="mb-4 flex items-center space-x-1">
                   <SelectInput
-                    firstOptionName="Choose a methos"
+                    firstOptionName="Choose a sale method"
                     control={control}
                     errors={errors}
-                    placeholder="Select a method"
+                    placeholder="Select the selling method"
                     valueType="text"
                     name="method"
                     dataItem={[

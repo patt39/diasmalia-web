@@ -1,5 +1,7 @@
 export type SalesModel = {
   price: number;
+  female: number;
+  male: number;
   soldTo: string;
   type: string;
   phone: number;

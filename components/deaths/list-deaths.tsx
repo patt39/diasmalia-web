@@ -53,7 +53,7 @@ const ListDeaths = ({ item, index }: { item: any; index: number }) => {
   return (
     <>
       <TableRow key={index} className="dark:border-gray-800">
-        <TableCell className="font-medium">{item.animal.code}</TableCell>
+        <TableCell className="font-medium">{item?.animal?.code}</TableCell>
         <TableCell>
           {item?.note?.length > 20
             ? item?.note?.substring(0, 20) + '...'

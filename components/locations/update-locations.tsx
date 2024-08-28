@@ -1,5 +1,5 @@
-import { GetAnimalsAPI } from '@/api-site/animals';
-import { CreateOrUpdateOneLocationAPI } from '@/api-site/locations';
+import { GetOneAnimalTypeAPI } from '@/api-site/animal-type';
+import { UpdateOneLoctionAPI } from '@/api-site/locations';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
 import { LocationModel } from '@/types/location';
@@ -12,25 +12,18 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
-import { LoadingFile } from '../ui-setting/ant';
-import { ErrorFile } from '../ui-setting/ant/error-file';
-import { TextAreaInput } from '../ui-setting/shadcn';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectTrigger,
-  SelectValue,
-} from '../ui/select';
+import { SelectInput, TextInput } from '../ui-setting/shadcn';
+import { Label } from '../ui/label';
 
 const schema = yup.object({
   code: yup.string().optional(),
+  productionPhase: yup.string().optional(),
   squareMeter: yup.number().required('squareMeter is required field'),
   manger: yup.number().required('manger is required field'),
   through: yup.number().required('through is required field'),
 });
 
-const CreateOrUpdateLocations = ({
+const UpdateLocations = ({
   showModal,
   setShowModal,
   location,
@@ -40,6 +33,7 @@ const CreateOrUpdateLocations = ({
   location?: any;
 }) => {
   const {
+    t,
     control,
     errors,
     setValue,
@@ -48,20 +42,28 @@ const CreateOrUpdateLocations = ({
     setLoading,
     hasErrors,
     setHasErrors,
-    register,
   } = useReactHookForm({ schema });
   const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
+  const { data: animalType } = GetOneAnimalTypeAPI({
+    animalTypeId: animalTypeId,
+  });
 
   useEffect(() => {
     if (location) {
-      const fields = ['animals', 'note'];
+      const fields = [
+        'code',
+        'productionPhase',
+        'squareMeter',
+        'manger',
+        'through',
+      ];
       fields?.forEach((field: any) => setValue(field, location[field]));
     }
   }, [location, setValue]);
 
-  // Create or Update data
-  const { mutateAsync: saveMutation } = CreateOrUpdateOneLocationAPI({
+  // Update data
+  const { mutateAsync: saveMutation } = UpdateOneLoctionAPI({
     onSuccess: () => {
       setHasErrors(false);
       setLoading(false);
@@ -80,12 +82,12 @@ const CreateOrUpdateLocations = ({
     try {
       await saveMutation({
         ...payload,
-        locationId: location?.id,
+        locationId: location.id,
       });
       setHasErrors(false);
       setLoading(false);
       AlertSuccessNotification({
-        text: 'Location created successfully',
+        text: 'Location updated successfully',
       });
       setShowModal(false);
     } catch (error: any) {
@@ -97,18 +99,6 @@ const CreateOrUpdateLocations = ({
       });
     }
   };
-
-  const {
-    isLoading: isLoadingAnimals,
-    isError: isErrorAnimals,
-    data: dataAnimals,
-  } = GetAnimalsAPI({
-    take: 10,
-    sort: 'desc',
-    status: 'ACTIVE',
-    sortBy: 'createdAt',
-    animalTypeId: animalTypeId,
-  });
 
   return (
     <>
@@ -140,69 +130,80 @@ const CreateOrUpdateLocations = ({
                   </div>
                 )}
 
-                {!location.id ? (
-                  <div className="mb-4 w-full mt-2">
-                    <Select>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select animals" />
-                      </SelectTrigger>
-                      <SelectContent className="dark:border-gray-800">
-                        <SelectGroup>
-                          {isLoadingAnimals ? (
-                            <LoadingFile />
-                          ) : isErrorAnimals ? (
-                            <ErrorFile
-                              title="404"
-                              description="Error finding data please try again..."
-                            />
-                          ) : Number(dataAnimals?.pages[0]?.data?.total) <=
-                            0 ? (
-                            <ErrorFile description="Don't have active animals" />
-                          ) : (
-                            dataAnimals?.pages
-                              .flatMap((page: any) => page?.data?.value)
-                              .map((item, index) => (
-                                <>
-                                  <div key={index}>
-                                    <label
-                                      htmlFor={item?.id}
-                                      className="flex cursor-pointer items-start gap-4 rounded-lg border border-gray-200 p-4 transition hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-900"
-                                    >
-                                      <div className="flex items-center">
-                                        &#8203;
-                                        <input
-                                          type="checkbox"
-                                          className="size-4 rounded cursor-pointer border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:ring-offset-gray-900"
-                                          id={item?.id}
-                                          {...register('animals')}
-                                          value={item?.code}
-                                        />
-                                      </div>
-
-                                      <div>
-                                        <strong className="font-medium text-gray-900 dark:text-white">
-                                          {item?.code}
-                                        </strong>
-                                      </div>
-                                    </label>
-                                  </div>
-                                </>
-                              ))
-                          )}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                ) : null}
-
-                <div className="mb-4">
-                  <TextAreaInput
+                <div className="flex items-center">
+                  <TextInput
                     control={control}
-                    label="Description"
-                    name="note"
-                    placeholder="Note"
+                    type="text"
+                    name="code"
+                    placeholder="Give a code"
                     errors={errors}
                   />
+                </div>
+                {[
+                  'Caprins',
+                  'Bovins',
+                  'Ovins',
+                  'Cuniculture',
+                  'Porciculture',
+                ].includes(animalType.name) ? (
+                  <div className="my-2">
+                    <Label>Phase de production: </Label>
+                    <SelectInput
+                      firstOptionName="Choose a production type"
+                      control={control}
+                      errors={errors}
+                      placeholder="Select a production phase"
+                      valueType="text"
+                      name="productionPhase"
+                      dataItem={[
+                        { id: 1, name: 'GROWTH' },
+                        { id: 2, name: 'FATTENING' },
+                        { id: 3, name: 'REPRODUCTION' },
+                        { id: 2, name: 'GESTATION' },
+                      ]}
+                    />
+                  </div>
+                ) : (
+                  ''
+                )}
+                <div className="my-2 flex items-center space-x-1">
+                  <div className="mr-10">
+                    <Label>
+                      Superficie:<span className="text-red-600">*</span>
+                    </Label>
+                    <TextInput
+                      control={control}
+                      type="number"
+                      name="squareMeter"
+                      placeholder="Square meters"
+                      errors={errors}
+                    />
+                  </div>
+                  <div className="pr-10">
+                    <Label>
+                      Nombre de mangeoirs:
+                      <span className="text-red-600">*</span>
+                    </Label>
+                    <TextInput
+                      control={control}
+                      type="number"
+                      name="manger"
+                      placeholder="Number of mangers"
+                      errors={errors}
+                    />
+                  </div>
+                  <div className="ml-4">
+                    <Label>
+                      Nombre abreuvoirs:<span className="text-red-600">*</span>
+                    </Label>
+                    <TextInput
+                      control={control}
+                      type="number"
+                      name="through"
+                      placeholder="Number of throughs"
+                      errors={errors}
+                    />
+                  </div>
                 </div>
                 <div className="mt-4 flex items-center space-x-4">
                   <ButtonInput
@@ -211,7 +212,7 @@ const CreateOrUpdateLocations = ({
                     variant="outline"
                     onClick={() => setShowModal(false)}
                   >
-                    Cancel
+                    {t.formatMessage({ id: 'ALERT.CANCEL' })}
                   </ButtonInput>
                   <ButtonInput
                     type="submit"
@@ -220,7 +221,7 @@ const CreateOrUpdateLocations = ({
                     disabled={loading}
                     loading={loading}
                   >
-                    Save
+                    {t.formatMessage({ id: 'ALERT.CONTINUE' })}
                   </ButtonInput>
                 </div>
               </div>
@@ -232,4 +233,4 @@ const CreateOrUpdateLocations = ({
   );
 };
 
-export { CreateOrUpdateLocations };
+export { UpdateLocations };

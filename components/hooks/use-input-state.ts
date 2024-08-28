@@ -18,6 +18,7 @@ export function useInputState() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isConfirmOpen, setIsConfirmOpen] = useState<boolean>(false);
   const [hasErrors, setHasErrors] = useState<boolean | string | undefined>(
     undefined,
   );
@@ -63,6 +64,8 @@ export function useInputState() {
     setLoading,
     setSuccess,
     setHasErrors,
+    setIsConfirmOpen,
+    isConfirmOpen,
     userStorage,
     ipLocation,
     profile,

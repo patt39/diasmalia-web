@@ -6,29 +6,66 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 
-export const CreateOrUpdateOneLocationAPI = ({
+export const CreateOneLocationAPI = ({
   onSuccess,
   onError,
 }: {
   onSuccess?: () => void;
   onError?: (error: any) => void;
 } = {}) => {
-  const queryKey = ['location'];
+  const queryKey = ['locations'];
   const queryClient = useQueryClient();
   const result = useMutation({
     mutationKey: queryKey,
-    mutationFn: async (payload: LocationModel & { locationId: string }) => {
+    mutationFn: async (payload: LocationModel & { animalTypeId: string }) => {
+      const { animalTypeId } = payload;
+      return await makeApiCall({
+        action: 'createOneLocation',
+        body: { ...payload },
+        urlParams: { animalTypeId },
+      });
+    },
+    onError: async (error) => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onError) {
+        onError(error);
+      }
+    },
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+  });
+
+  return result;
+};
+
+export const UpdateOneLoctionAPI = ({
+  onSuccess,
+  onError,
+}: {
+  onSuccess?: () => void;
+  onError?: (error: any) => void;
+} = {}) => {
+  const queryKey = ['locations'];
+  const queryClient = useQueryClient();
+  const result = useMutation({
+    mutationKey: queryKey,
+    mutationFn: async (payload: any & { locationId: string }) => {
       const { locationId } = payload;
-      return locationId
-        ? await makeApiCall({
-            action: 'updateOneLocation',
-            body: payload,
-            urlParams: { locationId },
-          })
-        : await makeApiCall({
-            action: 'createOneLocation',
-            body: { ...payload },
-          });
+      return await makeApiCall({
+        action: 'updateOneLocation',
+        body: { ...payload },
+        urlParams: { locationId },
+      });
     },
     onError: async (error) => {
       await queryClient.invalidateQueries({ queryKey });
@@ -56,13 +93,15 @@ export const CreateOrUpdateOneLocationAPI = ({
 export const GetLocationsAPI = (
   payload: {
     search?: string;
-    take: number;
+    take?: number;
     sortBy: string;
+    status?: boolean;
     animalTypeId?: string;
     organizationId?: string;
   } & PaginationRequest,
 ) => {
-  const { take, sort, sortBy, search, animalTypeId, organizationId } = payload;
+  const { take, sort, sortBy, search, status, animalTypeId, organizationId } =
+    payload;
   return useInfiniteQuery({
     queryKey: ['locations', 'infinite', { ...payload }],
     getNextPageParam: (lastPage: any) => lastPage.data.next_page,
@@ -74,12 +113,12 @@ export const GetLocationsAPI = (
           sort,
           search,
           sortBy,
+          status,
           animalTypeId,
           page: pageParam,
           organizationId,
         },
       }),
-    staleTime: 60_000,
     initialPageParam: 1,
   });
 };

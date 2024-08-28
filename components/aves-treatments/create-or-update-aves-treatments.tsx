@@ -1,7 +1,7 @@
 import { GetAnimalsAPI } from '@/api-site/animals';
 import { CreateOrUpdateOneAvesTreatmentAPI } from '@/api-site/treatment';
 import { useReactHookForm } from '@/components/hooks';
-import { ButtonInput } from '@/components/ui-setting';
+import { ButtonInput, ButtonLoadMore } from '@/components/ui-setting';
 import {
   SelectInput,
   TextAreaInput,
@@ -16,9 +16,11 @@ import { XIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { Controller, SubmitHandler } from 'react-hook-form';
+import { useInView } from 'react-intersection-observer';
 import * as yup from 'yup';
 import { LoadingFile } from '../ui-setting/ant';
 import { ErrorFile } from '../ui-setting/ant/error-file';
+import { Label } from '../ui/label';
 import {
   Select,
   SelectContent,
@@ -59,6 +61,7 @@ const CreateOrUpdateAvestreatments = ({
     hasErrors,
     setHasErrors,
   } = useReactHookForm({ schema });
+  const { ref, inView } = useInView();
 
   const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
@@ -120,13 +123,38 @@ const CreateOrUpdateAvestreatments = ({
     isLoading: isLoadingAnimals,
     isError: isErrorAnimals,
     data: dataAnimals,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
   } = GetAnimalsAPI({
     take: 10,
-    sort: 'asc',
+    sort: 'desc',
     sortBy: 'createdAt',
     status: 'ACTIVE',
     animalTypeId: animalTypeId,
   });
+
+  useEffect(() => {
+    let fetching = false;
+    if (inView) {
+      fetchNextPage();
+    }
+    const onScroll = async (event: any) => {
+      const { scrollHeight, scrollTop, clientHeight } =
+        event.target.scrollingElement;
+
+      if (!fetching && scrollHeight - scrollTop <= clientHeight * 1.5) {
+        fetching = true;
+        if (hasNextPage) await fetchNextPage();
+        fetching = false;
+      }
+    };
+
+    document.addEventListener('scroll', onScroll);
+    return () => {
+      document.removeEventListener('scroll', onScroll);
+    };
+  }, [fetchNextPage, hasNextPage, inView]);
 
   return (
     <>
@@ -195,6 +223,15 @@ const CreateOrUpdateAvestreatments = ({
                                   </>
                                 ))
                             )}
+                            {hasNextPage && (
+                              <div className="mx-auto mt-4 justify-center text-center">
+                                <ButtonLoadMore
+                                  ref={ref}
+                                  isFetchingNextPage={isFetchingNextPage}
+                                  onClick={() => fetchNextPage()}
+                                />
+                              </div>
+                            )}
                           </SelectGroup>
                         </SelectContent>
                       </Select>
@@ -202,16 +239,18 @@ const CreateOrUpdateAvestreatments = ({
                   />
                 </div>
 
-                <div className="mb-4">
+                <div className="mb-2">
+                  <Label>Treatement:</Label>
                   <TextInput
                     control={control}
                     type="text"
                     name="name"
-                    placeholder="Give a name"
+                    placeholder="Give treatment name"
                     errors={errors}
                   />
                 </div>
-                <div className="mb-4">
+                <div className="mb-2">
+                  <Label>Diagnostic:</Label>
                   <TextInput
                     control={control}
                     type="text"
@@ -221,6 +260,7 @@ const CreateOrUpdateAvestreatments = ({
                   />
                 </div>
                 <div className="mb-4">
+                  <Label>Medication:</Label>
                   <SelectInput
                     firstOptionName="Give a medication"
                     control={control}
@@ -246,7 +286,8 @@ const CreateOrUpdateAvestreatments = ({
                     ]}
                   />
                 </div>
-                <div className="mb-4">
+                <div className="mb-4 flex items-center space-x-1">
+                  <Label>Dose:</Label>
                   <TextInput
                     control={control}
                     type="number"
@@ -254,8 +295,7 @@ const CreateOrUpdateAvestreatments = ({
                     placeholder="Give a dose"
                     errors={errors}
                   />
-                </div>
-                <div className="mb-4">
+                  <Label>Voie:</Label>
                   <SelectInput
                     firstOptionName="Give a method"
                     control={control}

@@ -1,7 +1,7 @@
 import { GetAnimalsAPI } from '@/api-site/animals';
 import { CreateOrUpdateOneAvesIsolationAPI } from '@/api-site/isolations';
 import { useReactHookForm } from '@/components/hooks';
-import { ButtonInput } from '@/components/ui-setting';
+import { ButtonInput, ButtonLoadMore } from '@/components/ui-setting';
 import { LoadingFile } from '@/components/ui-setting/ant';
 import { ErrorFile } from '@/components/ui-setting/ant/error-file';
 import { TextAreaInput, TextInput } from '@/components/ui-setting/shadcn';
@@ -23,7 +23,9 @@ import { XIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { Controller, SubmitHandler } from 'react-hook-form';
+import { useInView } from 'react-intersection-observer';
 import * as yup from 'yup';
+import { Label } from '../ui/label';
 
 const schema = yup.object({
   code: yup.string().optional(),
@@ -51,6 +53,7 @@ const CreateOrUpdateAvesIsolations = ({
     hasErrors,
     setHasErrors,
   } = useReactHookForm({ schema });
+  const { ref, inView } = useInView();
   const { query, push } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
 
@@ -103,12 +106,38 @@ const CreateOrUpdateAvesIsolations = ({
     isLoading: isLoadingAnimals,
     isError: isErrorAnimals,
     data: dataAnimals,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
   } = GetAnimalsAPI({
     take: 10,
-    sort: 'asc',
+    sort: 'desc',
+    status: 'ACTIVE',
     sortBy: 'createdAt',
     animalTypeId: animalTypeId,
   });
+
+  useEffect(() => {
+    let fetching = false;
+    if (inView) {
+      fetchNextPage();
+    }
+    const onScroll = async (event: any) => {
+      const { scrollHeight, scrollTop, clientHeight } =
+        event.target.scrollingElement;
+
+      if (!fetching && scrollHeight - scrollTop <= clientHeight * 1.5) {
+        fetching = true;
+        if (hasNextPage) await fetchNextPage();
+        fetching = false;
+      }
+    };
+
+    document.addEventListener('scroll', onScroll);
+    return () => {
+      document.removeEventListener('scroll', onScroll);
+    };
+  }, [fetchNextPage, hasNextPage, inView]);
 
   return (
     <>
@@ -142,6 +171,10 @@ const CreateOrUpdateAvesIsolations = ({
 
                 {!isolation?.id ? (
                   <div className="mb-4">
+                    <Label>
+                      Sélectionez le code de la bande
+                      <span className="text-red-600">*</span>
+                    </Label>
                     <Controller
                       control={control}
                       name="code"
@@ -178,6 +211,15 @@ const CreateOrUpdateAvesIsolations = ({
                                     </>
                                   ))
                               )}
+                              {hasNextPage && (
+                                <div className="mx-auto mt-4 justify-center text-center">
+                                  <ButtonLoadMore
+                                    ref={ref}
+                                    isFetchingNextPage={isFetchingNextPage}
+                                    onClick={() => fetchNextPage()}
+                                  />
+                                </div>
+                              )}
                             </SelectGroup>
                           </SelectContent>
                         </Select>
@@ -187,6 +229,9 @@ const CreateOrUpdateAvesIsolations = ({
                 ) : null}
 
                 <div className="mb-4">
+                  <Label>
+                    Nombre animaux: <span className="text-red-600">*</span>
+                  </Label>
                   <TextInput
                     control={control}
                     type="number"

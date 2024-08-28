@@ -1,7 +1,7 @@
 import { LayoutDashboard } from '@/components/layouts/dashboard';
 import { ListFilter } from 'lucide-react';
 
-import { GetFinancesAPI } from '@/api-site/finances';
+import { GetFinancesAPI, GetFinanceStatisticsAPI } from '@/api-site/finances';
 import { GetOneUserMeAPI } from '@/api-site/user';
 import { useInputState } from '@/components/hooks';
 import { DashboardFooter } from '@/components/layouts/dashboard/footer';
@@ -40,8 +40,10 @@ import { ListFinances } from './list-finances';
 
 export function Finances() {
   const [type, setType] = useState('');
-  const { t, isOpen, setIsOpen, loading, setLoading } = useInputState();
+  const { t, isOpen, setIsOpen } = useInputState();
   const { data: user } = GetOneUserMeAPI();
+
+  const { data: financeStatistics } = GetFinanceStatisticsAPI();
 
   const {
     isLoading: isLoadingFinances,
@@ -53,31 +55,6 @@ export function Finances() {
     sort: 'desc',
     sortBy: 'createdAt',
   });
-
-  const { data: dataIncomeFinances } = GetFinancesAPI({
-    take: 10,
-    sort: 'desc',
-    type: 'INCOME',
-    sortBy: 'createdAt',
-  });
-
-  const { data: dataExpenseFinances } = GetFinancesAPI({
-    take: 10,
-    sort: 'desc',
-    type: 'EXPENSE',
-    sortBy: 'createdAt',
-  });
-
-  const initialValue = 0;
-  const sumIncome = dataIncomeFinances?.pages[0]?.data?.value.reduce(
-    (accumulator: any, currentValue: any) => accumulator + currentValue.amount,
-    initialValue,
-  );
-
-  const sumExpense = dataExpenseFinances?.pages[0]?.data?.value.reduce(
-    (accumulator: any, currentValue: any) => accumulator + currentValue.amount,
-    initialValue,
-  );
 
   return (
     <>
@@ -112,7 +89,8 @@ export function Finances() {
                     {t.formatMessage({ id: 'FINANCE.INCOME' })}
                   </CardDescription>
                   <CardTitle className="text-3xl">
-                    {sumIncome} {user?.profile?.currency?.symbol}
+                    {financeStatistics?.sumIncome}{' '}
+                    {user?.profile?.currency?.symbol}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -133,7 +111,8 @@ export function Finances() {
                     {t.formatMessage({ id: 'FINANCE.EXPENSES' })}
                   </CardDescription>
                   <CardTitle className="text-3xl">
-                    {sumExpense} {user?.profile?.currency?.symbol}
+                    {financeStatistics?.sumExpense}{' '}
+                    {user?.profile?.currency?.symbol}
                   </CardTitle>
                 </CardHeader>
                 <CardContent>

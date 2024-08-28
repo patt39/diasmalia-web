@@ -48,14 +48,6 @@ const ViewAvesTreatment = ({
                   />
                 </div>
                 <div className="mb-4">
-                  <Label htmlFor="text">Animal Code</Label>
-                  <Input
-                    disabled
-                    type="text"
-                    value={getOneTreatment.animal.code}
-                  />
-                </div>
-                <div className="mb-4">
                   <Label htmlFor="text">Treatment name</Label>
                   <Input disabled type="text" value={getOneTreatment.name} />
                 </div>
@@ -68,11 +60,13 @@ const ViewAvesTreatment = ({
                   />
                 </div>
                 <div className="mb-4 flex items-center space-x-4">
+                  <Label htmlFor="text">Treatment</Label>
                   <Input
                     disabled
                     type="text"
                     value={getOneTreatment.medication}
                   />
+                  <Label htmlFor="text">Dose</Label>
                   <Input disabled type="number" value={getOneTreatment.dose} />
                 </div>
                 <div className="mb-4 disabled">

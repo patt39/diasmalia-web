@@ -15,6 +15,7 @@ import * as yup from 'yup';
 import { LoadingFile } from '../ui-setting/ant';
 import { ErrorFile } from '../ui-setting/ant/error-file';
 import { TextAreaInput } from '../ui-setting/shadcn';
+import { Label } from '../ui/label';
 import {
   Select,
   SelectContent,
@@ -76,7 +77,6 @@ const CreateOrUpdateIsolations = ({
   ) => {
     setLoading(true);
     setHasErrors(undefined);
-    console.log('Payload ===>', payload);
     try {
       await saveMutation({
         ...payload,
@@ -107,6 +107,7 @@ const CreateOrUpdateIsolations = ({
     sort: 'desc',
     status: 'ACTIVE',
     sortBy: 'createdAt',
+    isIsolated: 'NO',
     animalTypeId: animalTypeId,
   });
 
@@ -139,12 +140,15 @@ const CreateOrUpdateIsolations = ({
                     </div>
                   </div>
                 )}
-
-                {!isolation.id ? (
+                {!isolation?.id ? (
                   <div className="mb-4 w-full mt-2">
+                    <Label>
+                      Sélectionez les animaux à isoler
+                      <span className="text-red-600">*</span>
+                    </Label>
                     <Select>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select animals" />
+                        <SelectValue placeholder="Select animals for isolation" />
                       </SelectTrigger>
                       <SelectContent className="dark:border-gray-800">
                         <SelectGroup>
@@ -193,7 +197,9 @@ const CreateOrUpdateIsolations = ({
                       </SelectContent>
                     </Select>
                   </div>
-                ) : null}
+                ) : (
+                  ''
+                )}
 
                 <div className="mb-4">
                   <TextAreaInput

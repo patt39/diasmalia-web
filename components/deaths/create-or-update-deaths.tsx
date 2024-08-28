@@ -22,6 +22,7 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
+import { Label } from '../ui/label';
 
 const schema = yup.object({
   animals: yup.array().optional(),
@@ -137,12 +138,16 @@ const CreateOrUpdateDeaths = ({
                   </div>
                 )}
 
-                <div className="mb-4 flex items-center space-x-4 w-full">
+                <div className="flex items-center space-x-4 w-full">
                   {!death?.id ? (
                     <div className="mb-4 w-full mt-2">
+                      <Label>
+                        Sélectionez les animaux morts
+                        <span className="text-red-600">*</span>
+                      </Label>
                       <Select>
                         <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select animals" />
+                          <SelectValue placeholder="Select death animals" />
                         </SelectTrigger>
                         <SelectContent className="dark:border-gray-800">
                           <SelectGroup>

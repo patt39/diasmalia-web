@@ -1,8 +1,10 @@
 import { GetOneSaleAPI } from '@/api-site/sales';
 import { useReactHookForm } from '@/components/hooks';
-import { TextAreaInput, TextInput } from '@/components/ui-setting/shadcn';
+import { TextInput } from '@/components/ui-setting/shadcn';
 import { XIcon } from 'lucide-react';
 import * as yup from 'yup';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
 
 const schema = yup.object({});
 
@@ -15,7 +17,7 @@ const ViewAvesSale = ({
   setShowModal: any;
   sale?: any;
 }) => {
-  const { control, errors } = useReactHookForm({ schema });
+  const { t, control, errors } = useReactHookForm({ schema });
 
   const { data: getOneSale } = GetOneSaleAPI({
     saleId: sale.id,
@@ -37,72 +39,68 @@ const ViewAvesSale = ({
             </button>
             <form className="mt-4">
               <div className="flex-auto justify-center p-2">
-                <div className="mb-4 flex items-center space-x-2">
-                  <TextInput
-                    control={control}
-                    type="number"
-                    name="number"
-                    defaultValue={getOneSale.number}
-                    errors={errors}
-                    disabled
-                  />
-                  <TextInput
-                    control={control}
-                    type="number"
-                    name="price"
-                    defaultValue={getOneSale.price}
-                    errors={errors}
-                    disabled
-                  />
-                </div>
-                <div className="mb-4">
+                <div className="mb-4 flex items-center space-x-1">
+                  <Label htmlFor="text">Client: </Label>
                   <TextInput
                     control={control}
                     type="text"
                     name="soldTo"
-                    defaultValue={getOneSale.soldTo}
+                    defaultValue={getOneSale.soldTo || 'N/A'}
                     errors={errors}
                     disabled
                   />
                 </div>
-                <div className="mb-4">
+                <div className="mb-4 flex items-center  space-x-1">
+                  <Label htmlFor="text">Email: </Label>
                   <TextInput
                     control={control}
                     type="text"
                     name="email"
-                    defaultValue={getOneSale.email}
+                    defaultValue={getOneSale.email || 'N/A'}
                     errors={errors}
                     disabled
                   />
                 </div>
-                <div className="mb-4">
+                <div className="mb-4 flex items-center  space-x-1">
+                  <Label htmlFor="text">Phone: </Label>
                   <TextInput
                     control={control}
                     type="number"
                     name="phone"
-                    defaultValue={getOneSale.phone}
+                    defaultValue={getOneSale.phone || 'N/A'}
                     errors={errors}
                     disabled
                   />
                 </div>
-                <div className="mb-4">
+                <div className="mb-4 flex items-center  space-x-1">
+                  <Label htmlFor="text">Address: </Label>
                   <TextInput
                     control={control}
                     type="text"
                     name="address"
-                    defaultValue={getOneSale.address}
+                    defaultValue={getOneSale.address || 'N/A'}
                     errors={errors}
                     disabled
                   />
                 </div>
-                <div className="mb-4">
-                  <TextAreaInput
-                    control={control}
-                    label="Details of sale"
-                    name="detail"
-                    defaultValue={`Sale of ${getOneSale.detail}`}
-                    errors={errors}
+                <Label>{t.formatMessage({ id: 'SALE.NUMBER' })}</Label>
+                <div className="mb-4 flex items-center space-x-4">
+                  <Input disabled type="text" value={getOneSale.number} />
+                </div>
+                <Label>{t.formatMessage({ id: 'SALE.AMOUNT' })}</Label>
+                <div className="mb-4 flex items-center space-x-4">
+                  <Input disabled type="text" value={getOneSale.price} />
+                </div>
+                <Label>{t.formatMessage({ id: 'SALE.CHANNEL' })}</Label>
+                <div className="mb-4 flex items-center space-x-4">
+                  <Input disabled type="text" value={getOneSale.method} />
+                </div>
+                <Label>{t.formatMessage({ id: 'SALE.DETAIL' })}:</Label>
+                <div className="mb-4 flex items-center space-x-4">
+                  <Input
                     disabled
+                    type="text"
+                    value={`Sale of ${getOneSale.detail}`}
                   />
                 </div>
               </div>

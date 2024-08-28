@@ -96,6 +96,7 @@ export const apiEndpoints: ClientApiMethods = {
   getSales: GET(`${baseUrl}/sales`),
   exportSales: GET(`${baseUrl}/sales/export`),
   getOneSale: GET(`${baseUrl}/sales/view/:saleId`),
+  getSaleStatistics: GET(`${baseUrl}/sales/statistics`),
   createOneSale: POST(`${baseUrl}/sales/bulk/create`),
   updateOneSale: PUT(`${baseUrl}/sales/:saleId/edit`),
   createOneAvesSale: POST(`${baseUrl}/sales/create/aves`),
@@ -116,20 +117,31 @@ export const apiEndpoints: ClientApiMethods = {
   /****************** Contributors route */
   getContributors: GET(`${baseUrl}/contributors`),
 
+  /****************** Breeds route */
+  getBreeds: GET(`${baseUrl}/breeds`),
+
   /****************** Finances route */
   getFinances: GET(`${baseUrl}/finances`),
   createOneFinance: POST(`${baseUrl}/finances/create`),
   getOneFinance: GET(`${baseUrl}/finances/:financeId/view`),
   updateOneFinance: PUT(`${baseUrl}/finances/:financeId/edit`),
+  getFinanceStatistics: GET(`${baseUrl}/finances/statistics`),
 
   /****************** Locations route */
   getLocations: GET(`${baseUrl}/locations`),
+  createOneLocation: POST(`${baseUrl}/locations/:animalTypeId/create`),
+  updateOneLocation: PUT(`${baseUrl}/locations/:locationId/edit`),
   changeStatus: PUT(`${baseUrl}/locations/:locationId/change-status`),
   deleteOneLocation: DELETE(`${baseUrl}/locations/:locationId/delete`),
 
   /****************** Animals route */
   getAnimals: GET(`${baseUrl}/animals`),
-  getAnimalsStatistics: GET(`${baseUrl}/animals/statistics`),
+  createOneAnimal: POST(`${baseUrl}/animals/create`),
+  getOneAnimal: GET(`${baseUrl}/animals/:animalId/view`),
+  createOneAvesAnimal: POST(`${baseUrl}/animals/:animalTypeId/create`),
+  updateOneAnimal: PUT(`${baseUrl}/animals/:animalId/edit`),
+  updateOneAves: PUT(`${baseUrl}/animals/:animalId/edit`),
+  getAnimalStatistics: GET(`${baseUrl}/animals/:animalTypeId/statistics`),
   deleteOneAnimal: DELETE(`${baseUrl}/animals/:animalId/delete`),
 
   /****************** Feedings route */
@@ -192,13 +204,14 @@ export const apiEndpoints: ClientApiMethods = {
 
   /****************** Milkings route */
   getMilkings: GET(`${baseUrl}/milkings`),
-  createOneMilking: POST(`${baseUrl}/milkings/create`),
+  createOneMilking: POST(`${baseUrl}/milkings/bulk/create`),
   updateOneMilking: GET(`${baseUrl}/milkings/:milkingId/edit`),
   deleteOneMilking: DELETE(`${baseUrl}/milkings/:milkingId/delete`),
 
   /****************** Incubations route */
   getIncubations: GET(`${baseUrl}/incubations`),
   createOneIncubation: POST(`${baseUrl}/incubations/create`),
+  getOneIncubation: GET(`${baseUrl}/incubations/:incubationId/view`),
   updateOneIncubation: PUT(`${baseUrl}/incubations/:incubationId/edit`),
   deleteOneIncubation: DELETE(`${baseUrl}/incubations/:incubationId/delete`),
 

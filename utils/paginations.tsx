@@ -1,12 +1,12 @@
-interface Props {
-  data: any;
-  setPageItem: any;
-  setPreviewPageItem: any;
-  setNextPageItem: any;
-  paginate: any;
-  isPreviousData: any;
-  pageItem: number;
-}
+import { CardFooter } from '@/components/ui/card';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '@/components/ui/pagination';
 
 export type SortModel = 'asc' | 'desc';
 
@@ -36,71 +36,64 @@ export type PaginationResponse = {
   total_value: number;
 };
 
-export const PaginationItem: React.FC<Props> = ({
+interface Props {
+  data: any;
+  setPageItem: any;
+  paginate?: any;
+  isPlaceholderData?: any;
+  pageItem: number;
+}
+
+export const PaginationPage: React.FC<Props> = ({
   data,
   setPageItem,
-  setPreviewPageItem,
-  setNextPageItem,
   paginate,
-  isPreviousData,
+  isPlaceholderData,
   pageItem,
 }) => {
   return (
     <>
-      {data?.data?.total > 0 && (
-        <>
-          <div className="separator separator-dashed my-2"></div>
-
-          <div className="d-flex flex-center mb-0">
-            <ul className="pagination">
-              <li
-                className={`page-item previous ${
-                  (isPreviousData || pageItem <= 1) && 'disabled'
-                }`}
+      {data?.total_page > 1 ? (
+        <CardFooter>
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem
+                onClick={() =>
+                  setPageItem((old: number) => Math.max(old - 1, 1))
+                }
+                className="cursor-pointer"
               >
-                <button
-                  type="button"
-                  onClick={() => {
-                    setPageItem(setPreviewPageItem);
-                    paginate(pageItem - 1);
-                  }}
-                  className="page-link"
-                >
-                  <i className="previous"></i>
-                </button>
-              </li>
-              <li className="page-item active">
-                <button type="button" className="page-link">
+                <PaginationPrevious />
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationLink href="#" isActive>
                   {pageItem}
-                </button>
-              </li>
-              <li
-                className={`page-item next ${
-                  !isPreviousData &&
+                </PaginationLink>
+              </PaginationItem>
+              <PaginationItem
+                className={`cursor-pointer  ${
+                  !isPlaceholderData &&
                   data?.data?.total_page === pageItem &&
                   'disabled'
                 }`}
+                onClick={() => {
+                  if (
+                    !isPlaceholderData &&
+                    data?.data?.total_page !== pageItem
+                  ) {
+                    setPageItem((old: number) =>
+                      data?.next_page ? old + 1 : old,
+                    );
+                    // paginate(pageItem + 1);
+                  }
+                }}
               >
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (
-                      !isPreviousData &&
-                      data?.data?.total_page !== pageItem
-                    ) {
-                      setPageItem(setNextPageItem);
-                      paginate(pageItem + 1);
-                    }
-                  }}
-                  className="page-link"
-                >
-                  <i className="next"></i>
-                </button>
-              </li>
-            </ul>
-          </div>
-        </>
-      )}
+                <PaginationNext />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </CardFooter>
+      ) : null}
     </>
   );
 };

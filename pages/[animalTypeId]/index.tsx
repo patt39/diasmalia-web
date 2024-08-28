@@ -1,8 +1,8 @@
 import { GetOneAnimalTypeAPI } from '@/api-site/animal-type';
-import { GetAnimalsAPI } from '@/api-site/animals';
-import { GetEggHarvestingsAPI } from '@/api-site/eggharvesting';
+import { GetAnimalStatisticsAPI } from '@/api-site/animals';
 import { TabAnalytics } from '@/components/analytics/tab-analytics';
 import { TabAnimals } from '@/components/animals/tab-animals';
+import { TabAvesAnimals } from '@/components/aves-animals/tab-aves-animals';
 import { TabAvesDeaths } from '@/components/aves-deaths/tab-aves-deaths';
 import { TabAvesFeedings } from '@/components/aves-feeding/tab-aves-feedings';
 import { TabAvesIsolations } from '@/components/aves-isolations/tab-aves-isolations';
@@ -44,57 +44,9 @@ export function Index() {
     animalTypeId: animalTypeId,
   });
 
-  const { data: dataMaleAnimals } = GetAnimalsAPI({
-    take: 10,
-    sort: 'asc',
-    gender: 'MALE',
-    status: 'ACTIVE',
-    sortBy: 'createdAt',
+  const { data: animalStatistics } = GetAnimalStatisticsAPI({
     animalTypeId: animalTypeId,
   });
-
-  const { data: dataFeMaleAnimals } = GetAnimalsAPI({
-    take: 10,
-    sort: 'asc',
-    gender: 'FEMALE',
-    status: 'ACTIVE',
-    sortBy: 'createdAt',
-    animalTypeId: animalTypeId,
-  });
-
-  const { data: dataAnimals } = GetAnimalsAPI({
-    take: 10,
-    sort: 'asc',
-    sortBy: 'createdAt',
-    animalTypeId: animalTypeId,
-  });
-
-  const { data: dataEggHavestings } = GetEggHarvestingsAPI({
-    take: 10,
-    sort: 'desc',
-    sortBy: 'createdAt',
-    animalTypeId: animalTypeId,
-  });
-
-  const initialValue = 0;
-  const sumAnimals = dataAnimals?.pages[0]?.data?.value.reduce(
-    (accumulator: any, currentValue: any) =>
-      accumulator + currentValue.quantity,
-    initialValue,
-  );
-
-  const sumWeight = dataAnimals?.pages[0]?.data?.value.reduce(
-    (accumulator: any, currentValue: any) => accumulator + currentValue.weight,
-    initialValue,
-  );
-
-  const averageWeight = sumWeight / Number(dataAnimals?.pages[0]?.data?.total);
-
-  const sumEggs = dataEggHavestings?.pages[0]?.data?.value.reduce(
-    (accumulator: any, currentValue: any) =>
-      accumulator + currentValue.quantity,
-    initialValue,
-  );
 
   return (
     <>
@@ -126,7 +78,7 @@ export function Index() {
                       {t.formatMessage({ id: 'ANIMALTYPE.FEMALE' })}
                     </CardDescription>
                     <CardTitle className="text-4xl">
-                      {dataFeMaleAnimals?.pages[0]?.data?.total}
+                      {animalStatistics?.sumFemales}
                     </CardTitle>
                   </CardHeader>
                 </Card>
@@ -139,7 +91,7 @@ export function Index() {
                       {t.formatMessage({ id: 'ANIMALTYPE.MALE' })}
                     </CardDescription>
                     <CardTitle className="text-4xl">
-                      {dataMaleAnimals?.pages[0]?.data?.total}
+                      {animalStatistics?.sumMales}
                     </CardTitle>
                   </CardHeader>
                 </Card>
@@ -169,7 +121,7 @@ export function Index() {
                       {t.formatMessage({ id: 'ANIMALTYPE.FEMALE' })}
                     </CardDescription>
                     <CardTitle className="text-4xl">
-                      {dataFeMaleAnimals?.pages[0]?.data?.total}
+                      {animalStatistics?.sumFemales}
                     </CardTitle>
                   </CardHeader>
                 </Card>
@@ -182,7 +134,7 @@ export function Index() {
                       {t.formatMessage({ id: 'ANIMALTYPE.MALE' })}
                     </CardDescription>
                     <CardTitle className="text-4xl">
-                      {dataMaleAnimals?.pages[0]?.data?.total}
+                      {animalStatistics?.sumMales}
                     </CardTitle>
                   </CardHeader>
                 </Card>
@@ -212,7 +164,7 @@ export function Index() {
                       {t.formatMessage({ id: 'ANIMALTYPE.FEMALE' })}
                     </CardDescription>
                     <CardTitle className="text-4xl">
-                      {dataFeMaleAnimals?.pages[0]?.data?.total}
+                      {animalStatistics?.sumFemales}
                     </CardTitle>
                   </CardHeader>
                 </Card>
@@ -225,7 +177,7 @@ export function Index() {
                       {t.formatMessage({ id: 'ANIMALTYPE.MALE' })}
                     </CardDescription>
                     <CardTitle className="text-4xl">
-                      {dataMaleAnimals?.pages[0]?.data?.total}
+                      {animalStatistics?.sumMales}
                     </CardTitle>
                   </CardHeader>
                 </Card>
@@ -255,7 +207,7 @@ export function Index() {
                       {t.formatMessage({ id: 'ANIMALTYPE.FEMALE' })}
                     </CardDescription>
                     <CardTitle className="text-4xl">
-                      {dataFeMaleAnimals?.pages[0]?.data?.total}
+                      {animalStatistics?.sumFemales}
                     </CardTitle>
                   </CardHeader>
                 </Card>
@@ -268,7 +220,7 @@ export function Index() {
                       {t.formatMessage({ id: 'ANIMALTYPE.MALE' })}
                     </CardDescription>
                     <CardTitle className="text-4xl">
-                      {dataMaleAnimals?.pages[0]?.data?.total}
+                      {animalStatistics?.sumMales}
                     </CardTitle>
                   </CardHeader>
                 </Card>
@@ -298,7 +250,7 @@ export function Index() {
                       {t.formatMessage({ id: 'ANIMALTYPE.FEMALE' })}
                     </CardDescription>
                     <CardTitle className="text-4xl">
-                      {dataFeMaleAnimals?.pages[0]?.data?.total}
+                      {animalStatistics?.sumFemales}
                     </CardTitle>
                   </CardHeader>
                 </Card>
@@ -311,7 +263,7 @@ export function Index() {
                       {t.formatMessage({ id: 'ANIMALTYPE.MALE' })}
                     </CardDescription>
                     <CardTitle className="text-4xl">
-                      {dataMaleAnimals?.pages[0]?.data?.total}
+                      {animalStatistics?.sumMales}
                     </CardTitle>
                   </CardHeader>
                 </Card>
@@ -338,10 +290,38 @@ export function Index() {
                 >
                   <CardHeader className="pb-2">
                     <CardDescription>
-                      {t.formatMessage({ id: 'ANIMALTYPE.AVES.QUANTITY' })}{' '}
+                      {t.formatMessage({ id: 'ANIMALTYPE.AVES.QUANTITY' })}
                       {animalType?.slug}
                     </CardDescription>
-                    <CardTitle className="text-4xl">{sumAnimals}</CardTitle>
+                    <CardTitle className="text-4xl">
+                      {animalStatistics?.sumAnimalsQuantity}
+                    </CardTitle>
+                  </CardHeader>
+                </Card>
+                <Card
+                  x-chunk="dashboard-05-chunk-2"
+                  className=" dark:border-gray-800"
+                >
+                  <CardHeader className="pb-2">
+                    <CardDescription>
+                      {t.formatMessage({ id: 'ANIMAL.SUM.MALES' })}
+                    </CardDescription>
+                    <CardTitle className="text-4xl">
+                      {animalStatistics.sumMaleAnimals}
+                    </CardTitle>
+                  </CardHeader>
+                </Card>
+                <Card
+                  x-chunk="dashboard-05-chunk-2"
+                  className=" dark:border-gray-800"
+                >
+                  <CardHeader className="pb-2">
+                    <CardDescription>
+                      {t.formatMessage({ id: 'ANIMAL.SUM.FEMALES' })}
+                    </CardDescription>
+                    <CardTitle className="text-4xl">
+                      {animalStatistics?.sumFemaleAnimals}
+                    </CardTitle>
                   </CardHeader>
                 </Card>
                 <Card
@@ -352,7 +332,9 @@ export function Index() {
                     <CardDescription>
                       {t.formatMessage({ id: 'ANIMALTYPE.LAYERS' })}
                     </CardDescription>
-                    <CardTitle className="text-4xl">{sumEggs}</CardTitle>
+                    <CardTitle className="text-4xl">
+                      {animalStatistics?.sumEggHarvested}
+                    </CardTitle>
                   </CardHeader>
                 </Card>
                 <AvesStatistics />
@@ -379,10 +361,38 @@ export function Index() {
                 >
                   <CardHeader className="pb-2">
                     <CardDescription>
-                      {t.formatMessage({ id: 'ANIMALTYPE.AVES.QUANTITY' })}{' '}
+                      {t.formatMessage({ id: 'ANIMALTYPE.AVES.QUANTITY' })}
                       {animalType?.slug}
                     </CardDescription>
-                    <CardTitle className="text-4xl">{sumAnimals}</CardTitle>
+                    <CardTitle className="text-4xl">
+                      {animalStatistics?.sumAnimalsQuantity}
+                    </CardTitle>
+                  </CardHeader>
+                </Card>
+                <Card
+                  x-chunk="dashboard-05-chunk-2"
+                  className=" dark:border-gray-800"
+                >
+                  <CardHeader className="pb-2">
+                    <CardDescription>
+                      {t.formatMessage({ id: 'ANIMAL.SUM.MALES' })}
+                    </CardDescription>
+                    <CardTitle className="text-4xl">
+                      {animalStatistics?.sumMaleAnimals}
+                    </CardTitle>
+                  </CardHeader>
+                </Card>
+                <Card
+                  x-chunk="dashboard-05-chunk-2"
+                  className=" dark:border-gray-800"
+                >
+                  <CardHeader className="pb-2">
+                    <CardDescription>
+                      {t.formatMessage({ id: 'ANIMAL.SUM.FEMALES' })}
+                    </CardDescription>
+                    <CardTitle className="text-4xl">
+                      {animalStatistics?.sumFemaleAnimals}
+                    </CardTitle>
                   </CardHeader>
                 </Card>
                 <Card
@@ -393,7 +403,9 @@ export function Index() {
                     <CardDescription>
                       {t.formatMessage({ id: 'ANIMALTYPE.LAYERS' })}
                     </CardDescription>
-                    <CardTitle className="text-4xl">{sumEggs}</CardTitle>
+                    <CardTitle className="text-4xl">
+                      {animalStatistics?.sumEggHarvested}
+                    </CardTitle>
                   </CardHeader>
                 </Card>
                 <AvesStatistics />
@@ -423,7 +435,35 @@ export function Index() {
                       {t.formatMessage({ id: 'ANIMALTYPE.AVES.QUANTITY' })}{' '}
                       {animalType?.slug}
                     </CardDescription>
-                    <CardTitle className="text-4xl">{sumAnimals}</CardTitle>
+                    <CardTitle className="text-4xl">
+                      {animalStatistics?.sumAnimalsQuantity}
+                    </CardTitle>
+                  </CardHeader>
+                </Card>
+                <Card
+                  x-chunk="dashboard-05-chunk-2"
+                  className=" dark:border-gray-800"
+                >
+                  <CardHeader className="pb-2">
+                    <CardDescription>
+                      {t.formatMessage({ id: 'ANIMAL.SUM.MALES' })}
+                    </CardDescription>
+                    <CardTitle className="text-4xl">
+                      {animalStatistics?.sumMaleAnimals}
+                    </CardTitle>
+                  </CardHeader>
+                </Card>
+                <Card
+                  x-chunk="dashboard-05-chunk-2"
+                  className=" dark:border-gray-800"
+                >
+                  <CardHeader className="pb-2">
+                    <CardDescription>
+                      {t.formatMessage({ id: 'ANIMAL.SUM.FEMALES' })}
+                    </CardDescription>
+                    <CardTitle className="text-4xl">
+                      {animalStatistics?.sumFemaleAnimals}
+                    </CardTitle>
                   </CardHeader>
                 </Card>
                 <Card
@@ -434,7 +474,9 @@ export function Index() {
                     <CardDescription>
                       {t.formatMessage({ id: 'ANIMALTYPE.LAYERS' })}
                     </CardDescription>
-                    <CardTitle className="text-4xl">{sumEggs}</CardTitle>
+                    <CardTitle className="text-4xl">
+                      {animalStatistics?.sumEggHarvested}
+                    </CardTitle>
                   </CardHeader>
                 </Card>
                 <AvesStatistics />
@@ -464,7 +506,35 @@ export function Index() {
                       {t.formatMessage({ id: 'ANIMALTYPE.AVES.QUANTITY' })}{' '}
                       {animalType?.slug}
                     </CardDescription>
-                    <CardTitle className="text-4xl">{sumAnimals}</CardTitle>
+                    <CardTitle className="text-4xl">
+                      {animalStatistics?.sumAnimalsQuantity}
+                    </CardTitle>
+                  </CardHeader>
+                </Card>
+                <Card
+                  x-chunk="dashboard-05-chunk-2"
+                  className=" dark:border-gray-800"
+                >
+                  <CardHeader className="pb-2">
+                    <CardDescription>
+                      {t.formatMessage({ id: 'ANIMAL.SUM.MALES' })}
+                    </CardDescription>
+                    <CardTitle className="text-4xl">
+                      {animalStatistics?.sumMaleAnimals}
+                    </CardTitle>
+                  </CardHeader>
+                </Card>
+                <Card
+                  x-chunk="dashboard-05-chunk-2"
+                  className=" dark:border-gray-800"
+                >
+                  <CardHeader className="pb-2">
+                    <CardDescription>
+                      {t.formatMessage({ id: 'ANIMAL.SUM.FEMALES' })}
+                    </CardDescription>
+                    <CardTitle className="text-4xl">
+                      {animalStatistics?.sumFemaleAnimals}
+                    </CardTitle>
                   </CardHeader>
                 </Card>
                 <Card
@@ -475,7 +545,9 @@ export function Index() {
                     <CardDescription>
                       {t.formatMessage({ id: 'ANIMALTYPE.LAYERS' })}
                     </CardDescription>
-                    <CardTitle className="text-4xl">{sumEggs}</CardTitle>
+                    <CardTitle className="text-4xl">
+                      {animalStatistics?.sumEggHarvested}
+                    </CardTitle>
                   </CardHeader>
                 </Card>
                 <AvesStatistics />
@@ -502,10 +574,38 @@ export function Index() {
                 >
                   <CardHeader className="pb-2">
                     <CardDescription>
-                      {t.formatMessage({ id: 'ANIMALTYPE.AVES.QUANTITY' })}{' '}
+                      {t.formatMessage({ id: 'ANIMALTYPE.AVES.QUANTITY' })}
                       {animalType?.slug}
                     </CardDescription>
-                    <CardTitle className="text-4xl">{sumAnimals}</CardTitle>
+                    <CardTitle className="text-4xl">
+                      {animalStatistics?.sumAnimalsQuantity}
+                    </CardTitle>
+                  </CardHeader>
+                </Card>
+                <Card
+                  x-chunk="dashboard-05-chunk-2"
+                  className=" dark:border-gray-800"
+                >
+                  <CardHeader className="pb-2">
+                    <CardDescription>
+                      {t.formatMessage({ id: 'ANIMAL.SUM.MALES' })}
+                    </CardDescription>
+                    <CardTitle className="text-4xl">
+                      {animalStatistics?.sumMaleAnimals}
+                    </CardTitle>
+                  </CardHeader>
+                </Card>
+                <Card
+                  x-chunk="dashboard-05-chunk-2"
+                  className=" dark:border-gray-800"
+                >
+                  <CardHeader className="pb-2">
+                    <CardDescription>
+                      {t.formatMessage({ id: 'ANIMAL.SUM.FEMALES' })}
+                    </CardDescription>
+                    <CardTitle className="text-4xl">
+                      {animalStatistics?.sumFemaleAnimals}
+                    </CardTitle>
                   </CardHeader>
                 </Card>
                 <Card
@@ -516,7 +616,9 @@ export function Index() {
                     <CardDescription>
                       {t.formatMessage({ id: 'ANIMALTYPE.LAYERS' })}
                     </CardDescription>
-                    <CardTitle className="text-4xl">{sumEggs}</CardTitle>
+                    <CardTitle className="text-4xl">
+                      {animalStatistics?.sumEggHarvested}
+                    </CardTitle>
                   </CardHeader>
                 </Card>
                 <AvesStatistics />
@@ -548,7 +650,9 @@ export function Index() {
                       {t.formatMessage({ id: 'ANIMALTYPE.AVES.QUANTITY' })}{' '}
                       {animalType?.slug}
                     </CardDescription>
-                    <CardTitle className="text-4xl">{sumAnimals}</CardTitle>
+                    <CardTitle className="text-4xl">
+                      {animalStatistics?.sumAnimalsQuantity}
+                    </CardTitle>
                   </CardHeader>
                 </Card>
                 <Card
@@ -560,10 +664,13 @@ export function Index() {
                       {t.formatMessage({ id: 'ANIMALTYPE.BROILERS' })}
                     </CardDescription>
                     <CardTitle className="text-4xl">
-                      {averageWeight || '00'} Kg
+                      {Math.floor(animalStatistics?.averageWeight * 100) /
+                        100 || '00'}
+                      Kg
                     </CardTitle>
                   </CardHeader>
                 </Card>
+                <AvesStatistics />
               </div>
             ) : ['Pisciculture'].includes(animalType?.name) ? (
               <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
@@ -589,10 +696,12 @@ export function Index() {
                 >
                   <CardHeader className="pb-2">
                     <CardDescription>
-                      {t.formatMessage({ id: 'ANIMALTYPE.AVES.QUANTITY' })}{' '}
+                      {t.formatMessage({ id: 'ANIMALTYPE.AVES.QUANTITY' })}
                       {animalType?.slug}
                     </CardDescription>
-                    <CardTitle className="text-4xl">{sumAnimals}</CardTitle>
+                    <CardTitle className="text-4xl">
+                      {animalStatistics?.sumAnimalsQuantity}
+                    </CardTitle>
                   </CardHeader>
                 </Card>
                 <Card
@@ -604,7 +713,7 @@ export function Index() {
                       {t.formatMessage({ id: 'ANIMALTYPE.BROILERS' })}
                     </CardDescription>
                     <CardTitle className="text-4xl">
-                      {averageWeight || '00'} Kg
+                      {animalStatistics?.averageWeight || '00'} Kg
                     </CardTitle>
                   </CardHeader>
                 </Card>
@@ -730,7 +839,7 @@ export function Index() {
                     <TabsTrigger value="locations">
                       {t.formatMessage({ id: 'ANIMALTYPE.LOCATIONS.AVES' })}
                     </TabsTrigger>
-                    <TabsTrigger value="animals">
+                    <TabsTrigger value="aves-animals">
                       {t.formatMessage({ id: 'ANIMALTYPE.ANIMALS.AVES' })}
                     </TabsTrigger>
                     <TabsTrigger value="aves-feedings">
@@ -768,7 +877,7 @@ export function Index() {
                         {t.formatMessage({ id: 'ANIMALTYPE.LOCATIONS.FISH' })}
                       </TabsTrigger>
                     )}
-                    <TabsTrigger value="animals">
+                    <TabsTrigger value="aves-animals">
                       {t.formatMessage({ id: 'ANIMALTYPE.ANIMALS.AVES' })}
                     </TabsTrigger>
                     <TabsTrigger value="aves-feedings">
@@ -795,6 +904,14 @@ export function Index() {
                   className="dark:border-gray-800"
                 >
                   <TabLocations animalTypeId={animalTypeId} />
+                </Card>
+              </TabsContent>
+              <TabsContent value="aves-animals">
+                <Card
+                  x-chunk="dashboard-06-chunk-0"
+                  className="dark:border-gray-800"
+                >
+                  <TabAvesAnimals animalTypeId={animalTypeId} />
                 </Card>
               </TabsContent>
               <TabsContent value="animals">

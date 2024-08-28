@@ -1,7 +1,7 @@
 import { DeathsModel } from '@/types/deaths';
 import { makeApiCall, PaginationRequest } from '@/utils';
 import {
-  useInfiniteQuery,
+  keepPreviousData,
   useMutation,
   useQuery,
   useQueryClient,
@@ -128,16 +128,25 @@ export const GetDeathsAPI = (
     search?: string;
     take?: number;
     periode?: string;
+    pageItem?: number;
     animalTypeId?: string;
     organizationId?: string;
   } & PaginationRequest,
 ) => {
-  const { take, sort, search, periode, sortBy, animalTypeId, organizationId } =
-    payload;
-  return useInfiniteQuery({
-    queryKey: ['deaths', 'infinite', { ...payload }],
-    getNextPageParam: (lastPage: any) => lastPage.data.next_page,
-    queryFn: async ({ pageParam = 1 }) =>
+  const {
+    take,
+    sort,
+    search,
+    pageItem,
+    periode,
+    sortBy,
+    animalTypeId,
+    organizationId,
+  } = payload;
+  return useQuery({
+    queryKey: ['deaths', { ...payload }],
+    placeholderData: keepPreviousData,
+    queryFn: async () =>
       await makeApiCall({
         action: 'getDeaths',
         queryParams: {
@@ -147,12 +156,11 @@ export const GetDeathsAPI = (
           sortBy,
           periode,
           animalTypeId,
-          page: pageParam,
+          page: pageItem,
           organizationId,
         },
       }),
-    staleTime: 60_000,
-    initialPageParam: 1,
+    staleTime: 5000,
   });
 };
 

@@ -55,7 +55,7 @@ const ListSales = ({ item, index }: { item: any; index: number }) => {
   return (
     <>
       <TableRow key={index} className="dark:border-gray-800">
-        <TableCell className="font-medium">{item.soldTo}</TableCell>
+        <TableCell className="font-medium">{item?.soldTo}</TableCell>
         <TableCell className="font-medium">
           <div className="font-medium">{item?.phone || 'N/A'}</div>
           <div className="hidden text-sm text-muted-foreground md:inline">
@@ -64,10 +64,10 @@ const ListSales = ({ item, index }: { item: any; index: number }) => {
               : item?.email || 'N/A'}
           </div>
         </TableCell>
-        <TableCell className="font-medium">{item.method}</TableCell>
-        <TableCell className="hidden md:table-cell">{item.number}</TableCell>
+        <TableCell className="font-medium">{item?.method}</TableCell>
+        <TableCell className="hidden md:table-cell">{item?.number}</TableCell>
         <TableCell className="hidden md:table-cell">
-          {item.price} {user?.profile?.currency?.symbol}
+          {item?.price} {user?.profile?.currency?.symbol}
         </TableCell>
         <TableCell className="hidden md:table-cell">
           {formatDateDDMMYY(item?.createdAt as Date)}

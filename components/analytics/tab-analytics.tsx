@@ -1,180 +1,14 @@
 /* eslint-disable @next/next/no-img-element */
-import { GetAnimalsAPI } from '@/api-site/animals';
-import { GetFarrowingsAPI } from '@/api-site/farrowings';
-import { GetWeaningsAPI } from '@/api-site/weanings';
+import { GetAnimalStatisticsAPI } from '@/api-site/animals';
 import { useInputState } from '@/components/hooks';
 import { Card, CardDescription, CardHeader, CardTitle } from '../ui/card';
 
 const TabAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
   const { t } = useInputState();
 
-  const { data: dataFemaleReproduction } = GetAnimalsAPI({
-    take: 10,
-    sort: 'asc',
-    gender: 'FEMALE',
-    status: 'ACTIVE',
-    sortBy: 'createdAt',
-    productionPhase: 'REPRODUCTION',
+  const { data: animalStatistics } = GetAnimalStatisticsAPI({
     animalTypeId: animalTypeId,
   });
-
-  const { data: dataFemaleReproductionSold } = GetAnimalsAPI({
-    take: 10,
-    sort: 'asc',
-    gender: 'FEMALE',
-    status: 'SOLD',
-    sortBy: 'createdAt',
-    productionPhase: 'REPRODUCTION',
-    animalTypeId: animalTypeId,
-  });
-
-  const { data: dataMaleReproduction } = GetAnimalsAPI({
-    take: 10,
-    sort: 'asc',
-    gender: 'MALE',
-    status: 'ACTIVE',
-    sortBy: 'createdAt',
-    productionPhase: 'REPRODUCTION',
-    animalTypeId: animalTypeId,
-  });
-
-  const { data: dataMaleReproductionSold } = GetAnimalsAPI({
-    take: 10,
-    sort: 'asc',
-    gender: 'MALE',
-    status: 'SOLD',
-    sortBy: 'createdAt',
-    productionPhase: 'REPRODUCTION',
-    animalTypeId: animalTypeId,
-  });
-
-  const { data: dataFemaleGrowth } = GetAnimalsAPI({
-    take: 10,
-    sort: 'asc',
-    gender: 'FEMALE',
-    status: 'ACTIVE',
-    sortBy: 'createdAt',
-    productionPhase: 'GROWTH',
-    animalTypeId: animalTypeId,
-  });
-
-  const { data: dataMaleGrowth } = GetAnimalsAPI({
-    take: 10,
-    sort: 'asc',
-    gender: 'MALE',
-    status: 'ACTIVE',
-    sortBy: 'createdAt',
-    productionPhase: 'GROWTH',
-    animalTypeId: animalTypeId,
-  });
-
-  const { data: dataFemaleGestation } = GetAnimalsAPI({
-    take: 10,
-    sort: 'asc',
-    gender: 'FEMALE',
-    status: 'ACTIVE',
-    sortBy: 'createdAt',
-    productionPhase: 'GESTATION',
-    animalTypeId: animalTypeId,
-  });
-
-  const { data: dataFemaleGestationSold } = GetAnimalsAPI({
-    take: 10,
-    sort: 'asc',
-    gender: 'FEMALE',
-    status: 'SOLD',
-    sortBy: 'createdAt',
-    productionPhase: 'GESTATION',
-    animalTypeId: animalTypeId,
-  });
-
-  const { data: dataFemaleLactation } = GetAnimalsAPI({
-    take: 10,
-    sort: 'asc',
-    gender: 'FEMALE',
-    status: 'ACTIVE',
-    sortBy: 'createdAt',
-    productionPhase: 'LACTATION',
-    animalTypeId: animalTypeId,
-  });
-
-  const { data: dataAnimalFattening } = GetAnimalsAPI({
-    take: 10,
-    sort: 'asc',
-    status: 'ACTIVE',
-    sortBy: 'createdAt',
-    productionPhase: 'FATTENING',
-    animalTypeId: animalTypeId,
-  });
-
-  const { data: dataAnimalFatteningSold } = GetAnimalsAPI({
-    take: 10,
-    sort: 'asc',
-    status: 'SOLD',
-    sortBy: 'createdAt',
-    productionPhase: 'FATTENING',
-    animalTypeId: animalTypeId,
-  });
-
-  const { data: dataAnimalFatteningDead } = GetAnimalsAPI({
-    take: 10,
-    sort: 'asc',
-    status: 'DEAD',
-    sortBy: 'createdAt',
-    productionPhase: 'FATTENING',
-    animalTypeId: animalTypeId,
-  });
-
-  const { data: dataAnimalGrowthSold } = GetAnimalsAPI({
-    take: 10,
-    sort: 'asc',
-    status: 'SOLD',
-    sortBy: 'createdAt',
-    productionPhase: 'GROWTH',
-    animalTypeId: animalTypeId,
-  });
-
-  const { data: dataAnimalGrowthDead } = GetAnimalsAPI({
-    take: 10,
-    sort: 'asc',
-    status: 'DEAD',
-    sortBy: 'createdAt',
-    productionPhase: 'GROWTH',
-    animalTypeId: animalTypeId,
-  });
-
-  const { data: dataAnimalSold } = GetAnimalsAPI({
-    take: 10,
-    sort: 'asc',
-    status: 'SOLD',
-    sortBy: 'createdAt',
-    animalTypeId: animalTypeId,
-  });
-
-  const { data: dataFarrowings } = GetFarrowingsAPI({
-    take: 10,
-    sort: 'desc',
-    sortBy: 'createdAt',
-    animalTypeId: animalTypeId,
-  });
-
-  const { data: dataWeanings } = GetWeaningsAPI({
-    take: 10,
-    sort: 'desc',
-    sortBy: 'createdAt',
-    animalTypeId: animalTypeId,
-  });
-
-  const initialValue = 0;
-  const sumFarrowings = dataFarrowings?.pages[0]?.data?.value.reduce(
-    (accumulator: any, currentValue: any) => accumulator + currentValue.litter,
-    initialValue,
-  );
-
-  const sumWeanings = dataWeanings?.pages[0]?.data?.value.reduce(
-    (accumulator: any, currentValue: any) => accumulator + currentValue.litter,
-    initialValue,
-  );
 
   return (
     <>
@@ -185,42 +19,11 @@ const TabAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
             className=" dark:border-gray-800"
           >
             <CardHeader className="pb-2">
-              <CardDescription>Porcelets femèles </CardDescription>
+              <CardDescription>
+                {t.formatMessage({ id: 'ANIMAL.FEMALE.REPRODUCTION' })}
+              </CardDescription>
               <CardTitle className="text-4xl">
-                {dataFemaleGrowth?.pages[0]?.data?.total}
-              </CardTitle>
-            </CardHeader>
-          </Card>
-          <Card
-            x-chunk="dashboard-05-chunk-2"
-            className=" dark:border-gray-800"
-          >
-            <CardHeader className="pb-2">
-              <CardDescription>Porcelets male</CardDescription>
-              <CardTitle className="text-4xl">
-                {dataMaleGrowth?.pages[0]?.data?.total}
-              </CardTitle>
-            </CardHeader>
-          </Card>
-          <Card
-            x-chunk="dashboard-05-chunk-2"
-            className=" dark:border-gray-800"
-          >
-            <CardHeader className="pb-2">
-              <CardDescription>Animaux en engraissement</CardDescription>
-              <CardTitle className="text-4xl">
-                {dataAnimalFattening?.pages[0]?.data?.total}
-              </CardTitle>
-            </CardHeader>
-          </Card>
-          <Card
-            x-chunk="dashboard-05-chunk-1"
-            className=" dark:border-gray-800"
-          >
-            <CardHeader className="pb-2">
-              <CardDescription>Femèles en reproduction</CardDescription>
-              <CardTitle className="text-4xl">
-                {dataFemaleReproduction?.pages[0]?.data?.total}
+                {animalStatistics?.sumFemaleReproduction}
               </CardTitle>
             </CardHeader>
           </Card>
@@ -233,7 +36,7 @@ const TabAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                 {t.formatMessage({ id: 'ANIMALTYPE.MALE.REPRODUCTION' })}
               </CardDescription>
               <CardTitle className="text-4xl">
-                {dataMaleReproduction?.pages[0]?.data?.total}
+                {animalStatistics?.sumMaleReproduction}
               </CardTitle>
             </CardHeader>
           </Card>
@@ -242,9 +45,11 @@ const TabAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
             className=" dark:border-gray-800"
           >
             <CardHeader className="pb-2">
-              <CardDescription>Femèles gestantes </CardDescription>
+              <CardDescription>
+                {t.formatMessage({ id: 'ANIMAL.FEMALE.GESTATION' })}
+              </CardDescription>
               <CardTitle className="text-4xl">
-                {dataFemaleGestation?.pages[0]?.data?.total}
+                {animalStatistics?.sumFemaleGestation}
               </CardTitle>
             </CardHeader>
           </Card>
@@ -253,9 +58,11 @@ const TabAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
             className=" dark:border-gray-800"
           >
             <CardHeader className="pb-2">
-              <CardDescription>Femèles allaitantes</CardDescription>
+              <CardDescription>
+                {t.formatMessage({ id: 'ANIMAL.FEMALE.LACTATION' })}
+              </CardDescription>
               <CardTitle className="text-4xl">
-                {dataFemaleLactation?.pages[0]?.data?.total}
+                {animalStatistics?.sumFemaleLactation}
               </CardTitle>
             </CardHeader>
           </Card>
@@ -264,27 +71,11 @@ const TabAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
             className=" dark:border-gray-800"
           >
             <CardHeader className="pb-2">
-              <CardDescription>Porcelets nés</CardDescription>
-              <CardTitle className="text-4xl">{sumFarrowings}</CardTitle>
-            </CardHeader>
-          </Card>
-          <Card
-            x-chunk="dashboard-05-chunk-1"
-            className=" dark:border-gray-800"
-          >
-            <CardHeader className="pb-2">
-              <CardDescription>Porcelets sevrès</CardDescription>
-              <CardTitle className="text-4xl">{sumWeanings}</CardTitle>
-            </CardHeader>
-          </Card>
-          <Card
-            x-chunk="dashboard-05-chunk-1"
-            className=" dark:border-gray-800"
-          >
-            <CardHeader className="pb-2">
-              <CardDescription>Porcelets vendu</CardDescription>
+              <CardDescription>
+                {t.formatMessage({ id: 'SUM.FARROWINGS' })}
+              </CardDescription>
               <CardTitle className="text-4xl">
-                {dataAnimalGrowthSold?.pages[0]?.data?.total}
+                {animalStatistics?.sumFarrowings}
               </CardTitle>
             </CardHeader>
           </Card>
@@ -293,9 +84,11 @@ const TabAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
             className=" dark:border-gray-800"
           >
             <CardHeader className="pb-2">
-              <CardDescription>Femèles gestantes vendu</CardDescription>
+              <CardDescription>
+                {t.formatMessage({ id: 'SUM.WEANINGS' })}
+              </CardDescription>
               <CardTitle className="text-4xl">
-                {dataFemaleGestationSold?.pages[0]?.data?.total}
+                {animalStatistics?.sumWeanings}
               </CardTitle>
             </CardHeader>
           </Card>
@@ -304,9 +97,24 @@ const TabAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
             className=" dark:border-gray-800"
           >
             <CardHeader className="pb-2">
-              <CardDescription>Animaux engraissés vendu</CardDescription>
+              <CardDescription>
+                {t.formatMessage({ id: 'ANIMAL.FEMALE.GROWTH' })}
+              </CardDescription>
               <CardTitle className="text-4xl">
-                {dataAnimalFatteningSold?.pages[0]?.data?.total}
+                {animalStatistics?.sumFemaleGrowth}
+              </CardTitle>
+            </CardHeader>
+          </Card>
+          <Card
+            x-chunk="dashboard-05-chunk-2"
+            className=" dark:border-gray-800"
+          >
+            <CardHeader className="pb-2">
+              <CardDescription>
+                {t.formatMessage({ id: 'ANIMAL.MALE.GROWTH' })}
+              </CardDescription>
+              <CardTitle className="text-4xl">
+                {animalStatistics?.sumMaleGrowth}
               </CardTitle>
             </CardHeader>
           </Card>
@@ -315,9 +123,11 @@ const TabAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
             className=" dark:border-gray-800"
           >
             <CardHeader className="pb-2">
-              <CardDescription>Males reproducteurs vendu</CardDescription>
+              <CardDescription>
+                {t.formatMessage({ id: 'ANIMAL.GROWTH.SALE' })}
+              </CardDescription>
               <CardTitle className="text-4xl">
-                {dataMaleReproductionSold?.pages[0]?.data?.total}
+                {animalStatistics?.sumAnimalGrowthSale}
               </CardTitle>
             </CardHeader>
           </Card>
@@ -326,9 +136,24 @@ const TabAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
             className=" dark:border-gray-800"
           >
             <CardHeader className="pb-2">
-              <CardDescription>Femèles reproducteurs vendu</CardDescription>
+              <CardDescription>
+                {t.formatMessage({ id: 'ANIMAL.GROWTH.DEATH' })}
+              </CardDescription>
               <CardTitle className="text-4xl">
-                {dataFemaleReproductionSold?.pages[0]?.data?.total}
+                {animalStatistics?.sumAnimalGrowthDead}
+              </CardTitle>
+            </CardHeader>
+          </Card>
+          <Card
+            x-chunk="dashboard-05-chunk-2"
+            className=" dark:border-gray-800"
+          >
+            <CardHeader className="pb-2">
+              <CardDescription>
+                {t.formatMessage({ id: 'ANIMAL.FATTENING' })}
+              </CardDescription>
+              <CardTitle className="text-4xl">
+                {animalStatistics?.sumAnimalFattening}
               </CardTitle>
             </CardHeader>
           </Card>
@@ -337,9 +162,11 @@ const TabAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
             className=" dark:border-gray-800"
           >
             <CardHeader className="pb-2">
-              <CardDescription>Porcelets morts</CardDescription>
+              <CardDescription>
+                {t.formatMessage({ id: 'ANIMAL.FATTENING.SOLD' })}
+              </CardDescription>
               <CardTitle className="text-4xl">
-                {dataAnimalGrowthDead?.pages[0]?.data?.total}
+                {animalStatistics?.sumAnimalFatteningSold}
               </CardTitle>
             </CardHeader>
           </Card>
@@ -348,9 +175,50 @@ const TabAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
             className=" dark:border-gray-800"
           >
             <CardHeader className="pb-2">
-              <CardDescription>Animaux engraissés morts</CardDescription>
+              <CardDescription>
+                {t.formatMessage({ id: 'ANIMAL.FATTENING.DEAD' })}
+              </CardDescription>
               <CardTitle className="text-4xl">
-                {dataAnimalFatteningDead?.pages[0]?.data?.total}
+                {animalStatistics?.sumAnimalFatteningDead}
+              </CardTitle>
+            </CardHeader>
+          </Card>
+          <Card
+            x-chunk="dashboard-05-chunk-1"
+            className=" dark:border-gray-800"
+          >
+            <CardHeader className="pb-2">
+              <CardDescription>
+                {t.formatMessage({ id: 'FEMALE.GESTATION.SOLD' })}
+              </CardDescription>
+              <CardTitle className="text-4xl">
+                {animalStatistics?.sumFemaleGestationSold}
+              </CardTitle>
+            </CardHeader>
+          </Card>
+          <Card
+            x-chunk="dashboard-05-chunk-1"
+            className=" dark:border-gray-800"
+          >
+            <CardHeader className="pb-2">
+              <CardDescription>
+                {t.formatMessage({ id: 'FEMALE.REPRODUCTION.SOLD' })}
+              </CardDescription>
+              <CardTitle className="text-4xl">
+                {animalStatistics?.sumFemaleReproductionSold}
+              </CardTitle>
+            </CardHeader>
+          </Card>
+          <Card
+            x-chunk="dashboard-05-chunk-1"
+            className=" dark:border-gray-800"
+          >
+            <CardHeader className="pb-2">
+              <CardDescription>
+                {t.formatMessage({ id: 'MALE.REPRODUCTION.SOLD' })}
+              </CardDescription>
+              <CardTitle className="text-4xl">
+                {animalStatistics?.sumMaleReproductionSold}
               </CardTitle>
             </CardHeader>
           </Card>

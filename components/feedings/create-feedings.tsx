@@ -22,6 +22,7 @@ import { useEffect } from 'react';
 import { SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
 import { SelectInput, TextInput } from '../ui-setting/shadcn';
+import { Label } from '../ui/label';
 
 const schema = yup.object({
   animals: yup.array().optional(),
@@ -144,7 +145,7 @@ const CreateFeedings = ({
                   </div>
                 )}
 
-                <div className="mb-4 flex items-center space-x-4">
+                <div className="mb-2 flex items-center space-x-4">
                   <Select>
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select animals" />
@@ -198,12 +199,12 @@ const CreateFeedings = ({
                     control={control}
                     type="number"
                     name="quantity"
-                    placeholder="Give a quantity"
+                    placeholder="Give quantity feed in (kg)"
                     errors={errors}
                   />
                 </div>
-
                 <div className="mb-4">
+                  <Label>Type aliment</Label>
                   <SelectInput
                     firstOptionName="Choose a feed type"
                     control={control}

@@ -2,18 +2,14 @@
 import { GetIsolationsAPI } from '@/api-site/isolations';
 import { useInputState } from '@/components/hooks';
 import { Button } from '@/components/ui/button';
-import {
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-} from '@/components/ui/card';
+import { CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import {
   Table,
   TableBody,
   TableHead,
   TableHeader,
 } from '@/components/ui/table';
+import { PaginationPage } from '@/utils';
 import { Eclipse, ListFilter } from 'lucide-react';
 import { useState } from 'react';
 import { SearchInput } from '../ui-setting';
@@ -39,16 +35,18 @@ import { ListIsolations } from './list-isolations';
 const TabIsolations = ({ animalTypeId }: { animalTypeId: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [periode, setPeriode] = useState('');
+  const [pageItem, setPageItem] = useState(1);
   const { t, search, handleSetSearch } = useInputState();
 
   const {
     isLoading: isLoadingIsolations,
     isError: isErrorIsolations,
     data: dataIsolations,
+    isPlaceholderData,
   } = GetIsolationsAPI({
     search,
     periode,
-    take: 10,
+    take: 1,
     sort: 'desc',
     sortBy: 'createdAt',
     animalTypeId: animalTypeId,
@@ -154,7 +152,7 @@ const TabIsolations = ({ animalTypeId }: { animalTypeId: string }) => {
               ) : (
                 dataIsolations?.pages
                   .flatMap((page: any) => page?.data?.value)
-                  .map((item, index) => (
+                  .map((item: any, index: any) => (
                     <>
                       <ListIsolations index={index} item={item} key={index} />
                     </>
@@ -162,12 +160,13 @@ const TabIsolations = ({ animalTypeId }: { animalTypeId: string }) => {
               )}
             </TableBody>
           </Table>
+          <PaginationPage
+            setPageItem={setPageItem}
+            data={dataIsolations?.pages[0].data}
+            pageItem={Number(pageItem)}
+            isPlaceholderData={isPlaceholderData}
+          />
         </CardContent>
-        <CardFooter>
-          <div className="text-xs text-muted-foreground">
-            Showing <strong>1-10</strong> of <strong>32</strong> products
-          </div>
-        </CardFooter>
       </main>
       <CreateOrUpdateIsolations
         isolation={animalTypeId}

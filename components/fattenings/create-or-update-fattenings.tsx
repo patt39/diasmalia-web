@@ -17,14 +17,20 @@ import {
   AlertDangerNotification,
   AlertSuccessNotification,
 } from '@/utils/alert-notification';
-import { XIcon } from 'lucide-react';
+import { FileQuestion, XIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '../ui/tooltip';
 
 const schema = yup.object({
-  //animals: yup.array().required(),
+  animals: yup.array().optional(),
   actualWeight: yup.number().optional(),
 });
 
@@ -141,10 +147,10 @@ const CreateOrUpdateFattenings = ({
                 )}
 
                 {!fattening?.id ? (
-                  <div className="mb-4 w-full mt-2">
+                  <div className="mb-4 items-center flex w-full">
                     <Select>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select animals" />
+                        <SelectValue placeholder="Select animals for fattening / animaux à engraisser" />
                       </SelectTrigger>
                       <SelectContent className="dark:border-gray-800">
                         <SelectGroup>
@@ -192,6 +198,20 @@ const CreateOrUpdateFattenings = ({
                         </SelectGroup>
                       </SelectContent>
                     </Select>
+                    <div>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <FileQuestion />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>
+                              {t.formatMessage({ id: 'CODE.ANIMALS.TOOLTIP' })}
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
                   </div>
                 ) : null}
 

@@ -1,38 +1,42 @@
 /* eslint-disable @next/next/no-img-element */
-import { DeleteOneIsolationAPI } from '@/api-site/isolations';
-import { ChangeLocationStatusAPI } from '@/api-site/locations';
+import {
+  ChangeLocationStatusAPI,
+  DeleteOneLocationAPI,
+} from '@/api-site/locations';
 import { useInputState } from '@/components/hooks';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { AlertDangerNotification, AlertSuccessNotification } from '@/utils';
-import { MoreHorizontal } from 'lucide-react';
+import {
+  BadgeCheck,
+  MoreHorizontal,
+  PencilIcon,
+  TrashIcon,
+} from 'lucide-react';
 import { useState } from 'react';
 import { ActionModalDialog } from '../ui-setting/shadcn';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from '../ui/alert-dialog';
+import { ActionModalConfirmeDialog } from '../ui-setting/shadcn/action-modal-confirme-dialog';
 import { Badge } from '../ui/badge';
-import { CreateOrUpdateLocations } from './create-or-update-locations';
-import { ViewIsolation } from './view-isolation';
+import { UpdateLocations } from './update-locations';
 
 const ListLocations = ({ item, index }: { item: any; index: number }) => {
-  const { t, isOpen, loading, setIsOpen, setLoading } = useInputState();
+  const {
+    t,
+    isOpen,
+    loading,
+    setIsOpen,
+    setLoading,
+    isConfirmOpen,
+    setIsConfirmOpen,
+  } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
-  const [isView, setIsView] = useState(false);
 
-  const { mutateAsync: deleteMutation } = DeleteOneIsolationAPI({
+  const { mutateAsync: deleteMutation } = DeleteOneLocationAPI({
     onSuccess: () => {},
     onError: (error?: any) => {},
   });
@@ -41,9 +45,9 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
     setLoading(true);
     setIsOpen(true);
     try {
-      await deleteMutation({ isolationId: item.id });
+      await deleteMutation({ locationId: item.id });
       AlertSuccessNotification({
-        text: 'Milking deleted successfully',
+        text: 'Location deleted successfully',
       });
       setLoading(false);
       setIsOpen(false);
@@ -63,17 +67,17 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
 
   const changeItem = async (item: any) => {
     setLoading(true);
-    setIsOpen(true);
+    setIsConfirmOpen(true);
     try {
       await saveMutation({ locationId: item?.id });
       AlertSuccessNotification({
         text: 'Status changed successfully',
       });
       setLoading(false);
-      setIsOpen(false);
+      setIsConfirmOpen(false);
     } catch (error: any) {
       setLoading(false);
-      setIsOpen(true);
+      setIsConfirmOpen(true);
       AlertDangerNotification({
         text: `${error.response.data.message}`,
       });
@@ -86,8 +90,8 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
         key={index}
         className="relative overflow-hidden transition-allduration-200 bg-gray-100 rounded-xl hover:bg-gray-200"
       >
-        <div className="p-8 lg:px-10 lg:py-8">
-          <div className="ml-36">
+        <div className="lg:px-10 lg:py-8">
+          <div className="px-25 mb-2">
             {item?.status ? (
               <Badge variant="secondary">
                 {t.formatMessage({ id: 'TABANIMAL.INSERVICE' })}
@@ -103,19 +107,28 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
           <div className="flex items-center justify-start space-x-4">
             <div>
               <h2 className="text-sm font-medium text-gray-500 h-4">
-                sfce: {item.squareMeter}m
+                {['Pisciculture'].includes(item.animalType?.name) ? (
+                  <h2 className="mt-2 text-sm font-medium text-gray-500 h-4">
+                    Surface: {item.squareMeter}m<sup>3</sup>
+                  </h2>
+                ) : (
+                  <h2 className="mt-2 text-sm font-medium text-gray-500 h-4">
+                    Surface: {item.squareMeter}m<sup>2</sup>
+                  </h2>
+                )}
               </h2>
               <h2 className="mt-2 text-sm font-medium text-gray-500 h-4">
-                mangers: {item.manger}
+                {t.formatMessage({ id: 'LOCATION.MANGERS' })}: {item.manger}
               </h2>
               <h2 className="mt-2 text-sm font-medium text-gray-500 h-4">
-                throughs: {item.through}
+                {t.formatMessage({ id: 'LOCATION.THROUGHS' })}: {item.through}
               </h2>
               {['Piggery', 'Bovines', 'Rabbits', 'Goats'].includes(
                 item.animalType?.name,
               ) ? (
                 <h2 className="mt-2 text-sm font-medium text-gray-500 h-4">
-                  animals: {item._count.animals}
+                  {t.formatMessage({ id: 'LOCATION.ANIMALS' })}:{' '}
+                  {item._count.animals}
                 </h2>
               ) : (
                 ''
@@ -127,7 +140,7 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
                 {(item?.code).toUpperCase()}
               </h3>
               <p className=" text-sm font-medium text-gray-500">
-                {item?.productionPhase}
+                {item?.productionPhase || 'N/A'}
               </p>
             </div>
           </div>
@@ -147,49 +160,24 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="dark:border-gray-800">
-                <Button variant="ghost">
-                  {t.formatMessage({
-                    id: 'TABANIMAL.EDIT',
-                  })}
-                </Button>
-                <Button variant="ghost" onClick={() => changeItem(item)}>
-                  {t.formatMessage({
-                    id: 'TABANIMAL.CHANGESTATUS',
-                  })}
-                </Button>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button variant="ghost">
-                      {t.formatMessage({
-                        id: 'TABANIMAL.DELETE',
-                      })}
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent className="dark:border-gray-800">
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>
-                        {t.formatMessage({ id: 'ALERT.TITLE' })}
-                      </AlertDialogTitle>
-                      <AlertDialogDescription>
-                        {t.formatMessage({
-                          id: 'ALERT.DESCRIPTION',
-                        })}
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>
-                        {t.formatMessage({
-                          id: 'ALERT.CANCEL',
-                        })}
-                      </AlertDialogCancel>
-                      <AlertDialogAction onClick={() => deleteItem(item)}>
-                        {t.formatMessage({
-                          id: 'ALERT.CONTINUE',
-                        })}
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                <DropdownMenuItem onClick={() => setIsEdit(true)}>
+                  <PencilIcon className="size-4 text-gray-600 hover:text-indigo-600" />
+                  <span className="ml-2 cursor-pointer hover:text-indigo-600">
+                    {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
+                  </span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setIsConfirmOpen(true)}>
+                  <BadgeCheck className="size-4 text-gray-600 hover:text-red-400 cursor-pointer" />
+                  <span className="ml-2 cursor-pointer hover:text-red-400">
+                    {t.formatMessage({ id: 'CHANGE.STATUS' })}
+                  </span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setIsOpen(true)}>
+                  <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
+                  <span className="ml-2 cursor-pointer hover:text-red-600">
+                    {t.formatMessage({ id: 'TABANIMAL.DELETE' })}
+                  </span>
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -201,15 +189,16 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
         setIsOpen={setIsOpen}
         onClick={() => deleteItem(item)}
       />
-      <CreateOrUpdateLocations
+      <ActionModalConfirmeDialog
+        loading={loading}
+        isConfirmOpen={isConfirmOpen}
+        setIsConfirmOpen={setIsConfirmOpen}
+        onClick={() => changeItem(item)}
+      />
+      <UpdateLocations
         location={item}
         showModal={isEdit}
         setShowModal={setIsEdit}
-      />
-      <ViewIsolation
-        isolation={item}
-        showModal={isView}
-        setShowModal={setIsView}
       />
     </>
   );

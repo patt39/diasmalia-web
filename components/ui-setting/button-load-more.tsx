@@ -1,3 +1,4 @@
+import { ChevronDownIcon } from 'lucide-react';
 import { SizeButton, VariantButton } from '../ui/button';
 import { ButtonInput } from './index';
 
@@ -11,26 +12,26 @@ interface Props {
 }
 
 export const ButtonLoadMore = ({
-  children = 'Load More',
-  variant = 'default',
+  // children = 'Load More',
+  variant = 'outline',
   onClick,
   ref,
-  size = 'lg',
+  size = 'icon',
   isFetchingNextPage,
 }: Props) => {
   return (
     <>
-      <div className="my-2 sm:mt-0">
+      <div className="my-2 sm:mt-0 rounded-sm">
         <ButtonInput
           type="button"
           size={size}
           variant={variant}
-          className="w-[200px]"
+          className=""
           ref={ref}
           loading={isFetchingNextPage ? true : false}
           onClick={onClick}
         >
-          {children}
+          <ChevronDownIcon className="h-4 w-4" />
         </ButtonInput>
       </div>
     </>

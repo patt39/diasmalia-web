@@ -7,6 +7,7 @@ import {
   AlertDangerNotification,
   AlertSuccessNotification,
 } from '@/utils/alert-notification';
+import { Label } from '@radix-ui/react-label';
 import { XIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { SubmitHandler } from 'react-hook-form';
@@ -119,7 +120,12 @@ const CheckPregnancy = ({
                     </div>
                   </div>
                 )}
-                <div className="mb-4 flex items-center space-x-4 cursor-pointer">
+
+                <div className="mb-4 flex items-center space-x-2">
+                  <Label>
+                    Methode:
+                    <span className="text-red-600">*</span>
+                  </Label>
                   <SelectInput
                     firstOptionName="Choose a size"
                     control={control}
@@ -136,6 +142,10 @@ const CheckPregnancy = ({
                       { id: 1, name: 'PALPATION' },
                     ]}
                   />
+                  <Label>
+                    Resultat:
+                    <span className="text-red-600">*</span>
+                  </Label>
                   <SelectInput
                     firstOptionName="Choose a size"
                     control={control}
@@ -149,11 +159,14 @@ const CheckPregnancy = ({
                     ]}
                   />
                 </div>
-                <div className="mb-4">
+                <div>
+                  <Label>
+                    Donnez la date de mise bas
+                    <span className="text-red-600">*</span>
+                  </Label>
                   <DateInput
                     control={control}
                     errors={errors}
-                    label="Farrowing date"
                     placeholder="Pick a date"
                     name="farrowingDate"
                   />

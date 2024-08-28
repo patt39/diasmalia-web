@@ -3,7 +3,6 @@ import { useReactHookForm } from '@/components/hooks';
 import { TextAreaInput } from '@/components/ui-setting/shadcn';
 import { XIcon } from 'lucide-react';
 import * as yup from 'yup';
-import { Input } from '../ui/input';
 
 const schema = yup.object({});
 
@@ -38,9 +37,6 @@ const ViewDeath = ({
             </button>
             <form className="mt-4">
               <div className="flex-auto justify-center p-2">
-                <div className="mb-4 flex items-center space-x-4">
-                  <Input disabled type="text" value={GetOneDeath.animal.code} />
-                </div>
                 <div className="mb-4">
                   <TextAreaInput
                     control={control}

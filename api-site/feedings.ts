@@ -107,12 +107,21 @@ export const GetFeedingsAPI = (
     take: number;
     sortBy: string;
     periode?: string;
+    pageItem?: number;
     animalTypeId?: string;
     organizationId?: string;
   } & PaginationRequest,
 ) => {
-  const { take, sort, search, periode, animalTypeId, sortBy, organizationId } =
-    payload;
+  const {
+    take,
+    sort,
+    search,
+    pageItem,
+    periode,
+    animalTypeId,
+    sortBy,
+    organizationId,
+  } = payload;
   return useInfiniteQuery({
     queryKey: ['feedings', 'infinite', { ...payload }],
     getNextPageParam: (lastPage: any) => lastPage.data.next_page,

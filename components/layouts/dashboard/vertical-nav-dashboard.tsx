@@ -5,7 +5,6 @@ import {
   ExternalLinkIcon,
   Fence,
   Footprints,
-  HeartHandshakeIcon,
   HomeIcon,
   ImageIcon,
   MailQuestion,
@@ -62,11 +61,6 @@ const VerticalNavDashboard = ({ user }: Props) => {
       icon: <Fence className={classIcon} />,
     },
     {
-      title: `${t.formatMessage({ id: 'MENU.SALES' })}`,
-      href: '/sales',
-      icon: <HeartHandshakeIcon className={classIcon} />,
-    },
-    {
       title: `${t.formatMessage({ id: 'MENU.TASKS' })}`,
       href: '/tasks',
       icon: <Calendar className={classIcon} />,
@@ -107,7 +101,6 @@ const VerticalNavDashboard = ({ user }: Props) => {
     },
   ]);
 
-  const bgColor = `bg-${user?.profile?.color}-600 text-white`;
   return (
     <>
       <div className="flex h-full flex-1 flex-col justify-between overflow-x-scroll px-4">
@@ -123,7 +116,7 @@ const VerticalNavDashboard = ({ user }: Props) => {
                   className={cn(
                     `group flex items-center rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 ${
                       isActive
-                        ? bgColor
+                        ? `bg-blue-600 text-white`
                         : 'text-gray-900 hover:bg-gray-200 dark:text-white dark:hover:bg-gray-700'
                     }`,
                   )}
@@ -152,7 +145,7 @@ const VerticalNavDashboard = ({ user }: Props) => {
                     className={cn(
                       `group flex items-center rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 ${
                         isActive
-                          ? bgColor
+                          ? `bg-blue-600 text-white`
                           : 'text-gray-900 hover:bg-gray-200 dark:text-white dark:hover:bg-gray-700'
                       }`,
                     )}
@@ -189,7 +182,7 @@ const VerticalNavDashboard = ({ user }: Props) => {
                     className={cn(
                       `group flex items-center rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 ${
                         isActive
-                          ? bgColor
+                          ? `bg-blue-600 text-white`
                           : 'text-gray-900 hover:bg-gray-200 dark:text-white dark:hover:bg-gray-700'
                       }`,
                     )}
@@ -218,7 +211,7 @@ const VerticalNavDashboard = ({ user }: Props) => {
                     className={cn(
                       `group flex items-center rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 ${
                         isActive
-                          ? bgColor
+                          ? `bg-blue-600 text-white`
                           : 'text-gray-900 hover:bg-gray-200 dark:text-white dark:hover:bg-gray-700'
                       }`,
                     )}

@@ -19,6 +19,7 @@ import { SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
 import { LoadingFile } from '../ui-setting/ant';
 import { ErrorFile } from '../ui-setting/ant/error-file';
+import { Label } from '../ui/label';
 import {
   Select,
   SelectContent,
@@ -158,11 +159,15 @@ const CreateOrUpdatetreatments = ({
                 )}
 
                 {!treatment.id ? (
-                  <div className="mb-4 flex items-center space-x-4 w-full">
+                  <div className="flex items-center space-x-4 w-full">
                     <div className="mb-4 w-full mt-2">
+                      <Label className="pt-3">
+                        Sélectionez les animaux a soigner:
+                        <span className="text-red-600">*</span>
+                      </Label>
                       <Select>
                         <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select animals" />
+                          <SelectValue placeholder="Select animals for treatment" />
                         </SelectTrigger>
                         <SelectContent className="dark:border-gray-800">
                           <SelectGroup>
@@ -196,7 +201,6 @@ const CreateOrUpdatetreatments = ({
                                             value={item?.code}
                                           />
                                         </div>
-
                                         <div>
                                           <strong className="font-medium text-gray-900 dark:text-white">
                                             {item?.code}
@@ -214,16 +218,28 @@ const CreateOrUpdatetreatments = ({
                   </div>
                 ) : null}
 
-                <div className="mb-4">
+                <div className="mb-4 flex items-center space-x-1">
+                  <Label>Treatement:</Label>
                   <TextInput
                     control={control}
                     type="text"
                     name="name"
-                    placeholder="Give a name"
+                    placeholder="Give treatment name"
                     errors={errors}
                   />
                 </div>
-                <div className="mb-4">
+                <div className="mb-4 flex items-center space-x-1">
+                  <Label>Diagnostic:</Label>
+                  <TextInput
+                    control={control}
+                    type="text"
+                    name="diagnosis"
+                    placeholder="Give a diagnosis"
+                    errors={errors}
+                  />
+                </div>
+                <div className="mb-4 flex items-center space-x-1">
+                  <Label>Medication:</Label>
                   <SelectInput
                     firstOptionName="Give a medication"
                     control={control}
@@ -249,16 +265,8 @@ const CreateOrUpdatetreatments = ({
                     ]}
                   />
                 </div>
-                <div className="mb-4">
-                  <TextInput
-                    control={control}
-                    type="text"
-                    name="diagnosis"
-                    placeholder="Give a diagnosis"
-                    errors={errors}
-                  />
-                </div>
-                <div className="mb-4">
+                <div className="mb-4 flex items-center space-x-2">
+                  <Label>Dose:</Label>
                   <TextInput
                     control={control}
                     type="number"
@@ -266,8 +274,7 @@ const CreateOrUpdatetreatments = ({
                     placeholder="Give a dose"
                     errors={errors}
                   />
-                </div>
-                <div className="mb-4">
+                  <Label>Voie:</Label>
                   <SelectInput
                     firstOptionName="Give a method"
                     control={control}

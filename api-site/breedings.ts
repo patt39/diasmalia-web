@@ -88,7 +88,6 @@ export const CreateOneCheckAPI = ({
     mutationKey: queryKey,
     mutationFn: async (payload: any & { breedingId: string }) => {
       const { breedingId } = payload;
-      console.log('payload ===>', payload);
       return await makeApiCall({
         action: 'createOneCheck',
         body: { ...payload },
@@ -165,6 +164,8 @@ export const GetBreedingsAPI = (
     search?: string;
     take?: number;
     periode?: string;
+    sort?: string;
+    sortBy?: string;
     animalTypeId?: string;
     organizationId?: string;
   } & PaginationRequest,

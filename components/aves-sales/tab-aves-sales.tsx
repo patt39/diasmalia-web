@@ -3,7 +3,7 @@ import { useInputState } from '@/components/hooks';
 import { exportSalesAPI, GetSalesAPI } from '@/api-site/sales';
 import { SearchInput } from '@/components/ui-setting';
 import { Button } from '@/components/ui/button';
-import { CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import { CardContent, CardHeader } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -11,6 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { PaginationPage } from '@/utils';
 import { File, HeartHandshakeIcon, ListFilter } from 'lucide-react';
 import { useState } from 'react';
 import { LoadingFile } from '../ui-setting/ant';
@@ -35,15 +36,18 @@ import { ListAvesSales } from './list-aves-sales';
 const TabAvesSales = ({ animalTypeId }: { animalTypeId: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [periode, setPeriode] = useState('');
+  const [pageItem, setPageItem] = useState(1);
   const { t, search, handleSetSearch } = useInputState();
 
   const {
     isLoading: isLoadingSales,
     isError: isErrorSales,
     data: dataSales,
+    isPlaceholderData,
   } = GetSalesAPI({
     search,
     periode,
+    pageItem,
     take: 10,
     sort: 'desc',
     sortBy: 'createdAt',
@@ -76,14 +80,12 @@ const TabAvesSales = ({ animalTypeId }: { animalTypeId: string }) => {
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button variant="outline">
-                    {dataSales?.pages[0]?.data?.total}
-                  </Button>
+                  <Button variant="outline">{dataSales?.data?.total}</Button>
                 </TooltipTrigger>
                 <TooltipContent className="dark:border-gray-800">
                   <p>
                     {t.formatMessage({ id: 'ANIMALTYPE.TOOLTIP' })}{' '}
-                    {dataSales?.pages[0]?.data?.total || '0'}{' '}
+                    {dataSales?.data?.total || '0'}{' '}
                     {t.formatMessage({ id: 'MENU.SALES' })}
                   </p>
                 </TooltipContent>
@@ -179,25 +181,24 @@ const TabAvesSales = ({ animalTypeId }: { animalTypeId: string }) => {
                   title="404"
                   description="Error finding data please try again..."
                 />
-              ) : Number(dataSales?.pages[0]?.data?.total) <= 0 ? (
-                <ErrorFile description="Don't have treatments yet please add" />
+              ) : Number(dataSales?.data?.total) <= 0 ? (
+                <ErrorFile description="Don't have animals soled yet please add" />
               ) : (
-                dataSales?.pages
-                  .flatMap((page: any) => page?.data?.value)
-                  .map((item, index) => (
-                    <>
-                      <ListAvesSales item={item} index={index} key={index} />
-                    </>
-                  ))
+                dataSales?.data?.value.map((item: any, index: number) => (
+                  <>
+                    <ListAvesSales item={item} index={index} key={index} />
+                  </>
+                ))
               )}
             </TableBody>
           </Table>
+          <PaginationPage
+            setPageItem={setPageItem}
+            data={dataSales?.data}
+            pageItem={Number(pageItem)}
+            isPlaceholderData={isPlaceholderData}
+          />
         </CardContent>
-        <CardFooter>
-          <div className="text-xs text-muted-foreground">
-            Showing <strong>1-10</strong> of <strong>32</strong> products
-          </div>
-        </CardFooter>
       </main>
       <CreateOrUpdateAvesSales
         sale={animalTypeId}

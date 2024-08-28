@@ -1,11 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
+import { GetOneAnimalTypeAPI } from '@/api-site/animal-type';
 import { GetLocationsAPI } from '@/api-site/locations';
 import { useInputState } from '@/components/hooks';
 import { Button } from '@/components/ui/button';
 import { CardDescription, CardHeader } from '@/components/ui/card';
 import { Fence, ListFilter } from 'lucide-react';
-import { useState } from 'react';
-import { SearchInput } from '../ui-setting';
+import { useEffect, useState } from 'react';
+import { useInView } from 'react-intersection-observer';
+import { ButtonLoadMore, SearchInput } from '../ui-setting';
 import { LoadingFile } from '../ui-setting/ant';
 import { ErrorFile } from '../ui-setting/ant/error-file';
 import {
@@ -21,17 +23,25 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '../ui/tooltip';
-import { CreateOrUpdateLocations } from './create-or-update-locations';
+import { CreateLocations } from './create-locations';
 import { ListLocations } from './list-locations';
 
 const TabLocations = ({ animalTypeId }: { animalTypeId: string }) => {
+  const { ref, inView } = useInView();
   const [isOpen, setIsOpen] = useState(false);
-  const { t, search, handleSetSearch, setLoading, locale } = useInputState();
+  const { t, search, handleSetSearch } = useInputState();
+
+  const { data: animalType } = GetOneAnimalTypeAPI({
+    animalTypeId: animalTypeId,
+  });
 
   const {
     isLoading: isLoadingLocations,
     isError: isErrorLocations,
     data: datalocations,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
   } = GetLocationsAPI({
     search,
     take: 10,
@@ -39,6 +49,28 @@ const TabLocations = ({ animalTypeId }: { animalTypeId: string }) => {
     sortBy: 'createdAt',
     animalTypeId: animalTypeId,
   });
+
+  useEffect(() => {
+    let fetching = false;
+    if (inView) {
+      fetchNextPage();
+    }
+    const onScroll = async (event: any) => {
+      const { scrollHeight, scrollTop, clientHeight } =
+        event.target.scrollingElement;
+
+      if (!fetching && scrollHeight - scrollTop <= clientHeight * 1.5) {
+        fetching = true;
+        if (hasNextPage) await fetchNextPage();
+        fetching = false;
+      }
+    };
+
+    document.addEventListener('scroll', onScroll);
+    return () => {
+      document.removeEventListener('scroll', onScroll);
+    };
+  }, [fetchNextPage, hasNextPage, inView]);
 
   return (
     <>
@@ -69,37 +101,46 @@ const TabLocations = ({ animalTypeId }: { animalTypeId: string }) => {
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="h-8 gap-1">
-                  <ListFilter className="h-3.5 w-3.5" />
-                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    Filter
-                  </span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Filter by</DropdownMenuLabel>
-                <DropdownMenuCheckboxItem>
-                  {t.formatMessage({ id: 'PRODUCTIONTYPE.GROWTH' })}
-                </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem>
-                  {t.formatMessage({ id: 'ANIMALTYPE.FATTENING' })}
-                </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem>
-                  {t.formatMessage({
-                    id: 'PRODUCTIONTYPE.REPRODUCTION',
-                  })}
-                </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem>
-                  {t.formatMessage({ id: 'ANIMALTYPE.GESTATIONS' })}
-                </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem>
-                  {t.formatMessage({ id: 'PRODUCTIONTYPE.LACTATION' })}
-                </DropdownMenuCheckboxItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <Button size="sm" className="h-8 gap-1">
+            {['Caprins', 'Bovins', 'Porciculture', 'Cuniculture'].includes(
+              animalType?.name,
+            ) ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="h-8 gap-1">
+                    <ListFilter className="h-3.5 w-3.5" />
+                    <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                      Filter
+                    </span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="end"
+                  className="dark:border-gray-800"
+                >
+                  <DropdownMenuLabel>Filter by</DropdownMenuLabel>
+                  <DropdownMenuCheckboxItem>
+                    {t.formatMessage({ id: 'PRODUCTIONTYPE.GROWTH' })}
+                  </DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem>
+                    {t.formatMessage({ id: 'ANIMALTYPE.FATTENING' })}
+                  </DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem>
+                    {t.formatMessage({ id: 'ANIMALTYPE.GESTATIONS' })}
+                  </DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem>
+                    {t.formatMessage({ id: 'PRODUCTIONTYPE.LACTATION' })}
+                  </DropdownMenuCheckboxItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              ''
+            )}
+
+            <Button
+              size="sm"
+              className="h-8 gap-1"
+              onClick={() => setIsOpen(true)}
+            >
               <Fence className="h-3.5 w-3.5  hover:shadow-xxl" />
               <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                 {t.formatMessage({ id: 'ANIMALTYPE.LOCATION.CREATE' })}
@@ -134,10 +175,19 @@ const TabLocations = ({ animalTypeId }: { animalTypeId: string }) => {
                   </>
                 ))
             )}
+            {hasNextPage && (
+              <div className="mx-auto mt-4 justify-center text-center">
+                <ButtonLoadMore
+                  ref={ref}
+                  isFetchingNextPage={isFetchingNextPage}
+                  onClick={() => fetchNextPage()}
+                />
+              </div>
+            )}
           </div>
         </div>
       </section>
-      <CreateOrUpdateLocations
+      <CreateLocations
         location={animalTypeId}
         showModal={isOpen}
         setShowModal={setIsOpen}

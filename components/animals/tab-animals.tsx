@@ -1,20 +1,17 @@
 /* eslint-disable @next/next/no-img-element */
+import { GetOneAnimalTypeAPI } from '@/api-site/animal-type';
 import { GetAnimalsAPI } from '@/api-site/animals';
 import { useInputState } from '@/components/hooks';
-import { SearchInput } from '@/components/ui-setting';
+import { ButtonLoadMore, SearchInput } from '@/components/ui-setting';
 import { LoadingFile } from '@/components/ui-setting/ant';
 import { ErrorFile } from '@/components/ui-setting/ant/error-file';
 import { Button } from '@/components/ui/button';
 import { CardHeader } from '@/components/ui/card';
-import { Command, CommandList } from '@/components/ui/command';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
+  DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
@@ -24,22 +21,55 @@ import {
 } from '@/components/ui/tooltip';
 import { TooltipProvider } from '@radix-ui/react-tooltip';
 import { ListFilter, PawPrint } from 'lucide-react';
+import { useEffect } from 'react';
+import { useInView } from 'react-intersection-observer';
+import { CreateOrUpdateAnimals } from './create-or-update-animal';
 import { ListAnimals } from './list-animals';
 
 const TabAnimals = ({ animalTypeId }: { animalTypeId: string }) => {
-  const { t, search, handleSetSearch } = useInputState();
+  const { t, search, handleSetSearch, isOpen, setIsOpen } = useInputState();
+  const { ref, inView } = useInView();
+
+  const { data: animalType } = GetOneAnimalTypeAPI({
+    animalTypeId: animalTypeId,
+  });
 
   const {
     isLoading: isLoadingAnimals,
     isError: isErrorAnimals,
     data: dataAnimals,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
   } = GetAnimalsAPI({
     search,
     take: 10,
-    sort: 'asc',
+    sort: 'desc',
     sortBy: 'createdAt',
     animalTypeId: animalTypeId,
   });
+
+  useEffect(() => {
+    let fetching = false;
+    if (inView) {
+      fetchNextPage();
+    }
+    const onScroll = async (event: any) => {
+      const { scrollHeight, scrollTop, clientHeight } =
+        event.target.scrollingElement;
+
+      if (!fetching && scrollHeight - scrollTop <= clientHeight * 1.5) {
+        fetching = true;
+        if (hasNextPage) await fetchNextPage();
+        fetching = false;
+      }
+    };
+
+    document.addEventListener('scroll', onScroll);
+    return () => {
+      document.removeEventListener('scroll', onScroll);
+    };
+  }, [fetchNextPage, hasNextPage, inView]);
 
   return (
     <>
@@ -70,86 +100,50 @@ const TabAnimals = ({ animalTypeId }: { animalTypeId: string }) => {
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="h-8 gap-1">
-                  <ListFilter className="h-3.5 w-3.5" />
-                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    Filter
-                  </span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuSub>
-                  <DropdownMenuSubTrigger>
-                    {t.formatMessage({ id: 'ANIMALTYPE.GENDER' })}
-                  </DropdownMenuSubTrigger>
-                  <DropdownMenuSubContent className="p-0">
-                    <Command>
-                      <CommandList>
-                        <DropdownMenuCheckboxItem>
-                          {t.formatMessage({ id: 'ANIMALTYPE.MALE' })}
-                        </DropdownMenuCheckboxItem>
-                        <DropdownMenuCheckboxItem>
-                          {t.formatMessage({ id: 'ANIMALTYPE.FEMALE' })}
-                        </DropdownMenuCheckboxItem>
-                      </CommandList>
-                    </Command>
-                  </DropdownMenuSubContent>
-                </DropdownMenuSub>
-                <DropdownMenuSeparator />
-                <DropdownMenuSub>
-                  <DropdownMenuSubTrigger>
-                    {t.formatMessage({ id: 'TABWEANING.STATUS' })}
-                  </DropdownMenuSubTrigger>
-                  <DropdownMenuSubContent className="p-0">
-                    <Command>
-                      <CommandList>
-                        <DropdownMenuCheckboxItem>
-                          {t.formatMessage({ id: 'ANIMAL.ACTIVE' })}
-                        </DropdownMenuCheckboxItem>
-                        <DropdownMenuCheckboxItem>
-                          {t.formatMessage({ id: 'ANIMAL.SOLD' })}
-                        </DropdownMenuCheckboxItem>
-                        <DropdownMenuCheckboxItem>
-                          {t.formatMessage({ id: 'ANIMALTYPE.DEATHS' })}
-                        </DropdownMenuCheckboxItem>
-                      </CommandList>
-                    </Command>
-                  </DropdownMenuSubContent>
-                </DropdownMenuSub>
-                <DropdownMenuSeparator />
-                <DropdownMenuSub>
-                  <DropdownMenuSubTrigger>
-                    {t.formatMessage({ id: 'ANIMALTYPE.PRODUCTIONPHASE' })}
-                  </DropdownMenuSubTrigger>
-                  <DropdownMenuSubContent className="p-0">
-                    <Command>
-                      <CommandList>
-                        <DropdownMenuCheckboxItem>
-                          {t.formatMessage({ id: 'PRODUCTIONTYPE.GROWTH' })}
-                        </DropdownMenuCheckboxItem>
-                        <DropdownMenuCheckboxItem>
-                          {t.formatMessage({ id: 'ANIMALTYPE.FATTENING' })}
-                        </DropdownMenuCheckboxItem>
-                        <DropdownMenuCheckboxItem>
-                          {t.formatMessage({
-                            id: 'PRODUCTIONTYPE.REPRODUCTION',
-                          })}
-                        </DropdownMenuCheckboxItem>
-                        <DropdownMenuCheckboxItem>
-                          {t.formatMessage({ id: 'ANIMALTYPE.GESTATIONS' })}
-                        </DropdownMenuCheckboxItem>
-                        <DropdownMenuCheckboxItem>
-                          {t.formatMessage({ id: 'PRODUCTIONTYPE.LACTATION' })}
-                        </DropdownMenuCheckboxItem>
-                      </CommandList>
-                    </Command>
-                  </DropdownMenuSubContent>
-                </DropdownMenuSub>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <Button size="sm" className="h-8 gap-1">
+            {['Caprins', 'Bovins', 'Porciculture', 'Cuniculture'].includes(
+              animalType?.name,
+            ) ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="h-8 gap-1">
+                    <ListFilter className="h-3.5 w-3.5" />
+                    <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                      Filter
+                    </span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="end"
+                  className="dark:border-gray-800"
+                >
+                  <DropdownMenuLabel>Filter by</DropdownMenuLabel>
+                  <DropdownMenuCheckboxItem>
+                    {t.formatMessage({ id: 'PRODUCTIONTYPE.GROWTH' })}
+                  </DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem>
+                    {t.formatMessage({ id: 'ANIMALTYPE.FATTENING' })}
+                  </DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem>
+                    {t.formatMessage({
+                      id: 'PRODUCTIONTYPE.REPRODUCTION',
+                    })}
+                  </DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem>
+                    {t.formatMessage({ id: 'ANIMALTYPE.GESTATIONS' })}
+                  </DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem>
+                    {t.formatMessage({ id: 'PRODUCTIONTYPE.LACTATION' })}
+                  </DropdownMenuCheckboxItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              ''
+            )}
+            <Button
+              size="sm"
+              className="h-8 gap-1"
+              onClick={() => setIsOpen(true)}
+            >
               <PawPrint className="h-3.5 w-3.5  hover:shadow-xxl" />
               <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                 {t.formatMessage({ id: 'ANIMALTYPE.ANIMALS.CREATE' })}
@@ -179,9 +173,23 @@ const TabAnimals = ({ animalTypeId }: { animalTypeId: string }) => {
                   </>
                 ))
             )}
+            {hasNextPage && (
+              <div className="mx-auto mt-4 justify-center text-center">
+                <ButtonLoadMore
+                  ref={ref}
+                  isFetchingNextPage={isFetchingNextPage}
+                  onClick={() => fetchNextPage()}
+                />
+              </div>
+            )}
           </div>
         </div>
       </section>
+      <CreateOrUpdateAnimals
+        animal={animalTypeId}
+        showModal={isOpen}
+        setShowModal={setIsOpen}
+      />
     </>
   );
 };

@@ -39,28 +39,20 @@ const ViewTreatment = ({
             </button>
             <form className="mt-4">
               <div className="flex-auto justify-center p-2">
-                <div className="mb-4">
-                  <Label htmlFor="text">Animal Code</Label>
+                <div className="mb-4 flex items-center space-x-2">
+                  <Label htmlFor="text">Code: </Label>
                   <Input
                     disabled
                     type="text"
                     value={getOneTreatment.animal.code}
                   />
                 </div>
-                <div className="mb-4">
-                  <Label htmlFor="text">Animal Code</Label>
-                  <Input
-                    disabled
-                    type="text"
-                    value={getOneTreatment.animal.code}
-                  />
-                </div>
-                <div className="mb-4">
-                  <Label htmlFor="text">Treatment name</Label>
+                <div className="mb-4 flex items-center space-x-2">
+                  <Label htmlFor="text">Treatment: </Label>
                   <Input disabled type="text" value={getOneTreatment.name} />
                 </div>
-                <div className="mb-4">
-                  <Label htmlFor="text">Diagnostic</Label>
+                <div className="mb-4 flex items-center space-x-2">
+                  <Label htmlFor="text">Diagnostic: </Label>
                   <Input
                     disabled
                     type="text"
@@ -68,12 +60,16 @@ const ViewTreatment = ({
                   />
                 </div>
                 <div className="mb-4 flex items-center space-x-4">
+                  <Label htmlFor="text">Medication: </Label>
                   <Input
                     disabled
                     type="text"
                     value={getOneTreatment.medication}
                   />
+                  <Label htmlFor="text">Dose:</Label>
                   <Input disabled type="number" value={getOneTreatment.dose} />
+                  <Label htmlFor="text">Method</Label>
+                  <Input disabled type="text" value={getOneTreatment.method} />
                 </div>
                 <div className="mb-4 disabled">
                   <TextAreaInput

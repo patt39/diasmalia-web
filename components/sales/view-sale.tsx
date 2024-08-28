@@ -3,6 +3,8 @@ import { useReactHookForm } from '@/components/hooks';
 import { TextAreaInput, TextInput } from '@/components/ui-setting/shadcn';
 import { XIcon } from 'lucide-react';
 import * as yup from 'yup';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
 
 const schema = yup.object({});
 
@@ -15,7 +17,7 @@ const ViewSale = ({
   setShowModal: any;
   sale?: any;
 }) => {
-  const { control, errors } = useReactHookForm({ schema });
+  const { t, control, errors } = useReactHookForm({ schema });
 
   const { data: getOneSale } = GetOneSaleAPI({
     saleId: sale.id,
@@ -37,25 +39,8 @@ const ViewSale = ({
             </button>
             <form className="mt-4">
               <div className="flex-auto justify-center p-2">
-                <div className="mb-4 flex items-center space-x-2">
-                  <TextInput
-                    control={control}
-                    type="number"
-                    name="number"
-                    defaultValue={getOneSale.number}
-                    errors={errors}
-                    disabled
-                  />
-                  <TextInput
-                    control={control}
-                    type="number"
-                    name="price"
-                    defaultValue={getOneSale.price}
-                    errors={errors}
-                    disabled
-                  />
-                </div>
-                <div className="mb-4">
+                <div className="mb-4 flex items-center space-x-1">
+                  <Label htmlFor="text">Client: </Label>
                   <TextInput
                     control={control}
                     type="text"
@@ -65,7 +50,8 @@ const ViewSale = ({
                     disabled
                   />
                 </div>
-                <div className="mb-4">
+                <div className="mb-4 flex items-center  space-x-1">
+                  <Label htmlFor="text">Email: </Label>
                   <TextInput
                     control={control}
                     type="text"
@@ -75,7 +61,8 @@ const ViewSale = ({
                     disabled
                   />
                 </div>
-                <div className="mb-4">
+                <div className="mb-4 flex items-center  space-x-1">
+                  <Label htmlFor="text">Phone: </Label>
                   <TextInput
                     control={control}
                     type="number"
@@ -85,7 +72,8 @@ const ViewSale = ({
                     disabled
                   />
                 </div>
-                <div className="mb-4">
+                <div className="mb-4 flex items-center  space-x-1">
+                  <Label htmlFor="text">Address: </Label>
                   <TextInput
                     control={control}
                     type="text"
@@ -94,6 +82,10 @@ const ViewSale = ({
                     errors={errors}
                     disabled
                   />
+                </div>
+                <Label>{t.formatMessage({ id: 'SALE.CHANNEL' })}:</Label>
+                <div className="mb-4 flex items-center space-x-4">
+                  <Input disabled type="text" value={getOneSale.method} />
                 </div>
                 <div className="mb-4">
                   <TextAreaInput

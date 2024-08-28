@@ -40,7 +40,7 @@ import { ListBreedings } from './list-breedings';
 const TabBreedings = ({ animalTypeId }: { animalTypeId: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [periode, setPeriode] = useState('');
-  const { t, search, handleSetSearch } = useInputState();
+  const { t, search, handleSetSearch, userStorage } = useInputState();
 
   const {
     isLoading: isLoadingBreedings,
@@ -53,6 +53,7 @@ const TabBreedings = ({ animalTypeId }: { animalTypeId: string }) => {
     sort: 'desc',
     sortBy: 'createdAt',
     animalTypeId: animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   return (

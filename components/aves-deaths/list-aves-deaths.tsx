@@ -22,9 +22,9 @@ import { CreateOrUpdateAvesDeaths } from './create-or-update-aves-deaths';
 import { ViewAvesDeath } from './view-death';
 
 const ListAvesDeaths = ({ item, index }: { item: any; index: number }) => {
-  const { t, loading, isOpen, setIsOpen, setLoading } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
   const [isView, setIsView] = useState(false);
+  const { t, isOpen, loading, setIsOpen, setLoading } = useInputState();
 
   const { mutateAsync: deleteMutation } = DeleteOneDeathAPI({
     onSuccess: () => {},
@@ -53,8 +53,8 @@ const ListAvesDeaths = ({ item, index }: { item: any; index: number }) => {
   return (
     <>
       <TableRow key={index} className="dark:border-gray-800">
-        <TableCell className="font-medium">{item.animal.code}</TableCell>
-        <TableCell className="font-medium">{item.number}</TableCell>
+        <TableCell className="font-medium">{item?.animal?.code}</TableCell>
+        <TableCell className="font-medium">{item?.number}</TableCell>
         <TableCell>
           {item?.note?.length > 20
             ? item?.note?.substring(0, 20) + '...'
@@ -79,30 +79,28 @@ const ListAvesDeaths = ({ item, index }: { item: any; index: number }) => {
                   {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
                 </span>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setIsEdit(true)}>
+              <DropdownMenuItem onClick={() => setIsView(true)}>
                 <Eye className="size-4 text-gray-600 hover:text-indigo-600" />
                 <span className="ml-2 cursor-pointer hover:text-indigo-600">
-                  {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
+                  {t.formatMessage({ id: 'TABANIMAL.VIEW' })}
                 </span>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setIsOpen(true)}>
                 <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
                 <span className="ml-2 cursor-pointer hover:text-red-600">
-                  {t.formatMessage({
-                    id: 'TABANIMAL.DELETE',
-                  })}
+                  {t.formatMessage({ id: 'TABANIMAL.DELETE' })}
                 </span>
               </DropdownMenuItem>
             </DropdownMenuContent>
-            <ActionModalDialog
-              loading={loading}
-              isOpen={isOpen}
-              setIsOpen={setIsOpen}
-              onClick={() => deleteItem(item)}
-            />
           </DropdownMenu>
         </TableCell>
       </TableRow>
+      <ActionModalDialog
+        loading={loading}
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        onClick={() => deleteItem(item)}
+      />
       <CreateOrUpdateAvesDeaths
         death={item}
         showModal={isEdit}

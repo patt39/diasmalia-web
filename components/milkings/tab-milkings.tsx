@@ -80,7 +80,7 @@ const TabMilkings = ({ animalTypeId }: { animalTypeId: string }) => {
               <Eclipse className="h-3.5 w-3.5  hover:shadow-xxl" />
               <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                 {t.formatMessage({
-                  id: 'ANIMALTYPE.ANIMALS.ISOLATIONS.CREATE',
+                  id: 'ANIMALTYPE.ANIMALS.MILKINGS.CREATE',
                 })}
               </span>
             </Button>
@@ -116,7 +116,7 @@ const TabMilkings = ({ animalTypeId }: { animalTypeId: string }) => {
                   description="Error finding data please try again..."
                 />
               ) : Number(dataMilkings?.pages[0]?.data?.total) <= 0 ? (
-                <ErrorFile description="Don't have isolated animals" />
+                <ErrorFile description="Don't have active animals in lactation phase" />
               ) : (
                 dataMilkings?.pages
                   .flatMap((page: any) => page?.data?.value)

@@ -3,7 +3,7 @@ import { useInputState } from '@/components/hooks';
 
 import { SearchInput } from '@/components/ui-setting';
 import { Button } from '@/components/ui/button';
-import { CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import { CardContent, CardHeader } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -163,11 +163,6 @@ const TabAvesTreatments = ({ animalTypeId }: { animalTypeId: string }) => {
             </TableBody>
           </Table>
         </CardContent>
-        <CardFooter>
-          <div className="text-xs text-muted-foreground">
-            Showing <strong>1-10</strong> of <strong>32</strong> products
-          </div>
-        </CardFooter>
       </main>
       <CreateOrUpdateAvestreatments
         treatment={animalTypeId}

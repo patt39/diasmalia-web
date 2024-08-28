@@ -4,6 +4,7 @@ import { IpLocationAPI } from '@/api-site/user';
 import { useInputState } from '@/components/hooks';
 import { LayoutDashboard } from '@/components/layouts/dashboard';
 import { DashboardFooter } from '@/components/layouts/dashboard/footer';
+import { ButtonLoadMore } from '@/components/ui-setting';
 import { LoadingFile } from '@/components/ui-setting/ant';
 import { ErrorFile } from '@/components/ui-setting/ant/error-file';
 import { Button } from '@/components/ui/button';
@@ -33,18 +34,23 @@ import {
 import { PrivateComponent } from '@/components/util/private-component';
 import { formatDDMMYYDate } from '@/utils';
 import { ListFilter } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useInView } from 'react-intersection-observer';
 import { useIntl } from 'react-intl';
 
 const ActivityLogs = () => {
   const [periode, setPeriode] = useState('');
   const { userStorage } = useInputState();
+  const { ref, inView } = useInView();
   const t = useIntl();
 
   const {
     isLoading: isLoadingActivityLog,
     isError: isErrorActivitylogs,
     data: dataActivityLogs,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
   } = GetActivityLogsAPI({
     take: 10,
     periode,
@@ -52,6 +58,28 @@ const ActivityLogs = () => {
     sortBy: 'createdAt',
     organizationId: userStorage?.organizationId,
   });
+
+  useEffect(() => {
+    let fetching = false;
+    if (inView) {
+      fetchNextPage();
+    }
+    const onScroll = async (event: any) => {
+      const { scrollHeight, scrollTop, clientHeight } =
+        event.target.scrollingElement;
+
+      if (!fetching && scrollHeight - scrollTop <= clientHeight * 1.5) {
+        fetching = true;
+        if (hasNextPage) await fetchNextPage();
+        fetching = false;
+      }
+    };
+
+    document.addEventListener('scroll', onScroll);
+    return () => {
+      document.removeEventListener('scroll', onScroll);
+    };
+  }, [fetchNextPage, hasNextPage, inView]);
 
   const { data } = IpLocationAPI();
 
@@ -144,6 +172,15 @@ const ActivityLogs = () => {
                             </TableRow>
                           </>
                         ))
+                    )}
+                    {hasNextPage && (
+                      <div className="mx-auto mt-4 justify-center text-center">
+                        <ButtonLoadMore
+                          ref={ref}
+                          isFetchingNextPage={isFetchingNextPage}
+                          onClick={() => fetchNextPage()}
+                        />
+                      </div>
                     )}
                   </TableBody>
                 </Table>

@@ -128,12 +128,21 @@ export const GetIsolationsAPI = (
     search?: string;
     take?: number;
     periode?: string;
+    pageItem?: number;
     animalTypeId?: string;
     organizationId?: string;
   } & PaginationRequest,
 ) => {
-  const { take, sort, search, periode, sortBy, animalTypeId, organizationId } =
-    payload;
+  const {
+    take,
+    sort,
+    search,
+    pageItem,
+    periode,
+    sortBy,
+    animalTypeId,
+    organizationId,
+  } = payload;
   return useInfiniteQuery({
     queryKey: ['isolations', 'infinite', { ...payload }],
     getNextPageParam: (lastPage: any) => lastPage.data.next_page,
@@ -146,6 +155,7 @@ export const GetIsolationsAPI = (
           search,
           sortBy,
           periode,
+          pageItem,
           animalTypeId,
           page: pageParam,
           organizationId,

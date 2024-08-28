@@ -16,6 +16,7 @@ import * as yup from 'yup';
 import { LoadingFile } from '../ui-setting/ant';
 import { ErrorFile } from '../ui-setting/ant/error-file';
 import { TextInput } from '../ui-setting/shadcn';
+import { Label } from '../ui/label';
 import {
   Select,
   SelectContent,
@@ -187,6 +188,9 @@ const CreateOrUpdateWeanings = ({
                   </div>
                 ) : null}
                 <div className="mb-4">
+                  <Label>
+                    Portée:<span className="text-red-600">*</span>
+                  </Label>
                   <TextInput
                     control={control}
                     type="number"

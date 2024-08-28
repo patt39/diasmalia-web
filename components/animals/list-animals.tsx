@@ -13,12 +13,17 @@ import {
   AlertSuccessNotification,
   formatDateDifference,
 } from '@/utils';
-import { MoreHorizontal, PencilIcon, TrashIcon } from 'lucide-react';
+import { Eye, MoreHorizontal, PencilIcon, TrashIcon } from 'lucide-react';
+import { useState } from 'react';
 import { ActionModalDialog } from '../ui-setting/shadcn';
 import { Badge } from '../ui/badge';
+import { CreateOrUpdateAnimals } from './create-or-update-animal';
+import { ViewAnimal } from './view-animal';
 
 const ListAnimals = ({ item, index }: { item: any; index: number }) => {
   const { t, isOpen, loading, setIsOpen, setLoading } = useInputState();
+  const [isEdit, setIsEdit] = useState(false);
+  const [isView, setIsView] = useState(false);
 
   const { mutateAsync: deleteMutation } = DeleteOneAnimalAPI({
     onSuccess: () => {},
@@ -71,7 +76,7 @@ const ListAnimals = ({ item, index }: { item: any; index: number }) => {
               </h2>
               {![
                 'Porciculture',
-                'Bovines',
+                'Bovins',
                 'Cuniculture',
                 'Caprins',
                 'Ovins',
@@ -89,18 +94,18 @@ const ListAnimals = ({ item, index }: { item: any; index: number }) => {
             <div className="flex-shrink-0 w-px h-20  bg-gray-200"></div>
             <div>
               <h3 className="text-sm font-bold text-gray-900 h-8 sm:text-base lg:text-lg">
-                {(item?.code || item.electronicCode).toUpperCase()}
+                {(item?.code).toUpperCase()}
               </h3>
-
-              <p className=" text-sm font-medium text-gray-500">
+              <p className="mb-1 text-sm font-medium text-gray-500">
                 {item?.productionPhase}
               </p>
-              <p className=" text-sm font-medium text-gray-500">
-                {item?.gender}
-              </p>
-              {['Piggery', 'Bovines', 'Rabbits', 'Goats'].includes(
-                item.animalType?.name,
-              ) ? (
+              {[
+                'Porciculture',
+                'Bovins',
+                'Cuniculture',
+                'Ovins',
+                'Caprins',
+              ].includes(item.animalType?.name) ? (
                 <p className=" text-sm font-medium text-gray-500">
                   {item?.gender}
                 </p>
@@ -124,11 +129,17 @@ const ListAnimals = ({ item, index }: { item: any; index: number }) => {
                   </span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem>
+              <DropdownMenuContent align="end" className="dark:border-gray-800">
+                <DropdownMenuItem onClick={() => setIsEdit(true)}>
                   <PencilIcon className="size-4 text-gray-600 hover:text-indigo-600" />
                   <span className="ml-2 cursor-pointer hover:text-indigo-600">
                     {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
+                  </span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setIsView(true)}>
+                  <Eye className="size-4 text-gray-600 hover:text-indigo-600" />
+                  <span className="ml-2 cursor-pointer hover:text-indigo-600">
+                    {t.formatMessage({ id: 'TABANIMAL.VIEW' })}
                   </span>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setIsOpen(true)}>
@@ -145,6 +156,16 @@ const ListAnimals = ({ item, index }: { item: any; index: number }) => {
                 onClick={() => deleteItem(item)}
               />
             </DropdownMenu>
+            <CreateOrUpdateAnimals
+              animal={item}
+              showModal={isEdit}
+              setShowModal={setIsEdit}
+            />
+            <ViewAnimal
+              animal={item}
+              showModal={isView}
+              setShowModal={setIsView}
+            />
           </div>
         </div>
       </div>

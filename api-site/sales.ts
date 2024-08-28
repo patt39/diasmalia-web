@@ -1,11 +1,31 @@
 import { SalesModel } from '@/types/sale';
 import { makeApiCall, PaginationRequest } from '@/utils';
 import {
-  useInfiniteQuery,
+  keepPreviousData,
   useMutation,
   useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
+
+export const GetSaleStatisticsAPI = () => {
+  const { data, isError, isLoading, status, isPending, refetch } = useQuery({
+    queryKey: ['statistic'],
+    queryFn: async () =>
+      await makeApiCall({
+        action: 'getSaleStatistics',
+      }),
+    refetchOnWindowFocus: false,
+  });
+
+  return {
+    data: data?.data as any,
+    isError,
+    isLoading,
+    status,
+    isPending,
+    refetch,
+  };
+};
 
 export const GetOneSaleAPI = (payload: { saleId: string }) => {
   const { saleId } = payload;
@@ -153,6 +173,7 @@ export const GetSalesAPI = (
     method?: string;
     detail?: string;
     sortBy?: string;
+    pageItem?: number;
     organizationId?: string;
   } & PaginationRequest,
 ) => {
@@ -164,13 +185,14 @@ export const GetSalesAPI = (
     method,
     detail,
     periode,
+    pageItem,
     animalTypeId,
     organizationId,
   } = payload;
-  return useInfiniteQuery({
-    queryKey: ['sales', 'infinite', { ...payload }],
-    getNextPageParam: (lastPage: any) => lastPage.data.next_page,
-    queryFn: async ({ pageParam = 1 }) =>
+  return useQuery({
+    queryKey: ['sales', { ...payload }],
+    placeholderData: keepPreviousData,
+    queryFn: async () =>
       await makeApiCall({
         action: 'getSales',
         queryParams: {
@@ -182,12 +204,11 @@ export const GetSalesAPI = (
           detail,
           periode,
           animalTypeId,
-          page: pageParam,
+          page: pageItem,
           organizationId,
         },
       }),
-    staleTime: 60_000,
-    initialPageParam: 1,
+    staleTime: 5000,
   });
 };
 

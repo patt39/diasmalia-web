@@ -26,15 +26,15 @@ const ListBreedings = ({ item, index }: { item: any; index: number }) => {
   return (
     <>
       <TableRow key={index} className="dark:border-gray-800">
-        <TableCell className="font-medium">{item.maleCode}</TableCell>
-        <TableCell className="font-medium">{item.femaleCode}</TableCell>
+        <TableCell className="font-medium">{item?.maleCode}</TableCell>
+        <TableCell className="font-medium">{item?.femaleCode}</TableCell>
         <TableCell>{item.method.toLowerCase()}</TableCell>
         <TableCell>
-          {item.checkStatus === true && item?.result === 'PREGNANT' ? (
+          {item?.checkStatus === true && item?.result === 'PREGNANT' ? (
             <Badge className="text-xs" variant="secondary">
               {t.formatMessage({ id: 'BREEDING.POSITIVE' })}
             </Badge>
-          ) : item.checkStatus === true && item?.result === 'OPEN' ? (
+          ) : item?.checkStatus === true && item?.result === 'OPEN' ? (
             <Badge className="text-xs" variant="default">
               {t.formatMessage({ id: 'BREEDING.NEGATIVE' })}
             </Badge>
@@ -61,7 +61,7 @@ const ListBreedings = ({ item, index }: { item: any; index: number }) => {
                   {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
                 </span>
               </DropdownMenuItem>
-              {item.checkStatus === false ? (
+              {item?.checkStatus === false ? (
                 <DropdownMenuItem onClick={() => setIsCheck(true)}>
                   <Check className="size-4 text-gray-600 hover:text-red-400 cursor-pointer" />
                   <span className="ml-2 cursor-pointer hover:text-red-400">

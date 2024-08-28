@@ -14,7 +14,8 @@ import { SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
 import { LoadingFile } from '../ui-setting/ant';
 import { ErrorFile } from '../ui-setting/ant/error-file';
-import { TextAreaInput } from '../ui-setting/shadcn';
+import { TextAreaInput, TextInput } from '../ui-setting/shadcn';
+import { Label } from '../ui/label';
 import {
   Select,
   SelectContent,
@@ -25,7 +26,8 @@ import {
 
 const schema = yup.object({
   animals: yup.array().optional(),
-  note: yup.string().required('note is required field'),
+  note: yup.string().optional(),
+  quantity: yup.number().required('quantity is required field'),
 });
 
 const CreateOrUpdateMilkings = ({
@@ -54,7 +56,7 @@ const CreateOrUpdateMilkings = ({
 
   useEffect(() => {
     if (milking) {
-      const fields = ['animals', 'note'];
+      const fields = ['animals', 'note', 'quantity'];
       fields?.forEach((field: any) => setValue(field, milking[field]));
     }
   }, [milking, setValue]);
@@ -84,7 +86,7 @@ const CreateOrUpdateMilkings = ({
       setHasErrors(false);
       setLoading(false);
       AlertSuccessNotification({
-        text: 'Isolation saved successfully',
+        text: 'Milking saved successfully',
       });
       setShowModal(false);
     } catch (error: any) {
@@ -105,7 +107,10 @@ const CreateOrUpdateMilkings = ({
     take: 10,
     sort: 'desc',
     status: 'ACTIVE',
+    isIsolated: 'NO',
+    gender: 'FEMALE',
     sortBy: 'createdAt',
+    productionPhase: 'LACTATION',
     animalTypeId: animalTypeId,
   });
 
@@ -140,10 +145,14 @@ const CreateOrUpdateMilkings = ({
                 )}
 
                 {!milking.id ? (
-                  <div className="mb-4 w-full mt-2">
+                  <div className="mb-2 w-full mt-2">
+                    <Label>
+                      Sélectionez les animaux à traire
+                      <span className="text-red-600">*</span>
+                    </Label>
                     <Select>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select animals" />
+                        <SelectValue placeholder="Select animals for milking" />
                       </SelectTrigger>
                       <SelectContent className="dark:border-gray-800">
                         <SelectGroup>
@@ -193,7 +202,19 @@ const CreateOrUpdateMilkings = ({
                     </Select>
                   </div>
                 ) : null}
-
+                <div className="mb-2">
+                  <Label>
+                    Quantité de lait collecté (L):
+                    <span className="text-red-600">*</span>
+                  </Label>
+                  <TextInput
+                    control={control}
+                    type="number"
+                    name="quantity"
+                    placeholder="Give a quantity"
+                    errors={errors}
+                  />
+                </div>
                 <div className="mb-4">
                   <TextAreaInput
                     control={control}

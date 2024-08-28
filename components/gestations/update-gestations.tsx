@@ -38,7 +38,6 @@ const UpdateGestations = ({
     setLoading,
     hasErrors,
     setHasErrors,
-    register,
   } = useReactHookForm({ schema });
   const [date, setDate] = React.useState<Date>();
 
@@ -117,12 +116,12 @@ const UpdateGestations = ({
                   </div>
                 )}
 
-                <div className="mb-4 flex items-center space-x-4">
+                <div className="flex items-center space-x-4">
                   <SelectInput
                     firstOptionName="Choose a size"
                     control={control}
                     errors={errors}
-                    placeholder="Select method"
+                    placeholder="Select a check method"
                     valueType="text"
                     name="method"
                     dataItem={[
@@ -133,7 +132,7 @@ const UpdateGestations = ({
                     ]}
                   />
                   <div className="mb-4">
-                    <Label>Farrowing date</Label>
+                    <Label>Date de mise bas</Label>
                     <DateInput
                       control={control}
                       errors={errors}

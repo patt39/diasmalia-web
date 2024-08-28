@@ -148,7 +148,7 @@ const TabDeaths = ({ animalTypeId }: { animalTypeId: string }) => {
               ) : (
                 dataDeaths?.pages
                   .flatMap((page: any) => page?.data?.value)
-                  .map((item, index) => (
+                  .map((item: any, index: any) => (
                     <>
                       <ListDeaths item={item} index={index} key={index} />
                     </>

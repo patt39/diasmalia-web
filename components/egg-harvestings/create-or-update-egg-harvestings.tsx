@@ -1,7 +1,7 @@
 import { GetAnimalsAPI } from '@/api-site/animals';
 import { CreateOrUpdateOneEggHarvestingAPI } from '@/api-site/eggharvesting';
 import { useReactHookForm } from '@/components/hooks';
-import { ButtonInput } from '@/components/ui-setting';
+import { ButtonInput, ButtonLoadMore } from '@/components/ui-setting';
 import { LoadingFile } from '@/components/ui-setting/ant';
 import { ErrorFile } from '@/components/ui-setting/ant/error-file';
 import {
@@ -22,8 +22,10 @@ import { XIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { Controller, SubmitHandler } from 'react-hook-form';
+import { useInView } from 'react-intersection-observer';
 import * as yup from 'yup';
 import { SelectInput, TextInput } from '../ui-setting/shadcn';
+import { Label } from '../ui/label';
 
 const schema = yup.object({
   code: yup.string().optional(),
@@ -51,6 +53,7 @@ const CreateOrUpdateEggHarvestings = ({
     hasErrors,
     setHasErrors,
   } = useReactHookForm({ schema });
+  const { ref, inView } = useInView();
   const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
 
@@ -103,6 +106,9 @@ const CreateOrUpdateEggHarvestings = ({
     isLoading: isLoadingAnimals,
     isError: isErrorAnimals,
     data: dataAnimals,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
   } = GetAnimalsAPI({
     take: 10,
     sort: 'desc',
@@ -110,6 +116,28 @@ const CreateOrUpdateEggHarvestings = ({
     sortBy: 'createdAt',
     animalTypeId: animalTypeId,
   });
+
+  useEffect(() => {
+    let fetching = false;
+    if (inView) {
+      fetchNextPage();
+    }
+    const onScroll = async (event: any) => {
+      const { scrollHeight, scrollTop, clientHeight } =
+        event.target.scrollingElement;
+
+      if (!fetching && scrollHeight - scrollTop <= clientHeight * 1.5) {
+        fetching = true;
+        if (hasNextPage) await fetchNextPage();
+        fetching = false;
+      }
+    };
+
+    document.addEventListener('scroll', onScroll);
+    return () => {
+      document.removeEventListener('scroll', onScroll);
+    };
+  }, [fetchNextPage, hasNextPage, inView]);
 
   return (
     <>
@@ -141,7 +169,11 @@ const CreateOrUpdateEggHarvestings = ({
                   </div>
                 )}
 
-                <div className="mb-4 flex items-center space-x-4">
+                <div className="mb-2">
+                  <Label>
+                    Sélectionnez le code de la bande:
+                    <span className="text-red-600">*</span>
+                  </Label>
                   <Controller
                     control={control}
                     name="code"
@@ -151,8 +183,8 @@ const CreateOrUpdateEggHarvestings = ({
                         name={'code'}
                         value={value}
                       >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a code" />
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select a band code" />
                         </SelectTrigger>
                         <SelectContent className="dark:border-gray-800">
                           <SelectGroup>
@@ -173,31 +205,49 @@ const CreateOrUpdateEggHarvestings = ({
                                 .map((item, index) => (
                                   <>
                                     <SelectItem key={index} value={item.code}>
-                                      {item.code}
+                                      {item?.code}
                                     </SelectItem>
                                   </>
                                 ))
+                            )}
+                            {hasNextPage && (
+                              <div className="mx-auto mt-4 justify-center text-center">
+                                <ButtonLoadMore
+                                  ref={ref}
+                                  isFetchingNextPage={isFetchingNextPage}
+                                  onClick={() => fetchNextPage()}
+                                />
+                              </div>
                             )}
                           </SelectGroup>
                         </SelectContent>
                       </Select>
                     )}
                   />
+                </div>
+                <div className="mb-2">
+                  <Label>
+                    Nombre oeufs rammassés:
+                    <span className="text-red-600">*</span>
+                  </Label>
                   <TextInput
                     control={control}
                     type="number"
                     name="quantity"
-                    placeholder="Give a number"
+                    placeholder="Give a quantity"
                     errors={errors}
                   />
                 </div>
                 <div className="mb-4">
+                  <Label>
+                    Taille:
+                    <span className="text-red-600">*</span>
+                  </Label>
                   <SelectInput
                     firstOptionName="Choose a size"
-                    label="Size"
                     control={control}
                     errors={errors}
-                    placeholder="Select method"
+                    placeholder="Select a size"
                     valueType="text"
                     name="size"
                     dataItem={[

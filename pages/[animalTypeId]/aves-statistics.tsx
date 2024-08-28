@@ -1,6 +1,6 @@
 import { GetOneAnimalTypeAPI } from '@/api-site/animal-type';
-import { GetIncubationsAPI } from '@/api-site/incubations';
-import { GetSalesAPI } from '@/api-site/sales';
+import { GetAnimalStatisticsAPI } from '@/api-site/animals';
+import { GetSaleStatisticsAPI } from '@/api-site/sales';
 import {
   Card,
   CardDescription,
@@ -19,92 +19,150 @@ const AvesStatistics = () => {
     animalTypeId: animalTypeId,
   });
 
-  const { data: dataIncubations } = GetIncubationsAPI({
-    take: 10,
-    sort: 'desc',
-    sortBy: 'createdAt',
+  const { data: saleStatistics } = GetSaleStatisticsAPI();
+
+  const { data: animalStatistics } = GetAnimalStatisticsAPI({
     animalTypeId: animalTypeId,
   });
-
-  const { data: dataSales } = GetSalesAPI({
-    take: 10,
-    sort: 'desc',
-    sortBy: 'createdAt',
-    detail: 'EGGS',
-    animalTypeId: animalTypeId,
-  });
-
-  const initialValue = 0;
-  const sumIncubations = dataIncubations?.pages[0]?.data?.value.reduce(
-    (accumulator: any, currentValue: any) =>
-      accumulator + currentValue.quantityStart,
-    initialValue,
-  );
-
-  const sumHatched = dataIncubations?.pages[0]?.data?.value.reduce(
-    (accumulator: any, currentValue: any) =>
-      accumulator + currentValue.quantityEnd,
-    initialValue,
-  );
-
-  const sumHSaleEggs = dataSales?.pages[0]?.data?.value.reduce(
-    (accumulator: any, currentValue: any) => accumulator + currentValue.number,
-    initialValue,
-  );
-
-  const sumHSaleChicks = dataSales?.pages[0]?.data?.value.reduce(
-    (accumulator: any, currentValue: any) => accumulator + currentValue.number,
-    initialValue,
-  );
 
   return (
     <>
-      <Card x-chunk="dashboard-05-chunk-2" className=" dark:border-gray-800">
-        <CardHeader className="pb-2">
-          <CardDescription>Nombre total oeufs vendus </CardDescription>
-          <CardTitle className="text-4xl">{sumHSaleEggs}</CardTitle>
-        </CardHeader>
-      </Card>
-      <Card x-chunk="dashboard-05-chunk-2" className=" dark:border-gray-800">
-        <CardHeader className="pb-2">
-          <CardDescription>Nombre total oeufs incubés </CardDescription>
-          <CardTitle className="text-4xl">{sumIncubations}</CardTitle>
-        </CardHeader>
-      </Card>
-      <Card x-chunk="dashboard-05-chunk-2" className=" dark:border-gray-800">
-        <CardHeader className="pb-2">
-          <CardDescription>Nombre total oeufs éclos </CardDescription>
-          <CardTitle className="text-4xl">{sumHatched}</CardTitle>
-        </CardHeader>
-      </Card>
-      {animalType.name === 'Canards' ? (
-        <Card x-chunk="dashboard-05-chunk-2" className=" dark:border-gray-800">
-          <CardHeader className="pb-2">
-            <CardDescription>Canettons un jour vendus </CardDescription>
-            <CardTitle className="text-4xl">{sumHSaleChicks}</CardTitle>
-          </CardHeader>
-        </Card>
-      ) : animalType.name === 'Poulets Goliaths' ? (
-        <Card x-chunk="dashboard-05-chunk-2" className=" dark:border-gray-800">
-          <CardHeader className="pb-2">
-            <CardDescription>Goliathaux un jour vendus </CardDescription>
-            <CardTitle className="text-4xl">{sumHSaleChicks}</CardTitle>
-          </CardHeader>
-        </Card>
-      ) : animalType.name === 'Dinde' ? (
-        <Card x-chunk="dashboard-05-chunk-2" className=" dark:border-gray-800">
-          <CardHeader className="pb-2">
-            <CardDescription>Dindoneaux un jour vendus </CardDescription>
-            <CardTitle className="text-4xl">{sumHSaleChicks}</CardTitle>
-          </CardHeader>
-        </Card>
+      {animalType?.name !== 'Poulet de chair' ? (
+        <>
+          <Card
+            x-chunk="dashboard-05-chunk-2"
+            className=" dark:border-gray-800"
+          >
+            <CardHeader className="pb-2">
+              <CardDescription>
+                {t.formatMessage({ id: 'ANIMAL.EGGS.SALE' })}
+              </CardDescription>
+              <CardTitle className="text-4xl">
+                {saleStatistics?.sumSaleEggs}
+              </CardTitle>
+            </CardHeader>
+          </Card>
+          <Card
+            x-chunk="dashboard-05-chunk-2"
+            className=" dark:border-gray-800"
+          >
+            <CardHeader className="pb-2">
+              <CardDescription>
+                {t.formatMessage({ id: 'ANIMAL.EGGS.INCUBATED' })}
+              </CardDescription>
+              <CardTitle className="text-4xl">
+                {animalStatistics?.sumIncubations}
+              </CardTitle>
+            </CardHeader>
+          </Card>
+          <Card
+            x-chunk="dashboard-05-chunk-2"
+            className=" dark:border-gray-800"
+          >
+            <CardHeader className="pb-2">
+              <CardDescription>
+                {t.formatMessage({ id: 'ANIMAL.EGGS.HATCHED' })}
+              </CardDescription>
+              <CardTitle className="text-4xl">
+                {animalStatistics?.sumHatched}
+              </CardTitle>
+            </CardHeader>
+          </Card>
+          <Card
+            x-chunk="dashboard-05-chunk-2"
+            className=" dark:border-gray-800"
+          >
+            <CardHeader className="pb-2">
+              <CardDescription>
+                {t.formatMessage({ id: 'ANIMAL.CHICKS.SOLD' })}
+              </CardDescription>
+              <CardTitle className="text-4xl">
+                {saleStatistics?.sumSaleChicks}
+              </CardTitle>
+            </CardHeader>
+          </Card>
+          <Card
+            x-chunk="dashboard-05-chunk-2"
+            className=" dark:border-gray-800"
+          >
+            <CardHeader className="pb-2">
+              <CardDescription>
+                {t.formatMessage({ id: 'ANIMAL.FEED' })}
+              </CardDescription>
+              <CardTitle className="text-4xl">
+                {animalStatistics?.sumFeedings}kg
+              </CardTitle>
+            </CardHeader>
+          </Card>
+          <Card
+            x-chunk="dashboard-05-chunk-2"
+            className=" dark:border-gray-800"
+          >
+            <CardHeader className="pb-2">
+              <CardDescription>
+                {t.formatMessage({ id: 'ANIMAL.SUM.TREATMENTS' })}
+              </CardDescription>
+              <CardTitle className="text-4xl">
+                {animalStatistics?.sumTreatments}
+              </CardTitle>
+            </CardHeader>
+          </Card>
+        </>
       ) : (
-        <Card x-chunk="dashboard-05-chunk-2" className=" dark:border-gray-800">
-          <CardHeader className="pb-2">
-            <CardDescription>Poussins un jour vendus </CardDescription>
-            <CardTitle className="text-4xl">{sumHSaleChicks}</CardTitle>
-          </CardHeader>
-        </Card>
+        <>
+          <Card
+            x-chunk="dashboard-05-chunk-2"
+            className=" dark:border-gray-800"
+          >
+            <CardHeader className="pb-2">
+              <CardDescription>
+                {t.formatMessage({ id: 'ANIMAL.SUM.SOLD' })}
+              </CardDescription>
+              <CardTitle className="text-4xl">
+                {saleStatistics?.sumSaleChickens}
+              </CardTitle>
+            </CardHeader>
+          </Card>
+          <Card
+            x-chunk="dashboard-05-chunk-2"
+            className=" dark:border-gray-800"
+          >
+            <CardHeader className="pb-2">
+              <CardDescription>
+                {t.formatMessage({ id: 'ANIMAL.SUM.DEATH' })}
+              </CardDescription>
+              <CardTitle className="text-4xl">
+                {animalStatistics?.sumDeaths}
+              </CardTitle>
+            </CardHeader>
+          </Card>
+          <Card
+            x-chunk="dashboard-05-chunk-2"
+            className=" dark:border-gray-800"
+          >
+            <CardHeader className="pb-2">
+              <CardDescription>
+                {t.formatMessage({ id: 'ANIMAL.FEED' })}
+              </CardDescription>
+              <CardTitle className="text-4xl">
+                {animalStatistics?.sumFeedings}kg
+              </CardTitle>
+            </CardHeader>
+          </Card>
+          <Card
+            x-chunk="dashboard-05-chunk-2"
+            className=" dark:border-gray-800"
+          >
+            <CardHeader className="pb-2">
+              <CardDescription>
+                {t.formatMessage({ id: 'ANIMAL.SUM.TREATMENTS' })}
+              </CardDescription>
+              <CardTitle className="text-4xl">
+                {animalStatistics?.sumTreatments}
+              </CardTitle>
+            </CardHeader>
+          </Card>
+        </>
       )}
     </>
   );

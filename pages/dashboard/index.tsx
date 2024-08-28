@@ -2,7 +2,7 @@ import { LayoutDashboard } from '@/components/layouts/dashboard';
 import { ArrowUpRight, CreditCard, Users } from 'lucide-react';
 
 import { GetActivityLogsAPI } from '@/api-site/activityLogs';
-import { GetFinancesAPI } from '@/api-site/finances';
+import { GetFinanceStatisticsAPI } from '@/api-site/finances';
 import { GetSalesAPI } from '@/api-site/sales';
 import { GetOneUserMeAPI } from '@/api-site/user';
 import { DashboardFooter } from '@/components/layouts/dashboard/footer';
@@ -27,10 +27,12 @@ import {
 import { PrivateComponent } from '@/components/util/private-component';
 import { formatDDMMYYDate } from '@/utils';
 import Link from 'next/link';
+import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export function Dashboard() {
   const t = useIntl();
+  const [pageItem, setPageItem] = useState(1);
 
   const {
     isLoading: isLoadingActivityLogs,
@@ -47,37 +49,17 @@ export function Dashboard() {
     isError: isErrorSales,
     data: dataSales,
   } = GetSalesAPI({
-    take: 4,
+    take: 6,
+    pageItem,
     sort: 'desc',
     sortBy: 'createdAt',
   });
 
-  const { data: dataIncomeFinances } = GetFinancesAPI({
-    take: 10,
-    sort: 'desc',
-    type: 'INCOME',
-    sortBy: 'createdAt',
-  });
+  const { data: financeStatistics } = GetFinanceStatisticsAPI();
 
-  const { data: dataExpenseFinances } = GetFinancesAPI({
-    take: 10,
-    sort: 'desc',
-    type: 'EXPENSE',
-    sortBy: 'createdAt',
-  });
-
-  const initialValue = 0;
-  const sumIncome = dataIncomeFinances?.pages[0]?.data?.value.reduce(
-    (accumulator: any, currentValue: any) => accumulator + currentValue.amount,
-    initialValue,
-  );
-
-  const sumExpense = dataExpenseFinances?.pages[0]?.data?.value.reduce(
-    (accumulator: any, currentValue: any) => accumulator + currentValue.amount,
-    initialValue,
-  );
-
-  const revenue = Number(sumIncome) - Number(sumExpense);
+  const revenue =
+    Number(financeStatistics?.sumIncome) -
+    Number(financeStatistics?.sumExpense);
 
   const { data: user } = GetOneUserMeAPI();
 
@@ -210,28 +192,26 @@ export function Dashboard() {
                       title="404"
                       description="Error finding data please try again..."
                     />
-                  ) : Number(dataSales?.pages[0]?.data?.total) <= 0 ? (
+                  ) : Number(dataSales?.data?.total) <= 0 ? (
                     <ErrorFile description="Don't have sales yet" />
                   ) : (
-                    dataSales?.pages
-                      .flatMap((page: any) => page?.data?.value)
-                      .map((item, index) => (
-                        <>
-                          <div key={index} className="flex items-center gap-4">
-                            <div className="grid gap-1">
-                              <p className="text-sm font-medium leading-none">
-                                {item.soldTo}
-                              </p>
-                              <p className="text-sm text-muted-foreground">
-                                {item.email}
-                              </p>
-                            </div>
-                            <div className="ml-auto font-medium">
-                              {item.price} {user?.profile?.currency?.symbol}
-                            </div>
+                    dataSales?.data?.value.map((item: any, index: number) => (
+                      <>
+                        <div key={index} className="flex items-center gap-4">
+                          <div className="grid gap-1">
+                            <p className="text-sm font-medium leading-none">
+                              {item.soldTo}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              {item.email}
+                            </p>
                           </div>
-                        </>
-                      ))
+                          <div className="ml-auto font-medium">
+                            {item.price} {user?.profile?.currency?.symbol}
+                          </div>
+                        </div>
+                      </>
+                    ))
                   )}
                 </CardContent>
               </Card>

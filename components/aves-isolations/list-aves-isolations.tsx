@@ -35,7 +35,7 @@ const ListAvesIsolations = ({ item, index }: { item: any; index: number }) => {
     setLoading(true);
     setIsOpen(true);
     try {
-      await deleteMutation({ isolationId: item.id });
+      await deleteMutation({ isolationId: item?.id });
       AlertSuccessNotification({
         text: 'Isolation deleted successfully',
       });
@@ -53,8 +53,8 @@ const ListAvesIsolations = ({ item, index }: { item: any; index: number }) => {
   return (
     <>
       <TableRow key={index} className="dark:border-gray-800">
-        <TableCell className="font-medium">{item.animal.code}</TableCell>
-        <TableCell className="font-medium">{item.number}</TableCell>
+        <TableCell className="font-medium">{item?.animal?.code}</TableCell>
+        <TableCell className="font-medium">{item?.number}</TableCell>
         <TableCell>
           {item?.note?.length > 20
             ? item?.note?.substring(0, 20) + '...'

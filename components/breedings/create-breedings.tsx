@@ -1,7 +1,7 @@
 import { GetAnimalsAPI } from '@/api-site/animals';
 import { CreateOrUpdateOneBreedingAPI } from '@/api-site/breedings';
 import { useReactHookForm } from '@/components/hooks';
-import { ButtonInput } from '@/components/ui-setting';
+import { ButtonInput, ButtonLoadMore } from '@/components/ui-setting';
 import { LoadingFile } from '@/components/ui-setting/ant';
 import { ErrorFile } from '@/components/ui-setting/ant/error-file';
 import { SelectInput, TextAreaInput } from '@/components/ui-setting/shadcn';
@@ -23,6 +23,7 @@ import { XIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { Controller, SubmitHandler } from 'react-hook-form';
+import { useInView } from 'react-intersection-observer';
 import * as yup from 'yup';
 
 const schema = yup.object({
@@ -54,6 +55,8 @@ const CreateBreedings = ({
   } = useReactHookForm({ schema });
   const { query, push } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
+
+  const { ref, inView } = useInView();
 
   useEffect(() => {
     if (breeding) {
@@ -104,6 +107,9 @@ const CreateBreedings = ({
     isLoading: isLoadingAnimals,
     isError: isErrorAnimals,
     data: dataFemaleAnimals,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
   } = GetAnimalsAPI({
     take: 10,
     sort: 'desc',
@@ -127,6 +133,28 @@ const CreateBreedings = ({
     productionPhase: 'REPRODUCTION',
     animalTypeId: animalTypeId,
   });
+
+  useEffect(() => {
+    let fetching = false;
+    if (inView) {
+      fetchNextPage();
+    }
+    const onScroll = async (event: any) => {
+      const { scrollHeight, scrollTop, clientHeight } =
+        event.target.scrollingElement;
+
+      if (!fetching && scrollHeight - scrollTop <= clientHeight * 1.5) {
+        fetching = true;
+        if (hasNextPage) await fetchNextPage();
+        fetching = false;
+      }
+    };
+
+    document.addEventListener('scroll', onScroll);
+    return () => {
+      document.removeEventListener('scroll', onScroll);
+    };
+  }, [fetchNextPage, hasNextPage, inView]);
 
   return (
     <>
@@ -237,6 +265,15 @@ const CreateBreedings = ({
                                     </SelectItem>
                                   </>
                                 ))
+                            )}
+                            {hasNextPage && (
+                              <div className="mx-auto mt-4 justify-center text-center">
+                                <ButtonLoadMore
+                                  ref={ref}
+                                  isFetchingNextPage={isFetchingNextPage}
+                                  onClick={() => fetchNextPage()}
+                                />
+                              </div>
                             )}
                           </SelectGroup>
                         </SelectContent>

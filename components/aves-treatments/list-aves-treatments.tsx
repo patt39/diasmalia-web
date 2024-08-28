@@ -52,7 +52,7 @@ const ListAvesTreatments = ({ item, index }: { item: any; index: number }) => {
   return (
     <>
       <TableRow key={index} className="dark:border-gray-800">
-        <TableCell className="font-medium">{item.animal.code}</TableCell>
+        <TableCell className="font-medium">{item?.animal?.code}</TableCell>
         <TableCell className="font-medium">
           <div className="font-medium">{item?.name}</div>
           <div className="hidden text-sm text-muted-foreground md:inline">
@@ -61,8 +61,8 @@ const ListAvesTreatments = ({ item, index }: { item: any; index: number }) => {
               : item?.diagnosis || 'N/A'}
           </div>
         </TableCell>
-        <TableCell className="font-medium">{item.medication}</TableCell>
-        <TableCell className="font-medium">{item.dose || 'N/A'}</TableCell>
+        <TableCell className="font-medium">{item?.medication}</TableCell>
+        <TableCell className="font-medium">{item?.dose || 'N/A'}</TableCell>
         <TableCell className="hidden md:table-cell">
           {formatDateDDMMYY(item?.createdAt as Date)}
         </TableCell>

@@ -42,7 +42,6 @@ const UpdateBreedings = ({
   breeding?: any;
 }) => {
   const {
-    watch,
     control,
     setValue,
     handleSubmit,

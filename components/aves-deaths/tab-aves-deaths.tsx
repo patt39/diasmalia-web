@@ -5,7 +5,7 @@ import { SearchInput } from '@/components/ui-setting';
 import { LoadingFile } from '@/components/ui-setting/ant';
 import { ErrorFile } from '@/components/ui-setting/ant/error-file';
 import { Button } from '@/components/ui/button';
-import { CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import { CardContent, CardHeader } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -19,6 +19,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { PaginationPage } from '@/utils';
 import { Bone, ListFilter } from 'lucide-react';
 import { useState } from 'react';
 import {
@@ -35,16 +36,19 @@ import { ListAvesDeaths } from './list-aves-deaths';
 const TabAvesDeaths = ({ animalTypeId }: { animalTypeId: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [periode, setPeriode] = useState('');
-  const { t, search, handleSetSearch, setLoading } = useInputState();
+  const [pageItem, setPageItem] = useState(1);
+  const { t, search, handleSetSearch } = useInputState();
 
   const {
     isLoading: isLoadingDeaths,
     isError: isErrorDeaths,
     data: dataDeaths,
+    isPlaceholderData,
   } = GetDeathsAPI({
     search,
     periode,
     take: 10,
+    pageItem,
     sort: 'desc',
     sortBy: 'createdAt',
     animalTypeId: animalTypeId,
@@ -64,14 +68,12 @@ const TabAvesDeaths = ({ animalTypeId }: { animalTypeId: string }) => {
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button variant="outline">
-                    {dataDeaths?.pages[0]?.data?.total}
-                  </Button>
+                  <Button variant="outline">{dataDeaths?.data?.total}</Button>
                 </TooltipTrigger>
                 <TooltipContent className="dark:border-gray-800">
                   <p>
                     {t.formatMessage({ id: 'ANIMALTYPE.TOOLTIP' })}{' '}
-                    {dataDeaths?.pages[0]?.data?.total}{' '}
+                    {dataDeaths?.data?.total}{' '}
                     {t.formatMessage({ id: 'ANIMALTYPE.TOOLTIP.ANIMALS' })}{' '}
                     {t.formatMessage({ id: 'ANIMALTYPE.DEATHS' })}{' '}
                   </p>
@@ -144,25 +146,24 @@ const TabAvesDeaths = ({ animalTypeId }: { animalTypeId: string }) => {
                   title="404"
                   description="Error finding data please try again..."
                 />
-              ) : Number(dataDeaths?.pages[0]?.data?.total) <= 0 ? (
+              ) : Number(dataDeaths?.data?.total) <= 0 ? (
                 <ErrorFile description="Don't have death birds created yet" />
               ) : (
-                dataDeaths?.pages
-                  .flatMap((page: any) => page?.data?.value)
-                  .map((item, index) => (
-                    <>
-                      <ListAvesDeaths item={item} index={index} key={index} />
-                    </>
-                  ))
+                dataDeaths?.data?.value.map((item: any, index: number) => (
+                  <>
+                    <ListAvesDeaths item={item} index={index} key={index} />
+                  </>
+                ))
               )}
             </TableBody>
           </Table>
+          <PaginationPage
+            setPageItem={setPageItem}
+            data={dataDeaths?.data}
+            pageItem={Number(pageItem)}
+            isPlaceholderData={isPlaceholderData}
+          />
         </CardContent>
-        <CardFooter>
-          <div className="text-xs text-muted-foreground">
-            Showing <strong>1-10</strong> of <strong>32</strong> products
-          </div>
-        </CardFooter>
       </main>
       <CreateOrUpdateAvesDeaths
         death={animalTypeId}

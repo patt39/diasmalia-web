@@ -3,8 +3,31 @@ import { makeApiCall, PaginationRequest } from '@/utils';
 import {
   useInfiniteQuery,
   useMutation,
+  useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
+
+export const GetOneIncubationAPI = (payload: { animalId: string }) => {
+  const { animalId } = payload;
+  const { data, isError, isLoading, status, isPending, refetch } = useQuery({
+    queryKey: ['incubation', animalId],
+    queryFn: async () =>
+      await makeApiCall({
+        action: 'getOneIncubation',
+        urlParams: { animalId },
+      }),
+    refetchOnWindowFocus: false,
+  });
+
+  return {
+    data: data?.data as any,
+    isError,
+    isLoading,
+    status,
+    isPending,
+    refetch,
+  };
+};
 
 export const CreateOrUpdateOneIncubationAPI = ({
   onSuccess,
