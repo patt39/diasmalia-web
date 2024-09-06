@@ -18,7 +18,7 @@ const ViewAvesIsolation = ({
   const { control, errors } = useReactHookForm({ schema });
 
   const { data: getOneIsolation } = GetOneIsolationAPI({
-    isolationId: isolation.id,
+    isolationId: isolation?.id,
   });
 
   return (
@@ -42,7 +42,7 @@ const ViewAvesIsolation = ({
                     control={control}
                     label="Note"
                     name="note"
-                    placeholder={getOneIsolation.note}
+                    placeholder={getOneIsolation?.note}
                     errors={errors}
                     disabled
                   />

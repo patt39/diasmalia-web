@@ -5,12 +5,7 @@ import { SearchInput } from '@/components/ui-setting';
 import { LoadingFile } from '@/components/ui-setting/ant';
 import { ErrorFile } from '@/components/ui-setting/ant/error-file';
 import { Button } from '@/components/ui/button';
-import {
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-} from '@/components/ui/card';
+import { CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -24,6 +19,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { PaginationPage } from '@/utils';
 import { Drama, ListFilter } from 'lucide-react';
 import { useState } from 'react';
 import {
@@ -40,15 +36,18 @@ import { ListBreedings } from './list-breedings';
 const TabBreedings = ({ animalTypeId }: { animalTypeId: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [periode, setPeriode] = useState('');
+  const [pageItem, setPageItem] = useState(1);
   const { t, search, handleSetSearch, userStorage } = useInputState();
 
   const {
     isLoading: isLoadingBreedings,
     isError: isErrorBreedings,
     data: dataBreedings,
+    isPlaceholderData,
   } = GetBreedingsAPI({
     search,
     periode,
+    pageItem,
     take: 10,
     sort: 'desc',
     sortBy: 'createdAt',
@@ -71,13 +70,13 @@ const TabBreedings = ({ animalTypeId }: { animalTypeId: string }) => {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button variant="outline">
-                    {dataBreedings?.pages[0]?.data?.total}
+                    {dataBreedings?.data?.total}
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent className="dark:border-gray-800">
                   <p>
                     {t.formatMessage({ id: 'ANIMALTYPE.TOOLTIP' })}{' '}
-                    {dataBreedings?.pages[0]?.data?.total}{' '}
+                    {dataBreedings?.data?.total}{' '}
                     {t.formatMessage({ id: 'ANIMALTYPE.BREEDING' })}
                   </p>
                 </TooltipContent>
@@ -96,18 +95,28 @@ const TabBreedings = ({ animalTypeId }: { animalTypeId: string }) => {
                 <DropdownMenuLabel>Filter by</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
                   onClick={() => setPeriode('')}
                   checked
                 >
                   {t.formatMessage({ id: 'ACTIVITY.FILTERALL' })}
                 </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem onClick={() => setPeriode('7')}>
+                <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
+                  onClick={() => setPeriode('7')}
+                >
                   {t.formatMessage({ id: 'ACTIVITY.LAST7DAYS' })}
                 </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem onClick={() => setPeriode('15')}>
+                <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
+                  onClick={() => setPeriode('15')}
+                >
                   {t.formatMessage({ id: 'ACTIVITY.LAST15DAYS' })}
                 </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem onClick={() => setPeriode('30')}>
+                <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
+                  onClick={() => setPeriode('30')}
+                >
                   {t.formatMessage({ id: 'ACTIVITY.LAST30DAYS' })}
                 </DropdownMenuCheckboxItem>
               </DropdownMenuContent>
@@ -155,25 +164,24 @@ const TabBreedings = ({ animalTypeId }: { animalTypeId: string }) => {
                   title="404"
                   description="Error finding data please try again..."
                 />
-              ) : Number(dataBreedings?.pages[0]?.data?.total) <= 0 ? (
+              ) : Number(dataBreedings?.data?.total) <= 0 ? (
                 <ErrorFile description="Don't have breedings created yet please do" />
               ) : (
-                dataBreedings?.pages
-                  .flatMap((page: any) => page?.data?.value)
-                  .map((item, index) => (
-                    <>
-                      <ListBreedings item={item} index={index} key={index} />
-                    </>
-                  ))
+                dataBreedings?.data?.value.map((item: any, index: number) => (
+                  <>
+                    <ListBreedings item={item} index={index} key={index} />
+                  </>
+                ))
               )}
             </TableBody>
+            <PaginationPage
+              setPageItem={setPageItem}
+              data={dataBreedings?.data}
+              pageItem={Number(pageItem)}
+              isPlaceholderData={isPlaceholderData}
+            />
           </Table>
         </CardContent>
-        <CardFooter>
-          <div className="text-xs text-muted-foreground">
-            Showing <strong>1-10</strong> of <strong>32</strong> products
-          </div>
-        </CardFooter>
       </main>
       <CreateBreedings
         breeding={animalTypeId}

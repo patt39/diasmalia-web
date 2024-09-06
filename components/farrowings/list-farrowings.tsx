@@ -53,8 +53,8 @@ const ListFarrowings = ({ item, index }: { item: any; index: number }) => {
   return (
     <>
       <TableRow key={index} className="dark:border-gray-800">
-        <TableCell>{item.animal.code}</TableCell>
-        <TableCell>{item.litter}</TableCell>
+        <TableCell>{item?.animal?.code}</TableCell>
+        <TableCell>{item?.litter}</TableCell>
         <TableCell>
           {item?.note?.length > 60
             ? item?.note?.substring(0, 60) + '...'

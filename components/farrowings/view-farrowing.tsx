@@ -41,14 +41,14 @@ const ViewFarrowing = ({
               <div className="flex-auto justify-center p-2">
                 <div className="mb-4 flex items-center space-x-4">
                   <Label>Litter</Label>
-                  <Input disabled type="text" value={GetOneFarrowing.litter} />
+                  <Input disabled type="text" value={GetOneFarrowing?.litter} />
                 </div>
                 <div className="mb-4 disabled">
                   <TextAreaInput
                     control={control}
                     label="Note"
                     name="note"
-                    defaultValue={GetOneFarrowing.note}
+                    defaultValue={GetOneFarrowing?.note}
                     errors={errors}
                     disabled
                   />

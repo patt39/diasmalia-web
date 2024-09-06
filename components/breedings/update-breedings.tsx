@@ -42,6 +42,7 @@ const UpdateBreedings = ({
   breeding?: any;
 }) => {
   const {
+    t,
     control,
     setValue,
     handleSubmit,
@@ -157,7 +158,7 @@ const UpdateBreedings = ({
                   </div>
                 )}
 
-                {breeding.checkStatus === false ? (
+                {breeding?.checkStatus === false ? (
                   <div className="mb-4 flex items-center space-x-4">
                     <Controller
                       control={control}
@@ -190,8 +191,11 @@ const UpdateBreedings = ({
                                   .flatMap((page: any) => page?.data?.value)
                                   .map((item, index) => (
                                     <>
-                                      <SelectItem key={index} value={item.code}>
-                                        {item.code}
+                                      <SelectItem
+                                        key={index}
+                                        value={item?.code}
+                                      >
+                                        {item?.code}
                                       </SelectItem>
                                     </>
                                   ))
@@ -232,8 +236,11 @@ const UpdateBreedings = ({
                                   .flatMap((page: any) => page?.data?.value)
                                   .map((item, index) => (
                                     <>
-                                      <SelectItem key={index} value={item.code}>
-                                        {item.code}
+                                      <SelectItem
+                                        key={index}
+                                        value={item?.code}
+                                      >
+                                        {item?.code}
                                       </SelectItem>
                                     </>
                                   ))
@@ -276,7 +283,7 @@ const UpdateBreedings = ({
                     variant="outline"
                     onClick={() => setShowModal(false)}
                   >
-                    Cancel
+                    {t.formatMessage({ id: 'ALERT.CANCEL' })}
                   </ButtonInput>
                   <ButtonInput
                     type="submit"
@@ -285,7 +292,7 @@ const UpdateBreedings = ({
                     disabled={loading}
                     loading={loading}
                   >
-                    Save
+                    {t.formatMessage({ id: 'ALERT.CONTINUE' })}
                   </ButtonInput>
                 </div>
               </div>

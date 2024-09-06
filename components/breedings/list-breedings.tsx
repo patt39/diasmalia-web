@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+import { DeleteOneDeathAPI } from '@/api-site/deaths';
 import { useInputState } from '@/components/hooks';
 import { Button } from '@/components/ui/button';
 import {
@@ -8,9 +9,20 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { formatDateDDMMYY } from '@/utils';
-import { Check, Eye, MoreHorizontal, PencilIcon } from 'lucide-react';
+import {
+  AlertDangerNotification,
+  AlertSuccessNotification,
+  formatDateDDMMYY,
+} from '@/utils';
+import {
+  Check,
+  Eye,
+  MoreHorizontal,
+  PencilIcon,
+  TrashIcon,
+} from 'lucide-react';
 import { useState } from 'react';
+import { ActionModalDialog } from '../ui-setting/shadcn';
 import { Badge } from '../ui/badge';
 import { TableCell, TableRow } from '../ui/table';
 import { CheckPregnancy } from './check-pregnancy';
@@ -18,10 +30,34 @@ import { UpdateBreedings } from './update-breedings';
 import { ViewBreeding } from './view-breeding';
 
 const ListBreedings = ({ item, index }: { item: any; index: number }) => {
-  const { t } = useInputState();
+  const { t, loading, isOpen, setIsOpen, setLoading } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
   const [isCheck, setIsCheck] = useState(false);
   const [isView, setIsView] = useState(false);
+
+  const { mutateAsync: deleteMutation } = DeleteOneDeathAPI({
+    onSuccess: () => {},
+    onError: (error?: any) => {},
+  });
+
+  const deleteItem = async (item: any) => {
+    setLoading(true);
+    setIsOpen(true);
+    try {
+      await deleteMutation({ deathId: item.id });
+      AlertSuccessNotification({
+        text: 'Breeding deleted successfully',
+      });
+      setLoading(false);
+      setIsOpen(false);
+    } catch (error: any) {
+      setLoading(false);
+      setIsOpen(true);
+      AlertDangerNotification({
+        text: `${error.response.data.message}`,
+      });
+    }
+  };
 
   return (
     <>
@@ -77,10 +113,22 @@ const ListBreedings = ({ item, index }: { item: any; index: number }) => {
                   {t.formatMessage({ id: 'TABANIMAL.VIEW' })}
                 </span>
               </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setIsOpen(true)}>
+                <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
+                <span className="ml-2 cursor-pointer hover:text-red-600">
+                  {t.formatMessage({ id: 'TABANIMAL.DELETE' })}
+                </span>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </TableCell>
       </TableRow>
+      <ActionModalDialog
+        loading={loading}
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        onClick={() => deleteItem(item)}
+      />
       <UpdateBreedings
         breeding={item}
         showModal={isEdit}

@@ -1,7 +1,7 @@
 import { FarrowingsModel } from '@/types/farrowing';
 import { makeApiCall, PaginationRequest } from '@/utils';
 import {
-  useInfiniteQuery,
+  keepPreviousData,
   useMutation,
   useQuery,
   useQueryClient,
@@ -81,16 +81,25 @@ export const GetFarrowingsAPI = (
     search?: string;
     take?: number;
     periode?: string;
+    pageItem: number;
     animalTypeId?: string;
     organizationId?: string;
   } & PaginationRequest,
 ) => {
-  const { take, sort, search, sortBy, periode, animalTypeId, organizationId } =
-    payload;
-  return useInfiniteQuery({
-    queryKey: ['farrowings', 'infinite', { ...payload }],
-    getNextPageParam: (lastPage: any) => lastPage.data.next_page,
-    queryFn: async ({ pageParam = 1 }) =>
+  const {
+    take,
+    sort,
+    search,
+    pageItem,
+    sortBy,
+    periode,
+    animalTypeId,
+    organizationId,
+  } = payload;
+  return useQuery({
+    queryKey: ['farrowings', { ...payload }],
+    placeholderData: keepPreviousData,
+    queryFn: async () =>
       await makeApiCall({
         action: 'getFarrowings',
         queryParams: {
@@ -100,12 +109,11 @@ export const GetFarrowingsAPI = (
           sortBy,
           periode,
           animalTypeId,
-          page: pageParam,
+          page: pageItem,
           organizationId,
         },
       }),
-    staleTime: 60_000,
-    initialPageParam: 1,
+    staleTime: 5000,
   });
 };
 

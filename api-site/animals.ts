@@ -51,7 +51,7 @@ export const GetOneAnimalAPI = (payload: { animalId: string }) => {
   };
 };
 
-export const CreateOrUpdateOneAnimalAPI = ({
+export const CreateOneAnimalAPI = ({
   onSuccess,
   onError,
 }: {
@@ -62,18 +62,11 @@ export const CreateOrUpdateOneAnimalAPI = ({
   const queryClient = useQueryClient();
   const result = useMutation({
     mutationKey: queryKey,
-    mutationFn: async (payload: AnimalModel & { animalId: string }) => {
-      const { animalId } = payload;
-      return animalId
-        ? await makeApiCall({
-            action: 'updateOneAnimal',
-            body: payload,
-            urlParams: { animalId },
-          })
-        : await makeApiCall({
-            action: 'createOneAnimal',
-            body: { ...payload },
-          });
+    mutationFn: async (payload: AnimalModel) => {
+      await makeApiCall({
+        action: 'createOneAnimal',
+        body: { ...payload },
+      });
     },
     onError: async (error) => {
       await queryClient.invalidateQueries({ queryKey });
@@ -182,12 +175,55 @@ export const UpdateOneAvesAnimalAPI = ({
   return result;
 };
 
+export const UpdateOneAnimalAPI = ({
+  onSuccess,
+  onError,
+}: {
+  onSuccess?: () => void;
+  onError?: (error: any) => void;
+} = {}) => {
+  const queryKey = ['animals'];
+  const queryClient = useQueryClient();
+  const result = useMutation({
+    mutationKey: queryKey,
+    mutationFn: async (payload: any & { animalId: string }) => {
+      const { animalId } = payload;
+      return await makeApiCall({
+        action: 'updateOneAnimal',
+        body: { ...payload },
+        urlParams: { animalId },
+      });
+    },
+    onError: async (error) => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onError) {
+        onError(error);
+      }
+    },
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+  });
+
+  return result;
+};
+
 export const GetAnimalsAPI = (
   payload: {
     search?: string;
     take?: number;
     status?: string;
     gender?: string;
+    quantity?: number;
     isIsolated?: string;
     animalTypeId?: string;
     productionPhase?: string;
@@ -207,7 +243,17 @@ export const GetAnimalsAPI = (
     organizationId,
   } = payload;
   return useInfiniteQuery({
-    queryKey: ['animals', 'infinite', { ...payload }],
+    queryKey: [
+      'animals',
+      'infinite',
+      'fattenings',
+      'breedings',
+      'weanings',
+      'deaths',
+      'avesdeaths',
+      'farrowings',
+      { ...payload },
+    ],
     getNextPageParam: (lastPage: any) => lastPage.data.next_page,
     queryFn: async ({ pageParam = 1 }) =>
       await makeApiCall({

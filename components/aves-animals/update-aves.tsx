@@ -60,8 +60,18 @@ const UpdateAvesAnimals = ({
   } = useReactHookForm({ schema });
   const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
-
   const { data: animalType } = GetOneAnimalTypeAPI({
+    animalTypeId: animalTypeId,
+  });
+
+  const {
+    isLoading: isLoadingLocations,
+    isError: isErrorLocations,
+    data: dataLocations,
+  } = GetLocationsAPI({
+    take: 10,
+    sort: 'desc',
+    sortBy: 'createdAt',
     animalTypeId: animalTypeId,
   });
 
@@ -117,17 +127,6 @@ const UpdateAvesAnimals = ({
     }
   };
 
-  const {
-    isLoading: isLoadingLocations,
-    isError: isErrorLocations,
-    data: dataLocations,
-  } = GetLocationsAPI({
-    take: 10,
-    sort: 'asc',
-    sortBy: 'createdAt',
-    animalTypeId: animalTypeId,
-  });
-
   return (
     <>
       {showModal ? (
@@ -142,7 +141,7 @@ const UpdateAvesAnimals = ({
                 <XIcon />
               </span>
             </button>
-            <form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
+            <form className="mt-2" onSubmit={handleSubmit(onSubmit)}>
               <div className="flex-auto justify-center p-2">
                 {hasErrors && (
                   <div className="bg-white py-6 dark:bg-[#121212]">
@@ -158,7 +157,8 @@ const UpdateAvesAnimals = ({
                   </div>
                 )}
 
-                <div className="flex items-center">
+                <div className="items-center">
+                  <Label>Code de la bande</Label>
                   <TextInput
                     control={control}
                     type="text"
@@ -167,21 +167,89 @@ const UpdateAvesAnimals = ({
                     errors={errors}
                   />
                 </div>
-                {animalType.name === 'Poulet de chair' ? (
-                  <div className="mt-2">
-                    <Label>Nombre animaux</Label>
-                    <TextInput
-                      control={control}
-                      type="number"
-                      name="quantity"
-                      placeholder="Number of animals"
-                      errors={errors}
-                    />
-                  </div>
+                {['Poulet de chair', 'Pisciculture', 'Pondeuses'].includes(
+                  animalType?.name,
+                ) ? (
+                  <>
+                    <div className="my-2">
+                      <Label>Nombre d&#39;animaux</Label>
+                      <TextInput
+                        control={control}
+                        type="number"
+                        name="quantity"
+                        placeholder="Number of animals"
+                        errors={errors}
+                      />
+                    </div>
+                    <div className="w-full">
+                      <Label>
+                        Code du batiment:<span className="text-red-600">*</span>
+                      </Label>
+                      <Controller
+                        control={control}
+                        name="locationCode"
+                        render={({ field: { value, onChange } }) => (
+                          <Select
+                            onValueChange={onChange}
+                            name={'locationCode'}
+                            value={value}
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select a location code" />
+                            </SelectTrigger>
+                            <SelectContent className="dark:border-gray-800">
+                              <SelectGroup>
+                                <SelectLabel>Location codes</SelectLabel>
+                                {isLoadingLocations ? (
+                                  <LoadingFile />
+                                ) : isErrorLocations ? (
+                                  <ErrorFile
+                                    title="404"
+                                    description="Error finding data please try again..."
+                                  />
+                                ) : Number(
+                                    dataLocations?.pages[0]?.data?.total,
+                                  ) <= 0 ? (
+                                  <ErrorFile description="Don't have location codes" />
+                                ) : (
+                                  dataLocations?.pages
+                                    .flatMap((page: any) => page?.data?.value)
+                                    .map((item, index) => (
+                                      <>
+                                        <SelectItem
+                                          key={index}
+                                          value={item?.code}
+                                        >
+                                          {item?.code}
+                                        </SelectItem>
+                                      </>
+                                    ))
+                                )}
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        )}
+                      />
+                    </div>
+                    <div className="my-2">
+                      <Label>
+                        Date de lancement:
+                        <span className="text-red-600">*</span>
+                      </Label>
+                      <div className="flex items-center space-x-2">
+                        <DateInput
+                          control={control}
+                          errors={errors}
+                          placeholder="Starting date"
+                          name="birthday"
+                        />
+                      </div>
+                    </div>
+                  </>
                 ) : (
-                  <div className="my-2 flex items-center space-x-1">
-                    <div className="mr-10">
-                      <Label>Phase de production</Label>
+                  <>
+                    <div className="my-2">
+                      <Label>Phase de production: </Label>
                       <SelectInput
                         firstOptionName="Choose a production type"
                         control={control}
@@ -195,99 +263,104 @@ const UpdateAvesAnimals = ({
                         ]}
                       />
                     </div>
-                    <div className="pr-10">
+                    <div className="my-2 flex items-center space-x-10">
+                      <div>
+                        <Label>Poids</Label>
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="weight"
+                          placeholder="Give weight"
+                          errors={errors}
+                        />
+                      </div>
+                      <div>
+                        <Label>Nombre de males</Label>
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="male"
+                          placeholder="Number of males"
+                          errors={errors}
+                        />
+                      </div>
+                      <div>
+                        <Label>Nombre de femèles</Label>
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="female"
+                          placeholder="Number of females"
+                          errors={errors}
+                        />
+                      </div>
+                    </div>
+                    <div className="w-full">
                       <Label>
-                        Nombre de males
+                        Code du batiment:<span className="text-red-600">*</span>
+                      </Label>
+                      <Controller
+                        control={control}
+                        name="locationCode"
+                        render={({ field: { value, onChange } }) => (
+                          <Select
+                            onValueChange={onChange}
+                            name={'locationCode'}
+                            value={value}
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select a location code" />
+                            </SelectTrigger>
+                            <SelectContent className="dark:border-gray-800">
+                              <SelectGroup>
+                                <SelectLabel>Location codes</SelectLabel>
+                                {isLoadingLocations ? (
+                                  <LoadingFile />
+                                ) : isErrorLocations ? (
+                                  <ErrorFile
+                                    title="404"
+                                    description="Error finding data please try again..."
+                                  />
+                                ) : Number(
+                                    dataLocations?.pages[0]?.data?.total,
+                                  ) <= 0 ? (
+                                  <ErrorFile description="Don't have location codes" />
+                                ) : (
+                                  dataLocations?.pages
+                                    .flatMap((page: any) => page?.data?.value)
+                                    .map((item, index) => (
+                                      <>
+                                        <SelectItem
+                                          key={index}
+                                          value={item?.code}
+                                        >
+                                          {item?.code}
+                                        </SelectItem>
+                                      </>
+                                    ))
+                                )}
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        )}
+                      />
+                    </div>
+                    <div className="my-2">
+                      <Label>
+                        Date de lancement:
                         <span className="text-red-600">*</span>
                       </Label>
-                      <TextInput
-                        control={control}
-                        type="number"
-                        name="male"
-                        placeholder="Number of males"
-                        errors={errors}
-                      />
+                      <div className="flex items-center space-x-2">
+                        <DateInput
+                          control={control}
+                          errors={errors}
+                          placeholder="Starting date"
+                          name="birthday"
+                        />
+                      </div>
                     </div>
-                    <div className="ml-4">
-                      <Label>Nombre de femèles</Label>
-                      <TextInput
-                        control={control}
-                        type="number"
-                        name="female"
-                        placeholder="Number of females"
-                        errors={errors}
-                      />
-                    </div>
-                  </div>
+                  </>
                 )}
-                <div className="my-2 flex items-center space-x-1">
-                  <div className="mr-10">
-                    <Label>Poids</Label>
-                    <TextInput
-                      control={control}
-                      type="number"
-                      name="weight"
-                      placeholder="Give weight"
-                      errors={errors}
-                    />
-                  </div>
-                  <div className="pr-10">
-                    <Label>Code du batiment</Label>
-                    <Controller
-                      control={control}
-                      name="locationCode"
-                      render={({ field: { value, onChange } }) => (
-                        <Select
-                          onValueChange={onChange}
-                          name={'locationCode'}
-                          value={value}
-                        >
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select a location code" />
-                          </SelectTrigger>
-                          <SelectContent className="dark:border-gray-800">
-                            <SelectGroup>
-                              <SelectLabel>Location codes</SelectLabel>
-                              {isLoadingLocations ? (
-                                <LoadingFile />
-                              ) : isErrorLocations ? (
-                                <ErrorFile
-                                  title="404"
-                                  description="Error finding data please try again..."
-                                />
-                              ) : Number(
-                                  dataLocations?.pages[0]?.data?.total,
-                                ) <= 0 ? (
-                                <ErrorFile description="Don't have location codes" />
-                              ) : (
-                                dataLocations?.pages
-                                  .flatMap((page: any) => page?.data?.value)
-                                  .map((item, index) => (
-                                    <>
-                                      <SelectItem key={index} value={item.code}>
-                                        {item.code}
-                                      </SelectItem>
-                                    </>
-                                  ))
-                              )}
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
-                  </div>
-                  <div className="ml-4">
-                    <Label>Date de lancement</Label>
-                    <div className="flex items-center space-x-2">
-                      <DateInput
-                        control={control}
-                        errors={errors}
-                        placeholder="Starting date"
-                        name="birthday"
-                      />
-                    </div>
-                  </div>
-                </div>
                 <div className="mt-4 flex items-center space-x-4">
                   <ButtonInput
                     type="button"

@@ -1,5 +1,4 @@
 /* eslint-disable @next/next/no-img-element */
-import { DeleteOneFeedingAPI } from '@/api-site/feedings';
 import { useInputState } from '@/components/hooks';
 import { Button } from '@/components/ui/button';
 import {
@@ -18,11 +17,6 @@ import { CreateOrUpdateAvesFeedings } from './create-or-update-aves-feedings';
 const ListAvesFeedings = ({ item, index }: { item: any; index: number }) => {
   const { t } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
-
-  const { mutateAsync: deleteMutation } = DeleteOneFeedingAPI({
-    onSuccess: () => {},
-    onError: (error?: any) => {},
-  });
 
   return (
     <>

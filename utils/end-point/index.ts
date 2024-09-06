@@ -95,8 +95,7 @@ export const apiEndpoints: ClientApiMethods = {
   /****************** Sales route */
   getSales: GET(`${baseUrl}/sales`),
   exportSales: GET(`${baseUrl}/sales/export`),
-  getOneSale: GET(`${baseUrl}/sales/view/:saleId`),
-  getSaleStatistics: GET(`${baseUrl}/sales/statistics`),
+  getOneSale: GET(`${baseUrl}/sales/:saleId/view`),
   createOneSale: POST(`${baseUrl}/sales/bulk/create`),
   updateOneSale: PUT(`${baseUrl}/sales/:saleId/edit`),
   createOneAvesSale: POST(`${baseUrl}/sales/create/aves`),

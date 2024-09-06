@@ -3,7 +3,7 @@ import { GetOneAnimalTypeAPI } from '@/api-site/animal-type';
 import { GetLocationsAPI } from '@/api-site/locations';
 import { useInputState } from '@/components/hooks';
 import { Button } from '@/components/ui/button';
-import { CardDescription, CardHeader } from '@/components/ui/card';
+import { CardHeader } from '@/components/ui/card';
 import { Fence, ListFilter } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
@@ -29,6 +29,7 @@ import { ListLocations } from './list-locations';
 const TabLocations = ({ animalTypeId }: { animalTypeId: string }) => {
   const { ref, inView } = useInView();
   const [isOpen, setIsOpen] = useState(false);
+  const [productionPhase, setProductionPhase] = useState('');
   const { t, search, handleSetSearch } = useInputState();
 
   const { data: animalType } = GetOneAnimalTypeAPI({
@@ -47,6 +48,7 @@ const TabLocations = ({ animalTypeId }: { animalTypeId: string }) => {
     take: 10,
     sort: 'desc',
     sortBy: 'createdAt',
+    productionPhase,
     animalTypeId: animalTypeId,
   });
 
@@ -118,17 +120,30 @@ const TabLocations = ({ animalTypeId }: { animalTypeId: string }) => {
                   className="dark:border-gray-800"
                 >
                   <DropdownMenuLabel>Filter by</DropdownMenuLabel>
-                  <DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem
+                    className="cursor-pointer"
+                    onClick={() => setProductionPhase('')}
+                    checked
+                  >
+                    {t.formatMessage({ id: 'ACTIVITY.FILTERALL' })}
+                  </DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem
+                    className="cursor-pointer"
+                    onClick={() => setProductionPhase('GROWTH')}
+                  >
                     {t.formatMessage({ id: 'PRODUCTIONTYPE.GROWTH' })}
                   </DropdownMenuCheckboxItem>
-                  <DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem
+                    className="cursor-pointer"
+                    onClick={() => setProductionPhase('FATTENING')}
+                  >
                     {t.formatMessage({ id: 'ANIMALTYPE.FATTENING' })}
                   </DropdownMenuCheckboxItem>
-                  <DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem
+                    className="cursor-pointer"
+                    onClick={() => setProductionPhase('GESTATION')}
+                  >
                     {t.formatMessage({ id: 'ANIMALTYPE.GESTATIONS' })}
-                  </DropdownMenuCheckboxItem>
-                  <DropdownMenuCheckboxItem>
-                    {t.formatMessage({ id: 'PRODUCTIONTYPE.LACTATION' })}
                   </DropdownMenuCheckboxItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -148,11 +163,11 @@ const TabLocations = ({ animalTypeId }: { animalTypeId: string }) => {
             </Button>
           </div>
         </div>
-        <div className="mr-auto mb-8 items-center gap-2">
+        {/* <div className="mr-auto items-center gap-2">
           <CardDescription>
             {t.formatMessage({ id: 'ANIMALTYPE.LOCATION.DESCRIPTION' })}
           </CardDescription>
-        </div>
+        </div> */}
       </CardHeader>
       <section className="mt-8 mb-20">
         <div className="px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl">

@@ -1,10 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
+import { GetAnimalStatisticsAPI } from '@/api-site/animals';
 import { GetFeedingsAPI } from '@/api-site/feedings';
 import { useInputState } from '@/components/hooks';
 import { LoadingFile } from '@/components/ui-setting/ant';
 import { ErrorFile } from '@/components/ui-setting/ant/error-file';
 import { Button } from '@/components/ui/button';
-import { CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import { CardContent, CardHeader } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -12,6 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { PaginationPage } from '@/utils';
 import { ListFilter, Salad } from 'lucide-react';
 import { useState } from 'react';
 import { SearchInput } from '../ui-setting';
@@ -35,16 +37,25 @@ import { ListFeedings } from './list-feedings';
 const TabFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [periode, setPeriode] = useState('');
+  const [pageItem, setPageItem] = useState(1);
+  const [feedingsCount] = useState('');
   const { t, search, handleSetSearch, userStorage } = useInputState();
+
+  const { data: animalStatistics } = GetAnimalStatisticsAPI({
+    animalTypeId: animalTypeId,
+  });
 
   const {
     isLoading: isLoadingFeedings,
     isError: isErrorFeedings,
     data: dataFeedings,
+    isPlaceholderData,
   } = GetFeedingsAPI({
     search,
     periode,
+    pageItem,
     take: 10,
+    feedingsCount,
     sort: 'desc',
     sortBy: 'createdAt',
     animalTypeId: animalTypeId,
@@ -65,12 +76,15 @@ const TabFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button variant="outline">2</Button>
+                  <Button variant="outline">
+                    {animalStatistics?.sumFeedings}
+                  </Button>
                 </TooltipTrigger>
                 <TooltipContent className="dark:border-gray-800">
                   <p>
-                    {t.formatMessage({ id: 'ANIMALTYPE.TOOLTIP' })} 2kg
-                    {t.formatMessage({ id: 'ANIMALTYPE.FEEDING' })}
+                    {t.formatMessage({ id: 'ANIMALTYPE.TOOLTIP' })}{' '}
+                    {animalStatistics?.sumFeedings}kg
+                    {''} {t.formatMessage({ id: 'ANIMALTYPE.FEEDING' })}
                   </p>
                 </TooltipContent>
               </Tooltip>
@@ -84,22 +98,35 @@ const TabFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
                   </span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="dark:border-gray-800">
+              <DropdownMenuContent
+                align="end"
+                className="dark:border-gray-800 cursor-pointer"
+              >
                 <DropdownMenuLabel>Filter by</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuCheckboxItem
                   onClick={() => setPeriode('')}
                   checked
+                  className="cursor-pointer"
                 >
                   {t.formatMessage({ id: 'ACTIVITY.FILTERALL' })}
                 </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem onClick={() => setPeriode('7')}>
+                <DropdownMenuCheckboxItem
+                  onClick={() => setPeriode('7')}
+                  className="cursor-pointer"
+                >
                   {t.formatMessage({ id: 'ACTIVITY.LAST7DAYS' })}
                 </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem onClick={() => setPeriode('15')}>
+                <DropdownMenuCheckboxItem
+                  onClick={() => setPeriode('15')}
+                  className="cursor-pointer"
+                >
                   {t.formatMessage({ id: 'ACTIVITY.LAST15DAYS' })}
                 </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem onClick={() => setPeriode('30')}>
+                <DropdownMenuCheckboxItem
+                  onClick={() => setPeriode('30')}
+                  className="cursor-pointer"
+                >
                   {t.formatMessage({ id: 'ACTIVITY.LAST30DAYS' })}
                 </DropdownMenuCheckboxItem>
               </DropdownMenuContent>
@@ -146,25 +173,24 @@ const TabFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
                   title="404"
                   description="Error finding data please try again..."
                 />
-              ) : Number(dataFeedings?.pages[0]?.data?.total) <= 0 ? (
+              ) : Number(dataFeedings?.data?.total) <= 0 ? (
                 <ErrorFile description="Don't have feedings created yet please do" />
               ) : (
-                dataFeedings?.pages
-                  .flatMap((page: any) => page?.data?.value)
-                  .map((item: any, index: any) => (
-                    <>
-                      <ListFeedings index={index} item={item} key={index} />
-                    </>
-                  ))
+                dataFeedings?.data?.value.map((item: any, index: number) => (
+                  <>
+                    <ListFeedings index={index} item={item} key={index} />
+                  </>
+                ))
               )}
             </TableBody>
           </Table>
+          <PaginationPage
+            setPageItem={setPageItem}
+            data={dataFeedings?.data}
+            pageItem={Number(pageItem)}
+            isPlaceholderData={isPlaceholderData}
+          />
         </CardContent>
-        <CardFooter>
-          <div className="text-xs text-muted-foreground">
-            Showing <strong>1-10</strong> of <strong>32</strong> products
-          </div>
-        </CardFooter>
       </main>
       <CreateFeedings
         feeding={animalTypeId}

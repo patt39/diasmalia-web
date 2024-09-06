@@ -12,7 +12,7 @@ import {
   AlertDangerNotification,
   AlertSuccessNotification,
 } from '@/utils/alert-notification';
-import { XIcon } from 'lucide-react';
+import { FileQuestion, XIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { SubmitHandler } from 'react-hook-form';
@@ -20,6 +20,7 @@ import { useInView } from 'react-intersection-observer';
 import * as yup from 'yup';
 import { LoadingFile } from '../ui-setting/ant';
 import { ErrorFile } from '../ui-setting/ant/error-file';
+import { Button } from '../ui/button';
 import { Label } from '../ui/label';
 import {
   Select,
@@ -28,6 +29,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/select';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '../ui/tooltip';
 
 const schema = yup.object({
   animals: yup.array().optional(),
@@ -51,6 +58,7 @@ const CreateOrUpdateSales = ({
 }) => {
   const {
     t,
+    watch,
     control,
     setValue,
     handleSubmit,
@@ -62,8 +70,10 @@ const CreateOrUpdateSales = ({
     register,
   } = useReactHookForm({ schema });
   const { query } = useRouter();
-  const animalTypeId = String(query?.animalTypeId);
   const { ref, inView } = useInView();
+  const selectedAnimals = watch('animals', '');
+  const animalTypeId = String(query?.animalTypeId);
+  const countSelectedAnimals = selectedAnimals.length;
 
   useEffect(() => {
     if (sale) {
@@ -126,7 +136,7 @@ const CreateOrUpdateSales = ({
     fetchNextPage,
   } = GetAnimalsAPI({
     take: 10,
-    sort: 'asc',
+    sort: 'desc',
     status: 'ACTIVE',
     sortBy: 'createdAt',
     animalTypeId: animalTypeId,
@@ -160,15 +170,36 @@ const CreateOrUpdateSales = ({
         <div className="min-w-screen animated fadeIn faster fixed  inset-0  z-50 flex h-screen items-center justify-center bg-cover bg-center bg-no-repeat outline-none focus:outline-none">
           <div className="absolute inset-0 z-0 bg-black opacity-80"></div>
           <div className="relative m-auto max-h-screen w-full max-w-2xl overflow-y-scroll rounded-xl bg-white  p-5 shadow-lg dark:bg-[#121212]">
-            <button
-              className="float-right border-0 bg-transparent text-black"
-              onClick={() => setShowModal(false)}
-            >
-              <span className="opacity-7 block size-6 rounded-full py-0 text-xl  dark:text-white">
-                <XIcon />
-              </span>
-            </button>
-            <form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
+            <div className="flex mb-0">
+              <div className="mr-auto">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="outline">
+                        {countSelectedAnimals || 0}
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>
+                        {countSelectedAnimals}
+                        {t.formatMessage({ id: 'ANIMAL.SELECTED.COUNT' })}
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+              <div className="justify-end">
+                <button
+                  className="float-right border-0 bg-transparent text-black"
+                  onClick={() => setShowModal(false)}
+                >
+                  <span className="opacity-7 block size-6 rounded-full py-0 text-xl  dark:text-white">
+                    <XIcon />
+                  </span>
+                </button>
+              </div>
+            </div>
+            <form className="mt-2" onSubmit={handleSubmit(onSubmit)}>
               <div className="flex-auto justify-center p-2">
                 {hasErrors && (
                   <div className="bg-white py-6 dark:bg-[#121212]">
@@ -185,10 +216,7 @@ const CreateOrUpdateSales = ({
                 )}
 
                 {!sale.id ? (
-                  <div className="flex mb-4 w-full  mt-2 space-x-2">
-                    <Label className="pt-3">
-                      Codes:<span className="text-red-600">*</span>
-                    </Label>
+                  <div className="flex mb-4 w-full items-center mt-2">
                     <Select>
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select animals for sale / Choisissez les animaux à vendre " />
@@ -247,6 +275,16 @@ const CreateOrUpdateSales = ({
                         </SelectGroup>
                       </SelectContent>
                     </Select>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <FileQuestion />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>{t.formatMessage({ id: 'CODE.SALES.TOOLTIP' })}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
                 ) : null}
 
@@ -316,7 +354,7 @@ const CreateOrUpdateSales = ({
                       { id: 3, name: 'AUCTION' },
                       { id: 4, name: 'CONTRACT' },
                       { id: 5, name: 'SOCIALMEDIA' },
-                      { id: 12, name: 'OTHERS' },
+                      { id: 12, name: 'OTHER' },
                     ]}
                   />
                 </div>

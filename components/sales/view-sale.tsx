@@ -45,7 +45,7 @@ const ViewSale = ({
                     control={control}
                     type="text"
                     name="soldTo"
-                    defaultValue={getOneSale.soldTo}
+                    defaultValue={getOneSale?.soldTo}
                     errors={errors}
                     disabled
                   />
@@ -56,7 +56,7 @@ const ViewSale = ({
                     control={control}
                     type="text"
                     name="email"
-                    defaultValue={getOneSale.email}
+                    defaultValue={getOneSale?.email}
                     errors={errors}
                     disabled
                   />
@@ -67,7 +67,7 @@ const ViewSale = ({
                     control={control}
                     type="number"
                     name="phone"
-                    defaultValue={getOneSale.phone}
+                    defaultValue={getOneSale?.phone}
                     errors={errors}
                     disabled
                   />
@@ -78,21 +78,21 @@ const ViewSale = ({
                     control={control}
                     type="text"
                     name="address"
-                    defaultValue={getOneSale.address}
+                    defaultValue={getOneSale?.address}
                     errors={errors}
                     disabled
                   />
                 </div>
                 <Label>{t.formatMessage({ id: 'SALE.CHANNEL' })}:</Label>
                 <div className="mb-4 flex items-center space-x-4">
-                  <Input disabled type="text" value={getOneSale.method} />
+                  <Input disabled type="text" value={getOneSale?.method} />
                 </div>
                 <div className="mb-4">
                   <TextAreaInput
                     control={control}
                     label="Details of sale"
                     name="detail"
-                    defaultValue={getOneSale.note}
+                    defaultValue={getOneSale?.note}
                     errors={errors}
                     disabled
                   />

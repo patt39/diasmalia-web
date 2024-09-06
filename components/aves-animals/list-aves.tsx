@@ -71,24 +71,30 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
         <div className="p-6 lg:px-10 lg:py-8">
           <div className="ml-auto mb-4">
             {item?.status === 'ACTIVE' ? (
-              <Badge variant="default">{item?.status}</Badge>
+              <Badge variant="default">
+                {t.formatMessage({ id: 'STATUS.ACTIVE' })}
+              </Badge>
             ) : item?.status === 'SOLD' ? (
-              <Badge variant="secondary">{item?.status}</Badge>
+              <Badge variant="secondary">
+                {t.formatMessage({ id: 'STATUS.SOLD' })}
+              </Badge>
             ) : (
-              <Badge variant="destructive">{item?.status}</Badge>
+              <Badge variant="destructive">
+                {t.formatMessage({ id: 'STATUS.DEATH' })}
+              </Badge>
             )}
           </div>
           <div className="flex items-center justify-start space-x-6">
             <div>
               <h2 className="text-sm font-medium text-gray-500 h-4">
-                {t.formatMessage({ id: 'TABANIMAL.WEIGHT' })} :{item?.weight}kg
+                {t.formatMessage({ id: 'TABANIMAL.WEIGHT' })}: {item?.weight}kg
               </h2>
               <h2 className="mt-2 text-sm font-medium text-gray-500 h-4">
                 Age: {formatDateDifference(item?.birthday)}
               </h2>
               <h2 className="mt-2 text-sm font-medium text-gray-500 h-4">
                 {t.formatMessage({
-                  id: 'TABINCUBATION.QTYSTART',
+                  id: 'LOCATION.ANIMALS',
                 })}
                 : {item?.quantity < 0 ? 0 : item?.quantity}
               </h2>
@@ -98,10 +104,15 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
               <h3 className="text-sm font-bold text-gray-900 h-8 sm:text-base lg:text-lg">
                 {(item?.code || item.electronicCode).toUpperCase()}
               </h3>
-
-              <p className=" text-sm font-medium text-gray-500">
-                {item?.productionPhase}
-              </p>
+              {item?.productionPhase === 'GROWTH' ? (
+                <p className=" text-sm font-medium text-gray-500">
+                  {t.formatMessage({ id: 'PRODUCTIONPHASE.GROWTH' })}
+                </p>
+              ) : (
+                <p className=" text-sm font-medium text-gray-500">
+                  {t.formatMessage({ id: 'PRODUCTIONPHASE.LAYING' })}
+                </p>
+              )}
             </div>
           </div>
           <div className="grid grid-cols-1 mt-6 sm:mt-2 px-20 sm:grid-cols-2 xl:grid-cols-3 sm:gap-8 xl:gap-12">

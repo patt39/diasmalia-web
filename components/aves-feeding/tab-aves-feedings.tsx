@@ -42,14 +42,13 @@ const TabAvesFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
   } = GetFeedingsAPI({
     search,
     periode,
-    take: 2,
+    take: 10,
+    pageItem,
     sort: 'desc',
     sortBy: 'createdAt',
     animalTypeId: animalTypeId,
     organizationId: userStorage?.organizationId,
   });
-
-  console.log('dataFeedings ==>', dataFeedings);
 
   return (
     <>
@@ -75,18 +74,28 @@ const TabAvesFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
                 <DropdownMenuLabel>Filter by</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
                   onClick={() => setPeriode('')}
                   checked
                 >
                   {t.formatMessage({ id: 'ACTIVITY.FILTERALL' })}
                 </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem onClick={() => setPeriode('7')}>
+                <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
+                  onClick={() => setPeriode('7')}
+                >
                   {t.formatMessage({ id: 'ACTIVITY.LAST7DAYS' })}
                 </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem onClick={() => setPeriode('15')}>
+                <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
+                  onClick={() => setPeriode('15')}
+                >
                   {t.formatMessage({ id: 'ACTIVITY.LAST15DAYS' })}
                 </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem onClick={() => setPeriode('30')}>
+                <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
+                  onClick={() => setPeriode('30')}
+                >
                   {t.formatMessage({ id: 'ACTIVITY.LAST30DAYS' })}
                 </DropdownMenuCheckboxItem>
               </DropdownMenuContent>
@@ -133,22 +142,20 @@ const TabAvesFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
                   title="404"
                   description="Error finding data please try again..."
                 />
-              ) : Number(dataFeedings?.pages[0]?.data?.total) <= 0 ? (
+              ) : Number(dataFeedings?.data?.total) <= 0 ? (
                 <ErrorFile description="Don't have feedings created yet please do" />
               ) : (
-                dataFeedings?.pages
-                  .flatMap((page: any) => page?.data?.value)
-                  .map((item: any, index: any) => (
-                    <>
-                      <ListAvesFeedings index={index} item={item} key={index} />
-                    </>
-                  ))
+                dataFeedings?.data?.value.map((item: any, index: number) => (
+                  <>
+                    <ListAvesFeedings index={index} item={item} key={index} />
+                  </>
+                ))
               )}
             </TableBody>
           </Table>
           <PaginationPage
             setPageItem={setPageItem}
-            data={dataFeedings?.pages[0]?.data}
+            data={dataFeedings?.data}
             pageItem={Number(pageItem)}
             isPlaceholderData={isPlaceholderData}
           />

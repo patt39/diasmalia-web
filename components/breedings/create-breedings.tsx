@@ -25,6 +25,7 @@ import { useEffect } from 'react';
 import { Controller, SubmitHandler } from 'react-hook-form';
 import { useInView } from 'react-intersection-observer';
 import * as yup from 'yup';
+import { Label } from '../ui/label';
 
 const schema = yup.object({
   codeMale: yup.string().optional(),
@@ -36,7 +37,6 @@ const schema = yup.object({
 const CreateBreedings = ({
   showModal,
   setShowModal,
-  breeding,
 }: {
   showModal: boolean;
   setShowModal: any;
@@ -45,7 +45,6 @@ const CreateBreedings = ({
   const {
     t,
     control,
-    setValue,
     handleSubmit,
     errors,
     loading,
@@ -57,13 +56,6 @@ const CreateBreedings = ({
   const animalTypeId = String(query?.animalTypeId);
 
   const { ref, inView } = useInView();
-
-  useEffect(() => {
-    if (breeding) {
-      const fields = ['codeMale', 'codeFemale', 'method', 'note'];
-      fields?.forEach((field: any) => setValue(field, breeding[field]));
-    }
-  }, [breeding, setValue]);
 
   // Create or Update data
   const { mutateAsync: saveMutation } = CreateOrUpdateOneBreedingAPI({
@@ -85,7 +77,6 @@ const CreateBreedings = ({
     try {
       await saveMutation({
         ...payload,
-        breedingId: breeding?.id,
       });
       setHasErrors(false);
       setLoading(false);
@@ -260,8 +251,8 @@ const CreateBreedings = ({
                                 .flatMap((page: any) => page?.data?.value)
                                 .map((item, index) => (
                                   <>
-                                    <SelectItem key={index} value={item.code}>
-                                      {item.code}
+                                    <SelectItem key={index} value={item?.code}>
+                                      {item?.code}
                                     </SelectItem>
                                   </>
                                 ))
@@ -282,12 +273,15 @@ const CreateBreedings = ({
                   />
                 </div>
                 <div className="mb-4">
+                  <Label>
+                    Sélectionnez la methode de croisement:
+                    <span className="text-red-600">*</span>
+                  </Label>
                   <SelectInput
                     firstOptionName="Choose a method"
-                    label="Method"
                     control={control}
                     errors={errors}
-                    placeholder="Select method"
+                    placeholder="Select breeding method"
                     valueType="text"
                     name="method"
                     dataItem={[

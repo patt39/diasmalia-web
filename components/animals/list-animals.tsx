@@ -17,7 +17,7 @@ import { Eye, MoreHorizontal, PencilIcon, TrashIcon } from 'lucide-react';
 import { useState } from 'react';
 import { ActionModalDialog } from '../ui-setting/shadcn';
 import { Badge } from '../ui/badge';
-import { CreateOrUpdateAnimals } from './create-or-update-animal';
+import { UpdateAnimals } from './update-animal';
 import { ViewAnimal } from './view-animal';
 
 const ListAnimals = ({ item, index }: { item: any; index: number }) => {
@@ -35,7 +35,7 @@ const ListAnimals = ({ item, index }: { item: any; index: number }) => {
     setIsOpen(true);
     try {
       console.log(item);
-      await deleteMutation({ animalId: item.id });
+      await deleteMutation({ animalId: item?.id });
       AlertSuccessNotification({
         text: 'Animal deleted successfully',
       });
@@ -59,37 +59,27 @@ const ListAnimals = ({ item, index }: { item: any; index: number }) => {
         <div className="p-6 lg:px-10 lg:py-8">
           <div className="ml-auto">
             {item?.status === 'ACTIVE' ? (
-              <Badge variant="default">{item?.status}</Badge>
+              <Badge variant="default">
+                {t.formatMessage({ id: 'STATUS.ACTIVE' })}
+              </Badge>
             ) : item?.status === 'SOLD' ? (
-              <Badge variant="secondary">{item?.status}</Badge>
+              <Badge variant="secondary">
+                {t.formatMessage({ id: 'STATUS.SOLD' })}
+              </Badge>
             ) : (
-              <Badge variant="destructive">{item?.status}</Badge>
+              <Badge variant="destructive">
+                {t.formatMessage({ id: 'STATUS.DEATH' })}
+              </Badge>
             )}
           </div>
           <div className="flex items-center justify-start space-x-6">
             <div>
-              <h2 className="text-sm font-medium text-gray-500 h-4">
-                {t.formatMessage({ id: 'TABANIMAL.WEIGHT' })} :{item?.weight}kg
+              <h2 className="text-sm font-medium text-gray-500 h-4 space-x-1">
+                {t.formatMessage({ id: 'TABANIMAL.WEIGHT' })}: {item?.weight}kg
               </h2>
               <h2 className="mt-2 text-sm font-medium text-gray-500 h-4">
                 Age: {formatDateDifference(item?.birthday)}
               </h2>
-              {![
-                'Porciculture',
-                'Bovins',
-                'Cuniculture',
-                'Caprins',
-                'Ovins',
-              ].includes(item.animalType?.name) ? (
-                <h2 className="mt-2 text-sm font-medium text-gray-500 h-4">
-                  {t.formatMessage({
-                    id: 'TABINCUBATION.QTYSTART',
-                  })}
-                  : {item?.quantity < 0 ? 0 : item?.quantity}
-                </h2>
-              ) : (
-                ''
-              )}
             </div>
             <div className="flex-shrink-0 w-px h-20  bg-gray-200"></div>
             <div>
@@ -156,7 +146,7 @@ const ListAnimals = ({ item, index }: { item: any; index: number }) => {
                 onClick={() => deleteItem(item)}
               />
             </DropdownMenu>
-            <CreateOrUpdateAnimals
+            <UpdateAnimals
               animal={item}
               showModal={isEdit}
               setShowModal={setIsEdit}

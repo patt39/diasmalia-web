@@ -18,7 +18,7 @@ const ViewGestation = ({
   const { control, errors } = useReactHookForm({ schema });
 
   const { data: getOneGestation } = GetOneGestationAPI({
-    gestationId: gestation.id,
+    gestationId: gestation?.id,
   });
 
   return (
@@ -42,7 +42,7 @@ const ViewGestation = ({
                     control={control}
                     label="Note"
                     name="note"
-                    defaultValue={getOneGestation.note}
+                    defaultValue={getOneGestation?.note}
                     errors={errors}
                     disabled
                   />

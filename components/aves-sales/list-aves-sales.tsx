@@ -16,7 +16,13 @@ import {
   AlertSuccessNotification,
   formatDateDDMMYY,
 } from '@/utils';
-import { Eye, MoreHorizontal, PencilIcon, TrashIcon } from 'lucide-react';
+import {
+  Download,
+  Eye,
+  MoreHorizontal,
+  PencilIcon,
+  TrashIcon,
+} from 'lucide-react';
 import { useState } from 'react';
 import { ActionModalDialog } from '../ui-setting/shadcn';
 import { CreateOrUpdateAvesSales } from './create-or-update-aves-sales';
@@ -64,7 +70,19 @@ const ListAvesSales = ({ item, index }: { item: any; index: number }) => {
               : item?.email || 'N/A'}
           </div>
         </TableCell>
-        <TableCell className="font-medium">{item?.method}</TableCell>
+        {item.detail === 'EGGS' ? (
+          <TableCell className="font-medium">
+            {t.formatMessage({ id: 'SALE.EGGS' })}
+          </TableCell>
+        ) : item.detail === 'CHICKS' ? (
+          <TableCell className="font-medium">
+            {t.formatMessage({ id: 'SALE.CHICKS' })}
+          </TableCell>
+        ) : (
+          <TableCell className="font-medium">
+            {t.formatMessage({ id: 'SALE.CHICKENS' })}
+          </TableCell>
+        )}
         <TableCell className="hidden md:table-cell">{item?.number}</TableCell>
         <TableCell className="hidden md:table-cell">
           {item.price} {user?.profile?.currency?.symbol}
@@ -92,6 +110,12 @@ const ListAvesSales = ({ item, index }: { item: any; index: number }) => {
                 <Eye className="size-4 text-gray-600 hover:text-indigo-600" />
                 <span className="ml-2 cursor-pointer hover:text-indigo-600">
                   {t.formatMessage({ id: 'TABANIMAL.VIEW' })}
+                </span>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Download className="size-4 text-gray-600 hover:text-red-600" />
+                <span className="ml-2 cursor-pointer hover:text-red-600">
+                  {t.formatMessage({ id: 'TABANIMAL.DOWNLOAD' })}
                 </span>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setIsOpen(true)}>

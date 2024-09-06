@@ -18,7 +18,7 @@ const ViewDeath = ({
   const { control, errors } = useReactHookForm({ schema });
 
   const { data: GetOneDeath } = GetOneDeathAPI({
-    deathId: death.id,
+    deathId: death?.id,
   });
 
   return (
@@ -42,7 +42,7 @@ const ViewDeath = ({
                     control={control}
                     label="Note"
                     name="note"
-                    defaultValue={GetOneDeath.note}
+                    defaultValue={GetOneDeath?.note}
                     errors={errors}
                     disabled
                   />

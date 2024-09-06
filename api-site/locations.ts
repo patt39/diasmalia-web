@@ -96,12 +96,21 @@ export const GetLocationsAPI = (
     take?: number;
     sortBy: string;
     status?: boolean;
+    productionPhase?: string;
     animalTypeId?: string;
     organizationId?: string;
   } & PaginationRequest,
 ) => {
-  const { take, sort, sortBy, search, status, animalTypeId, organizationId } =
-    payload;
+  const {
+    take,
+    sort,
+    sortBy,
+    search,
+    status,
+    productionPhase,
+    animalTypeId,
+    organizationId,
+  } = payload;
   return useInfiniteQuery({
     queryKey: ['locations', 'infinite', { ...payload }],
     getNextPageParam: (lastPage: any) => lastPage.data.next_page,
@@ -114,6 +123,7 @@ export const GetLocationsAPI = (
           search,
           sortBy,
           status,
+          productionPhase,
           animalTypeId,
           page: pageParam,
           organizationId,

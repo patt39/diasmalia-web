@@ -1,8 +1,9 @@
 import { EggHarvestingsModel } from '@/types/egg-harvesting';
 import { makeApiCall, PaginationRequest } from '@/utils';
 import {
-  useInfiniteQuery,
+  keepPreviousData,
   useMutation,
+  useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
 
@@ -13,7 +14,7 @@ export const CreateOrUpdateOneEggHarvestingAPI = ({
   onSuccess?: () => void;
   onError?: (error: any) => void;
 } = {}) => {
-  const queryKey = ['egg-Harvestings'];
+  const queryKey = ['eggharvestings'];
   const queryClient = useQueryClient();
   const result = useMutation({
     mutationKey: queryKey,
@@ -60,15 +61,16 @@ export const GetEggHarvestingsAPI = (
     search?: string;
     take?: number;
     periode?: string;
+    pageItem?: number;
     animalTypeId?: string;
     organizationId?: string;
   } & PaginationRequest,
 ) => {
   const { take, sort, search, periode, sortBy, animalTypeId, organizationId } =
     payload;
-  return useInfiniteQuery({
-    queryKey: ['egg-harvestings', 'infinite', { ...payload }],
-    getNextPageParam: (lastPage: any) => lastPage.data.next_page,
+  return useQuery({
+    queryKey: ['eggharvestings', { ...payload }],
+    placeholderData: keepPreviousData,
     queryFn: async ({ pageParam = 1 }) =>
       await makeApiCall({
         action: 'getEggharvestings',
@@ -83,8 +85,7 @@ export const GetEggHarvestingsAPI = (
           organizationId,
         },
       }),
-    staleTime: 60_000,
-    initialPageParam: 1,
+    staleTime: 6000,
   });
 };
 
@@ -95,7 +96,7 @@ export const DeleteOneEggHarvestingAPI = ({
   onSuccess?: () => void;
   onError?: (error: any) => void;
 } = {}) => {
-  const queryKey = ['egg-Harvestings'];
+  const queryKey = ['eggharvestings'];
   const queryClient = useQueryClient();
   const result = useMutation({
     mutationKey: queryKey,

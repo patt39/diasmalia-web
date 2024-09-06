@@ -107,31 +107,49 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
           <div className="flex items-center justify-start space-x-4">
             <div>
               <h2 className="text-sm font-medium text-gray-500 h-4">
-                {['Pisciculture'].includes(item.animalType?.name) ? (
+                {['Pisciculture'].includes(item?.animalType?.name) ? (
                   <h2 className="mt-2 text-sm font-medium text-gray-500 h-4">
-                    Surface: {item.squareMeter}m<sup>3</sup>
+                    Volume: {item?.squareMeter}m<sup>3</sup>
                   </h2>
                 ) : (
                   <h2 className="mt-2 text-sm font-medium text-gray-500 h-4">
-                    Surface: {item.squareMeter}m<sup>2</sup>
+                    Surface: {item?.squareMeter}m<sup>2</sup>
                   </h2>
                 )}
               </h2>
-              <h2 className="mt-2 text-sm font-medium text-gray-500 h-4">
-                {t.formatMessage({ id: 'LOCATION.MANGERS' })}: {item.manger}
-              </h2>
-              <h2 className="mt-2 text-sm font-medium text-gray-500 h-4">
-                {t.formatMessage({ id: 'LOCATION.THROUGHS' })}: {item.through}
-              </h2>
-              {['Piggery', 'Bovines', 'Rabbits', 'Goats'].includes(
-                item.animalType?.name,
-              ) ? (
-                <h2 className="mt-2 text-sm font-medium text-gray-500 h-4">
-                  {t.formatMessage({ id: 'LOCATION.ANIMALS' })}:{' '}
-                  {item._count.animals}
-                </h2>
-              ) : (
+              {['Pisciculture'].includes(item?.animalType?.name) ? (
                 ''
+              ) : (
+                <>
+                  <h2 className="mt-2 text-sm font-medium text-gray-500 h-4">
+                    {t.formatMessage({ id: 'LOCATION.MANGERS' })}:{' '}
+                    {item?.manger}
+                  </h2>
+                  <h2 className="mt-2 text-sm font-medium text-gray-500 h-4">
+                    {t.formatMessage({ id: 'LOCATION.THROUGHS' })}:{' '}
+                    {item?.through}
+                  </h2>
+                </>
+              )}
+
+              {[
+                'Pisciculture',
+                'Poulets Goliaths',
+                'Pondeuses',
+                'Poulet de chair',
+                'Pintarde',
+                'Canard',
+                'Poulets Brahma',
+                'Dinde',
+              ].includes(item?.animalType?.name) ? (
+                ''
+              ) : (
+                <h2 className="mt-2 text-sm font-medium text-gray-500 h-4 space-x-2">
+                  {item._count?.animals === 1
+                    ? t.formatMessage({ id: 'LOCATION.ANIMAL' })
+                    : t.formatMessage({ id: 'LOCATION.ANIMALS' })}
+                  : {item._count?.animals}
+                </h2>
               )}
             </div>
             <div className="flex-shrink-0 w-px h-20  bg-gray-200"></div>

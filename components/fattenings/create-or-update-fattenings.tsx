@@ -1,7 +1,7 @@
 import { GetAnimalsAPI } from '@/api-site/animals';
 import { CreateOrUpdateOneFatteningAPI } from '@/api-site/fattenings';
 import { useReactHookForm } from '@/components/hooks';
-import { ButtonInput } from '@/components/ui-setting';
+import { ButtonInput, ButtonLoadMore } from '@/components/ui-setting';
 import { LoadingFile } from '@/components/ui-setting/ant';
 import { ErrorFile } from '@/components/ui-setting/ant/error-file';
 import { TextInput } from '@/components/ui-setting/shadcn';
@@ -21,7 +21,9 @@ import { FileQuestion, XIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { SubmitHandler } from 'react-hook-form';
+import { useInView } from 'react-intersection-observer';
 import * as yup from 'yup';
+import { Button } from '../ui/button';
 import {
   Tooltip,
   TooltipContent,
@@ -45,6 +47,7 @@ const CreateOrUpdateFattenings = ({
 }) => {
   const {
     t,
+    watch,
     control,
     errors,
     setValue,
@@ -56,7 +59,10 @@ const CreateOrUpdateFattenings = ({
     register,
   } = useReactHookForm({ schema });
   const { query } = useRouter();
+  const { ref, inView } = useInView();
   const animalTypeId = String(query?.animalTypeId);
+  const selectedAnimals = watch('animals', '');
+  const countSelectedAnimals = selectedAnimals.length;
 
   useEffect(() => {
     if (fattening) {
@@ -107,14 +113,38 @@ const CreateOrUpdateFattenings = ({
     isLoading: isLoadingAnimals,
     isError: isErrorAnimals,
     data: dataAnimals,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
   } = GetAnimalsAPI({
     take: 10,
     sort: 'desc',
     status: 'ACTIVE',
     sortBy: 'createdAt',
-    productionPhase: 'GROWTH',
     animalTypeId: animalTypeId,
   });
+
+  useEffect(() => {
+    let fetching = false;
+    if (inView) {
+      fetchNextPage();
+    }
+    const onScroll = async (event: any) => {
+      const { scrollHeight, scrollTop, clientHeight } =
+        event.target.scrollingElement;
+
+      if (!fetching && scrollHeight - scrollTop <= clientHeight * 1.5) {
+        fetching = true;
+        if (hasNextPage) await fetchNextPage();
+        fetching = false;
+      }
+    };
+
+    document.addEventListener('scroll', onScroll);
+    return () => {
+      document.removeEventListener('scroll', onScroll);
+    };
+  }, [fetchNextPage, hasNextPage, inView]);
 
   return (
     <>
@@ -122,14 +152,35 @@ const CreateOrUpdateFattenings = ({
         <div className="min-w-screen animated fadeIn faster fixed  inset-0  z-50 flex h-screen items-center justify-center bg-cover bg-center bg-no-repeat outline-none focus:outline-none">
           <div className="absolute inset-0 z-0 bg-black opacity-80"></div>
           <div className="relative m-auto max-h-screen w-full max-w-2xl overflow-y-scroll rounded-xl bg-white  p-5 shadow-lg dark:bg-[#121212]">
-            <button
-              className="float-right border-0 bg-transparent text-black"
-              onClick={() => setShowModal(false)}
-            >
-              <span className="opacity-7 block size-6 rounded-full py-0 text-xl  dark:text-white">
-                <XIcon />
-              </span>
-            </button>
+            <div className="flex mb-0">
+              <div className="mr-auto">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="outline">
+                        {countSelectedAnimals || 0}
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>
+                        {countSelectedAnimals}
+                        {t.formatMessage({ id: 'ANIMAL.SELECTED.COUNT' })}
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+              <div className="justify-end">
+                <button
+                  className="float-right border-0 bg-transparent text-black"
+                  onClick={() => setShowModal(false)}
+                >
+                  <span className="opacity-7 block size-6 rounded-full py-0 text-xl  dark:text-white">
+                    <XIcon />
+                  </span>
+                </button>
+              </div>
+            </div>
             <form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
               <div className="flex-auto justify-center p-2">
                 {hasErrors && (
@@ -194,6 +245,15 @@ const CreateOrUpdateFattenings = ({
                                   </div>
                                 </>
                               ))
+                          )}
+                          {hasNextPage && (
+                            <div className="mx-auto mt-4 justify-center text-center">
+                              <ButtonLoadMore
+                                ref={ref}
+                                isFetchingNextPage={isFetchingNextPage}
+                                onClick={() => fetchNextPage()}
+                              />
+                            </div>
                           )}
                         </SelectGroup>
                       </SelectContent>

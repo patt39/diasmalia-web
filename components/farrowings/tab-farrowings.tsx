@@ -4,7 +4,7 @@ import { useInputState } from '@/components/hooks';
 import { LoadingFile } from '@/components/ui-setting/ant';
 import { ErrorFile } from '@/components/ui-setting/ant/error-file';
 import { Button } from '@/components/ui/button';
-import { CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import { CardContent, CardHeader } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -18,6 +18,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { PaginationPage } from '@/utils';
 import { ListFilter, Origami } from 'lucide-react';
 import { useState } from 'react';
 import { SearchInput } from '../ui-setting';
@@ -34,16 +35,19 @@ import { ListFarrowings } from './list-farrowings';
 
 const TabFarrowings = ({ animalTypeId }: { animalTypeId: string }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { t, search } = useInputState();
+  const { t, search, handleSetSearch } = useInputState();
+  const [pageItem, setPageItem] = useState(1);
   const [periode, setPeriode] = useState('');
 
   const {
     isLoading: isLoadingFarrowings,
     isError: isErrorFarrowings,
     data: dataFarrowings,
+    isPlaceholderData,
   } = GetFarrowingsAPI({
     search,
     periode,
+    pageItem,
     take: 10,
     sort: 'desc',
     sortBy: 'createdAt',
@@ -57,7 +61,7 @@ const TabFarrowings = ({ animalTypeId }: { animalTypeId: string }) => {
           <div className="mr-auto items-center gap-2">
             <SearchInput
               placeholder="Search by code"
-              onChange={'handleSetSearch'}
+              onChange={handleSetSearch}
             />
           </div>
           <div className="ml-auto flex items-center gap-2">
@@ -65,13 +69,13 @@ const TabFarrowings = ({ animalTypeId }: { animalTypeId: string }) => {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button variant="outline">
-                    {dataFarrowings?.pages[0]?.data?.total}
+                    {dataFarrowings?.data?.total}
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>
                     {t.formatMessage({ id: 'ANIMALTYPE.TOOLTIP' })}{' '}
-                    {dataFarrowings?.pages[0]?.data?.total}{' '}
+                    {dataFarrowings?.data?.total}{' '}
                     {t.formatMessage({ id: 'ANIMALTYPE.FARROWING' })}{' '}
                   </p>
                 </TooltipContent>
@@ -90,18 +94,28 @@ const TabFarrowings = ({ animalTypeId }: { animalTypeId: string }) => {
                 <DropdownMenuLabel>Filter by</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
                   onClick={() => setPeriode('')}
                   checked
                 >
                   {t.formatMessage({ id: 'ACTIVITY.FILTERALL' })}
                 </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem onClick={() => setPeriode('7')}>
+                <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
+                  onClick={() => setPeriode('7')}
+                >
                   {t.formatMessage({ id: 'ACTIVITY.LAST7DAYS' })}
                 </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem onClick={() => setPeriode('15')}>
+                <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
+                  onClick={() => setPeriode('15')}
+                >
                   {t.formatMessage({ id: 'ACTIVITY.LAST15DAYS' })}
                 </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem onClick={() => setPeriode('30')}>
+                <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
+                  onClick={() => setPeriode('30')}
+                >
                   {t.formatMessage({ id: 'ACTIVITY.LAST30DAYS' })}
                 </DropdownMenuCheckboxItem>
               </DropdownMenuContent>
@@ -145,25 +159,24 @@ const TabFarrowings = ({ animalTypeId }: { animalTypeId: string }) => {
                   title="404"
                   description="Error finding data please try again..."
                 />
-              ) : Number(dataFarrowings?.pages[0]?.data?.total) <= 0 ? (
+              ) : Number(dataFarrowings?.data?.total) <= 0 ? (
                 <ErrorFile description="Don't have farrowings created yet please do" />
               ) : (
-                dataFarrowings?.pages
-                  .flatMap((page: any) => page?.data?.value)
-                  .map((item, index) => (
-                    <>
-                      <ListFarrowings item={item} index={index} key={index} />
-                    </>
-                  ))
+                dataFarrowings?.data?.value.map((item: any, index: number) => (
+                  <>
+                    <ListFarrowings item={item} index={index} key={index} />
+                  </>
+                ))
               )}
             </TableBody>
           </Table>
+          <PaginationPage
+            setPageItem={setPageItem}
+            data={dataFarrowings?.data}
+            pageItem={Number(pageItem)}
+            isPlaceholderData={isPlaceholderData}
+          />
         </CardContent>
-        <CardFooter>
-          <div className="text-xs text-muted-foreground">
-            Showing <strong>1-10</strong> of <strong>32</strong> products
-          </div>
-        </CardFooter>
       </main>
       <CreateOrUpdateFarrowings
         farrowing={animalTypeId}

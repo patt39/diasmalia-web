@@ -1,7 +1,7 @@
 import { GetTreatmentsAPI } from '@/api-site/treatment';
 import { useInputState } from '@/components/hooks';
 
-import { SearchInput } from '@/components/ui-setting';
+import { ButtonLoadMore, SearchInput } from '@/components/ui-setting';
 import { Button } from '@/components/ui/button';
 import { CardContent, CardHeader } from '@/components/ui/card';
 import {
@@ -12,7 +12,8 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { ListFilter, Stethoscope } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useInView } from 'react-intersection-observer';
 import { LoadingFile } from '../ui-setting/ant';
 import { ErrorFile } from '../ui-setting/ant/error-file';
 import {
@@ -35,12 +36,16 @@ import { ListAvesTreatments } from './list-aves-treatments';
 const TabAvesTreatments = ({ animalTypeId }: { animalTypeId: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [periode, setPeriode] = useState('');
+  const { ref, inView } = useInView();
   const { t, search, handleSetSearch } = useInputState();
 
   const {
     isLoading: isLoadingTreatments,
     isError: isErrorTreatments,
     data: dataTreatments,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
   } = GetTreatmentsAPI({
     search,
     periode,
@@ -49,6 +54,28 @@ const TabAvesTreatments = ({ animalTypeId }: { animalTypeId: string }) => {
     sortBy: 'createdAt',
     animalTypeId: animalTypeId,
   });
+
+  useEffect(() => {
+    let fetching = false;
+    if (inView) {
+      fetchNextPage();
+    }
+    const onScroll = async (event: any) => {
+      const { scrollHeight, scrollTop, clientHeight } =
+        event.target.scrollingElement;
+
+      if (!fetching && scrollHeight - scrollTop <= clientHeight * 1.5) {
+        fetching = true;
+        if (hasNextPage) await fetchNextPage();
+        fetching = false;
+      }
+    };
+
+    document.addEventListener('scroll', onScroll);
+    return () => {
+      document.removeEventListener('scroll', onScroll);
+    };
+  }, [fetchNextPage, hasNextPage, inView]);
 
   return (
     <>
@@ -91,18 +118,28 @@ const TabAvesTreatments = ({ animalTypeId }: { animalTypeId: string }) => {
                 <DropdownMenuLabel>Filter by</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
                   onClick={() => setPeriode('')}
                   checked
                 >
                   {t.formatMessage({ id: 'ACTIVITY.FILTERALL' })}
                 </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem onClick={() => setPeriode('7')}>
+                <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
+                  onClick={() => setPeriode('7')}
+                >
                   {t.formatMessage({ id: 'ACTIVITY.LAST7DAYS' })}
                 </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem onClick={() => setPeriode('15')}>
+                <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
+                  onClick={() => setPeriode('15')}
+                >
                   {t.formatMessage({ id: 'ACTIVITY.LAST15DAYS' })}
                 </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem onClick={() => setPeriode('30')}>
+                <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
+                  onClick={() => setPeriode('30')}
+                >
                   {t.formatMessage({ id: 'ACTIVITY.LAST30DAYS' })}
                 </DropdownMenuCheckboxItem>
               </DropdownMenuContent>
@@ -162,6 +199,15 @@ const TabAvesTreatments = ({ animalTypeId }: { animalTypeId: string }) => {
               )}
             </TableBody>
           </Table>
+          {hasNextPage && (
+            <div className="mx-auto mt-4 justify-center text-center">
+              <ButtonLoadMore
+                ref={ref}
+                isFetchingNextPage={isFetchingNextPage}
+                onClick={() => fetchNextPage()}
+              />
+            </div>
+          )}
         </CardContent>
       </main>
       <CreateOrUpdateAvestreatments

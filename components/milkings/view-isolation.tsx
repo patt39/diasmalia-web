@@ -19,7 +19,7 @@ const ViewIsolation = ({
   const { control, errors } = useReactHookForm({ schema });
 
   const { data: getOneIsolation } = GetOneIsolationAPI({
-    isolationId: isolation.id,
+    isolationId: isolation?.id,
   });
 
   return (
@@ -42,7 +42,7 @@ const ViewIsolation = ({
                   <Input
                     disabled
                     type="text"
-                    value={getOneIsolation.animal.code}
+                    value={getOneIsolation?.animal?.code}
                   />
                 </div>
                 <div className="mb-4">
@@ -50,7 +50,7 @@ const ViewIsolation = ({
                     control={control}
                     label="Note"
                     name="note"
-                    placeholder={getOneIsolation.note}
+                    placeholder={getOneIsolation?.note}
                     errors={errors}
                   />
                 </div>

@@ -143,10 +143,7 @@ const CreateOrUpdateIncubations = ({
                   </div>
                 )}
 
-                <div className="mb-4 flex items-center space-x-2">
-                  <Label>
-                    Code:<span className="text-red-600">*</span>
-                  </Label>
+                <div className="flex items-center space-x-2">
                   <Controller
                     control={control}
                     name="code"
@@ -157,7 +154,7 @@ const CreateOrUpdateIncubations = ({
                         value={value}
                       >
                         <SelectTrigger>
-                          <SelectValue placeholder="Select a code" />
+                          <SelectValue placeholder="Select a band code / sélectionnez un code" />
                         </SelectTrigger>
                         <SelectContent className="dark:border-gray-800">
                           <SelectGroup>
@@ -177,8 +174,8 @@ const CreateOrUpdateIncubations = ({
                                 .flatMap((page: any) => page?.data?.value)
                                 .map((item, index) => (
                                   <>
-                                    <SelectItem key={index} value={item.code}>
-                                      {item.code}
+                                    <SelectItem key={index} value={item?.code}>
+                                      {item?.code}
                                     </SelectItem>
                                   </>
                                 ))
@@ -188,21 +185,25 @@ const CreateOrUpdateIncubations = ({
                       </Select>
                     )}
                   />
-                  <Label className="mr-2">
-                    Date éclosion:<span className="text-red-600">*</span>
-                  </Label>
-                  <DateInput
-                    control={control}
-                    errors={errors}
-                    placeholder="Hatching date"
-                    name="dueDate"
-                  />
+                  <div className="items-center mb-6">
+                    <Label>
+                      {t.formatMessage({ id: 'HATCHING.DATE' })}:
+                      <span className="text-red-600">*</span>
+                    </Label>
+                    <DateInput
+                      control={control}
+                      errors={errors}
+                      placeholder="Hatching date"
+                      name="dueDate"
+                    />
+                  </div>
                 </div>
-                {incubation.id ? (
-                  <div className="mb-4 flex items-center">
-                    <div className="flex items-center">
+                {incubation?.id ? (
+                  <div className="flex items-center">
+                    <div className="flex items-center space-x-4">
                       <Label className="mr-2">
-                        Oeufs incubés:<span className="text-red-600">*</span>
+                        {t.formatMessage({ id: 'EGGS.INCUBATED' })}:
+                        <span className="text-red-600">*</span>
                       </Label>
                       <div className="mr-2">
                         <TextInput
@@ -213,7 +214,9 @@ const CreateOrUpdateIncubations = ({
                           errors={errors}
                         />
                       </div>
-                      <Label className="mr-4 space-x-2">Oeufs éclos:</Label>
+                      <Label className="mr-4 space-x-2">
+                        {t.formatMessage({ id: 'EGGS.HATCHED' })}:
+                      </Label>
                       <div className="mr-2">
                         <TextInput
                           control={control}
@@ -226,7 +229,7 @@ const CreateOrUpdateIncubations = ({
                     </div>
                   </div>
                 ) : (
-                  <div className="mr-2 flex items-center">
+                  <div className="mt-0 mr-2 flex items-center">
                     <Label className="mr-2 flex items-center">
                       Incubés:<span className="text-red-600">*</span>
                     </Label>

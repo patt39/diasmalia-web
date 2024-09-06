@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { GetIsolationsAPI } from '@/api-site/isolations';
 import { useInputState } from '@/components/hooks';
-import { SearchInput } from '@/components/ui-setting';
+import { ButtonLoadMore, SearchInput } from '@/components/ui-setting';
 import { LoadingFile } from '@/components/ui-setting/ant';
 import { ErrorFile } from '@/components/ui-setting/ant/error-file';
 import { Button } from '@/components/ui/button';
@@ -19,9 +19,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { PaginationPage } from '@/utils';
 import { Eclipse, ListFilter } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useInView } from 'react-intersection-observer';
 import { useIntl } from 'react-intl';
 import {
   DropdownMenu,
@@ -38,22 +38,46 @@ const TabAvesIsolations = ({ animalTypeId }: { animalTypeId: string }) => {
   const t = useIntl();
   const [isOpen, setIsOpen] = useState(false);
   const [periode, setPeriode] = useState('');
-  const [pageItem, setPageItem] = useState(1);
+  const { ref, inView } = useInView();
   const { search, handleSetSearch } = useInputState();
 
   const {
     isLoading: isLoadingIsolations,
     isError: isErrorIsolations,
     data: dataIsolations,
-    isPlaceholderData,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
   } = GetIsolationsAPI({
     search,
     periode,
-    take: 1,
+    take: 10,
     sort: 'desc',
     sortBy: 'createdAt',
     animalTypeId: animalTypeId,
   });
+
+  useEffect(() => {
+    let fetching = false;
+    if (inView) {
+      fetchNextPage();
+    }
+    const onScroll = async (event: any) => {
+      const { scrollHeight, scrollTop, clientHeight } =
+        event.target.scrollingElement;
+
+      if (!fetching && scrollHeight - scrollTop <= clientHeight * 1.5) {
+        fetching = true;
+        if (hasNextPage) await fetchNextPage();
+        fetching = false;
+      }
+    };
+
+    document.addEventListener('scroll', onScroll);
+    return () => {
+      document.removeEventListener('scroll', onScroll);
+    };
+  }, [fetchNextPage, hasNextPage, inView]);
 
   return (
     <>
@@ -77,8 +101,7 @@ const TabAvesIsolations = ({ animalTypeId }: { animalTypeId: string }) => {
                   <p>
                     {t.formatMessage({ id: 'ANIMALTYPE.TOOLTIP' })}{' '}
                     {dataIsolations?.pages[0]?.data?.total}{' '}
-                    {t.formatMessage({ id: 'ANIMALTYPE.TOOLTIP.ANIMALS' })}{' '}
-                    {t.formatMessage({ id: 'ANIMALTYPE.DEATHS' })}{' '}
+                    {t.formatMessage({ id: 'ANIMAL.ISOLATED' })}{' '}
                   </p>
                 </TooltipContent>
               </Tooltip>
@@ -168,12 +191,15 @@ const TabAvesIsolations = ({ animalTypeId }: { animalTypeId: string }) => {
               )}
             </TableBody>
           </Table>
-          <PaginationPage
-            setPageItem={setPageItem}
-            data={dataIsolations?.pages[0].data}
-            pageItem={Number(pageItem)}
-            isPlaceholderData={isPlaceholderData}
-          />
+          {hasNextPage && (
+            <div className="mx-auto mt-4 justify-center text-center">
+              <ButtonLoadMore
+                ref={ref}
+                isFetchingNextPage={isFetchingNextPage}
+                onClick={() => fetchNextPage()}
+              />
+            </div>
+          )}
         </CardContent>
       </main>
       <CreateOrUpdateAvesIsolations

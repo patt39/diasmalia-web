@@ -9,10 +9,10 @@ import {
   TableHead,
   TableHeader,
 } from '@/components/ui/table';
-import { PaginationPage } from '@/utils';
 import { Eclipse, ListFilter } from 'lucide-react';
-import { useState } from 'react';
-import { SearchInput } from '../ui-setting';
+import { useEffect, useState } from 'react';
+import { useInView } from 'react-intersection-observer';
+import { ButtonLoadMore, SearchInput } from '../ui-setting';
 import { LoadingFile } from '../ui-setting/ant';
 import { ErrorFile } from '../ui-setting/ant/error-file';
 import {
@@ -33,24 +33,48 @@ import { CreateOrUpdateIsolations } from './create-or-update-isolations';
 import { ListIsolations } from './list-isolations';
 
 const TabIsolations = ({ animalTypeId }: { animalTypeId: string }) => {
+  const { ref, inView } = useInView();
   const [isOpen, setIsOpen] = useState(false);
   const [periode, setPeriode] = useState('');
-  const [pageItem, setPageItem] = useState(1);
   const { t, search, handleSetSearch } = useInputState();
 
   const {
     isLoading: isLoadingIsolations,
     isError: isErrorIsolations,
     data: dataIsolations,
-    isPlaceholderData,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
   } = GetIsolationsAPI({
     search,
     periode,
-    take: 1,
+    take: 10,
     sort: 'desc',
     sortBy: 'createdAt',
     animalTypeId: animalTypeId,
   });
+
+  useEffect(() => {
+    let fetching = false;
+    if (inView) {
+      fetchNextPage();
+    }
+    const onScroll = async (event: any) => {
+      const { scrollHeight, scrollTop, clientHeight } =
+        event.target.scrollingElement;
+
+      if (!fetching && scrollHeight - scrollTop <= clientHeight * 1.5) {
+        fetching = true;
+        if (hasNextPage) await fetchNextPage();
+        fetching = false;
+      }
+    };
+
+    document.addEventListener('scroll', onScroll);
+    return () => {
+      document.removeEventListener('scroll', onScroll);
+    };
+  }, [fetchNextPage, hasNextPage, inView]);
 
   return (
     <>
@@ -74,7 +98,7 @@ const TabIsolations = ({ animalTypeId }: { animalTypeId: string }) => {
                   <p>
                     {t.formatMessage({ id: 'ANIMALTYPE.TOOLTIP' })}{' '}
                     {dataIsolations?.pages[0]?.data?.total}{' '}
-                    {t.formatMessage({ id: 'ANIMALTYPE.INCUBATION' })}{' '}
+                    {t.formatMessage({ id: 'ANIMAL.ISOLATED' })}{' '}
                   </p>
                 </TooltipContent>
               </Tooltip>
@@ -92,18 +116,28 @@ const TabIsolations = ({ animalTypeId }: { animalTypeId: string }) => {
                 <DropdownMenuLabel>Filter by</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
                   onClick={() => setPeriode('')}
                   checked
                 >
                   {t.formatMessage({ id: 'ACTIVITY.FILTERALL' })}
                 </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem onClick={() => setPeriode('7')}>
+                <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
+                  onClick={() => setPeriode('7')}
+                >
                   {t.formatMessage({ id: 'ACTIVITY.LAST7DAYS' })}
                 </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem onClick={() => setPeriode('15')}>
+                <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
+                  onClick={() => setPeriode('15')}
+                >
                   {t.formatMessage({ id: 'ACTIVITY.LAST15DAYS' })}
                 </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem onClick={() => setPeriode('30')}>
+                <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
+                  onClick={() => setPeriode('30')}
+                >
                   {t.formatMessage({ id: 'ACTIVITY.LAST30DAYS' })}
                 </DropdownMenuCheckboxItem>
               </DropdownMenuContent>
@@ -160,12 +194,15 @@ const TabIsolations = ({ animalTypeId }: { animalTypeId: string }) => {
               )}
             </TableBody>
           </Table>
-          <PaginationPage
-            setPageItem={setPageItem}
-            data={dataIsolations?.pages[0].data}
-            pageItem={Number(pageItem)}
-            isPlaceholderData={isPlaceholderData}
-          />
+          {hasNextPage && (
+            <div className="mx-auto mt-4 justify-center text-center">
+              <ButtonLoadMore
+                ref={ref}
+                isFetchingNextPage={isFetchingNextPage}
+                onClick={() => fetchNextPage()}
+              />
+            </div>
+          )}
         </CardContent>
       </main>
       <CreateOrUpdateIsolations

@@ -52,14 +52,14 @@ const ListEggHarvestings = ({ item, index }: { item: any; index: number }) => {
   return (
     <>
       <TableRow key={index} className="dark:border-gray-800">
-        <TableCell>{item.animal.code}</TableCell>
-        <TableCell>{item.quantity}</TableCell>
+        <TableCell>{item?.animal?.code}</TableCell>
+        <TableCell>{item?.quantity}</TableCell>
         <TableCell>
-          {item.size === 'SMALL' ? (
+          {item?.size === 'SMALL' ? (
             <Badge className="text-xs" variant="destructive">
               {t.formatMessage({ id: 'TABEGGHAVESTING.SMALL' })}
             </Badge>
-          ) : item.size === 'MEDIUM' ? (
+          ) : item?.size === 'MEDIUM' ? (
             <Badge className="text-xs" variant="default">
               {t.formatMessage({
                 id: 'TABEGGHAVESTING.MEDIUM',

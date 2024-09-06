@@ -1,7 +1,7 @@
 import { GetAnimalsAPI } from '@/api-site/animals';
 import { CreateOrUpdateOneEggHarvestingAPI } from '@/api-site/eggharvesting';
 import { useReactHookForm } from '@/components/hooks';
-import { ButtonInput, ButtonLoadMore } from '@/components/ui-setting';
+import { ButtonInput } from '@/components/ui-setting';
 import { LoadingFile } from '@/components/ui-setting/ant';
 import { ErrorFile } from '@/components/ui-setting/ant/error-file';
 import {
@@ -22,7 +22,6 @@ import { XIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { Controller, SubmitHandler } from 'react-hook-form';
-import { useInView } from 'react-intersection-observer';
 import * as yup from 'yup';
 import { SelectInput, TextInput } from '../ui-setting/shadcn';
 import { Label } from '../ui/label';
@@ -53,7 +52,6 @@ const CreateOrUpdateEggHarvestings = ({
     hasErrors,
     setHasErrors,
   } = useReactHookForm({ schema });
-  const { ref, inView } = useInView();
   const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
 
@@ -106,38 +104,14 @@ const CreateOrUpdateEggHarvestings = ({
     isLoading: isLoadingAnimals,
     isError: isErrorAnimals,
     data: dataAnimals,
-    isFetchingNextPage,
-    hasNextPage,
-    fetchNextPage,
   } = GetAnimalsAPI({
     take: 10,
     sort: 'desc',
     status: 'ACTIVE',
     sortBy: 'createdAt',
+    productionPhase: 'LAYING',
     animalTypeId: animalTypeId,
   });
-
-  useEffect(() => {
-    let fetching = false;
-    if (inView) {
-      fetchNextPage();
-    }
-    const onScroll = async (event: any) => {
-      const { scrollHeight, scrollTop, clientHeight } =
-        event.target.scrollingElement;
-
-      if (!fetching && scrollHeight - scrollTop <= clientHeight * 1.5) {
-        fetching = true;
-        if (hasNextPage) await fetchNextPage();
-        fetching = false;
-      }
-    };
-
-    document.addEventListener('scroll', onScroll);
-    return () => {
-      document.removeEventListener('scroll', onScroll);
-    };
-  }, [fetchNextPage, hasNextPage, inView]);
 
   return (
     <>
@@ -209,15 +183,6 @@ const CreateOrUpdateEggHarvestings = ({
                                     </SelectItem>
                                   </>
                                 ))
-                            )}
-                            {hasNextPage && (
-                              <div className="mx-auto mt-4 justify-center text-center">
-                                <ButtonLoadMore
-                                  ref={ref}
-                                  isFetchingNextPage={isFetchingNextPage}
-                                  onClick={() => fetchNextPage()}
-                                />
-                              </div>
                             )}
                           </SelectGroup>
                         </SelectContent>

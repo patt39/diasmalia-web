@@ -4,7 +4,7 @@ import { useInputState } from '@/components/hooks';
 import { LoadingFile } from '@/components/ui-setting/ant';
 import { ErrorFile } from '@/components/ui-setting/ant/error-file';
 import { Button } from '@/components/ui/button';
-import { CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import { CardContent, CardHeader } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -18,6 +18,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { PaginationPage } from '@/utils';
 import { Anvil, ListFilter } from 'lucide-react';
 import { useState } from 'react';
 import { SearchInput } from '../ui-setting';
@@ -35,15 +36,18 @@ import { ListFattenings } from './list-fattenings';
 const TabFattenings = ({ animalTypeId }: { animalTypeId: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [periode, setPeriode] = useState('');
+  const [pageItem, setPageItem] = useState(1);
   const { t, search, handleSetSearch } = useInputState();
 
   const {
     isLoading: isLoadingFattenings,
     isError: isErrorFattenings,
     data: dataFattenings,
+    isPlaceholderData,
   } = GetFatteningsAPI({
     search,
     periode,
+    pageItem,
     take: 10,
     sort: 'desc',
     sortBy: 'createdAt',
@@ -65,13 +69,13 @@ const TabFattenings = ({ animalTypeId }: { animalTypeId: string }) => {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button variant="outline">
-                    {dataFattenings?.pages[0]?.data?.total}
+                    {dataFattenings?.data?.total}
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent className="dark:border-gray-800">
                   <p>
                     {t.formatMessage({ id: 'ANIMALTYPE.TOOLTIP' })}{' '}
-                    {dataFattenings?.pages[0]?.data?.total}{' '}
+                    {dataFattenings?.data?.total}{' '}
                     {t.formatMessage({ id: 'ANIMALTYPE.TOOLTIP.ANIMALS' })} en{' '}
                     {t.formatMessage({ id: 'ANIMALTYPE.FATTENING' })}{' '}
                   </p>
@@ -91,18 +95,28 @@ const TabFattenings = ({ animalTypeId }: { animalTypeId: string }) => {
                 <DropdownMenuLabel>Filter by</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
                   onClick={() => setPeriode('')}
                   checked
                 >
                   {t.formatMessage({ id: 'ACTIVITY.FILTERALL' })}
                 </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem onClick={() => setPeriode('7')}>
+                <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
+                  onClick={() => setPeriode('7')}
+                >
                   {t.formatMessage({ id: 'ACTIVITY.LAST7DAYS' })}
                 </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem onClick={() => setPeriode('15')}>
+                <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
+                  onClick={() => setPeriode('15')}
+                >
                   {t.formatMessage({ id: 'ACTIVITY.LAST15DAYS' })}
                 </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem onClick={() => setPeriode('30')}>
+                <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
+                  onClick={() => setPeriode('30')}
+                >
                   {t.formatMessage({ id: 'ACTIVITY.LAST30DAYS' })}
                 </DropdownMenuCheckboxItem>
               </DropdownMenuContent>
@@ -152,25 +166,24 @@ const TabFattenings = ({ animalTypeId }: { animalTypeId: string }) => {
                   title="404"
                   description="Error finding data please try again..."
                 />
-              ) : Number(dataFattenings?.pages[0]?.data?.total) <= 0 ? (
+              ) : Number(dataFattenings?.data?.total) <= 0 ? (
                 <ErrorFile description="Don't have fattenings created yet please do" />
               ) : (
-                dataFattenings?.pages
-                  .flatMap((page: any) => page?.data?.value)
-                  .map((item, index) => (
-                    <>
-                      <ListFattenings index={index} item={item} key={index} />
-                    </>
-                  ))
+                dataFattenings?.data?.value.map((item: any, index: number) => (
+                  <>
+                    <ListFattenings index={index} item={item} key={index} />
+                  </>
+                ))
               )}
             </TableBody>
           </Table>
+          <PaginationPage
+            setPageItem={setPageItem}
+            data={dataFattenings?.data}
+            pageItem={Number(pageItem)}
+            isPlaceholderData={isPlaceholderData}
+          />
         </CardContent>
-        <CardFooter>
-          <div className="text-xs text-muted-foreground">
-            Showing <strong>1-10</strong> of <strong>32</strong> products
-          </div>
-        </CardFooter>
       </main>
       <CreateOrUpdateFattenings
         fattening={animalTypeId}

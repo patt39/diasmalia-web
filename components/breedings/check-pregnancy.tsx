@@ -9,7 +9,7 @@ import {
 } from '@/utils/alert-notification';
 import { Label } from '@radix-ui/react-label';
 import { XIcon } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
 import { DateInput } from '../ui-setting/shadcn/date-input';
@@ -30,6 +30,7 @@ const CheckPregnancy = ({
   breeding?: any;
 }) => {
   const {
+    watch,
     control,
     setValue,
     handleSubmit,
@@ -40,11 +41,7 @@ const CheckPregnancy = ({
     setHasErrors,
   } = useReactHookForm({ schema });
 
-  const [selectedOption, setSelectedOption] = useState('');
-
-  const handleSelectChange = (e: any) => {
-    setSelectedOption(e.target.value);
-  };
+  const watchResult = watch('result', '');
 
   useEffect(() => {
     if (breeding) {
@@ -138,12 +135,10 @@ const CheckPregnancy = ({
                       { id: 1, name: 'RECTAL_PALPATION' },
                       { id: 1, name: 'OBSERVATION' },
                       { id: 1, name: 'ULTRASOUND' },
-                      { id: 1, name: 'ECHOGRAPHY' },
-                      { id: 1, name: 'PALPATION' },
                     ]}
                   />
                   <Label>
-                    Resultat:
+                    Résultat:
                     <span className="text-red-600">*</span>
                   </Label>
                   <SelectInput
@@ -159,18 +154,24 @@ const CheckPregnancy = ({
                     ]}
                   />
                 </div>
-                <div>
-                  <Label>
-                    Donnez la date de mise bas
-                    <span className="text-red-600">*</span>
-                  </Label>
-                  <DateInput
-                    control={control}
-                    errors={errors}
-                    placeholder="Pick a date"
-                    name="farrowingDate"
-                  />
-                </div>
+
+                {watchResult === 'PREGNANT' ? (
+                  <div>
+                    <Label>
+                      Donnez la date de mise bas
+                      <span className="text-red-600">*</span>
+                    </Label>
+                    <DateInput
+                      control={control}
+                      errors={errors}
+                      placeholder="Pick a date"
+                      name="farrowingDate"
+                    />
+                  </div>
+                ) : (
+                  ''
+                )}
+
                 <div className="mt-4 flex items-center space-x-4">
                   <ButtonInput
                     type="button"

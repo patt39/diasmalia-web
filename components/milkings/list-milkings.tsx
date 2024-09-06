@@ -53,8 +53,8 @@ const ListMilkings = ({ item, index }: { item: any; index: number }) => {
   return (
     <>
       <TableRow key={index} className="dark:border-gray-800">
-        <TableCell className="font-medium">{item.animal.code}</TableCell>
-        <TableCell>{item.quantity}</TableCell>
+        <TableCell className="font-medium">{item?.animal?.code}</TableCell>
+        <TableCell>{item?.quantity}</TableCell>
         <TableCell>{formatDateDDMMYY(item?.createdAt as Date)}</TableCell>
         <TableCell>
           <DropdownMenu>

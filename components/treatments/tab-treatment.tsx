@@ -1,9 +1,9 @@
 import { GetTreatmentsAPI } from '@/api-site/treatment';
 import { useInputState } from '@/components/hooks';
 
-import { SearchInput } from '@/components/ui-setting';
+import { ButtonLoadMore, SearchInput } from '@/components/ui-setting';
 import { Button } from '@/components/ui/button';
-import { CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import { CardContent, CardHeader } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -12,7 +12,8 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Eclipse, ListFilter } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useInView } from 'react-intersection-observer';
 import { LoadingFile } from '../ui-setting/ant';
 import { ErrorFile } from '../ui-setting/ant/error-file';
 import {
@@ -23,24 +24,23 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '../ui/tooltip';
+import { Tooltip, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
 import { CreateOrUpdatetreatments } from './create-or-update-treatments';
 import { ListTreatments } from './list-treatments';
 
 const TabTreatments = ({ animalTypeId }: { animalTypeId: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [periode, setPeriode] = useState('');
+  const { ref, inView } = useInView();
   const { t, search, handleSetSearch } = useInputState();
 
   const {
     isLoading: isLoadingTreatments,
     isError: isErrorTreatments,
     data: dataTreatments,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
   } = GetTreatmentsAPI({
     search,
     periode,
@@ -49,6 +49,28 @@ const TabTreatments = ({ animalTypeId }: { animalTypeId: string }) => {
     sortBy: 'createdAt',
     animalTypeId: animalTypeId,
   });
+
+  useEffect(() => {
+    let fetching = false;
+    if (inView) {
+      fetchNextPage();
+    }
+    const onScroll = async (event: any) => {
+      const { scrollHeight, scrollTop, clientHeight } =
+        event.target.scrollingElement;
+
+      if (!fetching && scrollHeight - scrollTop <= clientHeight * 1.5) {
+        fetching = true;
+        if (hasNextPage) await fetchNextPage();
+        fetching = false;
+      }
+    };
+
+    document.addEventListener('scroll', onScroll);
+    return () => {
+      document.removeEventListener('scroll', onScroll);
+    };
+  }, [fetchNextPage, hasNextPage, inView]);
 
   return (
     <>
@@ -68,14 +90,6 @@ const TabTreatments = ({ animalTypeId }: { animalTypeId: string }) => {
                     {dataTreatments?.pages[0]?.data?.total}
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent className="dark:border-gray-800">
-                  <p>
-                    {t.formatMessage({ id: 'ANIMALTYPE.TOOLTIP' })}{' '}
-                    {dataTreatments?.pages[0]?.data?.total}{' '}
-                    {t.formatMessage({ id: 'ANIMALTYPE.TOOLTIP.ANIMALS' })}{' '}
-                    {t.formatMessage({ id: 'ANIMALTYPE.DEATHS' })}{' '}
-                  </p>
-                </TooltipContent>
               </Tooltip>
             </TooltipProvider>
             <DropdownMenu>
@@ -91,18 +105,28 @@ const TabTreatments = ({ animalTypeId }: { animalTypeId: string }) => {
                 <DropdownMenuLabel>Filter by</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
                   onClick={() => setPeriode('')}
                   checked
                 >
                   {t.formatMessage({ id: 'ACTIVITY.FILTERALL' })}
                 </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem onClick={() => setPeriode('7')}>
+                <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
+                  onClick={() => setPeriode('7')}
+                >
                   {t.formatMessage({ id: 'ACTIVITY.LAST7DAYS' })}
                 </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem onClick={() => setPeriode('15')}>
+                <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
+                  onClick={() => setPeriode('15')}
+                >
                   {t.formatMessage({ id: 'ACTIVITY.LAST15DAYS' })}
                 </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem onClick={() => setPeriode('30')}>
+                <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
+                  onClick={() => setPeriode('30')}
+                >
                   {t.formatMessage({ id: 'ACTIVITY.LAST30DAYS' })}
                 </DropdownMenuCheckboxItem>
               </DropdownMenuContent>
@@ -159,12 +183,16 @@ const TabTreatments = ({ animalTypeId }: { animalTypeId: string }) => {
               )}
             </TableBody>
           </Table>
+          {hasNextPage && (
+            <div className="mx-auto mt-4 justify-center text-center">
+              <ButtonLoadMore
+                ref={ref}
+                isFetchingNextPage={isFetchingNextPage}
+                onClick={() => fetchNextPage()}
+              />
+            </div>
+          )}
         </CardContent>
-        <CardFooter>
-          <div className="text-xs text-muted-foreground">
-            Showing <strong>1-10</strong> of <strong>32</strong> products
-          </div>
-        </CardFooter>
       </main>
       <CreateOrUpdatetreatments
         treatment={animalTypeId}

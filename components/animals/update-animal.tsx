@@ -1,4 +1,4 @@
-import { CreateOneAnimalAPI, GetAnimalsAPI } from '@/api-site/animals';
+import { GetAnimalsAPI, UpdateOneAnimalAPI } from '@/api-site/animals';
 import { GetBreedsAPI } from '@/api-site/breed';
 import { GetLocationsAPI } from '@/api-site/locations';
 import { useReactHookForm } from '@/components/hooks';
@@ -58,17 +58,16 @@ import {
 
 const schema = yup.object({
   code: yup.string().optional(),
-  codeMother: yup.string().optional(),
-  codeFather: yup.string().optional(),
   birthday: yup.string().optional(),
   breedName: yup.string().optional(),
   locationCode: yup.string().optional(),
   isCastrated: yup.string().optional(),
-  weight: yup.number().required('weight is a required field'),
-  gender: yup.string().required('gender is a required field'),
+  weight: yup.number().optional(),
+  gender: yup.string().optional(),
+  productionPhase: yup.string().optional(),
 });
 
-const CreateAnimals = ({
+const UpdateAnimals = ({
   showModal,
   setShowModal,
   animal,
@@ -107,16 +106,18 @@ const CreateAnimals = ({
         'isCastrated',
         'breedName',
         'locationCode',
+        'productionPhase',
       ];
       fields?.forEach((field: any) => setValue(field, animal[field]));
     }
   }, [animal, setValue]);
 
   // Create or Update data
-  const { mutateAsync: saveMutation } = CreateOneAnimalAPI({
+  const { mutateAsync: saveMutation } = UpdateOneAnimalAPI({
     onSuccess: () => {
       setHasErrors(false);
       setLoading(false);
+      console.log(animal);
     },
     onError: (error?: any) => {
       setHasErrors(true);
@@ -130,6 +131,7 @@ const CreateAnimals = ({
     try {
       await saveMutation({
         ...payload,
+        animalId: animal?.id,
       });
       setHasErrors(false);
       setLoading(false);
@@ -283,9 +285,7 @@ const CreateAnimals = ({
                 </div>
                 <div className="my-2 flex items-center space-x-1">
                   <div>
-                    <Label>
-                      Genre:<span className="text-red-600">*</span>
-                    </Label>
+                    <Label>Genre:</Label>
                     <SelectInput
                       firstOptionName="Choose a production type"
                       control={control}
@@ -300,10 +300,7 @@ const CreateAnimals = ({
                     />
                   </div>
                   <div className="px-4">
-                    <Label>
-                      Date de naissance:
-                      <span className="text-red-600">*</span>
-                    </Label>
+                    <Label>Date de naissance:</Label>
                     <DateInput
                       control={control}
                       errors={errors}
@@ -312,9 +309,7 @@ const CreateAnimals = ({
                     />
                   </div>
                   <div>
-                    <Label>
-                      Poids:<span className="text-red-600">*</span>
-                    </Label>
+                    <Label>Poids:</Label>
                     <TextInput
                       control={control}
                       type="number"
@@ -423,12 +418,21 @@ const CreateAnimals = ({
                       )}
                     />
                   </div>
+                  <div className="mb-2">
+                    <Label>Phase de production:</Label>
+                    <SelectInput
+                      firstOptionName="Choose a production type"
+                      control={control}
+                      errors={errors}
+                      placeholder="Select a production phase"
+                      valueType="text"
+                      name="productionPhase"
+                      dataItem={[{ id: 3, name: 'REPRODUCTION' }]}
+                    />
+                  </div>
                 </div>
                 <div className="my-2">
-                  <Label>
-                    Sélectionnez la race
-                    <span className="text-red-600">*</span>
-                  </Label>
+                  <Label>Sélectionnez la race</Label>
                   <Controller
                     control={control}
                     name="breedName"
@@ -480,10 +484,7 @@ const CreateAnimals = ({
                     )}
                   />
                   <div className="mt-2">
-                    <Label>
-                      Sélectionnez un emplacement
-                      <span className="text-red-600">*</span>
-                    </Label>
+                    <Label>Sélectionnez un emplacement</Label>
                     <Controller
                       control={control}
                       name="locationCode"
@@ -587,4 +588,4 @@ const CreateAnimals = ({
   );
 };
 
-export { CreateAnimals };
+export { UpdateAnimals };

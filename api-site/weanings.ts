@@ -1,8 +1,9 @@
 import { WeaningsModel } from '@/types/weanings';
 import { makeApiCall, PaginationRequest } from '@/utils';
 import {
-  useInfiniteQuery,
+  keepPreviousData,
   useMutation,
+  useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
 
@@ -58,16 +59,25 @@ export const GetWeaningsAPI = (
     search?: string;
     take?: number;
     periode?: string;
+    pageItem?: number;
     animalTypeId?: string;
     organizationId?: string;
   } & PaginationRequest,
 ) => {
-  const { take, sort, search, periode, sortBy, animalTypeId, organizationId } =
-    payload;
-  return useInfiniteQuery({
-    queryKey: ['weanings', 'infinite', { ...payload }],
-    getNextPageParam: (lastPage: any) => lastPage.data.next_page,
-    queryFn: async ({ pageParam = 1 }) =>
+  const {
+    take,
+    sort,
+    pageItem,
+    search,
+    periode,
+    sortBy,
+    animalTypeId,
+    organizationId,
+  } = payload;
+  return useQuery({
+    queryKey: ['weanings', { ...payload }],
+    placeholderData: keepPreviousData,
+    queryFn: async () =>
       await makeApiCall({
         action: 'getWeanings',
         queryParams: {
@@ -77,12 +87,11 @@ export const GetWeaningsAPI = (
           sortBy,
           periode,
           animalTypeId,
-          page: pageParam,
+          page: pageItem,
           organizationId,
         },
       }),
-    staleTime: 60_000,
-    initialPageParam: 1,
+    staleTime: 6000,
   });
 };
 

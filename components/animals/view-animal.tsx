@@ -37,7 +37,7 @@ const ViewAnimal = ({
             </button>
             <form className="mt-4">
               <>
-                {getOneAnimal.gender === 'FEMALE' ? (
+                {getOneAnimal?.gender === 'FEMALE' ? (
                   <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
                     <Card
                       x-chunk="dashboard-05-chunk-1"
@@ -122,7 +122,7 @@ const ViewAnimal = ({
                   <Input disabled type="text" value={getOneAnimal?.status} />
                 </div>
                 <div className="mb-4">
-                  <div className="mb-4 flex items-center space-x-4">
+                  <div className="mb-4 flex items-center space-x-2">
                     <Label> {t.formatMessage({ id: 'VIEW.BREED' })}:</Label>
                     <Input
                       disabled
@@ -139,7 +139,7 @@ const ViewAnimal = ({
                   </div>
                 </div>
                 <div className="mb-4">
-                  <div className="mb-4 flex items-center space-x-4">
+                  <div className="mb-4 flex items-center space-x-2">
                     <Label>{t.formatMessage({ id: 'VIEW.LOCATION' })}:</Label>
                     <Input
                       disabled
@@ -162,7 +162,7 @@ const ViewAnimal = ({
                 </div>
                 <div>
                   <div className="mb-2 flex items-center space-x-2">
-                    <div className="flex items-center space-x-4">
+                    <div className="flex items-center space-x-2">
                       <Label>Isolé:</Label>
                       <Input
                         disabled

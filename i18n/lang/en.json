@@ -77,6 +77,7 @@
 
   "LOCATION.MANGERS": "Mangers",
   "LOCATION.THROUGHS": "Throughs",
+  "LOCATION.ANIMAL": "Animal",
   "LOCATION.ANIMALS": "Animals",
   "CHANGE.STATUS": "Change status",
   "VIEW.BREED": "Breed",
@@ -119,6 +120,9 @@
   "FEMALE.REPRODUCTION.SOLD": "Number of females in reproduction sold",
   "MALE.REPRODUCTION.SOLD": "Number of males in reproduction sold",
 
+  "HATCHING.DATE": "Hatching date",
+  "EGGS.INCUBATED": "Eggs incubated",
+  "EGGS.HATCHED": "Eggs hatched",
 
   "FINANCE.TITLE": "Your Finances",
   "FINANCE.DESCRIPTION": "Introducing our dynamic finance section to monitor income and expenses for seamless management and insightful analysis.",
@@ -142,12 +146,12 @@
   "CODE.LOCATION.TOOLTIP": "Give a code for your coop or leave empty and the app will generate it for you",
   "CODE.AVES.TOOLTIP": "Give a code for your band or leave empty and the app will generate it for you",
   "CODE.ANIMALS.TOOLTIP": "Give a code for your animal or leave empty and the app will generate it for you",
-
+  "CODE.SALES.TOOLTIP": "Select the animals for sale carefully as they will never be recovered again in the event of an error.",
 
   "ANIMALTYPE.TITLE": "Choose a farm",
   "ANIMALTYPE.DESCRIPTION": "Create your boxes, raise your animals, breed, follow up on gestation, inventory your births & deaths and make analysis to monitor growth and efficiency",
-  "ANIMALTYPE.FEMALE": "Females",
-  "ANIMALTYPE.MALE": "Males",
+  "ANIMALTYPE.FEMALE": "Nomber of active females",
+  "ANIMALTYPE.MALE": "Nomber of active males",
   "ANIMALTYPE.FEEDINGS": "Feedings",
   "ANIMALTYPE.FEEDING": "feed consumed",
   "ANIMALTYPE.FATTENING": "Fattenings",
@@ -161,6 +165,7 @@
   "ANIMALTYPE.LAYING": "Laying",
   "ANIMALTYPE.ISOLATIONS": "Isolations",
   "ANIMALTYPE.INCUBATION": "Incubation",
+  "ANIMALTYPE.WEANED": "weaned",
   "ANIMALTYPE.EGGHAVESTING": "Egg havesting",
   "ANIMALTYPE.LOCATION.CREATE": "Add a location",
   "ANIMALTYPE.LOCATIONS": "My locations",
@@ -195,12 +200,13 @@
   "ANIMALTYPE.ANIMALS.EGGHARVESTINGS.CREATE": "Add in harvesting",
   "ANIMALTYPE.ANIMALS.DEATHS.CREATE": "Add a death",
   "ANIMALTYPE.ANIMALS.BREEDINGS.CREATE": "Add a breeding",
-  "ANIMALTYPE.ANIMALS.FARROWINGS.CREATE": "Add a farrowing",
+  "ANIMALTYPE.ANIMALS.FARROWING.CREATE": "Add a farrowing",
   "ANIMALTYPE.ANIMALS.SALES.CREATE": "Add a sale",
   "ANIMALTYPE.MALE.REPRODUCTION": "Reproductive males",
   "ANIMALTYPE.FEMALE.REPRODUCTION": "Reproductive females",
+  "ANIMALTYPE.FISH.DESCRIPTION": "Create your fish ponds or tanks, raise your fish, take inventory of your deaths and analyze them to monitor the growth and efficiency of your farm.",
   "ANIMALTYPE.BROILERS.DESCRIPTION": "Create your chicken coops, raise your poultry, fatten them, take inventory of your dead and make analysis to monitor growth and efficiency in your farm.",
-  "ANIMALTYPE.EGGHAVESTING.DESCRIPTION": "Harvest eggs everyday and calibrate them according to thier size",
+  "ANIMALTYPE.EGGHAVESTING.DESCRIPTION": "Harvest eggs everyday making sure your bands are in LAYING phase and calibrate them according to thier size",
   "ANIMALTYPE.LAYERS.DESCRIPTION": "Create your chicken coops, raise your poultry, fatten them, collect eggs, incubate, take inventory of your dead and make analysis to monitor growth and efficiency in your farm.",
   "ANIMALTYPE.LOCATION.DESCRIPTION": "Create, view and edit your animal locations according to thier production phase to monitor thier well being and pin point thier exact location anytime",
   "ANIMALTYPE.ANIMALS.DESCRIPTION": "Add an animal in your organization by creating his profile with all necessary informations and edit it when ever you like",
@@ -220,8 +226,7 @@
   "ANIMAL.EGGS.HATCHED": "Total number of eggs hatched",
   "ANIMAL.SUM.MALES": "Total number of males",
   "ANIMAL.SUM.FEMALES": "Total number of females",
-
-
+  "ANIMAL.SELECTED.COUNT": " selected",
 
   "TABANIMAL.WEIGHT": "Weight",
   "TABANIMAL.QUANTITY": "Quantity",
@@ -230,6 +235,7 @@
   "TABANIMAL.VIEW": "View",
   "TABANIMAL.CHANGESTATUS": "Change status",
   "TABANIMAL.DELETE": "Delete",
+  "TABANIMAL.DOWNLOAD": "Download",
   "TABFARROWING.LITTER": "Litter",
   "TABEGGHAVESTING.NUMBER": "Number",
   "TABEGGHAVESTING.SIZE": "Size",
@@ -278,16 +284,33 @@
   "SALE.CHANNEL": "Sale channel",
   "SALE.NUMBER": "Number of animals sold",
   "SALE.AMOUNT": "Sale price",
+  "SALE.EGGS": "EGGS",
+  "SALE.CHICKS": "CHICKS",
+  "SALE.CHICKENS": "CHICKENS",
+  "SALES.ANALYTICS": "Sales analytics",
 
+  "STATUS.ACTIVE": "ACTIVE",
+  "STATUS.SOLD": "SOLD",
+  "STATUS.DEATH": "DEAD",
 
-
+  "FINANCE.TYPE": "Type",
+  "FINANCE.PERIODE": "Période",
   "FINANCE.INCOME": "Income",
   "FINANCE.EXPENSES": "Expenses",
+  "AMOUNT.SALE.CHICKS": "Amount sale chicks",
+  "AMOUNT.SALE.CHICKENS": "Amount sale chickens",
+  "AMOUNT.SALE.EGGS": "Amount sale eggs",
 
   "BREEDING.POSITIVE": "Positive",
   "BREEDING.NEGATIVE": "Negative",
   "BREEDING.CHECK": "Check",
   "BREEDING.RECHECK": "Recheck",
+
+  "PRODUCTIONPHASE.GROWTH": "GROWTH",
+  "PRODUCTIONPHASE.LAYING": "LAYING",
+  "LAYING.PERCENTAGE": "Laying percentage",
+  "HATCHING.PERCENTAGE": "Hatching percentage",
+  "DEATH.PERCENTAGE": "Death percentage",
 
 
   "DASHBOARD.FEATURE.1.TITLE": "Secured Payments",

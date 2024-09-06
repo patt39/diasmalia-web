@@ -130,7 +130,10 @@ const UpdateLocations = ({
                   </div>
                 )}
 
-                <div className="flex items-center">
+                <div className="items-center space-x-1">
+                  <Label>
+                    code:<span className="text-red-600">*</span>
+                  </Label>
                   <TextInput
                     control={control}
                     type="text"
@@ -167,43 +170,61 @@ const UpdateLocations = ({
                   ''
                 )}
                 <div className="my-2 flex items-center space-x-1">
-                  <div className="mr-10">
-                    <Label>
-                      Superficie:<span className="text-red-600">*</span>
-                    </Label>
-                    <TextInput
-                      control={control}
-                      type="number"
-                      name="squareMeter"
-                      placeholder="Square meters"
-                      errors={errors}
-                    />
-                  </div>
-                  <div className="pr-10">
-                    <Label>
-                      Nombre de mangeoirs:
-                      <span className="text-red-600">*</span>
-                    </Label>
-                    <TextInput
-                      control={control}
-                      type="number"
-                      name="manger"
-                      placeholder="Number of mangers"
-                      errors={errors}
-                    />
-                  </div>
-                  <div className="ml-4">
-                    <Label>
-                      Nombre abreuvoirs:<span className="text-red-600">*</span>
-                    </Label>
-                    <TextInput
-                      control={control}
-                      type="number"
-                      name="through"
-                      placeholder="Number of throughs"
-                      errors={errors}
-                    />
-                  </div>
+                  {animalType?.name === 'Pisciculture' ? (
+                    <>
+                      <Label>
+                        Volume:<span className="text-red-600">*</span>
+                      </Label>
+                      <TextInput
+                        control={control}
+                        type="number"
+                        name="squareMeter"
+                        placeholder="Square meters"
+                        errors={errors}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <div className="mr-10">
+                        <Label>
+                          Superficie:<span className="text-red-600">*</span>
+                        </Label>
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="squareMeter"
+                          placeholder="Square meters"
+                          errors={errors}
+                        />
+                      </div>
+                      <div className="pr-10">
+                        <Label>
+                          Nombre de mangeoirs:
+                          <span className="text-red-600">*</span>
+                        </Label>
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="manger"
+                          placeholder="Number of mangers"
+                          errors={errors}
+                        />
+                      </div>
+                      <div className="ml-4">
+                        <Label>
+                          Nombre abreuvoirs:
+                          <span className="text-red-600">*</span>
+                        </Label>
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="through"
+                          placeholder="Number of throughs"
+                          errors={errors}
+                        />
+                      </div>
+                    </>
+                  )}
                 </div>
                 <div className="mt-4 flex items-center space-x-4">
                   <ButtonInput

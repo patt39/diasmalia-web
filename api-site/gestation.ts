@@ -89,7 +89,7 @@ export const GetGestationsAPI = (
   const { take, sort, search, periode, animalTypeId, sortBy, organizationId } =
     payload;
   return useInfiniteQuery({
-    queryKey: ['gestations', 'infinite', { ...payload }],
+    queryKey: ['gestations', 'breedings', 'infinite', { ...payload }],
     getNextPageParam: (lastPage: any) => lastPage.data.next_page,
     queryFn: async ({ pageParam = 1 }) =>
       await makeApiCall({

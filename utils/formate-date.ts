@@ -39,7 +39,7 @@ export const formatDateDifference = (date: Date) => {
     age = `${years} years`;
   }
   if (months >= 1 && years < 1) {
-    age = `${months} months`;
+    age = `${months} mnths`;
   }
   if (days < 32 && months < 1 && years < 1) {
     age = `${days} days`;

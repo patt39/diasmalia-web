@@ -1,7 +1,7 @@
 import { GetAnimalsAPI } from '@/api-site/animals';
 import { CreateOrUpdateOneFarrowingAPI } from '@/api-site/farrowings';
 import { useReactHookForm } from '@/components/hooks';
-import { ButtonInput } from '@/components/ui-setting';
+import { ButtonInput, ButtonLoadMore } from '@/components/ui-setting';
 import { LoadingFile } from '@/components/ui-setting/ant';
 import { ErrorFile } from '@/components/ui-setting/ant/error-file';
 import {
@@ -22,6 +22,7 @@ import { XIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { Controller, SubmitHandler } from 'react-hook-form';
+import { useInView } from 'react-intersection-observer';
 import * as yup from 'yup';
 import { TextAreaInput, TextInput } from '../ui-setting/shadcn';
 import { Label } from '../ui/label';
@@ -53,6 +54,7 @@ const CreateOrUpdateFarrowings = ({
     setHasErrors,
   } = useReactHookForm({ schema });
   const { query } = useRouter();
+  const { ref, inView } = useInView();
   const animalTypeId = String(query?.animalTypeId);
 
   useEffect(() => {
@@ -104,6 +106,9 @@ const CreateOrUpdateFarrowings = ({
     isLoading: isLoadingAnimals,
     isError: isErrorAnimals,
     data: dataAnimals,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
   } = GetAnimalsAPI({
     take: 10,
     sort: 'desc',
@@ -112,6 +117,28 @@ const CreateOrUpdateFarrowings = ({
     productionPhase: 'GESTATION',
     animalTypeId: animalTypeId,
   });
+
+  useEffect(() => {
+    let fetching = false;
+    if (inView) {
+      fetchNextPage();
+    }
+    const onScroll = async (event: any) => {
+      const { scrollHeight, scrollTop, clientHeight } =
+        event.target.scrollingElement;
+
+      if (!fetching && scrollHeight - scrollTop <= clientHeight * 1.5) {
+        fetching = true;
+        if (hasNextPage) await fetchNextPage();
+        fetching = false;
+      }
+    };
+
+    document.addEventListener('scroll', onScroll);
+    return () => {
+      document.removeEventListener('scroll', onScroll);
+    };
+  }, [fetchNextPage, hasNextPage, inView]);
 
   return (
     <>
@@ -144,7 +171,11 @@ const CreateOrUpdateFarrowings = ({
                 )}
 
                 {!farrowing?.id ? (
-                  <div className="mb-4">
+                  <div className="mb-2">
+                    <Label>
+                      Sélectionnez une femèle gestante:
+                      <span className="text-red-600">*</span>
+                    </Label>
                     <Controller
                       control={control}
                       name="code"
@@ -155,7 +186,7 @@ const CreateOrUpdateFarrowings = ({
                           value={value}
                         >
                           <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select a code" />
+                            <SelectValue placeholder="Select a female in gestation" />
                           </SelectTrigger>
                           <SelectContent className="dark:border-gray-800">
                             <SelectGroup>
@@ -175,11 +206,23 @@ const CreateOrUpdateFarrowings = ({
                                   .flatMap((page: any) => page?.data?.value)
                                   .map((item, index) => (
                                     <>
-                                      <SelectItem key={index} value={item.code}>
-                                        {item.code}
+                                      <SelectItem
+                                        key={index}
+                                        value={item?.code}
+                                      >
+                                        {item?.code}
                                       </SelectItem>
                                     </>
                                   ))
+                              )}
+                              {hasNextPage && (
+                                <div className="mx-auto mt-4 justify-center text-center">
+                                  <ButtonLoadMore
+                                    ref={ref}
+                                    isFetchingNextPage={isFetchingNextPage}
+                                    onClick={() => fetchNextPage()}
+                                  />
+                                </div>
                               )}
                             </SelectGroup>
                           </SelectContent>
@@ -188,7 +231,7 @@ const CreateOrUpdateFarrowings = ({
                     />
                   </div>
                 ) : null}
-                <div className="mb-4">
+                <div className="mb-2">
                   <Label>
                     Portée: <span className="text-red-600">*</span>
                   </Label>

@@ -18,7 +18,7 @@ const ViewBreeding = ({
   const { control, errors } = useReactHookForm({ schema });
 
   const { data: OneBreeding } = GetOneBreedingAPI({
-    breedingId: breeding.id,
+    breedingId: breeding?.id,
   });
 
   return (
@@ -42,7 +42,7 @@ const ViewBreeding = ({
                     control={control}
                     label="Note"
                     name="note"
-                    defaultValue={OneBreeding.note}
+                    defaultValue={OneBreeding?.note}
                     errors={errors}
                     disabled
                   />

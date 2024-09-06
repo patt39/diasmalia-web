@@ -79,11 +79,12 @@ export const GetFinancesAPI = (
     search?: string;
     take?: number;
     type?: string;
+    periode?: string;
     animalTypeId?: string;
     organizationId?: string;
   } & PaginationRequest,
 ) => {
-  const { take, sort, search, sortBy, type, organizationId } = payload;
+  const { take, sort, search, periode, sortBy, type, organizationId } = payload;
   return useInfiniteQuery({
     queryKey: ['finances', 'infinite', { ...payload }],
     getNextPageParam: (lastPage: any) => lastPage.data.next_page,
@@ -96,6 +97,7 @@ export const GetFinancesAPI = (
           type,
           search,
           sortBy,
+          periode,
           page: pageParam,
           organizationId,
         },

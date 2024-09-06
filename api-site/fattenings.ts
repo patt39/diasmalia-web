@@ -1,8 +1,9 @@
 import { FatteningsModel } from '@/types/fattening';
 import { makeApiCall, PaginationRequest } from '@/utils';
 import {
-  useInfiniteQuery,
+  keepPreviousData,
   useMutation,
+  useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
 
@@ -59,16 +60,25 @@ export const GetFatteningsAPI = (
     take: number;
     sortBy: string;
     periode?: string;
+    pageItem?: number;
     animalTypeId?: string;
     organizationId?: string;
   } & PaginationRequest,
 ) => {
-  const { take, sort, search, sortBy, periode, animalTypeId, organizationId } =
-    payload;
-  return useInfiniteQuery({
-    queryKey: ['fattenings', 'infinite', { ...payload }],
-    getNextPageParam: (lastPage: any) => lastPage.data.next_page,
-    queryFn: async ({ pageParam = 1 }) =>
+  const {
+    take,
+    sort,
+    pageItem,
+    search,
+    sortBy,
+    periode,
+    animalTypeId,
+    organizationId,
+  } = payload;
+  return useQuery({
+    queryKey: ['fattenings', { ...payload }],
+    placeholderData: keepPreviousData,
+    queryFn: async () =>
       await makeApiCall({
         action: 'getFattenings',
         queryParams: {
@@ -78,12 +88,11 @@ export const GetFatteningsAPI = (
           sortBy,
           periode,
           animalTypeId,
-          page: pageParam,
+          page: pageItem,
           organizationId,
         },
       }),
-    staleTime: 60_000,
-    initialPageParam: 1,
+    staleTime: 6000,
   });
 };
 

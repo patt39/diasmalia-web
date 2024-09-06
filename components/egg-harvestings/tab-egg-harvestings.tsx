@@ -4,12 +4,7 @@ import { useInputState } from '@/components/hooks';
 import { LoadingFile } from '@/components/ui-setting/ant';
 import { ErrorFile } from '@/components/ui-setting/ant/error-file';
 import { Button } from '@/components/ui/button';
-import {
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-} from '@/components/ui/card';
+import { CardContent, CardDescription, CardHeader } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -23,6 +18,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { PaginationPage } from '@/utils';
 import { Egg, ListFilter } from 'lucide-react';
 import { useState } from 'react';
 import { SearchInput } from '../ui-setting';
@@ -40,16 +36,19 @@ import { ListEggHarvestings } from './list-egg-harvestings';
 const TabEggHarvestings = ({ animalTypeId }: { animalTypeId: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [periode, setPeriode] = useState('');
+  const [pageItem, setPageItem] = useState(1);
   const { t, search, handleSetSearch } = useInputState();
 
   const {
     isLoading: isLoadingEggHavestings,
     isError: isErrorEgghavestings,
     data: dataEggHavestings,
+    isPlaceholderData,
   } = GetEggHarvestingsAPI({
     search,
     periode,
     take: 10,
+    pageItem,
     sort: 'desc',
     sortBy: 'createdAt',
     animalTypeId: animalTypeId,
@@ -70,13 +69,13 @@ const TabEggHarvestings = ({ animalTypeId }: { animalTypeId: string }) => {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button variant="outline">
-                    {dataEggHavestings?.pages[0]?.data?.total}
+                    {dataEggHavestings?.data?.total}
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent className="dark:border-gray-800">
                   <p>
                     {t.formatMessage({ id: 'ANIMALTYPE.TOOLTIP' })}{' '}
-                    {dataEggHavestings?.pages[0]?.data?.total}{' '}
+                    {dataEggHavestings?.data?.total}{' '}
                     {t.formatMessage({ id: 'ANIMALTYPE.EGGHAVESTING' })}
                   </p>
                 </TooltipContent>
@@ -95,18 +94,28 @@ const TabEggHarvestings = ({ animalTypeId }: { animalTypeId: string }) => {
                 <DropdownMenuLabel>Filter by</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
                   onClick={() => setPeriode('')}
                   checked
                 >
                   {t.formatMessage({ id: 'ACTIVITY.FILTERALL' })}
                 </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem onClick={() => setPeriode('7')}>
+                <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
+                  onClick={() => setPeriode('7')}
+                >
                   {t.formatMessage({ id: 'ACTIVITY.LAST7DAYS' })}
                 </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem onClick={() => setPeriode('15')}>
+                <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
+                  onClick={() => setPeriode('15')}
+                >
                   {t.formatMessage({ id: 'ACTIVITY.LAST15DAYS' })}
                 </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem onClick={() => setPeriode('30')}>
+                <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
+                  onClick={() => setPeriode('30')}
+                >
                   {t.formatMessage({ id: 'ACTIVITY.LAST30DAYS' })}
                 </DropdownMenuCheckboxItem>
               </DropdownMenuContent>
@@ -159,12 +168,11 @@ const TabEggHarvestings = ({ animalTypeId }: { animalTypeId: string }) => {
                   title="404"
                   description="Error finding data please try again..."
                 />
-              ) : Number(dataEggHavestings?.pages[0]?.data?.total) <= 0 ? (
+              ) : Number(dataEggHavestings?.data?.total) <= 0 ? (
                 <ErrorFile description="Don't have Eggharvestings created yet please do" />
               ) : (
-                dataEggHavestings?.pages
-                  .flatMap((page: any) => page?.data?.value)
-                  .map((item, index) => (
+                dataEggHavestings?.data?.value.map(
+                  (item: any, index: number) => (
                     <>
                       <ListEggHarvestings
                         item={item}
@@ -172,16 +180,18 @@ const TabEggHarvestings = ({ animalTypeId }: { animalTypeId: string }) => {
                         key={index}
                       />
                     </>
-                  ))
+                  ),
+                )
               )}
             </TableBody>
           </Table>
+          <PaginationPage
+            setPageItem={setPageItem}
+            data={dataEggHavestings?.data}
+            pageItem={Number(pageItem)}
+            isPlaceholderData={isPlaceholderData}
+          />
         </CardContent>
-        <CardFooter>
-          <div className="text-xs text-muted-foreground">
-            Showing <strong>1-10</strong> of <strong>32</strong> products
-          </div>
-        </CardFooter>
       </main>
       <CreateOrUpdateEggHarvestings
         eggHarvesting={animalTypeId}

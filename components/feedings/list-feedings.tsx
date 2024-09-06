@@ -26,7 +26,7 @@ const ListFeedings = ({ item, index }: { item: any; index: number }) => {
           {item?.feedType.toLowerCase()}
         </TableCell>
         <TableCell className="font-medium">{item?.quantity}</TableCell>
-        <TableCell>{item?.animal.productionPhase.toLowerCase()}</TableCell>
+        <TableCell>{item?.animal?.productionPhase.toLowerCase()}</TableCell>
         <TableCell>{formatDateDDMMYY(item?.createdAt as Date)}</TableCell>
         <TableCell>
           <DropdownMenu>

@@ -7,26 +7,6 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 
-export const GetSaleStatisticsAPI = () => {
-  const { data, isError, isLoading, status, isPending, refetch } = useQuery({
-    queryKey: ['statistic'],
-    queryFn: async () =>
-      await makeApiCall({
-        action: 'getSaleStatistics',
-      }),
-    refetchOnWindowFocus: false,
-  });
-
-  return {
-    data: data?.data as any,
-    isError,
-    isLoading,
-    status,
-    isPending,
-    refetch,
-  };
-};
-
 export const GetOneSaleAPI = (payload: { saleId: string }) => {
   const { saleId } = payload;
   const { data, isError, isLoading, status, isPending, refetch } = useQuery({
@@ -141,21 +121,6 @@ export const CreateOrUpdateAvesSaleAPI = ({
   });
 
   return result;
-};
-
-export const getSalesAPI = async (
-  payload: {
-    search?: string;
-    take: number;
-    type?: string;
-    method?: string;
-    organizationId?: string;
-  } & PaginationRequest,
-) => {
-  return await makeApiCall({
-    action: 'getSales',
-    queryParams: payload,
-  });
 };
 
 export const exportSalesAPI = async () => {

@@ -1,6 +1,6 @@
 import { GetOneSaleAPI } from '@/api-site/sales';
 import { useReactHookForm } from '@/components/hooks';
-import { TextInput } from '@/components/ui-setting/shadcn';
+import { TextAreaInput, TextInput } from '@/components/ui-setting/shadcn';
 import { XIcon } from 'lucide-react';
 import * as yup from 'yup';
 import { Input } from '../ui/input';
@@ -45,7 +45,7 @@ const ViewAvesSale = ({
                     control={control}
                     type="text"
                     name="soldTo"
-                    defaultValue={getOneSale.soldTo || 'N/A'}
+                    defaultValue={getOneSale?.soldTo || 'N/A'}
                     errors={errors}
                     disabled
                   />
@@ -56,7 +56,7 @@ const ViewAvesSale = ({
                     control={control}
                     type="text"
                     name="email"
-                    defaultValue={getOneSale.email || 'N/A'}
+                    defaultValue={getOneSale?.email || 'N/A'}
                     errors={errors}
                     disabled
                   />
@@ -67,7 +67,7 @@ const ViewAvesSale = ({
                     control={control}
                     type="number"
                     name="phone"
-                    defaultValue={getOneSale.phone || 'N/A'}
+                    defaultValue={getOneSale?.phone || 'N/A'}
                     errors={errors}
                     disabled
                   />
@@ -78,29 +78,31 @@ const ViewAvesSale = ({
                     control={control}
                     type="text"
                     name="address"
-                    defaultValue={getOneSale.address || 'N/A'}
+                    defaultValue={getOneSale?.address || 'N/A'}
                     errors={errors}
                     disabled
                   />
                 </div>
                 <Label>{t.formatMessage({ id: 'SALE.NUMBER' })}</Label>
                 <div className="mb-4 flex items-center space-x-4">
-                  <Input disabled type="text" value={getOneSale.number} />
+                  <Input disabled type="text" value={getOneSale?.number} />
                 </div>
                 <Label>{t.formatMessage({ id: 'SALE.AMOUNT' })}</Label>
                 <div className="mb-4 flex items-center space-x-4">
-                  <Input disabled type="text" value={getOneSale.price} />
+                  <Input disabled type="text" value={getOneSale?.price} />
                 </div>
                 <Label>{t.formatMessage({ id: 'SALE.CHANNEL' })}</Label>
                 <div className="mb-4 flex items-center space-x-4">
-                  <Input disabled type="text" value={getOneSale.method} />
+                  <Input disabled type="text" value={getOneSale?.method} />
                 </div>
                 <Label>{t.formatMessage({ id: 'SALE.DETAIL' })}:</Label>
-                <div className="mb-4 flex items-center space-x-4">
-                  <Input
+                <div className="mb-4">
+                  <TextAreaInput
+                    control={control}
+                    name="detail"
+                    defaultValue={getOneSale?.note}
+                    errors={errors}
                     disabled
-                    type="text"
-                    value={`Sale of ${getOneSale.detail}`}
                   />
                 </div>
               </div>

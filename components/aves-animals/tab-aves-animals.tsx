@@ -20,13 +20,14 @@ import {
 } from '@/components/ui/tooltip';
 import { TooltipProvider } from '@radix-ui/react-tooltip';
 import { Bird, ListFilter } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { CreateAvesAnimals } from './create-aves';
 import { ListAvesAnimals } from './list-aves';
 
 const TabAvesAnimals = ({ animalTypeId }: { animalTypeId: string }) => {
   const { ref, inView } = useInView();
+  const [productionPhase, setProductionPhase] = useState('');
   const { t, search, handleSetSearch, isOpen, setIsOpen } = useInputState();
 
   const {
@@ -41,6 +42,7 @@ const TabAvesAnimals = ({ animalTypeId }: { animalTypeId: string }) => {
     take: 10,
     sort: 'desc',
     sortBy: 'createdAt',
+    productionPhase,
     animalTypeId: animalTypeId,
   });
 
@@ -106,10 +108,23 @@ const TabAvesAnimals = ({ animalTypeId }: { animalTypeId: string }) => {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="dark:border-gray-800">
                 <DropdownMenuLabel>Filter by</DropdownMenuLabel>
-                <DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
+                  checked
+                  onClick={() => setProductionPhase('')}
+                >
+                  {t.formatMessage({ id: 'ACTIVITY.FILTERALL' })}
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
+                  onClick={() => setProductionPhase('GROWTH')}
+                >
                   {t.formatMessage({ id: 'PRODUCTIONTYPE.GROWTH' })}
                 </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
+                  onClick={() => setProductionPhase('LAYING')}
+                >
                   {t.formatMessage({ id: 'ANIMALTYPE.LAYING' })}
                 </DropdownMenuCheckboxItem>
               </DropdownMenuContent>

@@ -20,7 +20,7 @@ const ViewAvesTreatment = ({
   const { control, errors } = useReactHookForm({ schema });
 
   const { data: getOneTreatment } = GetOneTreatmentAPI({
-    treatmentId: treatment.id,
+    treatmentId: treatment?.id,
   });
 
   return (
@@ -49,32 +49,32 @@ const ViewAvesTreatment = ({
                 </div>
                 <div className="mb-4">
                   <Label htmlFor="text">Treatment name</Label>
-                  <Input disabled type="text" value={getOneTreatment.name} />
+                  <Input disabled type="text" value={getOneTreatment?.name} />
                 </div>
                 <div className="mb-4">
                   <Label htmlFor="text">Diagnostic</Label>
                   <Input
                     disabled
                     type="text"
-                    value={getOneTreatment.diagnosis}
+                    value={getOneTreatment?.diagnosis}
                   />
                 </div>
                 <div className="mb-4 flex items-center space-x-4">
-                  <Label htmlFor="text">Treatment</Label>
+                  <Label htmlFor="text">Treatement</Label>
                   <Input
                     disabled
                     type="text"
-                    value={getOneTreatment.medication}
+                    value={getOneTreatment?.medication}
                   />
-                  <Label htmlFor="text">Dose</Label>
-                  <Input disabled type="number" value={getOneTreatment.dose} />
+                  <Label htmlFor="text">Nombre de doses</Label>
+                  <Input disabled type="number" value={getOneTreatment?.dose} />
                 </div>
                 <div className="mb-4 disabled">
                   <TextAreaInput
                     control={control}
                     label="Note"
                     name="note"
-                    defaultValue={getOneTreatment.note}
+                    defaultValue={getOneTreatment?.note}
                     errors={errors}
                     disabled
                   />

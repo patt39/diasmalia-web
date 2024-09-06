@@ -11,7 +11,13 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
@@ -21,15 +27,17 @@ import {
 } from '@/components/ui/tooltip';
 import { TooltipProvider } from '@radix-ui/react-tooltip';
 import { ListFilter, PawPrint } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { CreateOrUpdateAnimals } from './create-or-update-animal';
+import { CreateAnimals } from './create-or-update-animal';
 import { ListAnimals } from './list-animals';
 
 const TabAnimals = ({ animalTypeId }: { animalTypeId: string }) => {
   const { t, search, handleSetSearch, isOpen, setIsOpen } = useInputState();
   const { ref, inView } = useInView();
-
+  const [gender, setGender] = useState('');
+  const [status, setStatus] = useState('');
+  const [productionPhase, setProductionPhase] = useState('');
   const { data: animalType } = GetOneAnimalTypeAPI({
     animalTypeId: animalTypeId,
   });
@@ -43,9 +51,12 @@ const TabAnimals = ({ animalTypeId }: { animalTypeId: string }) => {
     fetchNextPage,
   } = GetAnimalsAPI({
     search,
+    gender,
+    status,
     take: 10,
     sort: 'desc',
     sortBy: 'createdAt',
+    productionPhase,
     animalTypeId: animalTypeId,
   });
 
@@ -105,35 +116,130 @@ const TabAnimals = ({ animalTypeId }: { animalTypeId: string }) => {
             ) ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="h-8 gap-1">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-7 gap-1 text-sm"
+                  >
                     <ListFilter className="h-3.5 w-3.5" />
-                    <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                      Filter
-                    </span>
+                    <span className="sr-only sm:not-sr-only">Filter</span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   align="end"
-                  className="dark:border-gray-800"
+                  className="dark:border-gray-80 cursor-pointer0 dark:border-gray-800"
                 >
                   <DropdownMenuLabel>Filter by</DropdownMenuLabel>
-                  <DropdownMenuCheckboxItem>
-                    {t.formatMessage({ id: 'PRODUCTIONTYPE.GROWTH' })}
-                  </DropdownMenuCheckboxItem>
-                  <DropdownMenuCheckboxItem>
-                    {t.formatMessage({ id: 'ANIMALTYPE.FATTENING' })}
-                  </DropdownMenuCheckboxItem>
-                  <DropdownMenuCheckboxItem>
-                    {t.formatMessage({
-                      id: 'PRODUCTIONTYPE.REPRODUCTION',
-                    })}
-                  </DropdownMenuCheckboxItem>
-                  <DropdownMenuCheckboxItem>
-                    {t.formatMessage({ id: 'ANIMALTYPE.GESTATIONS' })}
-                  </DropdownMenuCheckboxItem>
-                  <DropdownMenuCheckboxItem>
-                    {t.formatMessage({ id: 'PRODUCTIONTYPE.LACTATION' })}
-                  </DropdownMenuCheckboxItem>
+                  <DropdownMenuSeparator />
+                  {status ? (
+                    <DropdownMenuCheckboxItem
+                      checked
+                      onClick={() => setStatus('')}
+                      className="cursor-pointer"
+                    >
+                      {t.formatMessage({ id: 'ACTIVITY.FILTERALL' })}
+                    </DropdownMenuCheckboxItem>
+                  ) : gender ? (
+                    <DropdownMenuCheckboxItem
+                      checked
+                      className="cursor-pointer"
+                      onClick={() => setGender('')}
+                    >
+                      {t.formatMessage({ id: 'ACTIVITY.FILTERALL' })}
+                    </DropdownMenuCheckboxItem>
+                  ) : (
+                    <DropdownMenuCheckboxItem
+                      checked
+                      className="cursor-pointer"
+                      onClick={() => setProductionPhase('')}
+                    >
+                      {t.formatMessage({ id: 'ACTIVITY.FILTERALL' })}
+                    </DropdownMenuCheckboxItem>
+                  )}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger className="cursor-pointer">
+                      {t.formatMessage({ id: 'ANIMALTYPE.GENDER' })}
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuPortal>
+                      <DropdownMenuSubContent className=" dark:border-gray-800 cursor-pointer0">
+                        <DropdownMenuItem
+                          className="cursor-pointer"
+                          onClick={() => setGender('MALE')}
+                        >
+                          {t.formatMessage({ id: 'ANIMAL.MALES' })}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          className="cursor-pointer"
+                          onClick={() => setGender('FEMALE')}
+                        >
+                          {t.formatMessage({ id: 'ANIMAL.FEMALES' })}
+                        </DropdownMenuItem>
+                      </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                  </DropdownMenuSub>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger className="cursor-pointer">
+                      {t.formatMessage({ id: 'TABWEANING.STATUS' })}
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuPortal>
+                      <DropdownMenuSubContent className=" dark:border-gray-800">
+                        <DropdownMenuItem
+                          className="cursor-pointer"
+                          onClick={() => setStatus('ACTIVE')}
+                        >
+                          {t.formatMessage({ id: 'ANIMAL.ACTIVE' })}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          className="cursor-pointer"
+                          onClick={() => setStatus('SOLD')}
+                        >
+                          {t.formatMessage({ id: 'ANIMAL.SOLD' })}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          className="cursor-pointer"
+                          onClick={() => setStatus('DEATH')}
+                        >
+                          {t.formatMessage({ id: 'ANIMAL.DEATH' })}
+                        </DropdownMenuItem>
+                      </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                  </DropdownMenuSub>
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger className="cursor-pointer">
+                      {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
+                    </DropdownMenuSubTrigger>
+                    <DropdownMenuPortal>
+                      <DropdownMenuSubContent className=" dark:border-gray-800">
+                        <DropdownMenuItem
+                          className="cursor-pointer dark:border-gray-800"
+                          onClick={() => setProductionPhase('GROWTH')}
+                        >
+                          {t.formatMessage({ id: 'PRODUCTIONTYPE.GROWTH' })}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          className="cursor-pointer"
+                          onClick={() => setProductionPhase('FATTENING')}
+                        >
+                          {t.formatMessage({ id: 'ANIMALTYPE.FATTENING' })}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          className="cursor-pointer"
+                          onClick={() => setProductionPhase('GESTATIONS')}
+                        >
+                          {t.formatMessage({ id: 'ANIMALTYPE.GESTATIONS' })}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          className="cursor-pointer"
+                          onClick={() => setProductionPhase('LACTATION')}
+                        >
+                          {t.formatMessage({ id: 'PRODUCTIONTYPE.LACTATION' })}
+                        </DropdownMenuItem>
+                      </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                  </DropdownMenuSub>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
@@ -185,7 +291,7 @@ const TabAnimals = ({ animalTypeId }: { animalTypeId: string }) => {
           </div>
         </div>
       </section>
-      <CreateOrUpdateAnimals
+      <CreateAnimals
         animal={animalTypeId}
         showModal={isOpen}
         setShowModal={setIsOpen}

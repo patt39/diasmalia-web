@@ -23,10 +23,10 @@ import {
 
 const schema = yup.object({
   code: yup.string().optional(),
+  manger: yup.number().optional(),
+  through: yup.number().optional(),
   productionPhase: yup.string().optional(),
   squareMeter: yup.number().required('squareMeter is required field'),
-  manger: yup.number().required('manger is required field'),
-  through: yup.number().required('through is required field'),
 });
 
 const CreateLocations = ({
@@ -165,7 +165,9 @@ const CreateLocations = ({
                   'Dinde',
                   'Quails',
                   'Pondeuses',
-                ].includes(animalType.name) ? (
+                  'Pisciculture',
+                  'Poulets Brahma',
+                ].includes(animalType?.name) ? (
                   ''
                 ) : (
                   <div className="my-2">
@@ -180,51 +182,68 @@ const CreateLocations = ({
                       dataItem={[
                         { id: 1, name: 'GROWTH' },
                         { id: 2, name: 'FATTENING' },
-                        { id: 3, name: 'REPRODUCTION' },
-                        { id: 2, name: 'GESTATION' },
+                        { id: 3, name: 'GESTATION' },
                       ]}
                     />
                   </div>
                 )}
 
                 <div className="my-2 flex items-center space-x-1">
-                  <div className="mr-10">
-                    <Label>
-                      Superficie:<span className="text-red-600">*</span>
-                    </Label>
-                    <TextInput
-                      control={control}
-                      type="number"
-                      name="squareMeter"
-                      placeholder="Square meters"
-                      errors={errors}
-                    />
-                  </div>
-                  <div className="pr-10">
-                    <Label>
-                      Nombre de mangeoirs:
-                      <span className="text-red-600">*</span>
-                    </Label>
-                    <TextInput
-                      control={control}
-                      type="number"
-                      name="manger"
-                      placeholder="Number of mangers"
-                      errors={errors}
-                    />
-                  </div>
-                  <div className="ml-4">
-                    <Label>
-                      Nombre abreuvoirs:<span className="text-red-600">*</span>
-                    </Label>
-                    <TextInput
-                      control={control}
-                      type="number"
-                      name="through"
-                      placeholder="Number of throughs"
-                      errors={errors}
-                    />
-                  </div>
+                  {animalType?.name === 'Pisciculture' ? (
+                    <>
+                      <Label>
+                        Volume:<span className="text-red-600">*</span>
+                      </Label>
+                      <TextInput
+                        control={control}
+                        type="number"
+                        name="squareMeter"
+                        placeholder="Square meters"
+                        errors={errors}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <div className="mr-10">
+                        <Label>
+                          Superficie:<span className="text-red-600">*</span>
+                        </Label>
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="squareMeter"
+                          placeholder="Square meters"
+                          errors={errors}
+                        />
+                      </div>
+                      <div className="pr-10">
+                        <Label>
+                          Nombre de mangeoirs:
+                          <span className="text-red-600">*</span>
+                        </Label>
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="manger"
+                          placeholder="Number of mangers"
+                          errors={errors}
+                        />
+                      </div>
+                      <div className="ml-4">
+                        <Label>
+                          Nombre abreuvoirs:
+                          <span className="text-red-600">*</span>
+                        </Label>
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="through"
+                          placeholder="Number of throughs"
+                          errors={errors}
+                        />
+                      </div>
+                    </>
+                  )}
                 </div>
                 <div className="mt-4 flex items-center space-x-3">
                   <ButtonInput

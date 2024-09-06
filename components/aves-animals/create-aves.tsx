@@ -2,7 +2,7 @@ import { GetOneAnimalTypeAPI } from '@/api-site/animal-type';
 import { CreateOneAvesAnimalAPI } from '@/api-site/animals';
 import { GetLocationsAPI } from '@/api-site/locations';
 import { useReactHookForm } from '@/components/hooks';
-import { ButtonInput, ButtonLoadMore } from '@/components/ui-setting';
+import { ButtonInput } from '@/components/ui-setting';
 import { SelectInput, TextInput } from '@/components/ui-setting/shadcn';
 import { AnimalModel } from '@/types/animal';
 import {
@@ -13,7 +13,6 @@ import { FileQuestion, XIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { Controller, SubmitHandler } from 'react-hook-form';
-import { useInView } from 'react-intersection-observer';
 import * as yup from 'yup';
 import { DateInput, LoadingFile } from '../ui-setting/ant';
 import { ErrorFile } from '../ui-setting/ant/error-file';
@@ -65,7 +64,6 @@ const CreateAvesAnimals = ({
     hasErrors,
     setHasErrors,
   } = useReactHookForm({ schema });
-  const { ref, inView } = useInView();
   const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
 
@@ -129,37 +127,12 @@ const CreateAvesAnimals = ({
     isLoading: isLoadingLocations,
     isError: isErrorLocations,
     data: dataLocations,
-    isFetchingNextPage,
-    hasNextPage,
-    fetchNextPage,
   } = GetLocationsAPI({
     take: 10,
     sort: 'desc',
     sortBy: 'createdAt',
     animalTypeId: animalTypeId,
   });
-
-  useEffect(() => {
-    let fetching = false;
-    if (inView) {
-      fetchNextPage();
-    }
-    const onScroll = async (event: any) => {
-      const { scrollHeight, scrollTop, clientHeight } =
-        event.target.scrollingElement;
-
-      if (!fetching && scrollHeight - scrollTop <= clientHeight * 1.5) {
-        fetching = true;
-        if (hasNextPage) await fetchNextPage();
-        fetching = false;
-      }
-    };
-
-    document.addEventListener('scroll', onScroll);
-    return () => {
-      document.removeEventListener('scroll', onScroll);
-    };
-  }, [fetchNextPage, hasNextPage, inView]);
 
   return (
     <>
@@ -210,7 +183,9 @@ const CreateAvesAnimals = ({
                     </Tooltip>
                   </TooltipProvider>
                 </div>
-                {animalType.name === 'Poulet de chair' ? (
+                {['Poulet de chair', 'Pisciculture'].includes(
+                  animalType?.name,
+                ) ? (
                   <div className="mt-2">
                     <Label>
                       Nombre animaux:
@@ -225,8 +200,8 @@ const CreateAvesAnimals = ({
                     />
                   </div>
                 ) : (
-                  <div className="my-2 flex items-center space-x-1">
-                    <div className="">
+                  <>
+                    <div className="my-2">
                       <Label>Phase de production: </Label>
                       <SelectInput
                         firstOptionName="Choose a production type"
@@ -241,115 +216,105 @@ const CreateAvesAnimals = ({
                         ]}
                       />
                     </div>
-                    <div className="px-4">
-                      <Label>
-                        Nombre de males:
-                        <span className="text-red-600">*</span>
-                      </Label>
-                      <TextInput
-                        control={control}
-                        type="number"
-                        name="male"
-                        placeholder="Number of males"
-                        errors={errors}
-                      />
+                    <div className="my-2 flex items-center space-x-10">
+                      <div>
+                        <Label>
+                          Nombre de males:
+                          <span className="text-red-600">*</span>
+                        </Label>
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="male"
+                          placeholder="Number of males"
+                          errors={errors}
+                        />
+                      </div>
+                      <div>
+                        <Label>
+                          Nombre de femèles:
+                          <span className="text-red-600">*</span>
+                        </Label>
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="female"
+                          placeholder="Number of females"
+                          errors={errors}
+                        />
+                      </div>
+                      <div>
+                        <Label>
+                          Poids:<span className="text-red-600">*</span>
+                        </Label>
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="weight"
+                          placeholder="Give weight"
+                          errors={errors}
+                        />
+                      </div>
                     </div>
-                    <div className="ml-4">
-                      <Label>
-                        Nombre de femèles:
-                        <span className="text-red-600">*</span>
-                      </Label>
-                      <TextInput
-                        control={control}
-                        type="number"
-                        name="female"
-                        placeholder="Number of females"
-                        errors={errors}
-                      />
-                    </div>
-                  </div>
+                  </>
                 )}
-                <div className="my-2 flex items-center space-x-1">
-                  <div className="mr-10">
-                    <Label>
-                      Poids: <span className="text-red-600">*</span>
-                    </Label>
-                    <TextInput
+                <div className="w-full">
+                  <Label>
+                    Code du batiment:<span className="text-red-600">*</span>
+                  </Label>
+                  <Controller
+                    control={control}
+                    name="locationCode"
+                    render={({ field: { value, onChange } }) => (
+                      <Select
+                        onValueChange={onChange}
+                        name={'locationCode'}
+                        value={value}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select a location code" />
+                        </SelectTrigger>
+                        <SelectContent className="dark:border-gray-800">
+                          <SelectGroup>
+                            <SelectLabel>Location codes</SelectLabel>
+                            {isLoadingLocations ? (
+                              <LoadingFile />
+                            ) : isErrorLocations ? (
+                              <ErrorFile
+                                title="404"
+                                description="Error finding data please try again..."
+                              />
+                            ) : Number(dataLocations?.pages[0]?.data?.total) <=
+                              0 ? (
+                              <ErrorFile description="Don't have location codes" />
+                            ) : (
+                              dataLocations?.pages
+                                .flatMap((page: any) => page?.data?.value)
+                                .map((item, index) => (
+                                  <>
+                                    <SelectItem key={index} value={item.code}>
+                                      {item.code}
+                                    </SelectItem>
+                                  </>
+                                ))
+                            )}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                </div>
+                <div className="my-2">
+                  <Label>
+                    Date de lancement:<span className="text-red-600">*</span>
+                  </Label>
+                  <div className="flex items-center space-x-2">
+                    <DateInput
                       control={control}
-                      type="number"
-                      name="weight"
-                      placeholder="Give weight"
                       errors={errors}
+                      placeholder="Starting date"
+                      name="birthday"
                     />
-                  </div>
-                  <div className="pr-10">
-                    <Label>
-                      Code du batiment: <span className="text-red-600">*</span>{' '}
-                    </Label>
-                    <Controller
-                      control={control}
-                      name="locationCode"
-                      render={({ field: { value, onChange } }) => (
-                        <Select
-                          onValueChange={onChange}
-                          name={'locationCode'}
-                          value={value}
-                        >
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select a location code" />
-                          </SelectTrigger>
-                          <SelectContent className="dark:border-gray-800">
-                            <SelectGroup>
-                              <SelectLabel>Location codes</SelectLabel>
-                              {isLoadingLocations ? (
-                                <LoadingFile />
-                              ) : isErrorLocations ? (
-                                <ErrorFile
-                                  title="404"
-                                  description="Error finding data please try again..."
-                                />
-                              ) : Number(
-                                  dataLocations?.pages[0]?.data?.total,
-                                ) <= 0 ? (
-                                <ErrorFile description="Don't have location codes" />
-                              ) : (
-                                dataLocations?.pages
-                                  .flatMap((page: any) => page?.data?.value)
-                                  .map((item, index) => (
-                                    <>
-                                      <SelectItem key={index} value={item.code}>
-                                        {item.code}
-                                      </SelectItem>
-                                    </>
-                                  ))
-                              )}
-                              {hasNextPage && (
-                                <div className="mx-auto mt-4 justify-center text-center">
-                                  <ButtonLoadMore
-                                    ref={ref}
-                                    isFetchingNextPage={isFetchingNextPage}
-                                    onClick={() => fetchNextPage()}
-                                  />
-                                </div>
-                              )}
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
-                  </div>
-                  <div className="ml-4">
-                    <Label>
-                      Date de lancement: <span className="text-red-600">*</span>
-                    </Label>
-                    <div className="flex items-center space-x-2">
-                      <DateInput
-                        control={control}
-                        errors={errors}
-                        placeholder="Starting date"
-                        name="birthday"
-                      />
-                    </div>
                   </div>
                 </div>
                 <div className="mt-4 flex items-center space-x-4">

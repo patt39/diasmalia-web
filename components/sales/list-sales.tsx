@@ -16,7 +16,13 @@ import {
   AlertSuccessNotification,
   formatDateDDMMYY,
 } from '@/utils';
-import { Eye, MoreHorizontal, PencilIcon, TrashIcon } from 'lucide-react';
+import {
+  Download,
+  Eye,
+  MoreHorizontal,
+  PencilIcon,
+  TrashIcon,
+} from 'lucide-react';
 import { useState } from 'react';
 import { ActionModalDialog } from '../ui-setting/shadcn';
 import { CreateOrUpdateSales } from './create-or-update-sales';
@@ -92,6 +98,12 @@ const ListSales = ({ item, index }: { item: any; index: number }) => {
                 <Eye className="size-4 text-gray-600 hover:text-indigo-600" />
                 <span className="ml-2 cursor-pointer hover:text-indigo-600">
                   {t.formatMessage({ id: 'TABANIMAL.VIEW' })}
+                </span>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Download className="size-4 text-gray-600 hover:text-red-600" />
+                <span className="ml-2 cursor-pointer hover:text-red-600">
+                  {t.formatMessage({ id: 'TABANIMAL.DOWNLOAD' })}
                 </span>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setIsOpen(true)}>

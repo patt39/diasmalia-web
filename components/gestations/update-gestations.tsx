@@ -7,7 +7,7 @@ import {
   AlertSuccessNotification,
 } from '@/utils/alert-notification';
 import { XIcon } from 'lucide-react';
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
 import { DateInput } from '../ui-setting/ant';
@@ -30,6 +30,7 @@ const UpdateGestations = ({
   gestation?: any;
 }) => {
   const {
+    t,
     control,
     errors,
     setValue,
@@ -39,7 +40,6 @@ const UpdateGestations = ({
     hasErrors,
     setHasErrors,
   } = useReactHookForm({ schema });
-  const [date, setDate] = React.useState<Date>();
 
   useEffect(() => {
     if (gestation) {
@@ -158,7 +158,7 @@ const UpdateGestations = ({
                     variant="outline"
                     onClick={() => setShowModal(false)}
                   >
-                    Cancel
+                    {t.formatMessage({ id: 'ALERT.CANCEL' })}
                   </ButtonInput>
 
                   <ButtonInput
@@ -168,7 +168,7 @@ const UpdateGestations = ({
                     disabled={loading}
                     loading={loading}
                   >
-                    Save
+                    {t.formatMessage({ id: 'ALERT.CONTINUE' })}
                   </ButtonInput>
                 </div>
               </div>

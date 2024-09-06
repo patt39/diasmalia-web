@@ -2,12 +2,7 @@
 import { GetWeaningsAPI } from '@/api-site/weanings';
 import { useInputState } from '@/components/hooks';
 import { Button } from '@/components/ui/button';
-import {
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-} from '@/components/ui/card';
+import { CardContent, CardHeader } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -15,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { PaginationPage } from '@/utils';
 import { ListFilter, MilkOff } from 'lucide-react';
 import { useState } from 'react';
 import { SearchInput } from '../ui-setting';
@@ -40,15 +36,18 @@ import { ListWeanings } from './list-weanings';
 const TabWeanings = ({ animalTypeId }: { animalTypeId: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [periode, setPeriode] = useState('');
+  const [pageItem, setPageItem] = useState(1);
   const { t, search, handleSetSearch } = useInputState();
 
   const {
     isLoading: isLoadingWeanings,
     isError: isErrorWeanings,
     data: dataWeanings,
+    isPlaceholderData,
   } = GetWeaningsAPI({
     search,
     periode,
+    pageItem,
     take: 10,
     sort: 'desc',
     sortBy: 'createdAt',
@@ -69,15 +68,13 @@ const TabWeanings = ({ animalTypeId }: { animalTypeId: string }) => {
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button variant="outline">
-                    {dataWeanings?.pages[0]?.data?.total}
-                  </Button>
+                  <Button variant="outline">{dataWeanings?.data?.total}</Button>
                 </TooltipTrigger>
                 <TooltipContent className="dark:border-gray-800">
                   <p>
                     {t.formatMessage({ id: 'ANIMALTYPE.TOOLTIP' })}{' '}
-                    {dataWeanings?.pages[0]?.data?.total}{' '}
-                    {t.formatMessage({ id: 'ANIMALTYPE.INCUBATION' })}{' '}
+                    {dataWeanings?.data?.total}{' '}
+                    {t.formatMessage({ id: 'ANIMALTYPE.WEANED' })}{' '}
                   </p>
                 </TooltipContent>
               </Tooltip>
@@ -95,18 +92,28 @@ const TabWeanings = ({ animalTypeId }: { animalTypeId: string }) => {
                 <DropdownMenuLabel>Filter by</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
                   onClick={() => setPeriode('')}
                   checked
                 >
                   {t.formatMessage({ id: 'ACTIVITY.FILTERALL' })}
                 </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem onClick={() => setPeriode('7')}>
+                <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
+                  onClick={() => setPeriode('7')}
+                >
                   {t.formatMessage({ id: 'ACTIVITY.LAST7DAYS' })}
                 </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem onClick={() => setPeriode('15')}>
+                <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
+                  onClick={() => setPeriode('15')}
+                >
                   {t.formatMessage({ id: 'ACTIVITY.LAST15DAYS' })}
                 </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem onClick={() => setPeriode('30')}>
+                <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
+                  onClick={() => setPeriode('30')}
+                >
                   {t.formatMessage({ id: 'ACTIVITY.LAST30DAYS' })}
                 </DropdownMenuCheckboxItem>
               </DropdownMenuContent>
@@ -122,11 +129,6 @@ const TabWeanings = ({ animalTypeId }: { animalTypeId: string }) => {
               </span>
             </Button>
           </div>
-        </div>
-        <div className="mr-auto pt-4 items-center gap-2">
-          <CardDescription>
-            {t.formatMessage({ id: 'ANIMALTYPE.ISOLATION.DESCRIPTION' })}
-          </CardDescription>
         </div>
       </CardHeader>
       <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
@@ -158,25 +160,24 @@ const TabWeanings = ({ animalTypeId }: { animalTypeId: string }) => {
                   title="404"
                   description="Error finding data please try again..."
                 />
-              ) : Number(dataWeanings?.pages[0]?.data?.total) <= 0 ? (
+              ) : Number(dataWeanings?.data?.total) <= 0 ? (
                 <ErrorFile description="Don't have animals in lactation phase" />
               ) : (
-                dataWeanings?.pages
-                  .flatMap((page: any) => page?.data?.value)
-                  .map((item, index) => (
-                    <>
-                      <ListWeanings index={index} item={item} key={index} />
-                    </>
-                  ))
+                dataWeanings?.data?.value.map((item: any, index: number) => (
+                  <>
+                    <ListWeanings index={index} item={item} key={index} />
+                  </>
+                ))
               )}
             </TableBody>
           </Table>
+          <PaginationPage
+            setPageItem={setPageItem}
+            data={dataWeanings?.data}
+            pageItem={Number(pageItem)}
+            isPlaceholderData={isPlaceholderData}
+          />
         </CardContent>
-        <CardFooter>
-          <div className="text-xs text-muted-foreground">
-            Showing <strong>1-10</strong> of <strong>32</strong> products
-          </div>
-        </CardFooter>
       </main>
       <CreateOrUpdateWeanings
         weaning={animalTypeId}

@@ -27,7 +27,7 @@ import {
 } from '../ui/select';
 
 const schema = yup.object({
-  code: yup.array().optional(),
+  code: yup.string().optional(),
   litter: yup.number().required('litter is a required field'),
 });
 
@@ -143,7 +143,11 @@ const CreateOrUpdateWeanings = ({
                 )}
 
                 {!weaning?.id ? (
-                  <div className="mb-4">
+                  <div className="mb-2">
+                    <Label>
+                      Sélectionnez une femèle allaitante:
+                      <span className="text-red-600">*</span>
+                    </Label>
                     <Controller
                       control={control}
                       name="code"
@@ -154,7 +158,7 @@ const CreateOrUpdateWeanings = ({
                           value={value}
                         >
                           <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select a code" />
+                            <SelectValue placeholder="Select a lactating female" />
                           </SelectTrigger>
                           <SelectContent className="dark:border-gray-800">
                             <SelectGroup>
@@ -174,8 +178,11 @@ const CreateOrUpdateWeanings = ({
                                   .flatMap((page: any) => page?.data?.value)
                                   .map((item, index) => (
                                     <>
-                                      <SelectItem key={index} value={item.code}>
-                                        {item.code}
+                                      <SelectItem
+                                        key={index}
+                                        value={item?.code}
+                                      >
+                                        {item?.code}
                                       </SelectItem>
                                     </>
                                   ))

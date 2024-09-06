@@ -115,8 +115,6 @@ const ReCheckPregnancy = ({
                       { id: 1, name: 'RECTAL_PALPATION' },
                       { id: 1, name: 'OBSERVATION' },
                       { id: 1, name: 'ULTRASOUND' },
-                      { id: 1, name: 'ECHOGRAPHY' },
-                      { id: 1, name: 'PALPATION' },
                     ]}
                   />
                   <SelectInput

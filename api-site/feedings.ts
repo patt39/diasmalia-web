@@ -1,8 +1,9 @@
 import { FeedingAvesModel, FeedingsModel } from '@/types/feeding';
 import { makeApiCall, PaginationRequest } from '@/utils';
 import {
-  useInfiniteQuery,
+  keepPreviousData,
   useMutation,
+  useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
 
@@ -60,13 +61,12 @@ export const CreateOrUpdateOneAvesFeedingAPI = ({
   onSuccess?: () => void;
   onError?: (error: any) => void;
 } = {}) => {
-  const queryKey = ['aves-feedings'];
+  const queryKey = ['feedings'];
   const queryClient = useQueryClient();
   const result = useMutation({
     mutationKey: queryKey,
     mutationFn: async (payload: FeedingAvesModel & { feedingId: string }) => {
       const { feedingId } = payload;
-      console.log('payload===>', payload);
       return feedingId
         ? await makeApiCall({
             action: 'updateOneAvesFeeding',
@@ -108,6 +108,7 @@ export const GetFeedingsAPI = (
     sortBy: string;
     periode?: string;
     pageItem?: number;
+    feedingsCount?: string;
     animalTypeId?: string;
     organizationId?: string;
   } & PaginationRequest,
@@ -115,17 +116,18 @@ export const GetFeedingsAPI = (
   const {
     take,
     sort,
+    sortBy,
     search,
     pageItem,
     periode,
     animalTypeId,
-    sortBy,
+    feedingsCount,
     organizationId,
   } = payload;
-  return useInfiniteQuery({
-    queryKey: ['feedings', 'infinite', { ...payload }],
-    getNextPageParam: (lastPage: any) => lastPage.data.next_page,
-    queryFn: async ({ pageParam = 1 }) =>
+  return useQuery({
+    queryKey: ['feedings', { ...payload }],
+    placeholderData: keepPreviousData,
+    queryFn: async () =>
       await makeApiCall({
         action: 'getFeedings',
         queryParams: {
@@ -134,13 +136,13 @@ export const GetFeedingsAPI = (
           search,
           sortBy,
           periode,
+          feedingsCount,
           animalTypeId,
-          page: pageParam,
+          page: pageItem,
           organizationId,
         },
       }),
     staleTime: 60_000,
-    initialPageParam: 1,
   });
 };
 
