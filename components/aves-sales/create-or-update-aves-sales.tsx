@@ -3,7 +3,11 @@ import { GetAnimalsAPI } from '@/api-site/animals';
 import { CreateOrUpdateAvesSaleAPI } from '@/api-site/sales';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
-import { SelectInput, TextInput } from '@/components/ui-setting/shadcn';
+import {
+  SelectInput,
+  TextAreaInput,
+  TextInput,
+} from '@/components/ui-setting/shadcn';
 import { SalesModel } from '@/types/sale';
 import {
   AlertDangerNotification,
@@ -29,6 +33,7 @@ import {
 
 const schema = yup.object({
   code: yup.string().optional(),
+  note: yup.string().optional(),
   phone: yup.string().optional(),
   email: yup.string().optional(),
   address: yup.string().optional(),
@@ -64,6 +69,7 @@ const CreateOrUpdateAvesSales = ({
   } = useReactHookForm({ schema });
 
   const watchDetail = watch('detail');
+  const watchSaleCanale = watch('method');
   const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
   const { data: animalType } = GetOneAnimalTypeAPI({
@@ -74,6 +80,7 @@ const CreateOrUpdateAvesSales = ({
     if (sale) {
       const fields = [
         'code',
+        'note',
         'address',
         'phone',
         'email',
@@ -167,7 +174,7 @@ const CreateOrUpdateAvesSales = ({
                 {!sale?.id ? (
                   <div className="mb-2 items-center">
                     <Label>
-                      Code de la bande:<span className="text-red-600">*</span>
+                      Code de la bande<span className="text-red-600">*</span>
                     </Label>
                     <Controller
                       control={control}
@@ -217,14 +224,32 @@ const CreateOrUpdateAvesSales = ({
                 ) : (
                   ''
                 )}
-                {['Poulet de chair', 'Pisciculture'].includes(
-                  animalType?.name,
-                ) ? (
+                {['Pisciculture'].includes(animalType?.name) ? (
                   ''
+                ) : animalType.name === 'Pondeuses' ? (
+                  <div className="my-2">
+                    <Label>
+                      Choisissez un détail de vente
+                      <span className="text-red-600">*</span>
+                    </Label>
+                    <SelectInput
+                      className="cursor-pointer"
+                      firstOptionName="Choose selling detail"
+                      control={control}
+                      errors={errors}
+                      placeholder="Select a detail"
+                      valueType="text"
+                      name="detail"
+                      dataItem={[
+                        { id: 1, name: 'EGGS' },
+                        { id: 3, name: 'CHICKENS' },
+                      ]}
+                    />
+                  </div>
                 ) : (
                   <div className="my-2">
                     <Label>
-                      Choisissez un détail de vente:
+                      Choisissez un détail de vente
                       <span className="text-red-600">*</span>
                     </Label>
                     <SelectInput
@@ -242,9 +267,7 @@ const CreateOrUpdateAvesSales = ({
                     />
                   </div>
                 )}
-                {['Poulet de chair', 'Pisciculture'].includes(
-                  animalType?.name,
-                ) ? (
+                {['Pisciculture'].includes(animalType?.name) ? (
                   <div className="mb-2 flex items-center space-x-1">
                     <Label>
                       Nombre:<span className="text-red-600">*</span>
@@ -340,7 +363,7 @@ const CreateOrUpdateAvesSales = ({
                 )}
 
                 <div className="my-2 items-center">
-                  <Label>Nom du client:</Label>
+                  <Label>Nom du client</Label>
                   <TextInput
                     control={control}
                     type="text"
@@ -350,7 +373,7 @@ const CreateOrUpdateAvesSales = ({
                   />
                 </div>
                 <div className="my-2 items-center">
-                  <Label>Email:</Label>
+                  <Label>Email</Label>
                   <TextInput
                     control={control}
                     type="text"
@@ -360,7 +383,7 @@ const CreateOrUpdateAvesSales = ({
                   />
                 </div>
                 <div className="my-2 items-center">
-                  <Label>Téléphone:</Label>
+                  <Label>Téléphone</Label>
                   <TextInput
                     control={control}
                     type="number"
@@ -370,7 +393,7 @@ const CreateOrUpdateAvesSales = ({
                   />
                 </div>
                 <div className="my-2 items-center">
-                  <Label>Address:</Label>
+                  <Label>Address</Label>
                   <TextInput
                     control={control}
                     type="text"
@@ -379,7 +402,7 @@ const CreateOrUpdateAvesSales = ({
                     errors={errors}
                   />
                 </div>
-                <Label>Canal de vente:</Label>
+                <Label>Canal de vente</Label>
                 <span className="text-red-600">*</span>
                 <div className="mb-4 flex items-center">
                   <SelectInput
@@ -399,6 +422,19 @@ const CreateOrUpdateAvesSales = ({
                     ]}
                   />
                 </div>
+                {watchSaleCanale === 'OTHER' ? (
+                  <div className="mb-4">
+                    <TextAreaInput
+                      control={control}
+                      label="Details of sale"
+                      name="note"
+                      placeholder="Give details about animals and client"
+                      errors={errors}
+                    />
+                  </div>
+                ) : (
+                  ''
+                )}
                 <div className="mt-4 flex items-center space-x-4">
                   <ButtonInput
                     type="button"

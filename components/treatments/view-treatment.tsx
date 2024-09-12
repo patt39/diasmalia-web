@@ -20,7 +20,7 @@ const ViewTreatment = ({
   const { control, errors } = useReactHookForm({ schema });
 
   const { data: getOneTreatment } = GetOneTreatmentAPI({
-    treatmentId: treatment.id,
+    treatmentId: treatment?.id,
   });
 
   return (
@@ -37,26 +37,26 @@ const ViewTreatment = ({
                 <XIcon />
               </span>
             </button>
-            <form className="mt-4">
+            <form className="mt-6">
               <div className="flex-auto justify-center p-2">
                 <div className="mb-4 flex items-center space-x-2">
                   <Label htmlFor="text">Code: </Label>
                   <Input
                     disabled
                     type="text"
-                    value={getOneTreatment.animal.code}
+                    value={getOneTreatment?.animal?.code}
                   />
                 </div>
                 <div className="mb-4 flex items-center space-x-2">
                   <Label htmlFor="text">Treatment: </Label>
-                  <Input disabled type="text" value={getOneTreatment.name} />
+                  <Input disabled type="text" value={getOneTreatment?.name} />
                 </div>
                 <div className="mb-4 flex items-center space-x-2">
                   <Label htmlFor="text">Diagnostic: </Label>
                   <Input
                     disabled
                     type="text"
-                    value={getOneTreatment.diagnosis}
+                    value={getOneTreatment?.diagnosis}
                   />
                 </div>
                 <div className="mb-4 flex items-center space-x-4">
@@ -67,16 +67,16 @@ const ViewTreatment = ({
                     value={getOneTreatment.medication}
                   />
                   <Label htmlFor="text">Dose:</Label>
-                  <Input disabled type="number" value={getOneTreatment.dose} />
+                  <Input disabled type="number" value={getOneTreatment?.dose} />
                   <Label htmlFor="text">Method</Label>
-                  <Input disabled type="text" value={getOneTreatment.method} />
+                  <Input disabled type="text" value={getOneTreatment?.method} />
                 </div>
                 <div className="mb-4 disabled">
                   <TextAreaInput
                     control={control}
                     label="Note"
                     name="note"
-                    placeholder={getOneTreatment.note}
+                    placeholder={getOneTreatment?.note}
                     errors={errors}
                   />
                 </div>

@@ -1,4 +1,4 @@
-import { CreateOneAnimalAPI, GetAnimalsAPI } from '@/api-site/animals';
+import { CreateBulkAnimalsAPI, GetAnimalsAPI } from '@/api-site/animals';
 import { GetBreedsAPI } from '@/api-site/breed';
 import { GetLocationsAPI } from '@/api-site/locations';
 import { useReactHookForm } from '@/components/hooks';
@@ -34,41 +34,18 @@ import {
   TooltipTrigger,
 } from '../ui/tooltip';
 
-// type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
-// const getBase64 = (img: FileType, callback: (url: string) => void) => {
-//   const reader = new FileReader();
-//   reader.addEventListener('load', () => callback(reader.result as string));
-//   reader.readAsDataURL(img);
-// };
-// const beforeUpload = (file: FileType) => {
-//   const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
-//   if (!isJpgOrPng) {
-//     AlertDangerNotification({
-//       text: 'You can only upload JPG/PNG file!',
-//     });
-//   }
-//   const isLt2M = file.size / 1024 / 1024 < 2;
-//   if (!isLt2M) {
-//     AlertDangerNotification({
-//       text: 'Image must smaller than 2MB!',
-//     });
-//   }
-//   return isJpgOrPng && isLt2M;
-// };
-
 const schema = yup.object({
-  code: yup.string().optional(),
   codeMother: yup.string().optional(),
   codeFather: yup.string().optional(),
   birthday: yup.string().optional(),
   breedName: yup.string().optional(),
   locationCode: yup.string().optional(),
-  isCastrated: yup.string().optional(),
+  number: yup.number().required('number is a required field'),
   weight: yup.number().required('weight is a required field'),
   gender: yup.string().required('gender is a required field'),
 });
 
-const CreateAnimals = ({
+const CreateBulkAnimals = ({
   showModal,
   setShowModal,
   animal,
@@ -91,20 +68,16 @@ const CreateAnimals = ({
   const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
   const { ref, inView } = useInView();
-  // const [imageUrl, setImageUrl] = useState<string>(
-  //   oneImageToURL(animal?.image),
-  // );
 
   useEffect(() => {
     if (animal) {
       const fields = [
-        'code',
+        'number',
         'codeMother',
         'codeFather',
         'weight',
         'birthday',
         'gender',
-        'isCastrated',
         'breedName',
         'locationCode',
       ];
@@ -113,7 +86,7 @@ const CreateAnimals = ({
   }, [animal, setValue]);
 
   // Create or Update data
-  const { mutateAsync: saveMutation } = CreateOneAnimalAPI({
+  const { mutateAsync: saveMutation } = CreateBulkAnimalsAPI({
     onSuccess: () => {
       setHasErrors(false);
       setLoading(false);
@@ -147,16 +120,6 @@ const CreateAnimals = ({
     }
   };
 
-  // const handleChange: UploadProps['onChange'] = (info) => {
-  //   const { file } = info;
-  //   if (['done', 'error'].includes(String(file?.status))) {
-  //     getBase64(file?.originFileObj as FileType, (url) => {
-  //       setImageUrl(url as any);
-  //       setAttachment(file?.originFileObj);
-  //     });
-  //   }
-  // };
-
   const {
     isLoading: isLoadingLocations,
     isError: isErrorLocations,
@@ -164,7 +127,6 @@ const CreateAnimals = ({
   } = GetLocationsAPI({
     take: 10,
     sort: 'desc',
-    status: true,
     sortBy: 'createdAt',
     animalTypeId: animalTypeId,
   });
@@ -247,7 +209,7 @@ const CreateAnimals = ({
                 <XIcon />
               </span>
             </button>
-            <form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
+            <form className="mt-2" onSubmit={handleSubmit(onSubmit)}>
               <div className="flex-auto justify-center p-2">
                 {hasErrors && (
                   <div className="bg-white py-6 dark:bg-[#121212]">
@@ -262,42 +224,27 @@ const CreateAnimals = ({
                     </div>
                   </div>
                 )}
-                <div className="flex items-center">
-                  <TextInput
-                    control={control}
-                    type="text"
-                    name="code"
-                    placeholder="Give a code"
-                    errors={errors}
-                  />
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <FileQuestion />
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>{t.formatMessage({ id: 'CODE.ANIMALS.TOOLTIP' })}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
-                <div className="my-2 flex items-center space-x-1">
-                  <div>
-                    <Label>
-                      Genre:<span className="text-red-600">*</span>
-                    </Label>
-                    <SelectInput
-                      firstOptionName="Choose a production type"
+                <div className="my-2 flex items-center">
+                  <div className="flex items-center mt-6">
+                    <TextInput
                       control={control}
+                      type="number"
+                      name="number"
+                      placeholder="Give a number"
                       errors={errors}
-                      placeholder="Select gender"
-                      valueType="text"
-                      name="gender"
-                      dataItem={[
-                        { id: 1, name: 'MALE' },
-                        { id: 2, name: 'FEMALE' },
-                      ]}
                     />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <FileQuestion />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>
+                            {t.formatMessage({ id: 'BULK.ANIMALS.TOOLTIP' })}
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
                   <div className="px-4">
                     <Label>
@@ -323,6 +270,23 @@ const CreateAnimals = ({
                       errors={errors}
                     />
                   </div>
+                </div>
+                <div>
+                  <Label>
+                    Genre:<span className="text-red-600">*</span>
+                  </Label>
+                  <SelectInput
+                    firstOptionName="Choose a production type"
+                    control={control}
+                    errors={errors}
+                    placeholder="Select gender"
+                    valueType="text"
+                    name="gender"
+                    dataItem={[
+                      { id: 1, name: 'MALE' },
+                      { id: 2, name: 'FEMALE' },
+                    ]}
+                  />
                 </div>
                 <div className="my-2">
                   <Label>Code de la mère:</Label>
@@ -538,25 +502,6 @@ const CreateAnimals = ({
                         </Select>
                       )}
                     />
-                    {animal?.gender === 'MALE' && animal?.id ? (
-                      <div className="my-2">
-                        <Label>Castré</Label>
-                        <SelectInput
-                          firstOptionName="Choose a castration"
-                          control={control}
-                          errors={errors}
-                          placeholder="Choose if animal is castrated"
-                          valueType="text"
-                          name="isCastrated"
-                          dataItem={[
-                            { id: 1, name: 'YES' },
-                            { id: 2, name: 'NO' },
-                          ]}
-                        />
-                      </div>
-                    ) : (
-                      ''
-                    )}
                   </div>
                 </div>
                 <div className="mt-4 flex items-center space-x-4">
@@ -587,4 +532,4 @@ const CreateAnimals = ({
   );
 };
 
-export { CreateAnimals };
+export { CreateBulkAnimals };

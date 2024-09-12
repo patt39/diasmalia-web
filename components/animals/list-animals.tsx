@@ -87,7 +87,27 @@ const ListAnimals = ({ item, index }: { item: any; index: number }) => {
                 {(item?.code).toUpperCase()}
               </h3>
               <p className="mb-1 text-sm font-medium text-gray-500">
-                {item?.productionPhase}
+                {item?.productionPhase === 'GROWTH' ? (
+                  <p className="text-sm font-medium text-gray-500">
+                    {t.formatMessage({ id: 'PRODUCTIONPHASE.GROWTH' })}
+                  </p>
+                ) : item?.productionPhase === 'FATTENING' ? (
+                  <p className="text-sm font-medium text-gray-500">
+                    {t.formatMessage({ id: 'PRODUCTIONTYPE.FATTENING' })}
+                  </p>
+                ) : item?.productionPhase === 'GESTATION' ? (
+                  <p className="text-sm font-medium text-gray-500">
+                    {item?.productionPhase}
+                  </p>
+                ) : item?.productionPhase === 'REPRODUCTION' ? (
+                  <p className="text-sm font-medium text-gray-500">
+                    {item?.productionPhase}
+                  </p>
+                ) : (
+                  <p className="text-sm font-medium text-gray-500">
+                    {item?.productionPhase}
+                  </p>
+                )}
               </p>
               {[
                 'Porciculture',
@@ -96,7 +116,7 @@ const ListAnimals = ({ item, index }: { item: any; index: number }) => {
                 'Ovins',
                 'Caprins',
               ].includes(item.animalType?.name) ? (
-                <p className=" text-sm font-medium text-gray-500">
+                <p className="text-sm font-medium text-gray-500">
                   {item?.gender}
                 </p>
               ) : (

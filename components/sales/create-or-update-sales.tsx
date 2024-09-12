@@ -215,7 +215,7 @@ const CreateOrUpdateSales = ({
                   </div>
                 )}
 
-                {!sale.id ? (
+                {!sale?.id ? (
                   <div className="flex mb-4 w-full items-center mt-2">
                     <Select>
                       <SelectTrigger className="w-full">

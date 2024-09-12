@@ -23,6 +23,7 @@ import {
 
 const schema = yup.object({
   code: yup.string().optional(),
+  nest: yup.number().optional(),
   manger: yup.number().optional(),
   through: yup.number().optional(),
   productionPhase: yup.string().optional(),
@@ -40,6 +41,7 @@ const CreateLocations = ({
 }) => {
   const {
     t,
+    watch,
     control,
     errors,
     setValue,
@@ -51,6 +53,7 @@ const CreateLocations = ({
   } = useReactHookForm({ schema });
   const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
+  const watchProductionPhase = watch('productionPhase');
   const { data: animalType } = GetOneAnimalTypeAPI({
     animalTypeId: animalTypeId,
   });
@@ -59,6 +62,7 @@ const CreateLocations = ({
     if (location) {
       const fields = [
         'code',
+        'nest',
         'productionPhase',
         'squareMeter',
         'manger',
@@ -120,7 +124,7 @@ const CreateLocations = ({
                 <XIcon />
               </span>
             </button>
-            <form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
+            <form className="mt-6" onSubmit={handleSubmit(onSubmit)}>
               <div className="flex-auto justify-center p-2">
                 {hasErrors && (
                   <div className="bg-white py-6 dark:bg-[#121212]">
@@ -168,7 +172,24 @@ const CreateLocations = ({
                   'Pisciculture',
                   'Poulets Brahma',
                 ].includes(animalType?.name) ? (
-                  ''
+                  <div className="my-2">
+                    <Label>
+                      Phase de production
+                      <span className="text-red-600">*</span>
+                    </Label>
+                    <SelectInput
+                      firstOptionName="Choose a production type"
+                      control={control}
+                      errors={errors}
+                      placeholder="Select a production phase"
+                      valueType="text"
+                      name="productionPhase"
+                      dataItem={[
+                        { id: 1, name: 'GROWTH' },
+                        { id: 2, name: 'LAYING' },
+                      ]}
+                    />
+                  </div>
                 ) : (
                   <div className="my-2">
                     <Label>Phase de production: </Label>
@@ -187,12 +208,11 @@ const CreateLocations = ({
                     />
                   </div>
                 )}
-
-                <div className="my-2 flex items-center space-x-1">
+                <div className="my-2 items-center space-x-1">
                   {animalType?.name === 'Pisciculture' ? (
                     <>
                       <Label>
-                        Volume:<span className="text-red-600">*</span>
+                        Volume<span className="text-red-600">*</span>
                       </Label>
                       <TextInput
                         control={control}
@@ -204,44 +224,63 @@ const CreateLocations = ({
                     </>
                   ) : (
                     <>
-                      <div className="mr-10">
-                        <Label>
-                          Superficie:<span className="text-red-600">*</span>
-                        </Label>
-                        <TextInput
-                          control={control}
-                          type="number"
-                          name="squareMeter"
-                          placeholder="Square meters"
-                          errors={errors}
-                        />
+                      <div className="items-center flex space-x-9 my-2">
+                        <div>
+                          <Label>
+                            Superficie<span className="text-red-600">*</span>
+                          </Label>
+                          <TextInput
+                            control={control}
+                            type="number"
+                            name="squareMeter"
+                            placeholder="Square meters"
+                            errors={errors}
+                          />
+                        </div>
+                        <div>
+                          <Label>
+                            Nombre de mangeoirs
+                            <span className="text-red-600">*</span>
+                          </Label>
+                          <TextInput
+                            control={control}
+                            type="number"
+                            name="manger"
+                            placeholder="Number of mangers"
+                            errors={errors}
+                          />
+                        </div>
+                        <div>
+                          <Label>
+                            Nombre abreuvoirs
+                            <span className="text-red-600">*</span>
+                          </Label>
+                          <TextInput
+                            control={control}
+                            type="number"
+                            name="through"
+                            placeholder="Number of throughs"
+                            errors={errors}
+                          />
+                        </div>
                       </div>
-                      <div className="pr-10">
-                        <Label>
-                          Nombre de mangeoirs:
-                          <span className="text-red-600">*</span>
-                        </Label>
-                        <TextInput
-                          control={control}
-                          type="number"
-                          name="manger"
-                          placeholder="Number of mangers"
-                          errors={errors}
-                        />
-                      </div>
-                      <div className="ml-4">
-                        <Label>
-                          Nombre abreuvoirs:
-                          <span className="text-red-600">*</span>
-                        </Label>
-                        <TextInput
-                          control={control}
-                          type="number"
-                          name="through"
-                          placeholder="Number of throughs"
-                          errors={errors}
-                        />
-                      </div>
+                      {watchProductionPhase === 'LAYING' &&
+                      animalType?.name !== 'Pisciculture' ? (
+                        <div>
+                          <Label>
+                            Nids<span className="text-red-600">*</span>
+                          </Label>
+                          <TextInput
+                            control={control}
+                            type="number"
+                            name="nest"
+                            placeholder="Number of nests"
+                            errors={errors}
+                          />
+                        </div>
+                      ) : (
+                        ''
+                      )}
                     </>
                   )}
                 </div>

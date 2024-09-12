@@ -20,7 +20,7 @@ const ViewAvesSale = ({
   const { t, control, errors } = useReactHookForm({ schema });
 
   const { data: getOneSale } = GetOneSaleAPI({
-    saleId: sale.id,
+    saleId: sale?.id,
   });
 
   return (
@@ -37,10 +37,21 @@ const ViewAvesSale = ({
                 <XIcon />
               </span>
             </button>
-            <form className="mt-4">
+            <form className="mt-6">
               <div className="flex-auto justify-center p-2">
-                <div className="mb-4 flex items-center space-x-1">
-                  <Label htmlFor="text">Client: </Label>
+                <div className="mb-2 items-center space-x-1">
+                  <Label htmlFor="text">Code de la bande</Label>
+                  <TextInput
+                    control={control}
+                    type="text"
+                    name="code"
+                    defaultValue={getOneSale?.animal?.code || 'N/A'}
+                    errors={errors}
+                    disabled
+                  />
+                </div>
+                <div className="mb-2 items-center space-x-1">
+                  <Label htmlFor="text">Client</Label>
                   <TextInput
                     control={control}
                     type="text"
@@ -50,8 +61,8 @@ const ViewAvesSale = ({
                     disabled
                   />
                 </div>
-                <div className="mb-4 flex items-center  space-x-1">
-                  <Label htmlFor="text">Email: </Label>
+                <div className="mb-2 items-center  space-x-1">
+                  <Label htmlFor="text">Email</Label>
                   <TextInput
                     control={control}
                     type="text"
@@ -61,8 +72,8 @@ const ViewAvesSale = ({
                     disabled
                   />
                 </div>
-                <div className="mb-4 flex items-center  space-x-1">
-                  <Label htmlFor="text">Phone: </Label>
+                <div className="mb-2 items-center  space-x-1">
+                  <Label htmlFor="text">Phone</Label>
                   <TextInput
                     control={control}
                     type="number"
@@ -72,8 +83,8 @@ const ViewAvesSale = ({
                     disabled
                   />
                 </div>
-                <div className="mb-4 flex items-center  space-x-1">
-                  <Label htmlFor="text">Address: </Label>
+                <div className="mb-2 items-center  space-x-1">
+                  <Label htmlFor="text">Address</Label>
                   <TextInput
                     control={control}
                     type="text"
@@ -83,28 +94,26 @@ const ViewAvesSale = ({
                     disabled
                   />
                 </div>
-                <Label>{t.formatMessage({ id: 'SALE.NUMBER' })}</Label>
-                <div className="mb-4 flex items-center space-x-4">
-                  <Input disabled type="text" value={getOneSale?.number} />
-                </div>
-                <Label>{t.formatMessage({ id: 'SALE.AMOUNT' })}</Label>
-                <div className="mb-4 flex items-center space-x-4">
-                  <Input disabled type="text" value={getOneSale?.price} />
-                </div>
                 <Label>{t.formatMessage({ id: 'SALE.CHANNEL' })}</Label>
-                <div className="mb-4 flex items-center space-x-4">
+                <div className="mb-2 flex items-center space-x-4">
                   <Input disabled type="text" value={getOneSale?.method} />
                 </div>
-                <Label>{t.formatMessage({ id: 'SALE.DETAIL' })}:</Label>
-                <div className="mb-4">
-                  <TextAreaInput
-                    control={control}
-                    name="detail"
-                    defaultValue={getOneSale?.note}
-                    errors={errors}
-                    disabled
-                  />
-                </div>
+                {getOneSale?.note !== null ? (
+                  <>
+                    <Label>{t.formatMessage({ id: 'SALE.DETAIL' })}</Label>
+                    <div className="mb-2">
+                      <TextAreaInput
+                        control={control}
+                        name="note"
+                        defaultValue={getOneSale?.note}
+                        errors={errors}
+                        disabled
+                      />
+                    </div>
+                  </>
+                ) : (
+                  ''
+                )}
               </div>
             </form>
           </div>

@@ -1,4 +1,5 @@
 import { GetOneAnimalAPI } from '@/api-site/animals';
+import { GetOneSaleAnimalTypeAPI } from '@/api-site/sales';
 import { formatDateDDMMYY } from '@/utils';
 import { XIcon } from 'lucide-react';
 import { useIntl } from 'react-intl';
@@ -21,6 +22,13 @@ const ViewAnimal = ({
     animalId: animal?.id,
   });
 
+  const feedConversionIndex =
+    getOneAnimal?.feedingsCount / getOneAnimal?.weight;
+
+  const { data: getOneSaleAnimalType } = GetOneSaleAnimalTypeAPI({
+    animalTypeId: animal?.animalTypeId,
+  });
+
   return (
     <>
       {showModal ? (
@@ -35,7 +43,7 @@ const ViewAnimal = ({
                 <XIcon />
               </span>
             </button>
-            <form className="mt-4">
+            <form className="mt-8">
               <>
                 {getOneAnimal?.gender === 'FEMALE' ? (
                   <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
@@ -111,26 +119,77 @@ const ViewAnimal = ({
                 )}
               </>
               <div className="mt-4 flex-auto justify-center p-2">
-                <div className="mb-4 flex items-center space-x-4">
+                <div className="mb-2 flex items-center space-x-4">
                   <Input disabled type="text" value={getOneAnimal?.code} />
                   <Input disabled type="text" value={getOneAnimal?.gender} />
-                  <Input
-                    disabled
-                    type="text"
-                    value={getOneAnimal?.productionPhase}
-                  />
-                  <Input disabled type="text" value={getOneAnimal?.status} />
+                  {getOneAnimal?.productionPhase === 'GROWTH' ? (
+                    <Input
+                      disabled
+                      type="text"
+                      value={t.formatMessage({ id: 'PRODUCTIONPHASE.GROWTH' })}
+                    />
+                  ) : getOneAnimal?.productionPhase === 'FATTENING' ? (
+                    <Input
+                      disabled
+                      type="text"
+                      value={t.formatMessage({
+                        id: 'PRODUCTIONTYPE.FATTENING',
+                      })}
+                    />
+                  ) : getOneAnimal?.productionPhase === 'GESTATION' ? (
+                    <Input
+                      disabled
+                      type="text"
+                      value={getOneAnimal?.productionPhase}
+                    />
+                  ) : getOneAnimal?.productionPhase === 'REPRODUCTION' ? (
+                    <Input
+                      disabled
+                      type="text"
+                      value={getOneAnimal?.productionPhase}
+                    />
+                  ) : (
+                    <Input
+                      disabled
+                      type="text"
+                      value={getOneAnimal?.productionPhase}
+                    />
+                  )}
+
+                  {getOneAnimal?.status === 'ACTIVE' ? (
+                    <Input
+                      disabled
+                      type="text"
+                      value={t.formatMessage({ id: 'STATUS.ACTIVE' })}
+                    />
+                  ) : getOneAnimal?.status === 'SOLD' ? (
+                    <Input
+                      disabled
+                      type="text"
+                      value={t.formatMessage({ id: 'STATUS.SOLD' })}
+                    />
+                  ) : (
+                    <Input
+                      disabled
+                      type="text"
+                      value={t.formatMessage({ id: 'STATUS.DEATH' })}
+                    />
+                  )}
                 </div>
-                <div className="mb-4">
-                  <div className="mb-4 flex items-center space-x-2">
-                    <Label> {t.formatMessage({ id: 'VIEW.BREED' })}:</Label>
+                <div className="mb-2 flex items-center space-x-10">
+                  <div>
+                    <Label> {t.formatMessage({ id: 'VIEW.BREED' })}</Label>
                     <Input
                       disabled
                       type="text"
                       value={getOneAnimal?.breed?.name}
                     />
-                    <Label>{t.formatMessage({ id: 'VIEW.WEIGHT' })}:</Label>
+                  </div>
+                  <div>
+                    <Label>{t.formatMessage({ id: 'VIEW.WEIGHT' })}</Label>
                     <Input disabled type="text" value={getOneAnimal?.weight} />
+                  </div>
+                  <div>
                     <Label>{t.formatMessage({ id: 'VIEW.BIRTHDATE' })}:</Label>
                     <Input
                       disabled
@@ -138,21 +197,25 @@ const ViewAnimal = ({
                     />
                   </div>
                 </div>
-                <div className="mb-4">
-                  <div className="mb-4 flex items-center space-x-2">
-                    <Label>{t.formatMessage({ id: 'VIEW.LOCATION' })}:</Label>
+                <div className="mb-2 flex items-center space-x-10">
+                  <div>
+                    <Label>{t.formatMessage({ id: 'VIEW.LOCATION' })}</Label>
                     <Input
                       disabled
                       type="text"
                       value={getOneAnimal?.location?.code || 'N/A'}
                     />
-                    <Label>{t.formatMessage({ id: 'VIEW.MOTHER' })}:</Label>
+                  </div>
+                  <div>
+                    <Label>{t.formatMessage({ id: 'VIEW.MOTHER' })}</Label>
                     <Input
                       disabled
                       type="text"
                       value={getOneAnimal?.codeMother || 'N/A'}
                     />
-                    <Label>{t.formatMessage({ id: 'VIEW.FATHER' })}:</Label>
+                  </div>
+                  <div>
+                    <Label>{t.formatMessage({ id: 'VIEW.FATHER' })}</Label>
                     <Input
                       disabled
                       type="text"
@@ -160,30 +223,82 @@ const ViewAnimal = ({
                     />
                   </div>
                 </div>
-                <div>
-                  <div className="mb-2 flex items-center space-x-2">
-                    <div className="flex items-center space-x-2">
-                      <Label>Isolé:</Label>
-                      <Input
-                        disabled
-                        type="text"
-                        value={getOneAnimal?.isIsolated}
-                      />
-                    </div>
-                    {getOneAnimal.gender == 'MALE' ? (
-                      <div className="flex items-center space-x-4">
-                        <Label>Castré:</Label>
+                {getOneAnimal?.status === 'ACTIVE' ? (
+                  <div>
+                    <div className="mb-2 flex items-center space-x-4">
+                      <div>
+                        <Label>
+                          {t.formatMessage({ id: 'VIEW.ISOLATED' })}?
+                        </Label>
                         <Input
                           disabled
                           type="text"
-                          value={getOneAnimal?.isCastrated}
+                          value={
+                            getOneAnimal?.isIsolated === 'YES'
+                              ? t.formatMessage({ id: 'ISOLATED.YES' })
+                              : t.formatMessage({ id: 'ISOLATED.NO' })
+                          }
                         />
                       </div>
-                    ) : (
-                      ''
-                    )}
+                      {getOneAnimal?.gender === 'MALE' ? (
+                        <div>
+                          <Label>
+                            {t.formatMessage({ id: 'VIEW.CASTRATED' })}?
+                          </Label>
+                          <Input
+                            disabled
+                            type="text"
+                            value={
+                              getOneAnimal?.isCastrated === 'YES'
+                                ? t.formatMessage({ id: 'ISOLATED.YES' })
+                                : t.formatMessage({ id: 'ISOLATED.NO' })
+                            }
+                          />
+                        </div>
+                      ) : (
+                        ''
+                      )}
+                      <div>
+                        <Label>{t.formatMessage({ id: 'FEED.INDEX' })}</Label>
+                        <Input
+                          disabled
+                          type="text"
+                          value={feedConversionIndex}
+                        />
+                      </div>
+                    </div>
                   </div>
-                </div>
+                ) : getOneAnimal?.status === 'SOLD' ? (
+                  <div className="mb-2 flex items-center space-x-7">
+                    <div>
+                      <Label>Client</Label>
+                      <Input
+                        disabled
+                        type="text"
+                        value={getOneSaleAnimalType?.soldTo || 'N/A'}
+                      />
+                    </div>
+                    <div>
+                      <Label>Phone</Label>
+                      <Input
+                        disabled
+                        type="text"
+                        value={getOneSaleAnimalType?.phone || 'N/A'}
+                      />
+                    </div>
+                    <div>
+                      <Label>Date de vente</Label>
+                      <Input
+                        disabled
+                        value={
+                          formatDateDDMMYY(getOneAnimal?.createdAt) || 'N/A'
+                        }
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  ''
+                )}
               </div>
             </form>
           </div>

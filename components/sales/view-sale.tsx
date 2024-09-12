@@ -37,10 +37,10 @@ const ViewSale = ({
                 <XIcon />
               </span>
             </button>
-            <form className="mt-4">
+            <form className="mt-6">
               <div className="flex-auto justify-center p-2">
-                <div className="mb-4 flex items-center space-x-1">
-                  <Label htmlFor="text">Client: </Label>
+                <div className="mb-2 items-center space-x-1">
+                  <Label htmlFor="text">Client</Label>
                   <TextInput
                     control={control}
                     type="text"
@@ -50,8 +50,8 @@ const ViewSale = ({
                     disabled
                   />
                 </div>
-                <div className="mb-4 flex items-center  space-x-1">
-                  <Label htmlFor="text">Email: </Label>
+                <div className="mb-2 items-center  space-x-1">
+                  <Label htmlFor="text">Email</Label>
                   <TextInput
                     control={control}
                     type="text"
@@ -61,8 +61,8 @@ const ViewSale = ({
                     disabled
                   />
                 </div>
-                <div className="mb-4 flex items-center  space-x-1">
-                  <Label htmlFor="text">Phone: </Label>
+                <div className="mb-2 items-center  space-x-1">
+                  <Label htmlFor="text">Phone</Label>
                   <TextInput
                     control={control}
                     type="number"
@@ -72,8 +72,8 @@ const ViewSale = ({
                     disabled
                   />
                 </div>
-                <div className="mb-4 flex items-center  space-x-1">
-                  <Label htmlFor="text">Address: </Label>
+                <div className="mb-2 items-center  space-x-1">
+                  <Label htmlFor="text">Address</Label>
                   <TextInput
                     control={control}
                     type="text"
@@ -83,7 +83,7 @@ const ViewSale = ({
                     disabled
                   />
                 </div>
-                <Label>{t.formatMessage({ id: 'SALE.CHANNEL' })}:</Label>
+                <Label>{t.formatMessage({ id: 'SALE.CHANNEL' })}</Label>
                 <div className="mb-4 flex items-center space-x-4">
                   <Input disabled type="text" value={getOneSale?.method} />
                 </div>

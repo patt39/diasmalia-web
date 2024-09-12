@@ -1,6 +1,9 @@
 import { useInputState } from '@/components/hooks';
 
+import { GetOneAnimalTypeAPI } from '@/api-site/animal-type';
+import { GetAnimalStatisticsAPI } from '@/api-site/animals';
 import { exportSalesAPI, GetSalesAPI } from '@/api-site/sales';
+import { GetOneUserMeAPI } from '@/api-site/user';
 import { SearchInput } from '@/components/ui-setting';
 import { Button } from '@/components/ui/button';
 import { CardContent, CardHeader } from '@/components/ui/card';
@@ -38,6 +41,16 @@ const TabAvesSales = ({ animalTypeId }: { animalTypeId: string }) => {
   const [periode, setPeriode] = useState('');
   const [pageItem, setPageItem] = useState(1);
   const { t, search, handleSetSearch } = useInputState();
+  const { data: user } = GetOneUserMeAPI();
+
+  const { data: animalType } = GetOneAnimalTypeAPI({
+    animalTypeId: animalTypeId,
+  });
+
+  const { data: animalStatistics } = GetAnimalStatisticsAPI({
+    periode,
+    animalTypeId: animalTypeId,
+  });
 
   const {
     isLoading: isLoadingSales,
@@ -77,6 +90,88 @@ const TabAvesSales = ({ animalTypeId }: { animalTypeId: string }) => {
             />
           </div>
           <div className="ml-auto flex items-center gap-2">
+            {!['Pisciculture'].includes(animalType?.name) ? (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="outline">
+                      {animalStatistics?.sumSaleChicks?.price?.toLocaleString(
+                        'en-US',
+                      ) || 0}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent className="dark:border-gray-800">
+                    <p>
+                      {t.formatMessage({ id: 'SOLD.FOR.CHICKS' })}{' '}
+                      {animalStatistics?.sumSaleChicks?.price?.toLocaleString(
+                        'en-US',
+                        {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        },
+                      ) || 0}
+                      {user?.profile?.currency?.symbol}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            ) : (
+              ''
+            )}
+            {!['Poulet de chair', 'Pisciculture'].includes(animalType?.name) ? (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="outline">
+                      {animalStatistics?.sumSaleEggs?.price?.toLocaleString(
+                        'en-US',
+                      ) || 0}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent className="dark:border-gray-800">
+                    <p>
+                      {t.formatMessage({ id: 'SOLD.FOR.EGGS' })}{' '}
+                      {animalStatistics?.sumSaleEggs?.price?.toLocaleString(
+                        'en-US',
+                      ) || 0}
+                      {user?.profile?.currency?.symbol}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            ) : (
+              ''
+            )}
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="outline">
+                    {animalStatistics?.sumSaleChickens?.price?.toLocaleString(
+                      'en-US',
+                    ) || 0}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className="dark:border-gray-800">
+                  {animalType?.name === 'Pisciculture' ? (
+                    <p>
+                      {t.formatMessage({ id: 'SOLD.FOR.FISH' })}{' '}
+                      {animalStatistics?.sumSaleChickens?.price?.toLocaleString(
+                        'en-US',
+                      ) || 0}
+                      {user?.profile?.currency?.symbol}
+                    </p>
+                  ) : (
+                    <p>
+                      {t.formatMessage({ id: 'SOLD.FOR.CHICKENS' })}{' '}
+                      {animalStatistics?.sumSaleChickens?.price?.toLocaleString(
+                        'en-US',
+                      ) || 0}
+                      {user?.profile?.currency?.symbol}
+                    </p>
+                  )}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -85,8 +180,8 @@ const TabAvesSales = ({ animalTypeId }: { animalTypeId: string }) => {
                 <TooltipContent className="dark:border-gray-800">
                   <p>
                     {t.formatMessage({ id: 'ANIMALTYPE.TOOLTIP' })}{' '}
-                    {dataSales?.data?.total || '0'}{' '}
-                    {t.formatMessage({ id: 'MENU.SALES' })}
+                    {t.formatMessage({ id: 'MENU.SALES' })}{' '}
+                    {dataSales?.data?.total || '0'}
                   </p>
                 </TooltipContent>
               </Tooltip>
@@ -172,7 +267,11 @@ const TabAvesSales = ({ animalTypeId }: { animalTypeId: string }) => {
                   {t.formatMessage({ id: 'SALE.CUSTOMER' })}
                 </TableHead>
                 <TableHead>{t.formatMessage({ id: 'SALE.CONTACT' })}</TableHead>
-                <TableHead>Details</TableHead>
+                {!['Pisciculture'].includes(animalType?.name) ? (
+                  <TableHead>Details</TableHead>
+                ) : (
+                  ''
+                )}
                 <TableHead>
                   {t.formatMessage({ id: 'SALE.QUANTITY' })}
                 </TableHead>

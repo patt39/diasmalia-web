@@ -5,7 +5,7 @@ import { SearchInput } from '@/components/ui-setting';
 import { LoadingFile } from '@/components/ui-setting/ant';
 import { ErrorFile } from '@/components/ui-setting/ant/error-file';
 import { Button } from '@/components/ui/button';
-import { CardContent, CardDescription, CardHeader } from '@/components/ui/card';
+import { CardContent, CardHeader } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -66,6 +66,20 @@ const TabBreedings = ({ animalTypeId }: { animalTypeId: string }) => {
             />
           </div>
           <div className="ml-auto flex items-center gap-2">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="outline">Conseil</Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>
+                    {t.formatMessage({
+                      id: 'ANIMALTYPE.BREEDING.DESCRIPTION',
+                    })}
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -132,13 +146,6 @@ const TabBreedings = ({ animalTypeId }: { animalTypeId: string }) => {
               </span>
             </Button>
           </div>
-        </div>
-        <div className="mr-auto items-center gap-2">
-          <CardDescription>
-            {t.formatMessage({
-              id: 'ANIMALTYPE.BREEDING.DESCRIPTION',
-            })}
-          </CardDescription>
         </div>
       </CardHeader>
       <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">

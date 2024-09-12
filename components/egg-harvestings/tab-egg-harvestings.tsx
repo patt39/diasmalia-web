@@ -4,7 +4,7 @@ import { useInputState } from '@/components/hooks';
 import { LoadingFile } from '@/components/ui-setting/ant';
 import { ErrorFile } from '@/components/ui-setting/ant/error-file';
 import { Button } from '@/components/ui/button';
-import { CardContent, CardDescription, CardHeader } from '@/components/ui/card';
+import { CardContent, CardHeader } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -65,6 +65,20 @@ const TabEggHarvestings = ({ animalTypeId }: { animalTypeId: string }) => {
             />
           </div>
           <div className="ml-auto flex items-center gap-2">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="outline">Consigne</Button>
+                </TooltipTrigger>
+                <TooltipContent className="dark:border-gray-800">
+                  <p>
+                    {t.formatMessage({
+                      id: 'ANIMALTYPE.EGGHAVESTING.DESCRIPTION',
+                    })}
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -133,13 +147,6 @@ const TabEggHarvestings = ({ animalTypeId }: { animalTypeId: string }) => {
               </span>
             </Button>
           </div>
-        </div>
-        <div className="mr-auto items-center gap-2 pt-4">
-          <CardDescription>
-            {t.formatMessage({
-              id: 'ANIMALTYPE.EGGHAVESTING.DESCRIPTION',
-            })}
-          </CardDescription>
         </div>
       </CardHeader>
       <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">

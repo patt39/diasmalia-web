@@ -14,6 +14,7 @@ import {
 import { AlertDangerNotification, AlertSuccessNotification } from '@/utils';
 import {
   BadgeCheck,
+  Eye,
   MoreHorizontal,
   PencilIcon,
   TrashIcon,
@@ -23,6 +24,7 @@ import { ActionModalDialog } from '../ui-setting/shadcn';
 import { ActionModalConfirmeDialog } from '../ui-setting/shadcn/action-modal-confirme-dialog';
 import { Badge } from '../ui/badge';
 import { UpdateLocations } from './update-locations';
+import { ViewLocation } from './view-location';
 
 const ListLocations = ({ item, index }: { item: any; index: number }) => {
   const {
@@ -35,6 +37,7 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
     setIsConfirmOpen,
   } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
+  const [isView, setIsView] = useState(false);
 
   const { mutateAsync: deleteMutation } = DeleteOneLocationAPI({
     onSuccess: () => {},
@@ -90,8 +93,8 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
         key={index}
         className="relative overflow-hidden transition-allduration-200 bg-gray-100 rounded-xl hover:bg-gray-200"
       >
-        <div className="lg:px-10 lg:py-8">
-          <div className="px-25 mb-2">
+        <div className="p-6 lg:px-10 lg:py-8">
+          <div className="mb-4">
             {item?.status ? (
               <Badge variant="secondary">
                 {t.formatMessage({ id: 'TABANIMAL.INSERVICE' })}
@@ -104,7 +107,7 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
               </Badge>
             )}
           </div>
-          <div className="flex items-center justify-start space-x-4">
+          <div className="flex items-center justify-center space-x-4">
             <div>
               <h2 className="text-sm font-medium text-gray-500 h-4">
                 {['Pisciculture'].includes(item?.animalType?.name) ? (
@@ -129,6 +132,13 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
                     {t.formatMessage({ id: 'LOCATION.THROUGHS' })}:{' '}
                     {item?.through}
                   </h2>
+                  {item?.productionPhase === 'LAYING' ? (
+                    <h2 className="mt-2 text-sm font-medium text-gray-500 h-4">
+                      {t.formatMessage({ id: 'LOCATION.NEST' })}: {item?.nest}
+                    </h2>
+                  ) : (
+                    ''
+                  )}
                 </>
               )}
 
@@ -145,10 +155,10 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
                 ''
               ) : (
                 <h2 className="mt-2 text-sm font-medium text-gray-500 h-4 space-x-2">
-                  {item._count?.animals === 1
+                  {item?._count?.animals === 1
                     ? t.formatMessage({ id: 'LOCATION.ANIMAL' })
                     : t.formatMessage({ id: 'LOCATION.ANIMALS' })}
-                  : {item._count?.animals}
+                  : {item?._count?.animals}
                 </h2>
               )}
             </div>
@@ -157,9 +167,27 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
               <h3 className="text-sm font-bold text-gray-900 h-8 sm:text-base lg:text-lg">
                 {(item?.code).toUpperCase()}
               </h3>
-              <p className=" text-sm font-medium text-gray-500">
-                {item?.productionPhase || 'N/A'}
-              </p>
+              {item?.productionPhase === 'GROWTH' ? (
+                <p className=" text-sm font-medium text-gray-500">
+                  {t.formatMessage({ id: 'PRODUCTIONPHASE.GROWTH' })}
+                </p>
+              ) : item?.productionPhase === 'REPRODUCTION' ? (
+                <p className=" text-sm font-medium text-gray-500">
+                  {item?.productionPhase}
+                </p>
+              ) : item?.productionPhase === 'GESTATION' ? (
+                <p className=" text-sm font-medium text-gray-500">
+                  {item?.productionPhase}
+                </p>
+              ) : item?.productionPhase === 'LAYING' ? (
+                <p className=" text-sm font-medium text-gray-500">
+                  {t.formatMessage({ id: 'PRODUCTIONPHASE.LAYING' })}
+                </p>
+              ) : (
+                <p className=" text-sm font-medium text-gray-500">
+                  {item?.productionPhase}
+                </p>
+              )}
             </div>
           </div>
           <div className="grid grid-cols-1 mt-6 sm:mt-2 px-20 sm:grid-cols-2 xl:grid-cols-3 sm:gap-8 xl:gap-12">
@@ -178,12 +206,37 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="dark:border-gray-800">
-                <DropdownMenuItem onClick={() => setIsEdit(true)}>
-                  <PencilIcon className="size-4 text-gray-600 hover:text-indigo-600" />
-                  <span className="ml-2 cursor-pointer hover:text-indigo-600">
-                    {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
-                  </span>
-                </DropdownMenuItem>
+                {item._count?.animals !== 1 ? (
+                  <DropdownMenuItem onClick={() => setIsEdit(true)}>
+                    <PencilIcon className="size-4 text-gray-600 hover:text-indigo-600" />
+                    <span className="ml-2 cursor-pointer hover:text-indigo-600">
+                      {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
+                    </span>
+                  </DropdownMenuItem>
+                ) : (
+                  ''
+                )}
+                {['FATTENING', 'GROWTH'].includes(item?.productionPhase) &&
+                ![
+                  'Pisciculture',
+                  'Poulets Goliaths',
+                  'Pondeuses',
+                  'Poulet de chair',
+                  'Pintarde',
+                  'Canard',
+                  'Poulets Brahma',
+                  'Dinde',
+                ].includes(item?.animalType?.name) &&
+                item?._count?.animals >= 1 ? (
+                  <DropdownMenuItem onClick={() => setIsView(true)}>
+                    <Eye className="size-4 text-gray-600 hover:text-indigo-600" />
+                    <span className="ml-2 cursor-pointer hover:text-indigo-600">
+                      {t.formatMessage({ id: 'TABANIMAL.VIEW' })}
+                    </span>
+                  </DropdownMenuItem>
+                ) : (
+                  ''
+                )}
                 <DropdownMenuItem onClick={() => setIsConfirmOpen(true)}>
                   <BadgeCheck className="size-4 text-gray-600 hover:text-red-400 cursor-pointer" />
                   <span className="ml-2 cursor-pointer hover:text-red-400">
@@ -217,6 +270,11 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
         location={item}
         showModal={isEdit}
         setShowModal={setIsEdit}
+      />
+      <ViewLocation
+        location={item}
+        showModal={isView}
+        setShowModal={setIsView}
       />
     </>
   );

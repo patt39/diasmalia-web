@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+import { GetAnimalStatisticsAPI } from '@/api-site/animals';
 import { GetFeedingsAPI } from '@/api-site/feedings';
 import { useInputState } from '@/components/hooks';
 import { SearchInput } from '@/components/ui-setting';
@@ -24,6 +25,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '../ui/tooltip';
 import { CreateOrUpdateAvesFeedings } from './create-or-update-aves-feedings';
 import { ListAvesFeedings } from './list-aves-feedings';
 
@@ -33,6 +40,11 @@ const TabAvesFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
   const [periode, setPeriode] = useState('');
   const [pageItem, setPageItem] = useState(1);
   const { t, search, handleSetSearch } = useInputState();
+
+  const { data: animalStatistics } = GetAnimalStatisticsAPI({
+    periode,
+    animalTypeId: animalTypeId,
+  });
 
   const {
     isLoading: isLoadingFeedings,
@@ -61,6 +73,22 @@ const TabAvesFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
             />
           </div>
           <div className="ml-auto flex items-center gap-2">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="outline">
+                    {animalStatistics?.sumFeedings ?? 0}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className="dark:border-gray-800">
+                  <p>
+                    {t.formatMessage({ id: 'ANIMALTYPE.TOOLTIP' })}{' '}
+                    {animalStatistics?.sumFeedings}kg
+                    {''} {t.formatMessage({ id: 'ANIMALTYPE.FEEDING' })}
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="h-8 gap-1">

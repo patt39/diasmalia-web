@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+import { GetAnimalStatisticsAPI } from '@/api-site/animals';
 import { GetDeathsAPI } from '@/api-site/deaths';
 import { useInputState } from '@/components/hooks';
 import { SearchInput } from '@/components/ui-setting';
@@ -39,6 +40,11 @@ const TabAvesDeaths = ({ animalTypeId }: { animalTypeId: string }) => {
   const [pageItem, setPageItem] = useState(1);
   const { t, search, handleSetSearch } = useInputState();
 
+  const { data: animalStatistics } = GetAnimalStatisticsAPI({
+    periode,
+    animalTypeId: animalTypeId,
+  });
+
   const {
     isLoading: isLoadingDeaths,
     isError: isErrorDeaths,
@@ -68,12 +74,14 @@ const TabAvesDeaths = ({ animalTypeId }: { animalTypeId: string }) => {
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button variant="outline">{dataDeaths?.data?.total}</Button>
+                  <Button variant="outline">
+                    {animalStatistics?.sumDeaths ?? 0}
+                  </Button>
                 </TooltipTrigger>
                 <TooltipContent className="dark:border-gray-800">
                   <p>
                     {t.formatMessage({ id: 'ANIMALTYPE.TOOLTIP' })}{' '}
-                    {dataDeaths?.data?.total}{' '}
+                    {animalStatistics?.sumDeaths ?? 0}{' '}
                     {t.formatMessage({ id: 'ANIMALTYPE.TOOLTIP.ANIMALS' })}{' '}
                     {t.formatMessage({ id: 'ANIMALTYPE.DEATHS' })}{' '}
                   </p>

@@ -201,7 +201,6 @@ const CreateOrUpdateAvesFeedings = ({
                     name="feedType"
                     dataItem={[
                       { id: 1, name: 'FIBERS' },
-                      { id: 2, name: 'FORAGES' },
                       { id: 3, name: 'PROTEINS' },
                       { id: 4, name: 'VITAMINS' },
                       { id: 6, name: 'CONCENTRATES' },

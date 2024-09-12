@@ -10,10 +10,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { PaginationPage } from '@/utils';
 import { Egg, ListFilter } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { useInView } from 'react-intersection-observer';
-import { ButtonLoadMore } from '../ui-setting';
+import { useState } from 'react';
 import { LoadingFile } from '../ui-setting/ant';
 import { ErrorFile } from '../ui-setting/ant/error-file';
 import {
@@ -36,45 +35,22 @@ import { ListIncubations } from './list-incubations';
 const TabIncubations = ({ animalTypeId }: { animalTypeId: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const { t } = useInputState();
-  const { ref, inView } = useInView();
+  const [pageItem, setPageItem] = useState(1);
   const [periode, setPeriode] = useState('');
 
   const {
     isLoading: isLoadingIncubations,
     isError: isErrorIncubations,
     data: dataIncubations,
-    isFetchingNextPage,
-    hasNextPage,
-    fetchNextPage,
+    isPlaceholderData,
   } = GetIncubationsAPI({
-    take: 4,
+    take: 10,
     periode,
+    pageItem,
     sort: 'desc',
     sortBy: 'createdAt',
     animalTypeId: animalTypeId,
   });
-
-  useEffect(() => {
-    let fetching = false;
-    if (inView) {
-      fetchNextPage();
-    }
-    const onScroll = async (event: any) => {
-      const { scrollHeight, scrollTop, clientHeight } =
-        event.target.scrollingElement;
-
-      if (!fetching && scrollHeight - scrollTop <= clientHeight * 1.5) {
-        fetching = true;
-        if (hasNextPage) await fetchNextPage();
-        fetching = false;
-      }
-    };
-
-    document.addEventListener('scroll', onScroll);
-    return () => {
-      document.removeEventListener('scroll', onScroll);
-    };
-  }, [fetchNextPage, hasNextPage, inView]);
 
   return (
     <>
@@ -85,13 +61,13 @@ const TabIncubations = ({ animalTypeId }: { animalTypeId: string }) => {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button variant="outline">
-                    {dataIncubations?.pages[0]?.data?.total}
+                    {dataIncubations?.data?.total}
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent className="dark:border-gray-800">
                   <p>
                     {t.formatMessage({ id: 'ANIMALTYPE.TOOLTIP' })}{' '}
-                    {dataIncubations?.pages[0]?.data?.total}{' '}
+                    {dataIncubations?.data?.total}{' '}
                     {t.formatMessage({ id: 'ANIMALTYPE.INCUBATION' })}{' '}
                   </p>
                 </TooltipContent>
@@ -179,28 +155,23 @@ const TabIncubations = ({ animalTypeId }: { animalTypeId: string }) => {
                   title="404"
                   description="Error finding data please try again..."
                 />
-              ) : Number(dataIncubations?.pages[0]?.data?.total) <= 0 ? (
+              ) : Number(dataIncubations?.data?.total) <= 0 ? (
                 <ErrorFile description="Don't have eggs in incubation" />
               ) : (
-                dataIncubations?.pages
-                  .flatMap((page: any) => page?.data?.value)
-                  .map((item, index) => (
-                    <>
-                      <ListIncubations index={index} item={item} key={index} />
-                    </>
-                  ))
+                dataIncubations?.data?.value.map((item: any, index: number) => (
+                  <>
+                    <ListIncubations index={index} item={item} key={index} />
+                  </>
+                ))
               )}
             </TableBody>
           </Table>
-          {hasNextPage && (
-            <div className="mx-auto mt-4 justify-center text-center">
-              <ButtonLoadMore
-                ref={ref}
-                isFetchingNextPage={isFetchingNextPage}
-                onClick={() => fetchNextPage()}
-              />
-            </div>
-          )}
+          <PaginationPage
+            setPageItem={setPageItem}
+            data={dataIncubations?.data}
+            pageItem={Number(pageItem)}
+            isPlaceholderData={isPlaceholderData}
+          />
         </CardContent>
       </main>
       <CreateOrUpdateIncubations

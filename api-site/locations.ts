@@ -3,8 +3,31 @@ import { makeApiCall, PaginationRequest } from '@/utils';
 import {
   useInfiniteQuery,
   useMutation,
+  useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
+
+export const GetOneLocationAPI = (payload: { locationId: string }) => {
+  const { locationId } = payload;
+  const { data, isError, isLoading, status, isPending, refetch } = useQuery({
+    queryKey: ['location', locationId],
+    queryFn: async () =>
+      await makeApiCall({
+        action: 'getOneLocation',
+        urlParams: { locationId },
+      }),
+    refetchOnWindowFocus: false,
+  });
+
+  return {
+    data: data?.data as any,
+    isError,
+    isLoading,
+    status,
+    isPending,
+    refetch,
+  };
+};
 
 export const CreateOneLocationAPI = ({
   onSuccess,

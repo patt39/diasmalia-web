@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { DeleteOneSaleAPI } from '@/api-site/sales';
+import { DeleteOneSaleAPI, SalesPdfDownloadAPI } from '@/api-site/sales';
 import { GetOneUserMeAPI } from '@/api-site/user';
 import { useInputState } from '@/components/hooks';
 import { Button } from '@/components/ui/button';
@@ -33,6 +33,20 @@ const ListSales = ({ item, index }: { item: any; index: number }) => {
   const [isEdit, setIsEdit] = useState(false);
   const [isView, setIsView] = useState(false);
   const { data: user } = GetOneUserMeAPI();
+
+  const handleDownloadPdf = async () => {
+    try {
+      const response = await SalesPdfDownloadAPI({
+        saleId: item?.id,
+      });
+      const link = document.createElement('a');
+      link.href = response.config.url;
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const { mutateAsync: saveMutation } = DeleteOneSaleAPI({
     onSuccess: () => {},
@@ -100,7 +114,7 @@ const ListSales = ({ item, index }: { item: any; index: number }) => {
                   {t.formatMessage({ id: 'TABANIMAL.VIEW' })}
                 </span>
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleDownloadPdf()}>
                 <Download className="size-4 text-gray-600 hover:text-red-600" />
                 <span className="ml-2 cursor-pointer hover:text-red-600">
                   {t.formatMessage({ id: 'TABANIMAL.DOWNLOAD' })}

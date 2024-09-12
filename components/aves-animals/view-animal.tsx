@@ -22,9 +22,18 @@ const ViewAvesAnimal = ({
     animalId: animal?.id,
   });
 
-  const feedConversionPercentage = Number(
+  const feedConversionIndex = Number(
     getOneAnimal?.feedingsCount / getOneAnimal?.weight,
   );
+
+  const layingPercentageLayers =
+    Number(getOneAnimal?.eggHavestedCount / getOneAnimal?.quantity) * 100;
+
+  const layingPercentage =
+    Number(getOneAnimal?.eggHavestedCount / getOneAnimal?.female) * 100;
+
+  const deathPercentage =
+    Number(getOneAnimal?.deathsCount / getOneAnimal?.quantity) * 100;
 
   return (
     <>
@@ -40,10 +49,12 @@ const ViewAvesAnimal = ({
                 <XIcon />
               </span>
             </button>
-            <form className="mt-4">
+            <form className="my-4">
               <div className="my-2 flex justify-center p-2 space-x-4">
                 <div className="items-center">
-                  <Label>{t.formatMessage({ id: 'VIEW.LOCATION' })}:</Label>
+                  <Label className="ml-12">
+                    {t.formatMessage({ id: 'VIEW.LOCATION' })}
+                  </Label>
                   <Input
                     disabled
                     type="text"
@@ -51,7 +62,9 @@ const ViewAvesAnimal = ({
                   />
                 </div>
                 <div className="items-center">
-                  <Label>{t.formatMessage({ id: 'VIEW.BIRTHDATE' })}:</Label>
+                  <Label className="ml-8">
+                    {t.formatMessage({ id: 'LAUNCING.DATE' })}
+                  </Label>
                   <Input
                     disabled
                     value={formatDateDDMMYY(getOneAnimal?.birthday) || 'N/A'}
@@ -60,20 +73,97 @@ const ViewAvesAnimal = ({
               </div>
               <>
                 <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
-                  {['Poulet de chair', 'Pisciculture'].includes(
-                    getOneAnimal?.animalType?.name,
-                  ) ? (
+                  {[
+                    'Poulet de chair',
+                    'Pisciculture',
+                    'Poulets Goliaths',
+                    'Pondeuses',
+                    'Poulets Brahma',
+                    'Dinde',
+                    'Pintarde',
+                  ].includes(getOneAnimal?.animalType?.name) &&
+                  getOneAnimal?.productionPhase === 'GROWTH' ? (
                     <>
+                      {getOneAnimal?.animalType?.name !== 'Pondeuses' ? (
+                        <>
+                          <Card
+                            x-chunk="dashboard-05-chunk-1"
+                            className=" dark:border-gray-800"
+                          >
+                            <CardHeader className="pb-2">
+                              <CardDescription>
+                                {t.formatMessage({ id: 'ANIMAL.MALES' })}
+                              </CardDescription>
+                              <CardTitle className="text-4xl">
+                                {getOneAnimal?.male || 0}
+                              </CardTitle>
+                            </CardHeader>
+                          </Card>
+                          <Card
+                            x-chunk="dashboard-05-chunk-1"
+                            className=" dark:border-gray-800"
+                          >
+                            <CardHeader className="pb-2">
+                              <CardDescription>
+                                {t.formatMessage({ id: 'ANIMAL.FEMALES' })}
+                              </CardDescription>
+                              <CardTitle className="text-4xl">
+                                {getOneAnimal?.female || 0}
+                              </CardTitle>
+                            </CardHeader>
+                          </Card>
+                          <Card
+                            x-chunk="dashboard-05-chunk-1"
+                            className=" dark:border-gray-800"
+                          >
+                            <CardHeader className="pb-2">
+                              <CardDescription>
+                                {t.formatMessage({ id: 'ANIMAL.DEATH' })}
+                              </CardDescription>
+                              <CardTitle className="text-4xl">
+                                {getOneAnimal?.deathsCount}
+                              </CardTitle>
+                            </CardHeader>
+                          </Card>
+                          <Card
+                            x-chunk="dashboard-05-chunk-2"
+                            className=" dark:border-gray-800"
+                          >
+                            <CardHeader className="pb-2">
+                              <CardDescription>
+                                {t.formatMessage({ id: 'DEATH.PERCENTAGE' })}
+                              </CardDescription>
+                              <CardTitle className="text-4xl">
+                                {Math.floor(deathPercentage * 100) / 100 || 0}%
+                              </CardTitle>
+                            </CardHeader>
+                          </Card>
+                        </>
+                      ) : (
+                        <Card
+                          x-chunk="dashboard-05-chunk-1"
+                          className=" dark:border-gray-800"
+                        >
+                          <CardHeader className="pb-2">
+                            <CardDescription>
+                              {t.formatMessage({ id: 'ANIMAL.DEATH' })}
+                            </CardDescription>
+                            <CardTitle className="text-4xl">
+                              {getOneAnimal?.deathsCount}
+                            </CardTitle>
+                          </CardHeader>
+                        </Card>
+                      )}
                       <Card
                         x-chunk="dashboard-05-chunk-1"
                         className=" dark:border-gray-800"
                       >
                         <CardHeader className="pb-2">
                           <CardDescription>
-                            {t.formatMessage({ id: 'ANIMAL.DEATH' })}
+                            {t.formatMessage({ id: 'ANIMAL.SOLD' })}
                           </CardDescription>
                           <CardTitle className="text-4xl">
-                            {getOneAnimal?.deathsCount}
+                            {getOneAnimal?.chickenSaleCount}
                           </CardTitle>
                         </CardHeader>
                       </Card>
@@ -96,214 +186,430 @@ const ViewAvesAnimal = ({
                       >
                         <CardHeader className="pb-2">
                           <CardDescription>
-                            {t.formatMessage({ id: 'ANIMAL.SOLD' })}
+                            {t.formatMessage({ id: 'FEED.INDEX' })}
                           </CardDescription>
                           <CardTitle className="text-4xl">
-                            {getOneAnimal?.chickenSaleCount}
-                          </CardTitle>
-                        </CardHeader>
-                      </Card>
-                      <Card
-                        x-chunk="dashboard-05-chunk-1"
-                        className=" dark:border-gray-800"
-                      >
-                        <CardHeader className="pb-2">
-                          <CardDescription>
-                            Indice de conversion alimentaire
-                          </CardDescription>
-                          <CardTitle className="text-4xl">
-                            {feedConversionPercentage < 2 ? (
+                            {feedConversionIndex < 2 ? (
                               <div className="text-4xl my-2 font-bold text-green-600">
-                                {Math.floor(feedConversionPercentage * 100) /
-                                  100}
+                                {Math.floor(feedConversionIndex * 100) / 100}
                               </div>
                             ) : (
                               <div className="text-2xl my-2 font-bold text-red-600">
-                                {feedConversionPercentage}
+                                {feedConversionIndex}
                               </div>
                             )}
                           </CardTitle>
                         </CardHeader>
                       </Card>
-                      <Card
-                        className="sm:col-span-2 dark:border-gray-800"
-                        x-chunk="dashboard-05-chunk-0"
-                      >
-                        <CardHeader className="pb-3">
-                          <CardDescription className="max-w-lg text-balance leading-relaxed">
-                            Montant de la vente
-                          </CardDescription>
-                          <CardTitle className="text-4xl">
-                            {getOneAnimal?.chickenSaleAmount.toLocaleString(
-                              'en-US',
-                              {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                              },
-                            )}
-                            {user?.profile?.currency?.symbol}
-                          </CardTitle>
-                        </CardHeader>
-                      </Card>
+                      {getOneAnimal?.quantity === 0 ? (
+                        <Card
+                          className="sm:col-span-2 dark:border-gray-800"
+                          x-chunk="dashboard-05-chunk-0"
+                        >
+                          <CardHeader className="pb-3">
+                            <CardDescription className="max-w-lg text-balance leading-relaxed">
+                              {t.formatMessage({ id: 'AMOUNT.SOLD' })}
+                            </CardDescription>
+                            <CardTitle className="text-4xl">
+                              {getOneAnimal?.chickenSaleAmount.toLocaleString(
+                                'en-US',
+                                {
+                                  minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2,
+                                },
+                              )}
+                              {user?.profile?.currency?.symbol}
+                            </CardTitle>
+                          </CardHeader>
+                        </Card>
+                      ) : (
+                        <>
+                          <Card
+                            x-chunk="dashboard-05-chunk-1"
+                            className=" dark:border-gray-800"
+                          >
+                            <CardHeader className="pb-2">
+                              <CardDescription>
+                                {t.formatMessage({
+                                  id: 'ANIMAL.TREATMENTS',
+                                })}
+                              </CardDescription>
+                              <CardTitle className="text-4xl">
+                                {getOneAnimal?._count?.treatments}
+                              </CardTitle>
+                            </CardHeader>
+                          </Card>
+                          <Card
+                            x-chunk="dashboard-05-chunk-1"
+                            className=" dark:border-gray-800"
+                          >
+                            <CardHeader className="pb-2">
+                              <CardDescription>
+                                {t.formatMessage({ id: 'ANIMAL.ISOLATED' })}
+                              </CardDescription>
+                              <CardTitle className="text-4xl">
+                                {getOneAnimal?.isolatedCount}
+                              </CardTitle>
+                            </CardHeader>
+                          </Card>
+                        </>
+                      )}
                     </>
                   ) : (
                     <>
-                      <Card
-                        x-chunk="dashboard-05-chunk-1"
-                        className=" dark:border-gray-800"
-                      >
-                        <CardHeader className="pb-2">
-                          <CardDescription>
-                            {t.formatMessage({ id: 'ANIMAL.MALES' })}
-                          </CardDescription>
-                          <CardTitle className="text-4xl">
-                            {getOneAnimal?.male || 0}
-                          </CardTitle>
-                        </CardHeader>
-                      </Card>
-                      <Card
-                        x-chunk="dashboard-05-chunk-1"
-                        className=" dark:border-gray-800"
-                      >
-                        <CardHeader className="pb-2">
-                          <CardDescription>
-                            {t.formatMessage({ id: 'ANIMAL.FEMALES' })}
-                          </CardDescription>
-                          <CardTitle className="text-4xl">
-                            {getOneAnimal?.female || 0}
-                          </CardTitle>
-                        </CardHeader>
-                      </Card>
-                      <Card
-                        x-chunk="dashboard-05-chunk-1"
-                        className=" dark:border-gray-800"
-                      >
-                        <CardHeader className="pb-2">
-                          <CardDescription>
-                            {t.formatMessage({ id: 'ANIMAL.DEATH' })}
-                          </CardDescription>
-                          <CardTitle className="text-4xl">
-                            {getOneAnimal?.deathsCount}
-                          </CardTitle>
-                        </CardHeader>
-                      </Card>
-                      <Card
-                        x-chunk="dashboard-05-chunk-1"
-                        className=" dark:border-gray-800"
-                      >
-                        <CardHeader className="pb-2">
-                          <CardDescription>
-                            {t.formatMessage({ id: 'ANIMAL.FEED' })}
-                          </CardDescription>
-                          <CardTitle className="text-4xl">
-                            {getOneAnimal?.feedingsCount}kg
-                          </CardTitle>
-                        </CardHeader>
-                      </Card>
-                      <Card
-                        x-chunk="dashboard-05-chunk-1"
-                        className=" dark:border-gray-800"
-                      >
-                        <CardHeader className="pb-2">
-                          <CardDescription>
-                            {t.formatMessage({ id: 'ANIMAL.SOLD' })}
-                          </CardDescription>
-                          <CardTitle className="text-4xl">
-                            {getOneAnimal?.chickenSaleCount}
-                          </CardTitle>
-                        </CardHeader>
-                      </Card>
-                      <Card
-                        x-chunk="dashboard-05-chunk-1"
-                        className=" dark:border-gray-800"
-                      >
-                        <CardHeader className="pb-2">
-                          <CardDescription>
-                            {t.formatMessage({ id: 'CHICKS.SOLD' })}
-                          </CardDescription>
-                          <CardTitle className="text-4xl">
-                            {getOneAnimal?.chickSaleCount}
-                          </CardTitle>
-                        </CardHeader>
-                      </Card>
-                      <Card
-                        x-chunk="dashboard-05-chunk-1"
-                        className=" dark:border-gray-800"
-                      >
-                        <CardHeader className="pb-2">
-                          <CardDescription>
-                            {t.formatMessage({ id: 'ANIMAL.EGGHAVESTED' })}
-                          </CardDescription>
-                          <CardTitle className="text-4xl">
-                            {getOneAnimal?.eggHavestedCount}
-                          </CardTitle>
-                        </CardHeader>
-                      </Card>
-                      <Card
-                        x-chunk="dashboard-05-chunk-1"
-                        className=" dark:border-gray-800"
-                      >
-                        <CardHeader className="pb-2">
-                          <CardDescription>
-                            {t.formatMessage({ id: 'ANIMAL.EGGINCUBATED' })}
-                          </CardDescription>
-                          <CardTitle className="text-4xl">
-                            {getOneAnimal?.incubationCount}
-                          </CardTitle>
-                        </CardHeader>
-                      </Card>
-                      <Card
-                        x-chunk="dashboard-05-chunk-1"
-                        className=" dark:border-gray-800"
-                      >
-                        <CardHeader className="pb-2">
-                          <CardDescription>
-                            {t.formatMessage({ id: 'ANIMAL.EGGHATCHED' })}
-                          </CardDescription>
-                          <CardTitle className="text-4xl">
-                            {getOneAnimal?.eggHatchedCount}
-                          </CardTitle>
-                        </CardHeader>
-                      </Card>
-                      <Card
-                        x-chunk="dashboard-05-chunk-1"
-                        className=" dark:border-gray-800"
-                      >
-                        <CardHeader className="pb-2">
-                          <CardDescription>
-                            {t.formatMessage({ id: 'ANIMAL.EGGSOLD' })}
-                          </CardDescription>
-                          <CardTitle className="text-4xl">
-                            {getOneAnimal?.eggSaleCount}
-                          </CardTitle>
-                        </CardHeader>
-                      </Card>
-                      <Card
-                        x-chunk="dashboard-05-chunk-1"
-                        className=" dark:border-gray-800"
-                      >
-                        <CardHeader className="pb-2">
-                          <CardDescription>
-                            {t.formatMessage({ id: 'ANIMAL.TREATMENTS' })}
-                          </CardDescription>
-                          <CardTitle className="text-4xl">
-                            {getOneAnimal?._count.treatments}
-                          </CardTitle>
-                        </CardHeader>
-                      </Card>
-                      <Card
-                        x-chunk="dashboard-05-chunk-1"
-                        className=" dark:border-gray-800"
-                      >
-                        <CardHeader className="pb-2">
-                          <CardDescription>
-                            {t.formatMessage({ id: 'ANIMAL.ISOLATED' })}
-                          </CardDescription>
-                          <CardTitle className="text-4xl">
-                            {getOneAnimal?.isolatedCount}
-                          </CardTitle>
-                        </CardHeader>
-                      </Card>
+                      {getOneAnimal?.productionPhase === 'LAYING' &&
+                      getOneAnimal.quantity !== 0 ? (
+                        <>
+                          <Card
+                            x-chunk="dashboard-05-chunk-1"
+                            className=" dark:border-gray-800"
+                          >
+                            <CardHeader className="pb-2">
+                              <CardDescription>
+                                {t.formatMessage({ id: 'ANIMAL.MALES' })}
+                              </CardDescription>
+                              <CardTitle className="text-4xl">
+                                {getOneAnimal?.male || 0}
+                              </CardTitle>
+                            </CardHeader>
+                          </Card>
+                          <Card
+                            x-chunk="dashboard-05-chunk-1"
+                            className=" dark:border-gray-800"
+                          >
+                            <CardHeader className="pb-2">
+                              <CardDescription>
+                                {t.formatMessage({ id: 'ANIMAL.FEMALES' })}
+                              </CardDescription>
+                              <CardTitle className="text-4xl">
+                                {getOneAnimal?.female || 0}
+                              </CardTitle>
+                            </CardHeader>
+                          </Card>
+                          <Card
+                            x-chunk="dashboard-05-chunk-1"
+                            className=" dark:border-gray-800"
+                          >
+                            <CardHeader className="pb-2">
+                              <CardDescription>
+                                {t.formatMessage({ id: 'ANIMAL.ISOLATED' })}
+                              </CardDescription>
+                              <CardTitle className="text-4xl">
+                                {getOneAnimal?.isolatedCount}
+                              </CardTitle>
+                            </CardHeader>
+                          </Card>
+                          <Card
+                            x-chunk="dashboard-05-chunk-1"
+                            className=" dark:border-gray-800"
+                          >
+                            <CardHeader className="pb-2">
+                              <CardDescription>
+                                {t.formatMessage({ id: 'ANIMAL.DEATH' })}
+                              </CardDescription>
+                              <CardTitle className="text-4xl">
+                                {getOneAnimal?.deathsCount}
+                              </CardTitle>
+                            </CardHeader>
+                          </Card>
+                        </>
+                      ) : (
+                        <>
+                          <Card
+                            x-chunk="dashboard-05-chunk-1"
+                            className=" dark:border-gray-800"
+                          >
+                            <CardHeader className="pb-2">
+                              <CardDescription>
+                                {t.formatMessage({ id: 'ANIMAL.FEED' })}
+                              </CardDescription>
+                              <CardTitle className="text-4xl">
+                                {getOneAnimal?.feedingsCount}kg
+                              </CardTitle>
+                            </CardHeader>
+                          </Card>
+                          <Card
+                            x-chunk="dashboard-05-chunk-1"
+                            className=" dark:border-gray-800"
+                          >
+                            <CardHeader className="pb-2">
+                              <CardDescription>
+                                {t.formatMessage({
+                                  id: 'ANIMAL.TREATMENTS',
+                                })}
+                              </CardDescription>
+                              <CardTitle className="text-4xl">
+                                {getOneAnimal?._count?.treatments}
+                              </CardTitle>
+                            </CardHeader>
+                          </Card>
+                          <Card
+                            x-chunk="dashboard-05-chunk-1"
+                            className=" dark:border-gray-800"
+                          >
+                            <CardHeader className="pb-2">
+                              <CardDescription>
+                                {t.formatMessage({ id: 'ANIMAL.DEATH' })}
+                              </CardDescription>
+                              <CardTitle className="text-4xl">
+                                {getOneAnimal?.deathsCount}
+                              </CardTitle>
+                            </CardHeader>
+                          </Card>
+                        </>
+                      )}
+                      {getOneAnimal?.quantity !== 0 &&
+                      getOneAnimal?.productionPhase === 'LAYING' ? (
+                        <>
+                          <Card
+                            x-chunk="dashboard-05-chunk-1"
+                            className=" dark:border-gray-800"
+                          >
+                            <CardHeader className="pb-2">
+                              <CardDescription>
+                                {t.formatMessage({ id: 'ANIMAL.FEED' })}
+                              </CardDescription>
+                              <CardTitle className="text-4xl">
+                                {getOneAnimal?.feedingsCount}kg
+                              </CardTitle>
+                            </CardHeader>
+                          </Card>
+                          {getOneAnimal?.animalType?.name === 'Pondeuses' ? (
+                            <Card
+                              x-chunk="dashboard-05-chunk-1"
+                              className=" dark:border-gray-800"
+                            >
+                              <CardHeader className="pb-2">
+                                <CardDescription>
+                                  {t.formatMessage({ id: 'LAYING.PERCENTAGE' })}
+                                </CardDescription>
+                                <CardTitle className="text-4xl">
+                                  {layingPercentageLayers > 80 ? (
+                                    <div className="text-4xl my-2 font-bold text-green-600">
+                                      {Math.floor(
+                                        layingPercentageLayers * 100,
+                                      ) / 100}
+                                      %
+                                    </div>
+                                  ) : (
+                                    <div className="text-4xl my-2 font-bold text-red-600">
+                                      {layingPercentageLayers}%
+                                    </div>
+                                  )}
+                                </CardTitle>
+                              </CardHeader>
+                            </Card>
+                          ) : (
+                            <Card
+                              x-chunk="dashboard-05-chunk-1"
+                              className=" dark:border-gray-800"
+                            >
+                              <CardHeader className="pb-2">
+                                <CardDescription>
+                                  {t.formatMessage({ id: 'LAYING.PERCENTAGE' })}
+                                </CardDescription>
+                                <CardTitle className="text-4xl">
+                                  {layingPercentage > 80 ? (
+                                    <div className="text-4xl my-2 font-bold text-green-600">
+                                      {Math.floor(layingPercentage * 100) / 100}
+                                      %
+                                    </div>
+                                  ) : (
+                                    <div className="text-4xl my-2 font-bold text-red-600">
+                                      {layingPercentage}%
+                                    </div>
+                                  )}
+                                </CardTitle>
+                              </CardHeader>
+                            </Card>
+                          )}
+                          <Card
+                            x-chunk="dashboard-05-chunk-1"
+                            className=" dark:border-gray-800"
+                          >
+                            <CardHeader className="pb-2">
+                              <CardDescription>
+                                {t.formatMessage({ id: 'ANIMAL.EGGHAVESTED' })}
+                              </CardDescription>
+                              <CardTitle className="text-4xl">
+                                {getOneAnimal?.eggHavestedCount}
+                              </CardTitle>
+                            </CardHeader>
+                          </Card>
+                          <Card
+                            x-chunk="dashboard-05-chunk-1"
+                            className=" dark:border-gray-800"
+                          >
+                            <CardHeader className="pb-2">
+                              <CardDescription>
+                                {t.formatMessage({
+                                  id: 'ANIMAL.EGGINCUBATED',
+                                })}
+                              </CardDescription>
+                              <CardTitle className="text-4xl">
+                                {getOneAnimal?.incubationCount}
+                              </CardTitle>
+                            </CardHeader>
+                          </Card>
+                          <Card
+                            x-chunk="dashboard-05-chunk-1"
+                            className=" dark:border-gray-800"
+                          >
+                            <CardHeader className="pb-2">
+                              <CardDescription>
+                                {t.formatMessage({
+                                  id: 'ANIMAL.EGGHATCHED',
+                                })}
+                              </CardDescription>
+                              <CardTitle className="text-4xl">
+                                {getOneAnimal?.eggHatchedCount}
+                              </CardTitle>
+                            </CardHeader>
+                          </Card>
+                          <Card
+                            x-chunk="dashboard-05-chunk-1"
+                            className=" dark:border-gray-800"
+                          >
+                            <CardHeader className="pb-2">
+                              <CardDescription>
+                                {t.formatMessage({ id: 'ANIMAL.SOLD' })}
+                              </CardDescription>
+                              <CardTitle className="text-4xl">
+                                {getOneAnimal?.chickenSaleCount}
+                              </CardTitle>
+                            </CardHeader>
+                          </Card>
+                          <Card
+                            x-chunk="dashboard-05-chunk-1"
+                            className=" dark:border-gray-800"
+                          >
+                            <CardHeader className="pb-2">
+                              <CardDescription>
+                                {t.formatMessage({ id: 'CHICKS.SOLD' })}
+                              </CardDescription>
+                              <CardTitle className="text-4xl">
+                                {getOneAnimal?.chickSaleCount}
+                              </CardTitle>
+                            </CardHeader>
+                          </Card>
+
+                          <Card
+                            x-chunk="dashboard-05-chunk-1"
+                            className=" dark:border-gray-800"
+                          >
+                            <CardHeader className="pb-2">
+                              <CardDescription>
+                                {t.formatMessage({ id: 'ANIMAL.EGGSOLD' })}
+                              </CardDescription>
+                              <CardTitle className="text-4xl">
+                                {getOneAnimal?.eggSaleCount}
+                              </CardTitle>
+                            </CardHeader>
+                          </Card>
+                        </>
+                      ) : (
+                        <>
+                          <Card
+                            x-chunk="dashboard-05-chunk-1"
+                            className=" dark:border-gray-800"
+                          >
+                            <CardHeader className="pb-2">
+                              <CardDescription>
+                                {t.formatMessage({ id: 'ANIMAL.SOLD' })}
+                              </CardDescription>
+                              <CardTitle className="text-4xl">
+                                {getOneAnimal?.chickenSaleCount}
+                              </CardTitle>
+                            </CardHeader>
+                          </Card>
+                          <Card
+                            className="sm:col-span-2 dark:border-gray-800"
+                            x-chunk="dashboard-05-chunk-0"
+                          >
+                            <CardHeader className="pb-3">
+                              <CardDescription className="max-w-lg text-balance leading-relaxed">
+                                {t.formatMessage({ id: 'AMOUNT.SOLD' })}
+                              </CardDescription>
+                              <CardTitle className="text-4xl">
+                                {getOneAnimal?.chickenSaleAmount.toLocaleString(
+                                  'en-US',
+                                  {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                  },
+                                )}
+                                {user?.profile?.currency?.symbol}
+                              </CardTitle>
+                            </CardHeader>
+                          </Card>
+                          <Card
+                            x-chunk="dashboard-05-chunk-1"
+                            className=" dark:border-gray-800"
+                          >
+                            <CardHeader className="pb-2">
+                              <CardDescription>
+                                {t.formatMessage({ id: 'CHICKS.SOLD' })}
+                              </CardDescription>
+                              <CardTitle className="text-4xl">
+                                {getOneAnimal?.chickSaleCount}
+                              </CardTitle>
+                            </CardHeader>
+                          </Card>
+                          <Card
+                            className="sm:col-span-2 dark:border-gray-800"
+                            x-chunk="dashboard-05-chunk-0"
+                          >
+                            <CardHeader className="pb-3">
+                              <CardDescription className="max-w-lg text-balance leading-relaxed">
+                                {t.formatMessage({ id: 'AMOUNT.SOLD' })}
+                              </CardDescription>
+                              <CardTitle className="text-4xl">
+                                {getOneAnimal?.chickenSaleAmount.toLocaleString(
+                                  'en-US',
+                                  {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                  },
+                                )}
+                                {user?.profile?.currency?.symbol}
+                              </CardTitle>
+                            </CardHeader>
+                          </Card>
+                          <Card
+                            x-chunk="dashboard-05-chunk-1"
+                            className=" dark:border-gray-800"
+                          >
+                            <CardHeader className="pb-2">
+                              <CardDescription>
+                                {t.formatMessage({ id: 'ANIMAL.EGGSOLD' })}
+                              </CardDescription>
+                              <CardTitle className="text-4xl">
+                                {getOneAnimal?.eggSaleCount}
+                              </CardTitle>
+                            </CardHeader>
+                          </Card>
+                          <Card
+                            className="sm:col-span-2 dark:border-gray-800"
+                            x-chunk="dashboard-05-chunk-0"
+                          >
+                            <CardHeader className="pb-3">
+                              <CardDescription className="max-w-lg text-balance leading-relaxed">
+                                {t.formatMessage({ id: 'AMOUNT.SOLD' })}
+                              </CardDescription>
+                              <CardTitle className="text-4xl">
+                                {getOneAnimal?.chickenSaleAmount.toLocaleString(
+                                  'en-US',
+                                  {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                  },
+                                )}
+                                {user?.profile?.currency?.symbol}
+                              </CardTitle>
+                            </CardHeader>
+                          </Card>
+                        </>
+                      )}
                     </>
                   )}
                 </div>

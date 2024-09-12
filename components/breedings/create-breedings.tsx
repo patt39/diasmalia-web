@@ -161,7 +161,7 @@ const CreateBreedings = ({
                 <XIcon />
               </span>
             </button>
-            <form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
+            <form className="mt-6" onSubmit={handleSubmit(onSubmit)}>
               <div className="flex-auto justify-center p-2">
                 {hasErrors && (
                   <div className="bg-white py-6 dark:bg-[#121212]">

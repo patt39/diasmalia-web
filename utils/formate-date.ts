@@ -38,14 +38,26 @@ export const formatDateDifference = (date: Date) => {
   if (years > 1) {
     age = `${years} years`;
   }
-  if (months >= 1 && years < 1) {
-    age = `${months} mnths`;
+  if (months == 1 && years < 1) {
+    age = `${months} month`;
+  }
+  if (months > 1 && years < 1) {
+    age = `${months}months`;
   }
   if (days < 32 && months < 1 && years < 1) {
     age = `${days} days`;
   }
 
   return age;
+};
+
+export const formatWeight = (weight: number) => {
+  if (weight < 1000) {
+    return `${weight}g`;
+  }
+  if (weight >= 1000) {
+    return `${(weight / 1000).toFixed(1)}kg`;
+  }
 };
 
 export const formateNowDateUnixInteger = (date: Date) => {

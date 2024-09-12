@@ -1,5 +1,4 @@
 /* eslint-disable @next/next/no-img-element */
-import { GetOneAnimalTypeAPI } from '@/api-site/animal-type';
 import { DeleteOneAnimalAPI } from '@/api-site/animals';
 import { useInputState } from '@/components/hooks';
 import { Button } from '@/components/ui/button';
@@ -13,6 +12,7 @@ import {
   AlertDangerNotification,
   AlertSuccessNotification,
   formatDateDifference,
+  formatWeight,
 } from '@/utils';
 import {
   ListCollapse,
@@ -34,10 +34,6 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
   const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
 
-  const { data: animalType } = GetOneAnimalTypeAPI({
-    animalTypeId: animalTypeId,
-  });
-
   const { mutateAsync: deleteMutation } = DeleteOneAnimalAPI({
     onSuccess: () => {},
     onError: (error?: any) => {},
@@ -47,7 +43,7 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
     setLoading(true);
     setIsOpen(true);
     try {
-      await deleteMutation({ animalId: item.id });
+      await deleteMutation({ animalId: item?.id });
       AlertSuccessNotification({
         text: 'Animal deleted successfully',
       });
@@ -69,7 +65,7 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
         className="relative overflow-hidden transition-allduration-200 bg-gray-100 rounded-xl hover:bg-gray-200"
       >
         <div className="p-6 lg:px-10 lg:py-8">
-          <div className="ml-auto mb-4">
+          <div className="ml-2 mb-6">
             {item?.status === 'ACTIVE' ? (
               <Badge variant="default">
                 {t.formatMessage({ id: 'STATUS.ACTIVE' })}
@@ -84,10 +80,11 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
               </Badge>
             )}
           </div>
-          <div className="flex items-center justify-start space-x-6">
+          <div className="flex justify-center space-x-6">
             <div>
               <h2 className="text-sm font-medium text-gray-500 h-4">
-                {t.formatMessage({ id: 'TABANIMAL.WEIGHT' })}: {item?.weight}kg
+                {t.formatMessage({ id: 'TABANIMAL.WEIGHT' })}:{' '}
+                {formatWeight(item?.weight)}
               </h2>
               <h2 className="mt-2 text-sm font-medium text-gray-500 h-4">
                 Age: {formatDateDifference(item?.birthday)}
@@ -96,13 +93,13 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
                 {t.formatMessage({
                   id: 'LOCATION.ANIMALS',
                 })}
-                : {item?.quantity < 0 ? 0 : item?.quantity}
+                : {item?.quantity <= 0 ? 0 : item?.quantity}
               </h2>
             </div>
             <div className="flex-shrink-0 w-px h-20  bg-gray-200"></div>
             <div>
               <h3 className="text-sm font-bold text-gray-900 h-8 sm:text-base lg:text-lg">
-                {(item?.code || item.electronicCode).toUpperCase()}
+                {(item?.code).toUpperCase()}
               </h3>
               {item?.productionPhase === 'GROWTH' ? (
                 <p className=" text-sm font-medium text-gray-500">
@@ -131,22 +128,22 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="dark:border-gray-800">
-                <DropdownMenuItem onClick={() => setIsEdit(true)}>
-                  <PencilIcon className="size-4 text-gray-600 hover:text-indigo-600" />
-                  <span className="ml-2 cursor-pointer hover:text-indigo-600">
-                    {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
-                  </span>
-                </DropdownMenuItem>
-                {!['Poulets de chaire'].includes(animalType?.name) ? (
-                  <DropdownMenuItem onClick={() => setIsView(true)}>
-                    <ListCollapse className="size-4 text-gray-600 hover:text-indigo-600" />
+                {item?.quantity !== 0 ? (
+                  <DropdownMenuItem onClick={() => setIsEdit(true)}>
+                    <PencilIcon className="size-4 text-gray-600 hover:text-indigo-600" />
                     <span className="ml-2 cursor-pointer hover:text-indigo-600">
-                      {t.formatMessage({ id: 'TABANIMAL.STATISTICS' })}
+                      {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
                     </span>
                   </DropdownMenuItem>
                 ) : (
                   ''
                 )}
+                <DropdownMenuItem onClick={() => setIsView(true)}>
+                  <ListCollapse className="size-4 text-gray-600 hover:text-indigo-600" />
+                  <span className="ml-2 cursor-pointer hover:text-indigo-600">
+                    {t.formatMessage({ id: 'TABANIMAL.STATISTICS' })}
+                  </span>
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setIsOpen(true)}>
                   <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
                   <span className="ml-2 cursor-pointer hover:text-red-600">

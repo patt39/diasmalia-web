@@ -1,4 +1,4 @@
-import { GetAnimalsAPI, UpdateOneAnimalAPI } from '@/api-site/animals';
+import { CreateOneAnimalAPI, GetAnimalsAPI } from '@/api-site/animals';
 import { GetBreedsAPI } from '@/api-site/breed';
 import { GetLocationsAPI } from '@/api-site/locations';
 import { useReactHookForm } from '@/components/hooks';
@@ -36,16 +36,16 @@ import {
 
 const schema = yup.object({
   code: yup.string().optional(),
+  codeMother: yup.string().optional(),
+  codeFather: yup.string().optional(),
   birthday: yup.string().optional(),
   breedName: yup.string().optional(),
   locationCode: yup.string().optional(),
-  isCastrated: yup.string().optional(),
-  weight: yup.number().optional(),
-  gender: yup.string().optional(),
-  productionPhase: yup.string().optional(),
+  weight: yup.number().required('weight is a required field'),
+  gender: yup.string().required('gender is a required field'),
 });
 
-const UpdateAnimals = ({
+const CreateAnimals = ({
   showModal,
   setShowModal,
   animal,
@@ -78,21 +78,18 @@ const UpdateAnimals = ({
         'weight',
         'birthday',
         'gender',
-        'isCastrated',
         'breedName',
         'locationCode',
-        'productionPhase',
       ];
       fields?.forEach((field: any) => setValue(field, animal[field]));
     }
   }, [animal, setValue]);
 
   // Create or Update data
-  const { mutateAsync: saveMutation } = UpdateOneAnimalAPI({
+  const { mutateAsync: saveMutation } = CreateOneAnimalAPI({
     onSuccess: () => {
       setHasErrors(false);
       setLoading(false);
-      console.log(animal);
     },
     onError: (error?: any) => {
       setHasErrors(true);
@@ -106,7 +103,6 @@ const UpdateAnimals = ({
     try {
       await saveMutation({
         ...payload,
-        animalId: animal?.id,
       });
       setHasErrors(false);
       setLoading(false);
@@ -214,7 +210,7 @@ const UpdateAnimals = ({
                 <XIcon />
               </span>
             </button>
-            <form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
+            <form className="mt-2" onSubmit={handleSubmit(onSubmit)}>
               <div className="flex-auto justify-center p-2">
                 {hasErrors && (
                   <div className="bg-white py-6 dark:bg-[#121212]">
@@ -229,43 +225,33 @@ const UpdateAnimals = ({
                     </div>
                   </div>
                 )}
-                <div className="flex items-center">
-                  <TextInput
-                    control={control}
-                    type="text"
-                    name="code"
-                    placeholder="Give a code"
-                    errors={errors}
-                  />
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <FileQuestion />
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>{t.formatMessage({ id: 'CODE.ANIMALS.TOOLTIP' })}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
-                <div className="my-2 flex items-center space-x-1">
-                  <div>
-                    <Label>Genre:</Label>
-                    <SelectInput
-                      firstOptionName="Choose a production type"
+                <div className="my-2 flex items-center">
+                  <div className="flex items-center mt-6">
+                    <TextInput
                       control={control}
+                      type="number"
+                      name="code"
+                      placeholder="Give a code"
                       errors={errors}
-                      placeholder="Select gender"
-                      valueType="text"
-                      name="gender"
-                      dataItem={[
-                        { id: 1, name: 'MALE' },
-                        { id: 2, name: 'FEMALE' },
-                      ]}
                     />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <FileQuestion />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>
+                            {t.formatMessage({ id: 'CODE.ANIMALS.TOOLTIP' })}
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
                   <div className="px-4">
-                    <Label>Date de naissance:</Label>
+                    <Label>
+                      Date de naissance:
+                      <span className="text-red-600">*</span>
+                    </Label>
                     <DateInput
                       control={control}
                       errors={errors}
@@ -274,7 +260,9 @@ const UpdateAnimals = ({
                     />
                   </div>
                   <div>
-                    <Label>Poids:</Label>
+                    <Label>
+                      Poids:<span className="text-red-600">*</span>
+                    </Label>
                     <TextInput
                       control={control}
                       type="number"
@@ -283,6 +271,23 @@ const UpdateAnimals = ({
                       errors={errors}
                     />
                   </div>
+                </div>
+                <div>
+                  <Label>
+                    Genre:<span className="text-red-600">*</span>
+                  </Label>
+                  <SelectInput
+                    firstOptionName="Choose a production type"
+                    control={control}
+                    errors={errors}
+                    placeholder="Select gender"
+                    valueType="text"
+                    name="gender"
+                    dataItem={[
+                      { id: 1, name: 'MALE' },
+                      { id: 2, name: 'FEMALE' },
+                    ]}
+                  />
                 </div>
                 <div className="my-2">
                   <Label>Code de la mère:</Label>
@@ -383,21 +388,12 @@ const UpdateAnimals = ({
                       )}
                     />
                   </div>
-                  <div className="mb-2">
-                    <Label>Phase de production:</Label>
-                    <SelectInput
-                      firstOptionName="Choose a production type"
-                      control={control}
-                      errors={errors}
-                      placeholder="Select a production phase"
-                      valueType="text"
-                      name="productionPhase"
-                      dataItem={[{ id: 3, name: 'REPRODUCTION' }]}
-                    />
-                  </div>
                 </div>
                 <div className="my-2">
-                  <Label>Sélectionnez la race</Label>
+                  <Label>
+                    Sélectionnez la race
+                    <span className="text-red-600">*</span>
+                  </Label>
                   <Controller
                     control={control}
                     name="breedName"
@@ -449,7 +445,10 @@ const UpdateAnimals = ({
                     )}
                   />
                   <div className="mt-2">
-                    <Label>Sélectionnez un emplacement</Label>
+                    <Label>
+                      Sélectionnez un emplacement
+                      <span className="text-red-600">*</span>
+                    </Label>
                     <Controller
                       control={control}
                       name="locationCode"
@@ -504,25 +503,6 @@ const UpdateAnimals = ({
                         </Select>
                       )}
                     />
-                    {animal?.gender === 'MALE' && animal?.id ? (
-                      <div className="my-2">
-                        <Label>Castré</Label>
-                        <SelectInput
-                          firstOptionName="Choose a castration"
-                          control={control}
-                          errors={errors}
-                          placeholder="Choose if animal is castrated"
-                          valueType="text"
-                          name="isCastrated"
-                          dataItem={[
-                            { id: 1, name: 'YES' },
-                            { id: 2, name: 'NO' },
-                          ]}
-                        />
-                      </div>
-                    ) : (
-                      ''
-                    )}
                   </div>
                 </div>
                 <div className="mt-4 flex items-center space-x-4">
@@ -553,4 +533,4 @@ const UpdateAnimals = ({
   );
 };
 
-export { UpdateAnimals };
+export { CreateAnimals };

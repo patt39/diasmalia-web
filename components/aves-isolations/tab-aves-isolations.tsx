@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+import { GetAnimalStatisticsAPI } from '@/api-site/animals';
 import { GetIsolationsAPI } from '@/api-site/isolations';
 import { useInputState } from '@/components/hooks';
 import { ButtonLoadMore, SearchInput } from '@/components/ui-setting';
@@ -40,6 +41,11 @@ const TabAvesIsolations = ({ animalTypeId }: { animalTypeId: string }) => {
   const [periode, setPeriode] = useState('');
   const { ref, inView } = useInView();
   const { search, handleSetSearch } = useInputState();
+
+  const { data: animalStatistics } = GetAnimalStatisticsAPI({
+    periode,
+    animalTypeId: animalTypeId,
+  });
 
   const {
     isLoading: isLoadingIsolations,
@@ -94,13 +100,13 @@ const TabAvesIsolations = ({ animalTypeId }: { animalTypeId: string }) => {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button variant="outline">
-                    {dataIsolations?.pages[0]?.data?.total}
+                    {animalStatistics?.sumIsolations ?? 0}
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent className="dark:border-gray-800">
                   <p>
                     {t.formatMessage({ id: 'ANIMALTYPE.TOOLTIP' })}{' '}
-                    {dataIsolations?.pages[0]?.data?.total}{' '}
+                    {animalStatistics?.sumIsolations ?? 0}{' '}
                     {t.formatMessage({ id: 'ANIMAL.ISOLATED' })}{' '}
                   </p>
                 </TooltipContent>
@@ -121,16 +127,26 @@ const TabAvesIsolations = ({ animalTypeId }: { animalTypeId: string }) => {
                 <DropdownMenuCheckboxItem
                   onClick={() => setPeriode('')}
                   checked
+                  className="cursor-pointer"
                 >
                   {t.formatMessage({ id: 'ACTIVITY.FILTERALL' })}
                 </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem onClick={() => setPeriode('7')}>
+                <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
+                  onClick={() => setPeriode('7')}
+                >
                   {t.formatMessage({ id: 'ACTIVITY.LAST7DAYS' })}
                 </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem onClick={() => setPeriode('15')}>
+                <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
+                  onClick={() => setPeriode('15')}
+                >
                   {t.formatMessage({ id: 'ACTIVITY.LAST15DAYS' })}
                 </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem onClick={() => setPeriode('30')}>
+                <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
+                  onClick={() => setPeriode('30')}
+                >
                   {t.formatMessage({ id: 'ACTIVITY.LAST30DAYS' })}
                 </DropdownMenuCheckboxItem>
               </DropdownMenuContent>

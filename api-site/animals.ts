@@ -7,14 +7,18 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 
-export const GetAnimalStatisticsAPI = (payload: { animalTypeId: string }) => {
-  const { animalTypeId } = payload;
+export const GetAnimalStatisticsAPI = (payload: {
+  animalTypeId?: string;
+  periode?: string;
+}) => {
+  const { animalTypeId, periode } = payload;
   const { data, isError, isLoading, status, isPending, refetch } = useQuery({
-    queryKey: ['animal', animalTypeId],
+    queryKey: ['animal-statistics', { ...payload }],
     queryFn: async () =>
       await makeApiCall({
         action: 'getAnimalStatistics',
         urlParams: { animalTypeId },
+        queryParams: { periode },
       }),
     refetchOnWindowFocus: false,
   });
@@ -65,6 +69,46 @@ export const CreateOneAnimalAPI = ({
     mutationFn: async (payload: AnimalModel) => {
       await makeApiCall({
         action: 'createOneAnimal',
+        body: { ...payload },
+      });
+    },
+    onError: async (error) => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onError) {
+        onError(error);
+      }
+    },
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+  });
+
+  return result;
+};
+
+export const CreateBulkAnimalsAPI = ({
+  onSuccess,
+  onError,
+}: {
+  onSuccess?: () => void;
+  onError?: (error: any) => void;
+} = {}) => {
+  const queryKey = ['animals'];
+  const queryClient = useQueryClient();
+  const result = useMutation({
+    mutationKey: queryKey,
+    mutationFn: async (payload: AnimalModel) => {
+      await makeApiCall({
+        action: 'createBulkAnimal',
         body: { ...payload },
       });
     },
@@ -250,7 +294,7 @@ export const GetAnimalsAPI = (
       'breedings',
       'weanings',
       'deaths',
-      'avesdeaths',
+      'aves-deaths',
       'farrowings',
       { ...payload },
     ],

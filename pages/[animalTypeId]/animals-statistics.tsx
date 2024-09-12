@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/chart';
 import { useRouter } from 'next/router';
 import { useIntl } from 'react-intl';
-import { PolarAngleAxis, PolarGrid, Radar, RadarChart } from 'recharts';
+import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts';
 
 const AnimalStatistics = () => {
   const t = useIntl();
@@ -24,6 +24,27 @@ const AnimalStatistics = () => {
   const { data: animalStatistics } = GetAnimalStatisticsAPI({
     animalTypeId: animalTypeId,
   });
+
+  const weaningPercentage =
+    Number(animalStatistics?.sumWeanings / animalStatistics?.sumFarrowings) *
+    100;
+
+  const farrowingPercentage =
+    Number(
+      animalStatistics?.sumFarrowings / animalStatistics?.sumFemaleReproduction,
+    ) * 100;
+
+  const fertilityPercentage =
+    Number(
+      animalStatistics?.sumBreedingPregnant / animalStatistics?.sumBreedings,
+    ) * 100;
+
+  const youngDeathPercentage =
+    Number(
+      animalStatistics?.sumAnimalGrowthDead /
+        animalStatistics?.sumFemaleGrowth +
+        animalStatistics?.sumMaleGrowth,
+    ) * 100;
 
   const chartData = [
     { month: 'January', desktop: 186 },
@@ -88,116 +109,118 @@ const AnimalStatistics = () => {
       <Card x-chunk="dashboard-05-chunk-2" className=" dark:border-gray-800">
         <CardHeader className="pb-2">
           <CardDescription>Taux de Reproduction</CardDescription>
+          <CardTitle className="text-4xl">{fertilityPercentage}</CardTitle>
+        </CardHeader>
+      </Card>
+      <Card x-chunk="dashboard-05-chunk-2" className=" dark:border-gray-800">
+        <CardHeader className="pb-2">
+          <CardDescription>Taux de Naissances</CardDescription>
           <CardTitle className="text-4xl">
-            {animalStatistics?.sumMales}
+            {Math.floor(farrowingPercentage * 100 || 0) / 100}%
           </CardTitle>
         </CardHeader>
       </Card>
       <Card x-chunk="dashboard-05-chunk-2" className=" dark:border-gray-800">
         <CardHeader className="pb-2">
-          <CardDescription>Taux de Mortalité des Jeunes</CardDescription>
+          <CardDescription>
+            {t.formatMessage({ id: 'WEANING.PERCENTAGE' })}
+          </CardDescription>
           <CardTitle className="text-4xl">
-            {animalStatistics?.sumMales}
+            {Math.floor(weaningPercentage * 100 || 0) / 100}%
           </CardTitle>
         </CardHeader>
       </Card>
       <Card x-chunk="dashboard-05-chunk-2" className=" dark:border-gray-800">
         <CardHeader className="pb-2">
-          <CardDescription>Taux de Morbidité</CardDescription>
+          <CardDescription>
+            {t.formatMessage({ id: 'YOUTH.DEATH.PERCENTAGE' })}
+          </CardDescription>
           <CardTitle className="text-4xl">
-            {animalStatistics?.sumMales}
+            {Math.floor(youngDeathPercentage * 100 || 0) / 100}%
           </CardTitle>
         </CardHeader>
       </Card>
-      <Card x-chunk="dashboard-05-chunk-2" className=" dark:border-gray-800">
-        <CardHeader className="pb-2">
-          <CardDescription>Taux de Décès</CardDescription>
-          <CardTitle className="text-4xl">
-            {animalStatistics?.sumMales}
-          </CardTitle>
-        </CardHeader>
-      </Card>
-      <Card className="py-0 w-96 dark:border-gray-800">
-        <CardHeader className="items-center">
+      <Card className="dark:border-input dark:bg-background sm:col-span-2">
+        <CardHeader>
           <CardDescription>
             Showing total visitors for the last 6 months
           </CardDescription>
         </CardHeader>
-        <CardContent className="pb-0">
+        <CardContent>
           <ChartContainer
-            config={chartConfigTwo}
-            className="mx-auto aspect-square max-h-[250px]"
+            config={chartConfig}
+            className="lg:h-[200px] lg:w-[500px]"
           >
-            <RadarChart data={chartDataTwo}>
+            <AreaChart
+              accessibilityLayer
+              data={chartData}
+              margin={{
+                left: 12,
+                right: 12,
+              }}
+            >
+              <CartesianGrid vertical={false} />
+              <XAxis
+                dataKey="month"
+                tickLine={false}
+                axisLine={false}
+                tickMargin={8}
+                tickFormatter={(value) => value.slice(0, 3)}
+              />
               <ChartTooltip
                 cursor={false}
                 content={<ChartTooltipContent indicator="line" />}
               />
-              <PolarAngleAxis dataKey="month" />
-              <PolarGrid />
-              <Radar
+              <Area
                 dataKey="desktop"
+                type="natural"
                 fill="var(--color-desktop)"
-                fillOpacity={0.6}
+                fillOpacity={0.4}
+                stroke="var(--color-desktop)"
               />
-              <Radar dataKey="mobile" fill="var(--color-mobile)" />
-            </RadarChart>
+            </AreaChart>
           </ChartContainer>
         </CardContent>
       </Card>
-      <Card className="py-0 w-96 ml-24 dark:border-gray-800">
-        <CardHeader className="items-center">
+      <Card className="dark:border-input dark:bg-background sm:col-span-2">
+        <CardHeader>
           <CardDescription>
             Showing total visitors for the last 6 months
           </CardDescription>
         </CardHeader>
-        <CardContent className="py-0">
+        <CardContent>
           <ChartContainer
             config={chartConfig}
-            className="aspect-square max-h-[250px] w-80"
+            className="lg:h-[200px] lg:w-[500px]"
           >
-            <RadarChart data={chartData}>
-              <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-              <PolarAngleAxis dataKey="month" />
-              <PolarGrid />
-              <Radar
-                dataKey="desktop"
-                fill="var(--color-desktop)"
-                fillOpacity={0.6}
-                dot={{
-                  r: 4,
-                  fillOpacity: 1,
-                }}
+            <AreaChart
+              accessibilityLayer
+              data={chartData}
+              margin={{
+                left: 12,
+                right: 12,
+              }}
+            >
+              <CartesianGrid vertical={false} />
+              <XAxis
+                dataKey="month"
+                tickLine={false}
+                axisLine={false}
+                tickMargin={8}
+                tickFormatter={(value) => value.slice(0, 3)}
               />
-            </RadarChart>
-          </ChartContainer>
-        </CardContent>
-      </Card>
-      <Card className="py-0 w-96 ml-48 dark:border-gray-800">
-        <CardHeader className="items-center">
-          <CardDescription>
-            Showing total visitors for the last 6 months
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="py-0">
-          <ChartContainer
-            config={chartConfig}
-            className="aspect-square max-h-[250px] w-80"
-          >
-            <RadarChart data={chartData}>
-              <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
-              <PolarAngleAxis dataKey="month" />
-              <PolarGrid />
-              <Radar
-                dataKey="desktop"
-                fill="var(--color-desktop)"
-                fillOpacity={0.6}
-                dot={{
-                  r: 4,
-                  fillOpacity: 1,
-                }}
+              <ChartTooltip
+                cursor={false}
+                content={<ChartTooltipContent indicator="line" />}
               />
-            </RadarChart>
+              <Area
+                dataKey="desktop"
+                type="natural"
+                fill="var(--color-desktop)"
+                fillOpacity={0.4}
+                stroke="var(--color-desktop)"
+              />
+            </AreaChart>
           </ChartContainer>
         </CardContent>
       </Card>

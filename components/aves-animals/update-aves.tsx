@@ -171,20 +171,58 @@ const UpdateAvesAnimals = ({
                   animalType?.name,
                 ) ? (
                   <>
-                    <div className="my-2">
-                      <Label>Nombre d&#39;animaux</Label>
-                      <TextInput
-                        control={control}
-                        type="number"
-                        name="quantity"
-                        placeholder="Number of animals"
-                        errors={errors}
-                      />
+                    <div className="flex items-center space-x-4">
+                      <div className="my-2">
+                        <Label>Nombre animaux</Label>
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="quantity"
+                          placeholder="Number of animals"
+                          errors={errors}
+                        />
+                      </div>
+                      <div>
+                        <Label>Poids</Label>
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="weight"
+                          placeholder="Give weight"
+                          errors={errors}
+                        />
+                      </div>
+                      <div className="">
+                        <Label>Date de lancement</Label>
+                        <DateInput
+                          control={control}
+                          errors={errors}
+                          placeholder="Starting date"
+                          name="birthday"
+                        />
+                      </div>
                     </div>
+                    {animalType.name === 'Pondeuses' ? (
+                      <div className="mb-2">
+                        <Label>Phase de production: </Label>
+                        <SelectInput
+                          firstOptionName="Choose a production type"
+                          control={control}
+                          errors={errors}
+                          placeholder="Select a production phase"
+                          valueType="text"
+                          name="productionPhase"
+                          dataItem={[
+                            { id: 1, name: 'GROWTH' },
+                            { id: 2, name: 'LAYING' },
+                          ]}
+                        />
+                      </div>
+                    ) : (
+                      ''
+                    )}
                     <div className="w-full">
-                      <Label>
-                        Code du batiment:<span className="text-red-600">*</span>
-                      </Label>
+                      <Label>Code du batiment</Label>
                       <Controller
                         control={control}
                         name="locationCode"
@@ -230,20 +268,6 @@ const UpdateAvesAnimals = ({
                           </Select>
                         )}
                       />
-                    </div>
-                    <div className="my-2">
-                      <Label>
-                        Date de lancement:
-                        <span className="text-red-600">*</span>
-                      </Label>
-                      <div className="flex items-center space-x-2">
-                        <DateInput
-                          control={control}
-                          errors={errors}
-                          placeholder="Starting date"
-                          name="birthday"
-                        />
-                      </div>
                     </div>
                   </>
                 ) : (
@@ -296,9 +320,7 @@ const UpdateAvesAnimals = ({
                       </div>
                     </div>
                     <div className="w-full">
-                      <Label>
-                        Code du batiment:<span className="text-red-600">*</span>
-                      </Label>
+                      <Label>Code du batiment</Label>
                       <Controller
                         control={control}
                         name="locationCode"
@@ -345,12 +367,14 @@ const UpdateAvesAnimals = ({
                         )}
                       />
                     </div>
-                    <div className="my-2">
-                      <Label>
-                        Date de lancement:
-                        <span className="text-red-600">*</span>
-                      </Label>
-                      <div className="flex items-center space-x-2">
+                    {!['Poulet de chair', 'Pisciculture', 'Pondeuses'].includes(
+                      animalType?.name,
+                    ) ? (
+                      <div className="my-2">
+                        <Label>
+                          Date de lancement:
+                          <span className="text-red-600">*</span>
+                        </Label>
                         <DateInput
                           control={control}
                           errors={errors}
@@ -358,7 +382,9 @@ const UpdateAvesAnimals = ({
                           name="birthday"
                         />
                       </div>
-                    </div>
+                    ) : (
+                      ''
+                    )}
                   </>
                 )}
                 <div className="mt-4 flex items-center space-x-4">

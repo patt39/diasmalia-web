@@ -52,17 +52,17 @@ const ListWeanings = ({ item, index }: { item: any; index: number }) => {
   return (
     <>
       <TableRow key={index} className="dark:border-gray-800">
-        <TableCell className="font-medium">{item.animal.code}</TableCell>
-        <TableCell>{item.farrowing?.litter}</TableCell>
-        <TableCell>{item.litter}</TableCell>
+        <TableCell className="font-medium">{item?.animal?.code}</TableCell>
+        <TableCell>{item?.farrowing?.litter}</TableCell>
+        <TableCell>{item?.litter}</TableCell>
         <TableCell>
-          {item.litter === item.farrowing?.litter ? (
+          {item?.litter === item?.farrowing?.litter ? (
             <Badge className="text-xs" variant="default">
-              Good Mother
+              {t.formatMessage({ id: 'GOOD.MOTHER' })}
             </Badge>
           ) : (
             <Badge className="text-xs" variant="secondary">
-              Not good
+              {t.formatMessage({ id: 'BAD.MOTHER' })}
             </Badge>
           )}
         </TableCell>

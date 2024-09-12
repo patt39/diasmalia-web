@@ -36,7 +36,7 @@ export const CreateOrUpdateOneAvesDeathAPI = ({
   onSuccess?: () => void;
   onError?: (error: any) => void;
 } = {}) => {
-  const queryKey = ['avesdeaths'];
+  const queryKey = ['aves-deaths'];
   const queryClient = useQueryClient();
   const result = useMutation({
     mutationKey: queryKey,
@@ -144,7 +144,7 @@ export const GetDeathsAPI = (
     organizationId,
   } = payload;
   return useQuery({
-    queryKey: ['deaths', 'avesdeaths', { ...payload }],
+    queryKey: ['deaths', 'aves-deaths', { ...payload }],
     placeholderData: keepPreviousData,
     queryFn: async () =>
       await makeApiCall({

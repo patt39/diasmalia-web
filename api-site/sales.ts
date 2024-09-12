@@ -29,6 +29,37 @@ export const GetOneSaleAPI = (payload: { saleId: string }) => {
   };
 };
 
+export const SalesPdfDownloadAPI = async (payload: { saleId: string }) => {
+  const { saleId } = payload;
+  const data = await makeApiCall({
+    action: 'downloadSalePdf',
+    urlParams: { saleId },
+  });
+  return data;
+};
+
+export const GetOneSaleAnimalTypeAPI = (payload: { animalTypeId: string }) => {
+  const { animalTypeId } = payload;
+  const { data, isError, isLoading, status, isPending, refetch } = useQuery({
+    queryKey: ['sale', animalTypeId],
+    queryFn: async () =>
+      await makeApiCall({
+        action: 'getOneSaleAnimalType',
+        urlParams: { animalTypeId },
+      }),
+    refetchOnWindowFocus: false,
+  });
+
+  return {
+    data: data?.data as any,
+    isError,
+    isLoading,
+    status,
+    isPending,
+    refetch,
+  };
+};
+
 export const CreateOrUpdateOneSaleAPI = ({
   onSuccess,
   onError,
@@ -131,14 +162,14 @@ export const exportSalesAPI = async () => {
 
 export const GetSalesAPI = (
   payload: {
-    search?: string;
     take: number;
+    search?: string;
     periode?: string;
-    animalTypeId?: string;
     method?: string;
     detail?: string;
     sortBy?: string;
     pageItem?: number;
+    animalTypeId?: string;
     organizationId?: string;
   } & PaginationRequest,
 ) => {

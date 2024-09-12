@@ -26,10 +26,11 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { TooltipProvider } from '@radix-ui/react-tooltip';
-import { ListFilter, PawPrint } from 'lucide-react';
+import { ListFilter } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { CreateAnimals } from './create-or-update-animal';
+import { CreateAnimals } from './create-animal';
+import { CreateBulkAnimals } from './create-bulk-animal';
 import { ListAnimals } from './list-animals';
 
 const TabAnimals = ({ animalTypeId }: { animalTypeId: string }) => {
@@ -37,6 +38,7 @@ const TabAnimals = ({ animalTypeId }: { animalTypeId: string }) => {
   const { ref, inView } = useInView();
   const [gender, setGender] = useState('');
   const [status, setStatus] = useState('');
+  const [isBulkOpen, setIsBulkOpen] = useState<boolean>(false);
   const [productionPhase, setProductionPhase] = useState('');
   const { data: animalType } = GetOneAnimalTypeAPI({
     animalTypeId: animalTypeId,
@@ -229,13 +231,13 @@ const TabAnimals = ({ animalTypeId }: { animalTypeId: string }) => {
                           className="cursor-pointer"
                           onClick={() => setProductionPhase('GESTATIONS')}
                         >
-                          {t.formatMessage({ id: 'ANIMALTYPE.GESTATIONS' })}
+                          Gestation
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           className="cursor-pointer"
                           onClick={() => setProductionPhase('LACTATION')}
                         >
-                          {t.formatMessage({ id: 'PRODUCTIONTYPE.LACTATION' })}
+                          Lactation
                         </DropdownMenuItem>
                       </DropdownMenuSubContent>
                     </DropdownMenuPortal>
@@ -245,16 +247,30 @@ const TabAnimals = ({ animalTypeId }: { animalTypeId: string }) => {
             ) : (
               ''
             )}
-            <Button
-              size="sm"
-              className="h-8 gap-1"
-              onClick={() => setIsOpen(true)}
-            >
-              <PawPrint className="h-3.5 w-3.5  hover:shadow-xxl" />
-              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                {t.formatMessage({ id: 'ANIMALTYPE.ANIMALS.CREATE' })}
-              </span>
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="h-8 gap-1">
+                  <ListFilter className="h-3.5 w-3.5" />
+                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                    {t.formatMessage({ id: 'CREATION.TYPE' })}
+                  </span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="dark:border-gray-800">
+                <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
+                  onClick={() => setIsOpen(true)}
+                >
+                  {t.formatMessage({ id: 'ADD.AN.ANIMAL' })}
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
+                  onClick={() => setIsBulkOpen(true)}
+                >
+                  {t.formatMessage({ id: 'ADD.MANY.ANIMALS' })}
+                </DropdownMenuCheckboxItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </CardHeader>
@@ -295,6 +311,11 @@ const TabAnimals = ({ animalTypeId }: { animalTypeId: string }) => {
         animal={animalTypeId}
         showModal={isOpen}
         setShowModal={setIsOpen}
+      />
+      <CreateBulkAnimals
+        animal={animalTypeId}
+        showModal={isBulkOpen}
+        setShowModal={setIsBulkOpen}
       />
     </>
   );

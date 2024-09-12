@@ -9,16 +9,21 @@ import { TabAvesSales } from '@/components/aves-sales/tab-aves-sales';
 import { TabAvesTreatments } from '@/components/aves-treatments/tab-aves-treatment';
 import { TabBreedings } from '@/components/breedings/tab-breedings';
 import { TabDeaths } from '@/components/deaths/tab-deaths';
+import { EggHarvestingsAnalytics } from '@/components/egg-harvestings/eggHarvestings-analytics';
 import { TabEggHarvestings } from '@/components/egg-harvestings/tab-egg-harvestings';
 import { TabFarrowings } from '@/components/farrowings/tab-farrowings';
 import { TabFattenings } from '@/components/fattenings/tab-fattenings';
 import { TabFeedings } from '@/components/feedings/tab-feedings';
 import { TabGestations } from '@/components/gestations/tab-gestations';
 import { TabIncubations } from '@/components/incubations/tab-incubations';
+import { TabIncubationsAnalytics } from '@/components/incubations/tab-incubations-analytics';
 import { TabIsolations } from '@/components/isolations/tab-isolations';
 import { LayoutDashboard } from '@/components/layouts/dashboard';
 import { TabLocations } from '@/components/locations/tab-locations';
 import { TabMilkings } from '@/components/milkings/tab-milkings';
+import { ChickenSalesAnalytics } from '@/components/sales-analytics/chickens-sales-analytics';
+import { ChickSalesAnalytics } from '@/components/sales-analytics/chicks-sales-analytics';
+import { EggSalesAnalytics } from '@/components/sales-analytics/eggs-sales-analytics';
 import { TabSalesAnalytics } from '@/components/sales-analytics/tab-sales-analytics';
 import { TabSales } from '@/components/sales/tab-sales';
 import { TabTreatments } from '@/components/treatments/tab-treatment';
@@ -268,11 +273,11 @@ export function Index() {
                     </CardDescription>
                   </CardHeader>
                 </Card>
+                <AvesStatistics />
               </div>
             ) : (
               ''
             )}
-
             <Tabs defaultValue="locations">
               <div className="flex items-center">
                 {[
@@ -298,7 +303,6 @@ export function Index() {
                         {t.formatMessage({ id: 'ANIMALTYPE.LOCATIONS' })}
                       </TabsTrigger>
                     )}
-
                     {['Porciculture'].includes(animalType?.name) ? (
                       <TabsTrigger value="animals">
                         {t.formatMessage({ id: 'ANIMALTYPE.ANIMALS.PIGS' })}
@@ -340,7 +344,6 @@ export function Index() {
                     ) : (
                       ''
                     )}
-
                     <TabsTrigger value="breedings">
                       {t.formatMessage({ id: 'ANIMALTYPE.BREEDING' })}
                     </TabsTrigger>
@@ -399,9 +402,13 @@ export function Index() {
                     <TabsTrigger value="egg-harvestings">
                       {t.formatMessage({ id: 'ANIMALTYPE.EGGHAVESTING' })}
                     </TabsTrigger>
-                    <TabsTrigger value="incubations">
-                      {t.formatMessage({ id: 'ANIMALTYPE.INCUBATION' })}
-                    </TabsTrigger>
+                    {animalType?.name === 'Pondeuses' ? (
+                      ''
+                    ) : (
+                      <TabsTrigger value="incubations">
+                        {t.formatMessage({ id: 'ANIMALTYPE.INCUBATION' })}
+                      </TabsTrigger>
+                    )}
                     <TabsTrigger value="aves-deaths">
                       {t.formatMessage({ id: 'ANIMALTYPE.DEATHS' })}
                     </TabsTrigger>
@@ -449,9 +456,13 @@ export function Index() {
                     <TabsTrigger value="aves-sales">
                       {t.formatMessage({ id: 'SALE.TITLE.PAGE' })}
                     </TabsTrigger>
-                    <TabsTrigger value="sales-analytics">
-                      {t.formatMessage({ id: 'SALE.TITLE.PAGE' })}
-                    </TabsTrigger>
+                    {animalType?.name !== 'Pisciculture' ? (
+                      <TabsTrigger value="sales-analytics">
+                        {t.formatMessage({ id: 'SALES.ANALYTICS' })}
+                      </TabsTrigger>
+                    ) : (
+                      ''
+                    )}
                   </TabsList>
                 )}
               </div>
@@ -567,20 +578,28 @@ export function Index() {
                   <TabEggHarvestings animalTypeId={animalTypeId} />
                 </Card>
               </TabsContent>
-              {/* <TabsContent value="egg-harvestings">
+              <TabsContent value="egg-harvestings">
                 <Card
                   x-chunk="dashboard-06-chunk-0"
                   className="dark:border-gray-800"
                 >
-                  <TabEggHarvestings animalTypeId={animalTypeId} />
+                  <EggHarvestingsAnalytics animalTypeId={animalTypeId} />
                 </Card>
-              </TabsContent> */}
+              </TabsContent>
               <TabsContent value="incubations">
                 <Card
                   x-chunk="dashboard-06-chunk-0"
                   className="dark:border-gray-800"
                 >
                   <TabIncubations animalTypeId={animalTypeId} />
+                </Card>
+              </TabsContent>
+              <TabsContent value="incubations">
+                <Card
+                  x-chunk="dashboard-06-chunk-0"
+                  className="dark:border-gray-800"
+                >
+                  <TabIncubationsAnalytics animalTypeId={animalTypeId} />
                 </Card>
               </TabsContent>
               <TabsContent value="isolations">
@@ -645,6 +664,34 @@ export function Index() {
                   className="dark:border-gray-800"
                 >
                   <TabSalesAnalytics animalTypeId={animalTypeId} />
+                </Card>
+              </TabsContent>
+              <TabsContent value="sales-analytics">
+                <Card
+                  x-chunk="dashboard-06-chunk-0"
+                  className="dark:border-gray-800"
+                >
+                  <ChickenSalesAnalytics animalTypeId={animalTypeId} />
+                </Card>
+              </TabsContent>
+              {animalType?.name !== 'Pondeuses' ? (
+                <TabsContent value="sales-analytics">
+                  <Card
+                    x-chunk="dashboard-06-chunk-0"
+                    className="dark:border-gray-800"
+                  >
+                    <ChickSalesAnalytics animalTypeId={animalTypeId} />
+                  </Card>
+                </TabsContent>
+              ) : (
+                ''
+              )}
+              <TabsContent value="sales-analytics">
+                <Card
+                  x-chunk="dashboard-06-chunk-0"
+                  className="dark:border-gray-800"
+                >
+                  <EggSalesAnalytics animalTypeId={animalTypeId} />
                 </Card>
               </TabsContent>
             </Tabs>

@@ -20,8 +20,8 @@ export const firstLetterToLowerCase = (value: string): string => {
 };
 
 export const capitalizeFirstLetter = (value: string): string => {
-  const valueLower = String(value).toLowerCase();
-  return valueLower.charAt(0).toUpperCase() + valueLower.slice(1);
+  const valueUpper = String(value).toLowerCase();
+  return valueUpper.charAt(0).toUpperCase() + valueUpper.slice(1);
 };
 
 export const convertToPluralMonth = (value: number): string =>

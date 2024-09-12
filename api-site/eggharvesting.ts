@@ -89,6 +89,31 @@ export const GetEggHarvestingsAPI = (
   });
 };
 
+export const GetEggHarvestingsAnalyticAPI = (payload: {
+  days?: number;
+  months?: number;
+  year?: number;
+  animalTypeId?: string;
+  organizationId?: string;
+}) => {
+  const { year, months, days, animalTypeId, organizationId } = payload;
+  return useQuery({
+    queryKey: ['eggharvestings-analytics', { ...payload }],
+    queryFn: async () =>
+      await makeApiCall({
+        action: 'getEggharvestingAnalytics',
+        queryParams: {
+          year,
+          months,
+          days,
+          animalTypeId,
+          organizationId,
+        },
+      }),
+    staleTime: 6000,
+  });
+};
+
 export const DeleteOneEggHarvestingAPI = ({
   onSuccess,
   onError,

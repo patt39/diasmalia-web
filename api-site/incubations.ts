@@ -1,7 +1,7 @@
 import { IncubationsModel } from '@/types/incubation';
 import { makeApiCall, PaginationRequest } from '@/utils';
 import {
-  useInfiniteQuery,
+  keepPreviousData,
   useMutation,
   useQuery,
   useQueryClient,
@@ -83,16 +83,25 @@ export const GetIncubationsAPI = (
     search?: string;
     take?: number;
     periode?: string;
+    pageItem?: number;
     animalTypeId?: string;
     organizationId?: string;
   } & PaginationRequest,
 ) => {
-  const { take, sort, search, periode, sortBy, animalTypeId, organizationId } =
-    payload;
-  return useInfiniteQuery({
-    queryKey: ['incubations', 'infinite', { ...payload }],
-    getNextPageParam: (lastPage: any) => lastPage.data.next_page,
-    queryFn: async ({ pageParam = 1 }) =>
+  const {
+    take,
+    sort,
+    pageItem,
+    search,
+    periode,
+    sortBy,
+    animalTypeId,
+    organizationId,
+  } = payload;
+  return useQuery({
+    queryKey: ['incubations', { ...payload }],
+    placeholderData: keepPreviousData,
+    queryFn: async () =>
       await makeApiCall({
         action: 'getIncubations',
         queryParams: {
@@ -102,12 +111,11 @@ export const GetIncubationsAPI = (
           sortBy,
           periode,
           animalTypeId,
-          page: pageParam,
+          page: pageItem,
           organizationId,
         },
       }),
-    staleTime: 60_000,
-    initialPageParam: 1,
+    staleTime: 6000,
   });
 };
 

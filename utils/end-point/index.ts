@@ -101,6 +101,8 @@ export const apiEndpoints: ClientApiMethods = {
   createOneAvesSale: POST(`${baseUrl}/sales/create/aves`),
   updateOneAvesSale: PUT(`${baseUrl}/sales/:saleId/edit`),
   deleteOneSale: DELETE(`${baseUrl}/sales/:saleId/delete`),
+  downloadSalePdf: GET(`${baseUrl}/sales/:saleId/download`),
+  getOneSaleAnimalType: GET(`${baseUrl}/sales/:animalTypeId/view/animalType`),
 
   /****************** User route */
   ipLocation: GET(`${baseUrl}/ip-location`),
@@ -128,6 +130,7 @@ export const apiEndpoints: ClientApiMethods = {
 
   /****************** Locations route */
   getLocations: GET(`${baseUrl}/locations`),
+  getOneLocation: GET(`${baseUrl}/locations/:locationId/view`),
   createOneLocation: POST(`${baseUrl}/locations/:animalTypeId/create`),
   updateOneLocation: PUT(`${baseUrl}/locations/:locationId/edit`),
   changeStatus: PUT(`${baseUrl}/locations/:locationId/change-status`),
@@ -137,6 +140,7 @@ export const apiEndpoints: ClientApiMethods = {
   getAnimals: GET(`${baseUrl}/animals`),
   createOneAnimal: POST(`${baseUrl}/animals/create`),
   getOneAnimal: GET(`${baseUrl}/animals/:animalId/view`),
+  createBulkAnimal: POST(`${baseUrl}/animals/create/bulk`),
   createOneAvesAnimal: POST(`${baseUrl}/animals/:animalTypeId/create`),
   updateOneAnimal: PUT(`${baseUrl}/animals/:animalId/edit`),
   updateOneAves: PUT(`${baseUrl}/animals/:animalId/edit`),
@@ -177,6 +181,7 @@ export const apiEndpoints: ClientApiMethods = {
 
   /****************** Egg-harvestings route */
   getEggharvestings: GET(`${baseUrl}/egg-harvestings`),
+  getEggharvestingAnalytics: GET(`${baseUrl}/analytics/egg-harvestings`),
   createOneEggHarvesting: POST(`${baseUrl}/egg-harvestings/create`),
   updateOneEggharvesting: PUT(
     `${baseUrl}/egg-harvestings/:eggHarvestingId/edit`,

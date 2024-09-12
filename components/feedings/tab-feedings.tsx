@@ -38,10 +38,10 @@ const TabFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [periode, setPeriode] = useState('');
   const [pageItem, setPageItem] = useState(1);
-  const [feedingsCount] = useState('');
   const { t, search, handleSetSearch, userStorage } = useInputState();
 
   const { data: animalStatistics } = GetAnimalStatisticsAPI({
+    periode,
     animalTypeId: animalTypeId,
   });
 
@@ -55,7 +55,6 @@ const TabFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
     periode,
     pageItem,
     take: 10,
-    feedingsCount,
     sort: 'desc',
     sortBy: 'createdAt',
     animalTypeId: animalTypeId,
@@ -77,13 +76,13 @@ const TabFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button variant="outline">
-                    {animalStatistics?.sumFeedings}
+                    {animalStatistics?.sumFeedings ?? 0}
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent className="dark:border-gray-800">
                   <p>
                     {t.formatMessage({ id: 'ANIMALTYPE.TOOLTIP' })}{' '}
-                    {animalStatistics?.sumFeedings}kg
+                    {animalStatistics?.sumFeedings ?? 0}kg
                     {''} {t.formatMessage({ id: 'ANIMALTYPE.FEEDING' })}
                   </p>
                 </TooltipContent>

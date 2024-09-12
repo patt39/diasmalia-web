@@ -38,7 +38,7 @@ const schema = yup.object({
   male: yup.number().optional(),
   female: yup.number().optional(),
   quantity: yup.number().optional(),
-  productionPhase: yup.string().optional(),
+  productionPhase: yup.string().required('productionPhase is required'),
   birthday: yup.string().required('birthday is a required field'),
   weight: yup.number().required('weight is a required field'),
   locationCode: yup.string().required('location code is a required field'),
@@ -55,6 +55,7 @@ const CreateAvesAnimals = ({
 }) => {
   const {
     t,
+    watch,
     control,
     setValue,
     handleSubmit,
@@ -66,6 +67,7 @@ const CreateAvesAnimals = ({
   } = useReactHookForm({ schema });
   const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
+  const watchProductionPhase = watch('productionPhase');
 
   const { data: animalType } = GetOneAnimalTypeAPI({
     animalTypeId: animalTypeId,
@@ -148,7 +150,7 @@ const CreateAvesAnimals = ({
                 <XIcon />
               </span>
             </button>
-            <form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
+            <form className="mt-6" onSubmit={handleSubmit(onSubmit)}>
               <div className="flex-auto justify-center p-2">
                 {hasErrors && (
                   <div className="bg-white py-6 dark:bg-[#121212]">
@@ -183,26 +185,132 @@ const CreateAvesAnimals = ({
                     </Tooltip>
                   </TooltipProvider>
                 </div>
-                {['Poulet de chair', 'Pisciculture'].includes(
+                {['Poulet de chair', 'Pisciculture', 'Pondeuses'].includes(
                   animalType?.name,
                 ) ? (
-                  <div className="mt-2">
-                    <Label>
-                      Nombre animaux:
-                      <span className="text-red-600">*</span>
-                    </Label>
-                    <TextInput
-                      control={control}
-                      type="number"
-                      name="quantity"
-                      placeholder="Number of animals"
-                      errors={errors}
-                    />
-                  </div>
+                  <>
+                    <div className="my-2">
+                      <Label>
+                        Phase de production
+                        <span className="text-red-600">*</span>
+                      </Label>
+                      <SelectInput
+                        firstOptionName="Choose a production type"
+                        control={control}
+                        errors={errors}
+                        placeholder="Select a production phase"
+                        valueType="text"
+                        name="productionPhase"
+                        dataItem={[
+                          { id: 1, name: 'GROWTH' },
+                          { id: 2, name: 'LAYING' },
+                        ]}
+                      />
+                    </div>
+                    {watchProductionPhase === 'GROWTH' ? (
+                      <>
+                        <div className="flex items-center space-x-4">
+                          <div className="my-2">
+                            <Label>
+                              Nombre d&apos;animaux
+                              <span className="text-red-600">*</span>
+                            </Label>
+                            <TextInput
+                              control={control}
+                              type="number"
+                              name="quantity"
+                              defaultValue="0"
+                              placeholder="Number of animals"
+                              errors={errors}
+                            />
+                          </div>
+                          <div>
+                            <Label>
+                              Poids(g)<span className="text-red-600">*</span>
+                            </Label>
+                            <TextInput
+                              control={control}
+                              type="number"
+                              name="weight"
+                              placeholder="Give weight"
+                              errors={errors}
+                            />
+                          </div>
+                          <div className="">
+                            <Label>
+                              Date de lancement
+                              <span className="text-red-600">*</span>
+                            </Label>
+                            <DateInput
+                              control={control}
+                              errors={errors}
+                              placeholder="Starting date"
+                              name="birthday"
+                            />
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="my-2 flex items-center space-x-10">
+                          <div>
+                            <Label>
+                              Nombre de males
+                              <span className="text-red-600">*</span>
+                            </Label>
+                            <TextInput
+                              control={control}
+                              type="number"
+                              name="male"
+                              placeholder="Number of males"
+                              errors={errors}
+                            />
+                          </div>
+                          <div>
+                            <Label>
+                              Nombre de femèles
+                              <span className="text-red-600">*</span>
+                            </Label>
+                            <TextInput
+                              control={control}
+                              type="number"
+                              name="female"
+                              placeholder="Number of females"
+                              errors={errors}
+                            />
+                          </div>
+                          <div>
+                            <Label>
+                              Poids(g)<span className="text-red-600">*</span>
+                            </Label>
+                            <TextInput
+                              control={control}
+                              type="number"
+                              name="weight"
+                              placeholder="Give weight"
+                              errors={errors}
+                            />
+                          </div>
+                        </div>
+                        <div className="my-2">
+                          <Label>
+                            Date de lancement
+                            <span className="text-red-600">*</span>
+                          </Label>
+                          <DateInput
+                            control={control}
+                            errors={errors}
+                            placeholder="Starting date"
+                            name="birthday"
+                          />
+                        </div>
+                      </>
+                    )}
+                  </>
                 ) : (
                   <>
                     <div className="my-2">
-                      <Label>Phase de production: </Label>
+                      <Label>Phase de production</Label>
                       <SelectInput
                         firstOptionName="Choose a production type"
                         control={control}
@@ -219,33 +327,35 @@ const CreateAvesAnimals = ({
                     <div className="my-2 flex items-center space-x-10">
                       <div>
                         <Label>
-                          Nombre de males:
+                          Nombre de males
                           <span className="text-red-600">*</span>
                         </Label>
                         <TextInput
                           control={control}
                           type="number"
                           name="male"
+                          defaultValue="0"
                           placeholder="Number of males"
                           errors={errors}
                         />
                       </div>
                       <div>
                         <Label>
-                          Nombre de femèles:
+                          Nombre de femèles
                           <span className="text-red-600">*</span>
                         </Label>
                         <TextInput
                           control={control}
                           type="number"
                           name="female"
+                          defaultValue="0"
                           placeholder="Number of females"
                           errors={errors}
                         />
                       </div>
                       <div>
                         <Label>
-                          Poids:<span className="text-red-600">*</span>
+                          Poids(g)<span className="text-red-600">*</span>
                         </Label>
                         <TextInput
                           control={control}
@@ -260,7 +370,7 @@ const CreateAvesAnimals = ({
                 )}
                 <div className="w-full">
                   <Label>
-                    Code du batiment:<span className="text-red-600">*</span>
+                    Code du batiment<span className="text-red-600">*</span>
                   </Label>
                   <Controller
                     control={control}
@@ -292,8 +402,8 @@ const CreateAvesAnimals = ({
                                 .flatMap((page: any) => page?.data?.value)
                                 .map((item, index) => (
                                   <>
-                                    <SelectItem key={index} value={item.code}>
-                                      {item.code}
+                                    <SelectItem key={index} value={item?.code}>
+                                      {item?.code}
                                     </SelectItem>
                                   </>
                                 ))
@@ -304,11 +414,13 @@ const CreateAvesAnimals = ({
                     )}
                   />
                 </div>
-                <div className="my-2">
-                  <Label>
-                    Date de lancement:<span className="text-red-600">*</span>
-                  </Label>
-                  <div className="flex items-center space-x-2">
+                {!['Poulet de chair', 'Pisciculture', 'Pondeuses'].includes(
+                  animalType?.name,
+                ) ? (
+                  <div className="my-2">
+                    <Label>
+                      Date de lancement<span className="text-red-600">*</span>
+                    </Label>
                     <DateInput
                       control={control}
                       errors={errors}
@@ -316,7 +428,9 @@ const CreateAvesAnimals = ({
                       name="birthday"
                     />
                   </div>
-                </div>
+                ) : (
+                  ''
+                )}
                 <div className="mt-4 flex items-center space-x-4">
                   <ButtonInput
                     type="button"

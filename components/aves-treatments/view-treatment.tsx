@@ -37,9 +37,9 @@ const ViewAvesTreatment = ({
                 <XIcon />
               </span>
             </button>
-            <form className="mt-4">
+            <form className="mt-2">
               <div className="flex-auto justify-center p-2">
-                <div className="mb-4">
+                <div className="mb-2">
                   <Label htmlFor="text">Animal Code</Label>
                   <Input
                     disabled
@@ -47,11 +47,11 @@ const ViewAvesTreatment = ({
                     value={getOneTreatment.animal.code}
                   />
                 </div>
-                <div className="mb-4">
+                <div className="mb-2">
                   <Label htmlFor="text">Treatment name</Label>
                   <Input disabled type="text" value={getOneTreatment?.name} />
                 </div>
-                <div className="mb-4">
+                <div className="mb-2">
                   <Label htmlFor="text">Diagnostic</Label>
                   <Input
                     disabled
@@ -59,17 +59,17 @@ const ViewAvesTreatment = ({
                     value={getOneTreatment?.diagnosis}
                   />
                 </div>
-                <div className="mb-4 flex items-center space-x-4">
-                  <Label htmlFor="text">Treatement</Label>
+                <div className="mb-2 flex items-center space-x-4">
+                  <Label htmlFor="text">Treatement:</Label>
                   <Input
                     disabled
                     type="text"
                     value={getOneTreatment?.medication}
                   />
-                  <Label htmlFor="text">Nombre de doses</Label>
+                  <Label htmlFor="text">Doses:</Label>
                   <Input disabled type="number" value={getOneTreatment?.dose} />
                 </div>
-                <div className="mb-4 disabled">
+                <div className="mb-2 disabled">
                   <TextAreaInput
                     control={control}
                     label="Note"
