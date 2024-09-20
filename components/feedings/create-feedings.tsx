@@ -281,7 +281,6 @@ const CreateFeedings = ({
                       { id: 2, name: 'FORAGES' },
                       { id: 3, name: 'PROTEINS' },
                       { id: 4, name: 'VITAMINS' },
-                      { id: 5, name: 'ROUGHAGES' },
                       { id: 6, name: 'CONCENTRATES' },
                       { id: 7, name: 'BYPRODUCTS' },
                       { id: 8, name: 'COMPLETEFEED' },

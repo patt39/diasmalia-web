@@ -1,10 +1,20 @@
 import { GetAnimalsAPI } from '@/api-site/animals';
-import { CreateOrUpdateOneAvesFeedingAPI } from '@/api-site/feedings';
+import { CreateOrUpdateOneIncubationAPI } from '@/api-site/incubations';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
-import { LoadingFile } from '@/components/ui-setting/ant';
-import { ErrorFile } from '@/components/ui-setting/ant/error-file';
-import { SelectInput, TextInput } from '@/components/ui-setting/shadcn';
+import { IncubationsModel } from '@/types/incubation';
+import {
+  AlertDangerNotification,
+  AlertSuccessNotification,
+} from '@/utils/alert-notification';
+import { XIcon } from 'lucide-react';
+import { useRouter } from 'next/router';
+import { Controller, SubmitHandler } from 'react-hook-form';
+import * as yup from 'yup';
+import { DateInput, LoadingFile } from '../ui-setting/ant';
+import { ErrorFile } from '../ui-setting/ant/error-file';
+import { TextInput } from '../ui-setting/shadcn';
+import { Label } from '../ui/label';
 import {
   Select,
   SelectContent,
@@ -13,57 +23,39 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { FeedingAvesModel } from '@/types/feeding';
-import {
-  AlertDangerNotification,
-  AlertSuccessNotification,
-} from '@/utils/alert-notification';
-import { XIcon } from 'lucide-react';
-import { useRouter } from 'next/router';
-import { useEffect } from 'react';
-import { Controller, SubmitHandler } from 'react-hook-form';
-import * as yup from 'yup';
-import { Label } from '../ui/label';
+} from '../ui/select';
 
 const schema = yup.object({
-  code: yup.string().required('code is a required field'),
-  quantity: yup.number().required('quantity is a required field'),
-  feedType: yup.string().required('feedType is a required field'),
+  code: yup.string().optional(),
+  quantityEnd: yup.number().optional(),
+  quantityStart: yup.number().required('quantity is required'),
+  dueDate: yup.date().required('dueDate is required field'),
 });
 
-const CreateOrUpdateAvesFeedings = ({
+const CreateIncubations = ({
   showModal,
   setShowModal,
-  feeding,
+  incubation,
 }: {
   showModal: boolean;
   setShowModal: any;
-  feeding?: any;
+  incubation?: any;
 }) => {
   const {
     t,
     control,
-    setValue,
-    handleSubmit,
     errors,
+    handleSubmit,
     loading,
     setLoading,
     hasErrors,
     setHasErrors,
   } = useReactHookForm({ schema });
-  const { query, push } = useRouter();
+  const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
 
-  useEffect(() => {
-    if (feeding) {
-      const fields = ['code', 'quantity', 'feedType'];
-      fields?.forEach((field: any) => setValue(field, feeding[field]));
-    }
-  }, [feeding, setValue]);
-
-  // Create or Update data
-  const { mutateAsync: saveMutation } = CreateOrUpdateOneAvesFeedingAPI({
+  // Create
+  const { mutateAsync: saveMutation } = CreateOrUpdateOneIncubationAPI({
     onSuccess: () => {
       setHasErrors(false);
       setLoading(false);
@@ -74,20 +66,20 @@ const CreateOrUpdateAvesFeedings = ({
     },
   });
 
-  const onSubmit: SubmitHandler<FeedingAvesModel> = async (
-    payload: FeedingAvesModel,
+  const onSubmit: SubmitHandler<IncubationsModel> = async (
+    payload: IncubationsModel,
   ) => {
     setLoading(true);
     setHasErrors(undefined);
     try {
       await saveMutation({
         ...payload,
-        feedingId: feeding?.id,
+        incubationId: incubation?.id,
       });
       setHasErrors(false);
       setLoading(false);
       AlertSuccessNotification({
-        text: 'Feeding saved successfully',
+        text: 'Incubation saved successfully',
       });
       setShowModal(false);
     } catch (error: any) {
@@ -109,6 +101,7 @@ const CreateOrUpdateAvesFeedings = ({
     sort: 'desc',
     status: 'ACTIVE',
     sortBy: 'createdAt',
+    productionPhase: 'LAYING',
     animalTypeId: animalTypeId,
   });
 
@@ -141,7 +134,8 @@ const CreateOrUpdateAvesFeedings = ({
                     </div>
                   </div>
                 )}
-                <div className="mb-2">
+
+                <div>
                   <Label>
                     {t.formatMessage({ id: 'ANIMAL.CODE' })}
                     <span className="text-red-600">*</span>
@@ -155,7 +149,7 @@ const CreateOrUpdateAvesFeedings = ({
                         name={'code'}
                         value={value}
                       >
-                        <SelectTrigger className="w-full">
+                        <SelectTrigger>
                           <SelectValue placeholder="Select a band code" />
                         </SelectTrigger>
                         <SelectContent className="dark:border-gray-800">
@@ -170,13 +164,13 @@ const CreateOrUpdateAvesFeedings = ({
                               />
                             ) : Number(dataAnimals?.pages[0]?.data?.total) <=
                               0 ? (
-                              <ErrorFile description="Don't have active animals yet" />
+                              <ErrorFile description="Don't have active animals in LAYING phase yet" />
                             ) : (
                               dataAnimals?.pages
                                 .flatMap((page: any) => page?.data?.value)
                                 .map((item, index) => (
                                   <>
-                                    <SelectItem key={index} value={item.code}>
+                                    <SelectItem key={index} value={item?.code}>
                                       {item?.code}
                                     </SelectItem>
                                   </>
@@ -188,44 +182,32 @@ const CreateOrUpdateAvesFeedings = ({
                     )}
                   />
                 </div>
-                <div className="mb-2">
-                  <Label>
-                    {t.formatMessage({ id: 'FEED.TYPE' })}
-                    <span className="text-red-600">*</span>
-                  </Label>
-                  <SelectInput
-                    firstOptionName="Choose a feed type"
-                    control={control}
-                    errors={errors}
-                    placeholder="Select feed type"
-                    valueType="text"
-                    name="feedType"
-                    dataItem={[
-                      { id: 1, name: 'FIBERS' },
-                      { id: 3, name: 'PROTEINS' },
-                      { id: 4, name: 'VITAMINS' },
-                      { id: 6, name: 'CONCENTRATES' },
-                      { id: 7, name: 'BYPRODUCTS' },
-                      { id: 8, name: 'COMPLETEFEED' },
-                      { id: 9, name: 'MINERALSALTS' },
-                      { id: 10, name: 'ENERGYSUPPLIMENTS' },
-                      { id: 11, name: 'SYNTHETICADICTIVES' },
-                      { id: 12, name: 'OTHERS' },
-                    ]}
-                  />
-                </div>
-                <div className="mb-2">
-                  <Label>
-                    {t.formatMessage({ id: 'FEED.TYPE' })}(kg)
-                    <span className="text-red-600">*</span>
-                  </Label>
-                  <TextInput
-                    control={control}
-                    type="number"
-                    name="quantity"
-                    placeholder="Give a quantity"
-                    errors={errors}
-                  />
+                <div className="flex items-center my-2 space-x-10">
+                  <div className="w-80">
+                    <Label>
+                      {t.formatMessage({ id: 'EGGS.INCUBATED' })}
+                      <span className="text-red-600">*</span>
+                    </Label>
+                    <TextInput
+                      control={control}
+                      type="number"
+                      name="quantityStart"
+                      placeholder="Number eggs incubated"
+                      errors={errors}
+                    />
+                  </div>
+                  <div>
+                    <Label>
+                      {t.formatMessage({ id: 'HATCHING.DATE' })}
+                      <span className="text-red-600">*</span>
+                    </Label>
+                    <DateInput
+                      control={control}
+                      errors={errors}
+                      placeholder="Hatching date"
+                      name="dueDate"
+                    />
+                  </div>
                 </div>
                 <div className="mt-4 flex items-center space-x-4">
                   <ButtonInput
@@ -255,4 +237,4 @@ const CreateOrUpdateAvesFeedings = ({
   );
 };
 
-export { CreateOrUpdateAvesFeedings };
+export { CreateIncubations };

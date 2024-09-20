@@ -15,24 +15,24 @@ import {
   formatWeight,
 } from '@/utils';
 import {
+  Hospital,
   ListCollapse,
   MoreHorizontal,
   PencilIcon,
   TrashIcon,
 } from 'lucide-react';
-import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { ActionModalDialog } from '../ui-setting/shadcn';
 import { Badge } from '../ui/badge';
 import { UpdateAvesAnimals } from './update-aves';
 import { ViewAvesAnimal } from './view-animal';
+import { ViewAvesHealth } from './view-aves-health';
 
 const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
   const { t, isOpen, loading, setIsOpen, setLoading } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
   const [isView, setIsView] = useState(false);
-  const { query } = useRouter();
-  const animalTypeId = String(query?.animalTypeId);
+  const [isHealthView, setIsHealth] = useState(false);
 
   const { mutateAsync: deleteMutation } = DeleteOneAnimalAPI({
     onSuccess: () => {},
@@ -138,6 +138,16 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
                 ) : (
                   ''
                 )}
+                {item?.quantity !== 0 && item._count?.treatments !== 0 ? (
+                  <DropdownMenuItem onClick={() => setIsHealth(true)}>
+                    <Hospital className="size-4 text-gray-600 hover:text-indigo-600" />
+                    <span className="ml-2 cursor-pointer hover:text-indigo-600">
+                      {t.formatMessage({ id: 'HEALTH' })}
+                    </span>
+                  </DropdownMenuItem>
+                ) : (
+                  ''
+                )}
                 <DropdownMenuItem onClick={() => setIsView(true)}>
                   <ListCollapse className="size-4 text-gray-600 hover:text-indigo-600" />
                   <span className="ml-2 cursor-pointer hover:text-indigo-600">
@@ -167,6 +177,11 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
               animal={item}
               showModal={isView}
               setShowModal={setIsView}
+            />
+            <ViewAvesHealth
+              animal={item}
+              showModal={isHealthView}
+              setShowModal={setIsHealth}
             />
           </div>
         </div>

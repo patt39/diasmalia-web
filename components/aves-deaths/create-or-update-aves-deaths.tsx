@@ -46,6 +46,7 @@ const CreateOrUpdateAvesDeaths = ({
 }) => {
   const {
     t,
+    watch,
     control,
     setValue,
     handleSubmit,
@@ -150,7 +151,7 @@ const CreateOrUpdateAvesDeaths = ({
                 {!death?.id ? (
                   <div className="mb-4">
                     <Label>
-                      Sélectionnez le code de la bande:
+                      {t.formatMessage({ id: 'ANIMAL.CODE' })}
                       <span className="text-red-600">*</span>
                     </Label>
                     <Controller
@@ -197,57 +198,58 @@ const CreateOrUpdateAvesDeaths = ({
                         </Select>
                       )}
                     />
-                    {['Poulet de chair', 'Pisciculture'].includes(
-                      animalType?.name,
-                    ) ? (
-                      <div className="mt-4">
-                        <Label>
-                          Nombre animaux:
-                          <span className="text-red-600">*</span>
-                        </Label>
-                        <TextInput
-                          control={control}
-                          type="number"
-                          name="number"
-                          placeholder="Give a number"
-                          errors={errors}
-                        />
-                      </div>
-                    ) : (
-                      <div className="my-2 flex items-center space-x-1">
-                        <Label>
-                          Males:
-                          <span className="text-red-600">*</span>
-                        </Label>
-                        <TextInput
-                          control={control}
-                          type="number"
-                          name="male"
-                          defaultValue="0"
-                          placeholder="Number of males"
-                          errors={errors}
-                        />
-                        <Label>
-                          Femèles:
-                          <span className="text-red-600">*</span>
-                        </Label>
-                        <TextInput
-                          control={control}
-                          type="number"
-                          name="female"
-                          defaultValue="0"
-                          placeholder="Number of females"
-                          errors={errors}
-                        />
-                      </div>
-                    )}
                   </div>
                 ) : null}
-
+                {['Poulet de chair', 'Pisciculture', 'Pondeuses'].includes(
+                  animalType?.name,
+                ) ? (
+                  <div className="mt-4">
+                    <Label>
+                      {t.formatMessage({ id: 'NUMBER.ANIMALS' })}
+                      <span className="text-red-600">*</span>
+                    </Label>
+                    <TextInput
+                      control={control}
+                      type="number"
+                      name="number"
+                      placeholder="Give a number"
+                      errors={errors}
+                    />
+                  </div>
+                ) : (
+                  <div className="my-4 flex items-center space-x-1">
+                    <Label>
+                      {t.formatMessage({ id: 'ANIMAL.MALES' })}:
+                      <span className="text-red-600">*</span>
+                    </Label>
+                    <TextInput
+                      control={control}
+                      type="number"
+                      name="male"
+                      defaultValue="0"
+                      placeholder="Number of males"
+                      errors={errors}
+                    />
+                    <Label>
+                      {t.formatMessage({ id: 'ANIMAL.FEMALES' })}:
+                      <span className="text-red-600">*</span>
+                    </Label>
+                    <TextInput
+                      control={control}
+                      type="number"
+                      name="female"
+                      defaultValue="0"
+                      placeholder="Number of females"
+                      errors={errors}
+                    />
+                  </div>
+                )}
                 <div className="mb-4">
+                  <Label>
+                    Cause<span className="text-red-600">*</span>
+                  </Label>
                   <TextAreaInput
                     control={control}
-                    label="Description"
                     name="note"
                     placeholder="Note"
                     errors={errors}

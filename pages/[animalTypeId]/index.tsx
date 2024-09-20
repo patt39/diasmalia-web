@@ -1,8 +1,11 @@
 import { GetOneAnimalTypeAPI } from '@/api-site/animal-type';
+import { GetAnimalByAnimalTypeAPI } from '@/api-site/animals';
 import { TabAnalytics } from '@/components/analytics/tab-analytics';
 import { TabAnimals } from '@/components/animals/tab-animals';
 import { TabAvesAnimals } from '@/components/aves-animals/tab-aves-animals';
+import { AvesDeathsAnalytics } from '@/components/aves-deaths/aves-deaths-analytics';
 import { TabAvesDeaths } from '@/components/aves-deaths/tab-aves-deaths';
+import { FeedingsAnalytics } from '@/components/aves-feeding/feedings-analytics';
 import { TabAvesFeedings } from '@/components/aves-feeding/tab-aves-feedings';
 import { TabAvesIsolations } from '@/components/aves-isolations/tab-aves-isolations';
 import { TabAvesSales } from '@/components/aves-sales/tab-aves-sales';
@@ -35,6 +38,7 @@ import {
 } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PrivateComponent } from '@/components/util/private-component';
+import { FarrowingsWeaningsAnalytics } from '@/components/weanings/farrowings-weanings-analytics';
 import { TabWeanings } from '@/components/weanings/tab-weanings';
 import { useRouter } from 'next/router';
 import { useIntl } from 'react-intl';
@@ -47,6 +51,10 @@ export function Index() {
   const animalTypeId = String(query?.animalTypeId);
 
   const { data: animalType } = GetOneAnimalTypeAPI({
+    animalTypeId: animalTypeId,
+  });
+
+  const { data: animalByType } = GetAnimalByAnimalTypeAPI({
     animalTypeId: animalTypeId,
   });
 
@@ -421,9 +429,13 @@ export function Index() {
                     <TabsTrigger value="aves-sales">
                       {t.formatMessage({ id: 'MENU.SALES' })}
                     </TabsTrigger>
-                    <TabsTrigger value="sales-analytics">
-                      {t.formatMessage({ id: 'SALES.ANALYTICS' })}
-                    </TabsTrigger>
+                    {animalByType?._count?.sales !== 0 ? (
+                      <TabsTrigger value="sales-analytics">
+                        {t.formatMessage({ id: 'SALES.ANALYTICS' })}
+                      </TabsTrigger>
+                    ) : (
+                      ''
+                    )}
                   </TabsList>
                 ) : (
                   <TabsList>
@@ -444,6 +456,18 @@ export function Index() {
                     <TabsTrigger value="aves-feedings">
                       {t.formatMessage({ id: 'ANIMALTYPE.FEEDINGS' })}
                     </TabsTrigger>
+                    {animalByType?.productionPhase === 'LAYING' ? (
+                      <>
+                        <TabsTrigger value="egg-harvestings">
+                          {t.formatMessage({ id: 'ANIMALTYPE.EGGHAVESTING' })}
+                        </TabsTrigger>
+                        <TabsTrigger value="incubations">
+                          {t.formatMessage({ id: 'ANIMALTYPE.INCUBATION' })}
+                        </TabsTrigger>
+                      </>
+                    ) : (
+                      ''
+                    )}
                     <TabsTrigger value="aves-deaths">
                       {t.formatMessage({ id: 'ANIMALTYPE.DEATHS' })}
                     </TabsTrigger>
@@ -456,7 +480,8 @@ export function Index() {
                     <TabsTrigger value="aves-sales">
                       {t.formatMessage({ id: 'SALE.TITLE.PAGE' })}
                     </TabsTrigger>
-                    {animalType?.name !== 'Pisciculture' ? (
+                    {animalByType?._count?.sales !== 0 &&
+                    animalByType?.productionPhase === 'LAYING' ? (
                       <TabsTrigger value="sales-analytics">
                         {t.formatMessage({ id: 'SALES.ANALYTICS' })}
                       </TabsTrigger>
@@ -506,6 +531,14 @@ export function Index() {
                   <TabAvesFeedings animalTypeId={animalTypeId} />
                 </Card>
               </TabsContent>
+              <TabsContent value="aves-feedings">
+                <Card
+                  x-chunk="dashboard-06-chunk-0"
+                  className="dark:border-gray-800"
+                >
+                  <FeedingsAnalytics animalTypeId={animalTypeId} />
+                </Card>
+              </TabsContent>
               <TabsContent value="fattenings">
                 <Card
                   x-chunk="dashboard-06-chunk-0"
@@ -546,6 +579,14 @@ export function Index() {
                   <TabWeanings animalTypeId={animalTypeId} />
                 </Card>
               </TabsContent>
+              <TabsContent value="weanings">
+                <Card
+                  x-chunk="dashboard-06-chunk-0"
+                  className="dark:border-gray-800"
+                >
+                  <FarrowingsWeaningsAnalytics animalTypeId={animalTypeId} />
+                </Card>
+              </TabsContent>
               <TabsContent value="milkings">
                 <Card
                   x-chunk="dashboard-06-chunk-0"
@@ -568,6 +609,14 @@ export function Index() {
                   className="dark:border-gray-800"
                 >
                   <TabAvesDeaths animalTypeId={animalTypeId} />
+                </Card>
+              </TabsContent>
+              <TabsContent value="aves-deaths">
+                <Card
+                  x-chunk="dashboard-06-chunk-0"
+                  className="dark:border-gray-800"
+                >
+                  <AvesDeathsAnalytics animalTypeId={animalTypeId} />
                 </Card>
               </TabsContent>
               <TabsContent value="egg-harvestings">

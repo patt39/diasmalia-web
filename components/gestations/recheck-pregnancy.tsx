@@ -26,6 +26,7 @@ const ReCheckPregnancy = ({
   gestation?: any;
 }) => {
   const {
+    t,
     control,
     handleSubmit,
     errors,
@@ -111,22 +112,28 @@ const ReCheckPregnancy = ({
                     valueType="text"
                     name="method"
                     dataItem={[
-                      { id: 1, name: 'BLOOD_TEST' },
-                      { id: 1, name: 'RECTAL_PALPATION' },
-                      { id: 1, name: 'OBSERVATION' },
-                      { id: 1, name: 'ULTRASOUND' },
+                      {
+                        id: 1,
+                        name: t.formatMessage({ id: 'ANALYSE.SANGUINE' }),
+                      },
+                      {
+                        id: 2,
+                        name: t.formatMessage({ id: 'PALPATION.RECTAL' }),
+                      },
+                      { id: 3, name: t.formatMessage({ id: 'OBSERVATION' }) },
+                      { id: 4, name: t.formatMessage({ id: 'ECHOGRAPHY' }) },
                     ]}
                   />
                   <SelectInput
-                    firstOptionName="Choose a size"
+                    firstOptionName="Choose a status"
                     control={control}
                     errors={errors}
                     placeholder="Select result"
                     valueType="text"
                     name="result"
                     dataItem={[
-                      { id: 1, name: 'OPEN' },
-                      { id: 2, name: 'PREGNANT' },
+                      { id: 1, name: t.formatMessage({ id: 'OPEN' }) },
+                      { id: 2, name: t.formatMessage({ id: 'PREGNANT' }) },
                     ]}
                   />
                 </div>
@@ -137,7 +144,7 @@ const ReCheckPregnancy = ({
                     variant="outline"
                     onClick={() => setShowModal(false)}
                   >
-                    Cancel
+                    {t.formatMessage({ id: 'ALERT.CANCEL' })}
                   </ButtonInput>
                   <ButtonInput
                     type="submit"
@@ -146,7 +153,7 @@ const ReCheckPregnancy = ({
                     disabled={loading}
                     loading={loading}
                   >
-                    Save
+                    {t.formatMessage({ id: 'ALERT.CONTINUE' })}
                   </ButtonInput>
                 </div>
               </div>

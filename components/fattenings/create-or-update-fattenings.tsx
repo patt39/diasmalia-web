@@ -1,5 +1,6 @@
 import { GetAnimalsAPI } from '@/api-site/animals';
 import { CreateOrUpdateOneFatteningAPI } from '@/api-site/fattenings';
+import { GetLocationsAPI } from '@/api-site/locations';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput, ButtonLoadMore } from '@/components/ui-setting';
 import { LoadingFile } from '@/components/ui-setting/ant';
@@ -9,6 +10,8 @@ import {
   Select,
   SelectContent,
   SelectGroup,
+  SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
@@ -17,13 +20,14 @@ import {
   AlertDangerNotification,
   AlertSuccessNotification,
 } from '@/utils/alert-notification';
-import { FileQuestion, XIcon } from 'lucide-react';
+import { XIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import { SubmitHandler } from 'react-hook-form';
+import { Controller, SubmitHandler } from 'react-hook-form';
 import { useInView } from 'react-intersection-observer';
 import * as yup from 'yup';
 import { Button } from '../ui/button';
+import { Label } from '../ui/label';
 import {
   Tooltip,
   TooltipContent,
@@ -34,6 +38,7 @@ import {
 const schema = yup.object({
   animals: yup.array().optional(),
   actualWeight: yup.number().optional(),
+  locationCode: yup.string().optional(),
 });
 
 const CreateOrUpdateFattenings = ({
@@ -66,7 +71,7 @@ const CreateOrUpdateFattenings = ({
 
   useEffect(() => {
     if (fattening) {
-      const fields = ['animals', 'actualWeight'];
+      const fields = ['animals', 'actualWeight', 'locationCode'];
       fields?.forEach((field: any) => setValue(field, fattening[field]));
     }
   }, [fattening, setValue]);
@@ -121,6 +126,18 @@ const CreateOrUpdateFattenings = ({
     sort: 'desc',
     status: 'ACTIVE',
     sortBy: 'createdAt',
+    animalTypeId: animalTypeId,
+  });
+
+  const {
+    isLoading: isLoadingLocations,
+    isError: isErrorLocations,
+    data: dataLocations,
+  } = GetLocationsAPI({
+    take: 10,
+    sort: 'desc',
+    sortBy: 'createdAt',
+    productionPhase: 'FATTENING',
     animalTypeId: animalTypeId,
   });
 
@@ -196,85 +213,134 @@ const CreateOrUpdateFattenings = ({
                     </div>
                   </div>
                 )}
-
                 {!fattening?.id ? (
-                  <div className="mb-4 items-center flex w-full">
-                    <Select>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select animals for fattening / animaux à engraisser" />
-                      </SelectTrigger>
-                      <SelectContent className="dark:border-gray-800">
-                        <SelectGroup>
-                          {isLoadingAnimals ? (
-                            <LoadingFile />
-                          ) : isErrorAnimals ? (
-                            <ErrorFile
-                              title="404"
-                              description="Error finding data please try again..."
-                            />
-                          ) : Number(dataAnimals?.pages[0]?.data?.total) <=
-                            0 ? (
-                            <ErrorFile description="Don't have animals in growth phase yet please add" />
-                          ) : (
-                            dataAnimals?.pages
-                              .flatMap((page: any) => page?.data?.value)
-                              .map((item, index) => (
-                                <>
-                                  <div key={index}>
-                                    <label
-                                      htmlFor={item?.id}
-                                      className="flex cursor-pointer items-start gap-4 rounded-lg border border-gray-200 p-4 transition hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-900"
-                                    >
-                                      <div className="flex items-center">
-                                        &#8203;
-                                        <input
-                                          type="checkbox"
-                                          className="size-4 rounded cursor-pointer border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:ring-offset-gray-900"
-                                          id={item?.id}
-                                          {...register('animals')}
-                                          value={item?.code}
-                                        />
-                                      </div>
-
-                                      <div>
-                                        <strong className="font-medium text-gray-900 dark:text-white">
-                                          {item?.code}
-                                        </strong>
-                                      </div>
-                                    </label>
-                                  </div>
-                                </>
-                              ))
-                          )}
-                          {hasNextPage && (
-                            <div className="mx-auto mt-4 justify-center text-center">
-                              <ButtonLoadMore
-                                ref={ref}
-                                isFetchingNextPage={isFetchingNextPage}
-                                onClick={() => fetchNextPage()}
+                  <>
+                    <div className="mb-2 items-center w-full">
+                      <Label>
+                        Sélectionnez les animaux à engraisser
+                        <span className="text-red-600">*</span>
+                      </Label>
+                      <Select>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select animals for fattening" />
+                        </SelectTrigger>
+                        <SelectContent className="dark:border-gray-800">
+                          <SelectGroup>
+                            {isLoadingAnimals ? (
+                              <LoadingFile />
+                            ) : isErrorAnimals ? (
+                              <ErrorFile
+                                title="404"
+                                description="Error finding data please try again..."
                               />
-                            </div>
-                          )}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                    <div>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <FileQuestion />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>
-                              {t.formatMessage({ id: 'CODE.ANIMALS.TOOLTIP' })}
-                            </p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                            ) : Number(dataAnimals?.pages[0]?.data?.total) <=
+                              0 ? (
+                              <ErrorFile description="Don't have animals in growth phase yet please add" />
+                            ) : (
+                              dataAnimals?.pages
+                                .flatMap((page: any) => page?.data?.value)
+                                .map((item, index) => (
+                                  <>
+                                    <div key={index}>
+                                      <label
+                                        htmlFor={item?.id}
+                                        className="flex cursor-pointer items-start gap-4 rounded-lg border border-gray-200 p-4 transition hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-900"
+                                      >
+                                        <div className="flex items-center">
+                                          &#8203;
+                                          <input
+                                            type="checkbox"
+                                            className="size-4 rounded cursor-pointer border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:ring-offset-gray-900"
+                                            id={item?.id}
+                                            {...register('animals')}
+                                            value={item?.code}
+                                          />
+                                        </div>
+                                        <div>
+                                          <strong className="font-medium text-gray-900 dark:text-white">
+                                            {item?.code}
+                                          </strong>
+                                        </div>
+                                      </label>
+                                    </div>
+                                  </>
+                                ))
+                            )}
+                            {hasNextPage && (
+                              <div className="mx-auto mt-4 justify-center text-center">
+                                <ButtonLoadMore
+                                  ref={ref}
+                                  isFetchingNextPage={isFetchingNextPage}
+                                  onClick={() => fetchNextPage()}
+                                />
+                              </div>
+                            )}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
                     </div>
-                  </div>
+                    <div className="mt-2">
+                      <Label>
+                        Sélectionnez un emplacement
+                        <span className="text-red-600">*</span>
+                      </Label>
+                      <Controller
+                        control={control}
+                        name="locationCode"
+                        render={({ field: { value, onChange } }) => (
+                          <Select
+                            onValueChange={onChange}
+                            name={'locationCode'}
+                            value={value}
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select a location code" />
+                            </SelectTrigger>
+                            <SelectContent className="dark:border-gray-800">
+                              <SelectGroup>
+                                <SelectLabel>Location codes</SelectLabel>
+                                {isLoadingLocations ? (
+                                  <LoadingFile />
+                                ) : isErrorLocations ? (
+                                  <ErrorFile
+                                    title="404"
+                                    description="Error finding data please try again..."
+                                  />
+                                ) : Number(
+                                    dataLocations?.pages[0]?.data?.total,
+                                  ) <= 0 ? (
+                                  <ErrorFile description="Don't have location codes" />
+                                ) : (
+                                  dataLocations?.pages
+                                    .flatMap((page: any) => page?.data?.value)
+                                    .map((item, index) => (
+                                      <>
+                                        <SelectItem
+                                          key={index}
+                                          value={item?.code}
+                                        >
+                                          {item?.code}
+                                        </SelectItem>
+                                      </>
+                                    ))
+                                )}
+                                {hasNextPage && (
+                                  <div className="mx-auto mt-4 justify-center text-center">
+                                    <ButtonLoadMore
+                                      ref={ref}
+                                      isFetchingNextPage={isFetchingNextPage}
+                                      onClick={() => fetchNextPage()}
+                                    />
+                                  </div>
+                                )}
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        )}
+                      />
+                    </div>
+                  </>
                 ) : null}
-
                 {fattening.id ? (
                   <div className="mb-4">
                     <TextInput

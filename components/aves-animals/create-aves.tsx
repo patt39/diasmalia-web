@@ -185,13 +185,13 @@ const CreateAvesAnimals = ({
                     </Tooltip>
                   </TooltipProvider>
                 </div>
-                {['Poulet de chair', 'Pisciculture', 'Pondeuses'].includes(
+                {['Poulet de chair', 'Pisciculture'].includes(
                   animalType?.name,
                 ) ? (
                   <>
                     <div className="my-2">
                       <Label>
-                        Phase de production
+                        {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
                         <span className="text-red-600">*</span>
                       </Label>
                       <SelectInput
@@ -212,7 +212,7 @@ const CreateAvesAnimals = ({
                         <div className="flex items-center space-x-4">
                           <div className="my-2">
                             <Label>
-                              Nombre d&apos;animaux
+                              {t.formatMessage({ id: 'NUMBER.ANIMALS' })}
                               <span className="text-red-600">*</span>
                             </Label>
                             <TextInput
@@ -226,7 +226,8 @@ const CreateAvesAnimals = ({
                           </div>
                           <div>
                             <Label>
-                              Poids(g)<span className="text-red-600">*</span>
+                              {t.formatMessage({ id: 'TABANIMAL.WEIGHT' })}
+                              (g)<span className="text-red-600">*</span>
                             </Label>
                             <TextInput
                               control={control}
@@ -238,7 +239,7 @@ const CreateAvesAnimals = ({
                           </div>
                           <div className="">
                             <Label>
-                              Date de lancement
+                              {t.formatMessage({ id: 'LAUNCHING.DATE' })}
                               <span className="text-red-600">*</span>
                             </Label>
                             <DateInput
@@ -255,7 +256,7 @@ const CreateAvesAnimals = ({
                         <div className="my-2 flex items-center space-x-10">
                           <div>
                             <Label>
-                              Nombre de males
+                              {t.formatMessage({ id: 'ANIMAL.MALES' })}
                               <span className="text-red-600">*</span>
                             </Label>
                             <TextInput
@@ -268,7 +269,7 @@ const CreateAvesAnimals = ({
                           </div>
                           <div>
                             <Label>
-                              Nombre de femèles
+                              {t.formatMessage({ id: 'ANIMAL.FEMALES' })}
                               <span className="text-red-600">*</span>
                             </Label>
                             <TextInput
@@ -281,7 +282,8 @@ const CreateAvesAnimals = ({
                           </div>
                           <div>
                             <Label>
-                              Poids(g)<span className="text-red-600">*</span>
+                              {t.formatMessage({ id: 'TABANIMAL.WEIGHT' })}(g)
+                              <span className="text-red-600">*</span>
                             </Label>
                             <TextInput
                               control={control}
@@ -294,7 +296,7 @@ const CreateAvesAnimals = ({
                         </div>
                         <div className="my-2">
                           <Label>
-                            Date de lancement
+                            {t.formatMessage({ id: 'LAUNCHING.DATE' })}
                             <span className="text-red-600">*</span>
                           </Label>
                           <DateInput
@@ -310,7 +312,9 @@ const CreateAvesAnimals = ({
                 ) : (
                   <>
                     <div className="my-2">
-                      <Label>Phase de production</Label>
+                      <Label>
+                        {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
+                      </Label>
                       <SelectInput
                         firstOptionName="Choose a production type"
                         control={control}
@@ -325,52 +329,100 @@ const CreateAvesAnimals = ({
                       />
                     </div>
                     <div className="my-2 flex items-center space-x-10">
-                      <div>
-                        <Label>
-                          Nombre de males
-                          <span className="text-red-600">*</span>
-                        </Label>
-                        <TextInput
-                          control={control}
-                          type="number"
-                          name="male"
-                          defaultValue="0"
-                          placeholder="Number of males"
-                          errors={errors}
-                        />
-                      </div>
-                      <div>
-                        <Label>
-                          Nombre de femèles
-                          <span className="text-red-600">*</span>
-                        </Label>
-                        <TextInput
-                          control={control}
-                          type="number"
-                          name="female"
-                          defaultValue="0"
-                          placeholder="Number of females"
-                          errors={errors}
-                        />
-                      </div>
-                      <div>
-                        <Label>
-                          Poids(g)<span className="text-red-600">*</span>
-                        </Label>
-                        <TextInput
-                          control={control}
-                          type="number"
-                          name="weight"
-                          placeholder="Give weight"
-                          errors={errors}
-                        />
-                      </div>
+                      {animalType?.name !== 'Pondeuses' ? (
+                        <>
+                          <div>
+                            <Label>
+                              {t.formatMessage({ id: 'ANIMAL.MALES' })}
+                              <span className="text-red-600">*</span>
+                            </Label>
+                            <TextInput
+                              control={control}
+                              type="number"
+                              name="male"
+                              defaultValue="0"
+                              placeholder="Number of males"
+                              errors={errors}
+                            />
+                          </div>
+                          <div>
+                            <Label>
+                              {t.formatMessage({ id: 'ANIMAL.FEMALES' })}
+                              <span className="text-red-600">*</span>
+                            </Label>
+                            <TextInput
+                              control={control}
+                              type="number"
+                              name="female"
+                              defaultValue="0"
+                              placeholder="Number of females"
+                              errors={errors}
+                            />
+                          </div>
+                          <div>
+                            <Label>
+                              {t.formatMessage({ id: 'TABANIMAL.WEIGHT' })}(g)
+                              <span className="text-red-600">*</span>
+                            </Label>
+                            <TextInput
+                              control={control}
+                              type="number"
+                              name="weight"
+                              placeholder="Give weight"
+                              errors={errors}
+                            />
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="my-2">
+                            <Label>
+                              {t.formatMessage({ id: 'NUMBER.ANIMALS' })}
+                              <span className="text-red-600">*</span>
+                            </Label>
+                            <TextInput
+                              control={control}
+                              type="number"
+                              name="quantity"
+                              defaultValue="0"
+                              placeholder="Number of animals"
+                              errors={errors}
+                            />
+                          </div>
+                          <div>
+                            <Label>
+                              {t.formatMessage({ id: 'TABANIMAL.WEIGHT' })}
+                              (g)<span className="text-red-600">*</span>
+                            </Label>
+                            <TextInput
+                              control={control}
+                              type="number"
+                              name="weight"
+                              placeholder="Give weight"
+                              errors={errors}
+                            />
+                          </div>
+                          <div className="">
+                            <Label>
+                              {t.formatMessage({ id: 'LAUNCHING.DATE' })}
+                              <span className="text-red-600">*</span>
+                            </Label>
+                            <DateInput
+                              control={control}
+                              errors={errors}
+                              placeholder="Starting date"
+                              name="birthday"
+                            />
+                          </div>
+                        </>
+                      )}
                     </div>
                   </>
                 )}
                 <div className="w-full">
                   <Label>
-                    Code du batiment<span className="text-red-600">*</span>
+                    {t.formatMessage({ id: 'LOCATION.CODE' })}
+                    <span className="text-red-600">*</span>
                   </Label>
                   <Controller
                     control={control}
@@ -419,7 +471,8 @@ const CreateAvesAnimals = ({
                 ) ? (
                   <div className="my-2">
                     <Label>
-                      Date de lancement<span className="text-red-600">*</span>
+                      {t.formatMessage({ id: 'LAUNCHING.DATE' })}
+                      <span className="text-red-600">*</span>
                     </Label>
                     <DateInput
                       control={control}

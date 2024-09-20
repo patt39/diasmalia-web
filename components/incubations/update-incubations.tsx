@@ -1,4 +1,3 @@
-import { GetAnimalsAPI } from '@/api-site/animals';
 import { CreateOrUpdateOneIncubationAPI } from '@/api-site/incubations';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
@@ -8,31 +7,21 @@ import {
   AlertSuccessNotification,
 } from '@/utils/alert-notification';
 import { XIcon } from 'lucide-react';
-import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import { Controller, SubmitHandler } from 'react-hook-form';
+import { SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
-import { DateInput, LoadingFile } from '../ui-setting/ant';
-import { ErrorFile } from '../ui-setting/ant/error-file';
+import { DateInput } from '../ui-setting/ant';
 import { TextInput } from '../ui-setting/shadcn';
 import { Label } from '../ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '../ui/select';
 
 const schema = yup.object({
+  code: yup.string().optional(),
   quantityEnd: yup.number().optional(),
   quantityStart: yup.number().required('quantity is required'),
   dueDate: yup.date().required('dueDate is required field'),
 });
 
-const CreateOrUpdateIncubations = ({
+const UpdateIncubations = ({
   showModal,
   setShowModal,
   incubation,
@@ -52,8 +41,6 @@ const CreateOrUpdateIncubations = ({
     hasErrors,
     setHasErrors,
   } = useReactHookForm({ schema });
-  const { query } = useRouter();
-  const animalTypeId = String(query?.animalTypeId);
 
   useEffect(() => {
     if (incubation) {
@@ -100,19 +87,6 @@ const CreateOrUpdateIncubations = ({
     }
   };
 
-  const {
-    isLoading: isLoadingAnimals,
-    isError: isErrorAnimals,
-    data: dataAnimals,
-  } = GetAnimalsAPI({
-    take: 10,
-    sort: 'desc',
-    status: 'ACTIVE',
-    sortBy: 'createdAt',
-    productionPhase: 'LAYING',
-    animalTypeId: animalTypeId,
-  });
-
   return (
     <>
       {showModal ? (
@@ -143,51 +117,35 @@ const CreateOrUpdateIncubations = ({
                   </div>
                 )}
 
-                <div className="flex items-center space-x-2">
-                  <Controller
-                    control={control}
-                    name="code"
-                    render={({ field: { value, onChange } }) => (
-                      <Select
-                        onValueChange={onChange}
-                        name={'code'}
-                        value={value}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a band code / sélectionnez un code" />
-                        </SelectTrigger>
-                        <SelectContent className="dark:border-gray-800">
-                          <SelectGroup>
-                            <SelectLabel>Codes</SelectLabel>
-                            {isLoadingAnimals ? (
-                              <LoadingFile />
-                            ) : isErrorAnimals ? (
-                              <ErrorFile
-                                title="404"
-                                description="Error finding data please try again..."
-                              />
-                            ) : Number(dataAnimals?.pages[0]?.data?.total) <=
-                              0 ? (
-                              <ErrorFile description="Don't have active animals in LAYING phase yet" />
-                            ) : (
-                              dataAnimals?.pages
-                                .flatMap((page: any) => page?.data?.value)
-                                .map((item, index) => (
-                                  <>
-                                    <SelectItem key={index} value={item?.code}>
-                                      {item?.code}
-                                    </SelectItem>
-                                  </>
-                                ))
-                            )}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    )}
-                  />
-                  <div className="items-center mb-6">
+                <div className="flex items-center my-2 space-x-2">
+                  <div>
                     <Label>
-                      {t.formatMessage({ id: 'HATCHING.DATE' })}:
+                      {t.formatMessage({ id: 'EGGS.INCUBATED' })}
+                      <span className="text-red-600">*</span>
+                    </Label>
+                    <TextInput
+                      control={control}
+                      type="number"
+                      name="quantityStart"
+                      placeholder="Number eggs incubated"
+                      errors={errors}
+                    />
+                  </div>
+                  <div className="mr-2">
+                    <Label className="mr-4 space-x-2">
+                      {t.formatMessage({ id: 'EGGS.HATCHED' })}
+                    </Label>
+                    <TextInput
+                      control={control}
+                      type="number"
+                      name="quantityEnd"
+                      placeholder="Number hatched"
+                      errors={errors}
+                    />
+                  </div>
+                  <div className="items-center">
+                    <Label>
+                      {t.formatMessage({ id: 'HATCHING.DATE' })}
                       <span className="text-red-600">*</span>
                     </Label>
                     <DateInput
@@ -198,51 +156,6 @@ const CreateOrUpdateIncubations = ({
                     />
                   </div>
                 </div>
-                {incubation?.id ? (
-                  <div className="flex items-center">
-                    <div className="flex items-center space-x-4">
-                      <Label className="mr-2">
-                        {t.formatMessage({ id: 'EGGS.INCUBATED' })}:
-                        <span className="text-red-600">*</span>
-                      </Label>
-                      <div className="mr-2">
-                        <TextInput
-                          control={control}
-                          type="number"
-                          name="quantityStart"
-                          placeholder="Number eggs incubated"
-                          errors={errors}
-                        />
-                      </div>
-                      <Label className="mr-4 space-x-2">
-                        {t.formatMessage({ id: 'EGGS.HATCHED' })}:
-                      </Label>
-                      <div className="mr-2">
-                        <TextInput
-                          control={control}
-                          type="number"
-                          name="quantityEnd"
-                          placeholder="Number hatched"
-                          errors={errors}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="mt-0 mr-2 flex items-center">
-                    <Label className="mr-2 flex items-center">
-                      Incubés:<span className="text-red-600">*</span>
-                    </Label>
-                    <TextInput
-                      control={control}
-                      type="number"
-                      name="quantityStart"
-                      placeholder="Number of eggs incubated"
-                      errors={errors}
-                    />
-                  </div>
-                )}
-
                 <div className="mt-4 flex items-center space-x-4">
                   <ButtonInput
                     type="button"
@@ -271,4 +184,4 @@ const CreateOrUpdateIncubations = ({
   );
 };
 
-export { CreateOrUpdateIncubations };
+export { UpdateIncubations };

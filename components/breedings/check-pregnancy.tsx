@@ -1,4 +1,5 @@
 import { CreateOneCheckAPI } from '@/api-site/breedings';
+import { GetLocationsAPI } from '@/api-site/locations';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
 import { SelectInput } from '@/components/ui-setting/shadcn';
@@ -9,12 +10,24 @@ import {
 } from '@/utils/alert-notification';
 import { Label } from '@radix-ui/react-label';
 import { XIcon } from 'lucide-react';
+import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import { SubmitHandler } from 'react-hook-form';
+import { Controller, SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
-import { DateInput } from '../ui-setting/shadcn/date-input';
+import { DateInput, LoadingFile } from '../ui-setting/ant';
+import { ErrorFile } from '../ui-setting/ant/error-file';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '../ui/select';
 
 const schema = yup.object({
+  locationCode: yup.string().optional(),
   farrowingDate: yup.date().optional(),
   method: yup.string().required('method is required'),
   result: yup.string().required('result is required'),
@@ -30,6 +43,7 @@ const CheckPregnancy = ({
   breeding?: any;
 }) => {
   const {
+    t,
     watch,
     control,
     setValue,
@@ -40,8 +54,10 @@ const CheckPregnancy = ({
     hasErrors,
     setHasErrors,
   } = useReactHookForm({ schema });
+  const { query } = useRouter();
+  const animalTypeId = String(query?.animalTypeId);
 
-  const watchResult = watch('result', '');
+  const watchResult = watch('result');
 
   useEffect(() => {
     if (breeding) {
@@ -88,6 +104,18 @@ const CheckPregnancy = ({
     }
   };
 
+  const {
+    isLoading: isLoadingLocations,
+    isError: isErrorLocations,
+    data: dataLocations,
+  } = GetLocationsAPI({
+    take: 10,
+    sort: 'desc',
+    sortBy: 'createdAt',
+    productionPhase: 'GESTATION',
+    animalTypeId: animalTypeId,
+  });
+
   return (
     <>
       {showModal ? (
@@ -117,7 +145,6 @@ const CheckPregnancy = ({
                     </div>
                   </div>
                 )}
-
                 <div className="mb-4 flex items-center space-x-2">
                   <Label>
                     Methode:
@@ -132,9 +159,9 @@ const CheckPregnancy = ({
                     name="method"
                     dataItem={[
                       { id: 1, name: 'BLOOD_TEST' },
-                      { id: 1, name: 'RECTAL_PALPATION' },
-                      { id: 1, name: 'OBSERVATION' },
-                      { id: 1, name: 'ULTRASOUND' },
+                      { id: 2, name: ' RECTAL_PALPATION' },
+                      { id: 3, name: 'OBSERVATION' },
+                      { id: 4, name: 'ULTRA_SOUND' },
                     ]}
                   />
                   <Label>
@@ -154,24 +181,75 @@ const CheckPregnancy = ({
                     ]}
                   />
                 </div>
-
                 {watchResult === 'PREGNANT' ? (
-                  <div>
-                    <Label>
-                      Donnez la date de mise bas
-                      <span className="text-red-600">*</span>
-                    </Label>
-                    <DateInput
-                      control={control}
-                      errors={errors}
-                      placeholder="Pick a date"
-                      name="farrowingDate"
-                    />
-                  </div>
+                  <>
+                    <div>
+                      <Label>
+                        Donnez la date de mise bas
+                        <span className="text-red-600">*</span>
+                      </Label>
+                      <DateInput
+                        control={control}
+                        errors={errors}
+                        placeholder="Pick a date"
+                        name="farrowingDate"
+                      />
+                    </div>
+                    <div className="mt-2">
+                      <Label>
+                        Sélectionnez un emplacement
+                        <span className="text-red-600">*</span>
+                      </Label>
+                      <Controller
+                        control={control}
+                        name="locationCode"
+                        render={({ field: { value, onChange } }) => (
+                          <Select
+                            onValueChange={onChange}
+                            name={'locationCode'}
+                            value={value}
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select a location code" />
+                            </SelectTrigger>
+                            <SelectContent className="dark:border-gray-800">
+                              <SelectGroup>
+                                <SelectLabel>Location codes</SelectLabel>
+                                {isLoadingLocations ? (
+                                  <LoadingFile />
+                                ) : isErrorLocations ? (
+                                  <ErrorFile
+                                    title="404"
+                                    description="Error finding data please try again..."
+                                  />
+                                ) : Number(
+                                    dataLocations?.pages[0]?.data?.total,
+                                  ) <= 0 ? (
+                                  <ErrorFile description="Don't have location codes" />
+                                ) : (
+                                  dataLocations?.pages
+                                    .flatMap((page: any) => page?.data?.value)
+                                    .map((item, index) => (
+                                      <>
+                                        <SelectItem
+                                          key={index}
+                                          value={item?.code}
+                                        >
+                                          {item?.code}
+                                        </SelectItem>
+                                      </>
+                                    ))
+                                )}
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        )}
+                      />
+                    </div>
+                  </>
                 ) : (
                   ''
                 )}
-
                 <div className="mt-4 flex items-center space-x-4">
                   <ButtonInput
                     type="button"
@@ -179,7 +257,7 @@ const CheckPregnancy = ({
                     variant="outline"
                     onClick={() => setShowModal(false)}
                   >
-                    Cancel
+                    {t.formatMessage({ id: 'ALERT.CANCEL' })}
                   </ButtonInput>
                   <ButtonInput
                     type="submit"
@@ -188,7 +266,7 @@ const CheckPregnancy = ({
                     disabled={loading}
                     loading={loading}
                   >
-                    Save
+                    {t.formatMessage({ id: 'ALERT.CONTINUE' })}
                   </ButtonInput>
                 </div>
               </div>

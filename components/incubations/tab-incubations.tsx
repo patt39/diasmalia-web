@@ -19,7 +19,6 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
@@ -29,7 +28,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '../ui/tooltip';
-import { CreateOrUpdateIncubations } from './create-or-update-incubations';
+import { CreateIncubations } from './create-incubations';
 import { ListIncubations } from './list-incubations';
 
 const TabIncubations = ({ animalTypeId }: { animalTypeId: string }) => {
@@ -78,12 +77,19 @@ const TabIncubations = ({ animalTypeId }: { animalTypeId: string }) => {
                 <Button variant="outline" size="sm" className="h-8 gap-1">
                   <ListFilter className="h-3.5 w-3.5" />
                   <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    Filter
+                    {periode == ''
+                      ? t.formatMessage({ id: 'ACTIVITY.FILTERALL' })
+                      : periode == '7'
+                        ? t.formatMessage({ id: 'ACTIVITY.LAST7DAYS' })
+                        : periode == '15'
+                          ? t.formatMessage({ id: 'ACTIVITY.LAST15DAYS' })
+                          : t.formatMessage({
+                              id: 'ACTIVITY.LAST30DAYS',
+                            })}
                   </span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="dark:border-gray-800">
-                <DropdownMenuLabel>Filter by</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuCheckboxItem
                   className="cursor-pointer"
@@ -174,7 +180,7 @@ const TabIncubations = ({ animalTypeId }: { animalTypeId: string }) => {
           />
         </CardContent>
       </main>
-      <CreateOrUpdateIncubations
+      <CreateIncubations
         incubation={animalTypeId}
         showModal={isOpen}
         setShowModal={setIsOpen}

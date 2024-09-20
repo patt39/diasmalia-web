@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { GetAnimalStatisticsAPI } from '@/api-site/animals';
-import { ChickSalesAnalyticAPI } from '@/api-site/sales';
+import { ChickenSalesAnalyticsAPI } from '@/api-site/sales';
 import { dateTimeNowUtc, formatMMDate, getMonthNow } from '@/utils';
 import { Calendar, ListFilter } from 'lucide-react';
 import { Fragment, useState } from 'react';
@@ -22,7 +22,7 @@ import {
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 
-const ChickSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
+const AnimalSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
   const [periode, setPeriode] = useState('');
   const [year, setYear] = useState<String>(`${dateTimeNowUtc().getFullYear()}`);
   const [months, setMonths] = useState<String>(`${getMonthNow(new Date())}`);
@@ -31,19 +31,19 @@ const ChickSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
     animalTypeId: animalTypeId,
   });
 
-  const { data: dataSalesChicksAnalyticsDay } = ChickSalesAnalyticAPI({
+  const { data: dataSalesChickenAnalyticsDay } = ChickenSalesAnalyticsAPI({
     year: String(year),
     months: String(months),
     periode: String(periode),
     animalTypeId: animalTypeId,
   });
 
-  const { data: dataSalesChicksAnalyticsMonth } = ChickSalesAnalyticAPI({
+  const { data: dataSalesChickenAnalyticsMonth } = ChickenSalesAnalyticsAPI({
     year: String(year),
     animalTypeId: animalTypeId,
   });
 
-  const { data: dataSalesChicksAnalyticsYear } = ChickSalesAnalyticAPI({
+  const { data: dataSalesChickenAnalyticsYear } = ChickenSalesAnalyticsAPI({
     animalTypeId: animalTypeId,
   });
 
@@ -60,13 +60,13 @@ const ChickSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
 
   return (
     <>
-      {animalStatistics?.sumSaleChicks?.price !== null ? (
+      {animalStatistics?.sumSaleAnimals?.price !== null ? (
         <Card className="dark:border-input dark:bg-background sm:col-span-2">
           <CardHeader>
             <div className="flex items-center">
               <div className="mr-auto items-center gap-2">
                 <CardTitle className="text-xl">
-                  {t.formatMessage({ id: 'AMOUNT.SALE.CHICKS' })}
+                  {t.formatMessage({ id: 'ANIMAL.FEED' })}
                 </CardTitle>
               </div>
               <div className="ml-auto flex items-center gap-2">
@@ -81,7 +81,7 @@ const ChickSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="dark:border-gray-800 w-auto">
-                      {dataSalesChicksAnalyticsYear?.data?.map(
+                      {dataSalesChickenAnalyticsYear?.data?.map(
                         (item: any, index: number) => (
                           <Fragment key={index}>
                             <DropdownMenuCheckboxItem
@@ -108,7 +108,7 @@ const ChickSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="dark:border-gray-800 w-auto">
-                    {dataSalesChicksAnalyticsMonth?.data?.map(
+                    {dataSalesChickenAnalyticsMonth?.data?.map(
                       (item: any, index: number) => (
                         <Fragment key={index}>
                           <DropdownMenuCheckboxItem
@@ -176,20 +176,19 @@ const ChickSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
           <CardContent>
             <ChartContainer
               config={chartConfig}
-              className="lg:h-[400px] w-full"
+              className="lg:h-[300px] w-full"
             >
               <AreaChart
                 accessibilityLayer
-                data={dataSalesChicksAnalyticsDay?.data}
+                data={dataSalesChickenAnalyticsDay}
                 margin={{
-                  top: 12,
                   left: 12,
                   right: 12,
                 }}
               >
                 <CartesianGrid vertical={false} />
                 <XAxis
-                  dataKey="date"
+                  dataKey="month"
                   tickLine={false}
                   axisLine={false}
                   tickMargin={8}
@@ -200,7 +199,7 @@ const ChickSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                   content={<ChartTooltipContent indicator="line" />}
                 />
                 <Area
-                  dataKey="sum"
+                  dataKey="desktop"
                   type="natural"
                   fill="var(--color-desktop)"
                   fillOpacity={0.4}
@@ -216,4 +215,4 @@ const ChickSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
     </>
   );
 };
-export { ChickSalesAnalytics };
+export { AnimalSalesAnalytics };

@@ -1,8 +1,9 @@
 import { GetOneDeathAPI } from '@/api-site/deaths';
 import { useReactHookForm } from '@/components/hooks';
-import { TextAreaInput } from '@/components/ui-setting/shadcn';
+import { TextAreaInput, TextInput } from '@/components/ui-setting/shadcn';
 import { XIcon } from 'lucide-react';
 import * as yup from 'yup';
+import { Label } from '../ui/label';
 
 const schema = yup.object({});
 
@@ -15,7 +16,7 @@ const ViewAvesDeath = ({
   setShowModal: any;
   death?: any;
 }) => {
-  const { control, errors } = useReactHookForm({ schema });
+  const { t, control, errors } = useReactHookForm({ schema });
 
   const { data: GetOneDeath } = GetOneDeathAPI({
     deathId: death?.id,
@@ -37,10 +38,85 @@ const ViewAvesDeath = ({
             </button>
             <form className="mt-4">
               <div className="flex-auto justify-center p-2">
+                {['Poulet de chair', 'Pisciculture', 'Pondeuses'].includes(
+                  GetOneDeath?.animalType?.name,
+                ) ? (
+                  <div className="my-4">
+                    <Label>
+                      {t.formatMessage({ id: 'NUMBER.ANIMALS' })}
+                      <span className="text-red-600">*</span>
+                    </Label>
+                    <TextInput
+                      control={control}
+                      type="number"
+                      name="number"
+                      defaultValue={GetOneDeath?.number}
+                      placeholder="Give a number"
+                      errors={errors}
+                      disabled
+                    />
+                  </div>
+                ) : GetOneDeath?.male !== 0 ? (
+                  <div className="my-4">
+                    <Label>
+                      {t.formatMessage({ id: 'ANIMAL.MALES' })}:
+                      <span className="text-red-600">*</span>
+                    </Label>
+                    <TextInput
+                      control={control}
+                      type="number"
+                      name="number"
+                      defaultValue={GetOneDeath?.male}
+                      errors={errors}
+                      disabled
+                    />
+                  </div>
+                ) : GetOneDeath?.female !== 0 ? (
+                  <div className="my-4">
+                    <Label>
+                      {t.formatMessage({ id: 'ANIMAL.FEMALES' })}:
+                      <span className="text-red-600">*</span>
+                    </Label>
+                    <TextInput
+                      control={control}
+                      type="number"
+                      name="female"
+                      defaultValue={GetOneDeath?.female}
+                      errors={errors}
+                      disabled
+                    />
+                  </div>
+                ) : (
+                  <div className="my-4 flex items-center space-x-1">
+                    <Label>
+                      {t.formatMessage({ id: 'ANIMAL.MALES' })}:
+                      <span className="text-red-600">*</span>
+                    </Label>
+                    <TextInput
+                      control={control}
+                      type="number"
+                      name="male"
+                      defaultValue={GetOneDeath?.male}
+                      errors={errors}
+                      disabled
+                    />
+                    <Label>
+                      {t.formatMessage({ id: 'ANIMAL.FEMALES' })}:
+                      <span className="text-red-600">*</span>
+                    </Label>
+                    <TextInput
+                      control={control}
+                      type="number"
+                      name="female"
+                      defaultValue={GetOneDeath?.female}
+                      errors={errors}
+                      disabled
+                    />
+                  </div>
+                )}
                 <div className="mb-4">
                   <TextAreaInput
                     control={control}
-                    label="Note"
                     name="note"
                     defaultValue={GetOneDeath?.note}
                     errors={errors}

@@ -87,11 +87,11 @@ const ViewSale = ({
                 <div className="mb-4 flex items-center space-x-4">
                   <Input disabled type="text" value={getOneSale?.method} />
                 </div>
-                <div className="mb-4">
+                <Label>{t.formatMessage({ id: 'SALE.DETAIL' })}</Label>
+                <div className="mb-2">
                   <TextAreaInput
                     control={control}
-                    label="Details of sale"
-                    name="detail"
+                    name="note"
                     defaultValue={getOneSale?.note}
                     errors={errors}
                     disabled

@@ -60,6 +60,17 @@ const ListAvesDeaths = ({ item, index }: { item: any; index: number }) => {
             ? item?.note?.substring(0, 20) + '...'
             : item?.note}
         </TableCell>
+        <TableCell>
+          {item?.productionPhase === 'GROWTH' ? (
+            <p className="font-medium">
+              {t.formatMessage({ id: 'PRODUCTIONPHASE.GROWTH' })}
+            </p>
+          ) : (
+            <p className="font-medium">
+              {t.formatMessage({ id: 'PRODUCTIONPHASE.LAYING' })}
+            </p>
+          )}
+        </TableCell>
         <TableCell>{formatDateDDMMYY(item?.createdAt as Date)}</TableCell>
         <TableCell>
           <DropdownMenu>
@@ -85,12 +96,17 @@ const ListAvesDeaths = ({ item, index }: { item: any; index: number }) => {
                   {t.formatMessage({ id: 'TABANIMAL.VIEW' })}
                 </span>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setIsOpen(true)}>
-                <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
-                <span className="ml-2 cursor-pointer hover:text-red-600">
-                  {t.formatMessage({ id: 'TABANIMAL.DELETE' })}
-                </span>
-              </DropdownMenuItem>
+              {item?.animal?.quantity === 0 ||
+              item?.animal?.deletedAt !== null ? (
+                <DropdownMenuItem onClick={() => setIsOpen(true)}>
+                  <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
+                  <span className="ml-2 cursor-pointer hover:text-red-600">
+                    {t.formatMessage({ id: 'TABANIMAL.DELETE' })}
+                  </span>
+                </DropdownMenuItem>
+              ) : (
+                ''
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </TableCell>

@@ -102,6 +102,9 @@ export const apiEndpoints: ClientApiMethods = {
   updateOneAvesSale: PUT(`${baseUrl}/sales/:saleId/edit`),
   deleteOneSale: DELETE(`${baseUrl}/sales/:saleId/delete`),
   downloadSalePdf: GET(`${baseUrl}/sales/:saleId/download`),
+  getEggsAnalytics: GET(`${baseUrl}/analytics/sales/eggs`),
+  getchicksAnalytics: GET(`${baseUrl}/analytics/sales/chicks`),
+  getchickensAnalytics: GET(`${baseUrl}/analytics/sales/chickens`),
   getOneSaleAnimalType: GET(`${baseUrl}/sales/:animalTypeId/view/animalType`),
 
   /****************** User route */
@@ -141,14 +144,16 @@ export const apiEndpoints: ClientApiMethods = {
   createOneAnimal: POST(`${baseUrl}/animals/create`),
   getOneAnimal: GET(`${baseUrl}/animals/:animalId/view`),
   createBulkAnimal: POST(`${baseUrl}/animals/create/bulk`),
-  createOneAvesAnimal: POST(`${baseUrl}/animals/:animalTypeId/create`),
   updateOneAnimal: PUT(`${baseUrl}/animals/:animalId/edit`),
   updateOneAves: PUT(`${baseUrl}/animals/:animalId/edit`),
+  createOneAvesAnimal: POST(`${baseUrl}/animals/:animalTypeId/create`),
+  getAnimalByAnimalType: GET(`${baseUrl}/animals/:animalTypeId/view/animal`),
   getAnimalStatistics: GET(`${baseUrl}/animals/:animalTypeId/statistics`),
   deleteOneAnimal: DELETE(`${baseUrl}/animals/:animalId/delete`),
 
   /****************** Feedings route */
   getFeedings: GET(`${baseUrl}/feedings`),
+  getFeedingsAnalytics: GET(`${baseUrl}/analytics/feedings`),
   createOneFeeding: POST(`${baseUrl}/feedings/bulk/create`),
   createOneAvesFeeding: POST(`${baseUrl}/feedings/create/aves`),
   updateOneFeeding: PUT(`${baseUrl}/feedings/:feedingId/edit`),
@@ -163,6 +168,7 @@ export const apiEndpoints: ClientApiMethods = {
 
   /****************** Deaths route */
   getDeaths: GET(`${baseUrl}/deaths`),
+  getDeathAnalytics: GET(`${baseUrl}/analytics/deaths`),
   getOneDeath: GET(`${baseUrl}/deaths/:deathId/view`),
   createOneDeath: POST(`${baseUrl}/deaths/bulk/create`),
   updateOneDeath: PUT(`${baseUrl}/deaths/:deathId/edit`),
@@ -215,6 +221,7 @@ export const apiEndpoints: ClientApiMethods = {
   /****************** Incubations route */
   getIncubations: GET(`${baseUrl}/incubations`),
   createOneIncubation: POST(`${baseUrl}/incubations/create`),
+  getIncubationsAnalytics: GET(`${baseUrl}/analytics/incubations`),
   getOneIncubation: GET(`${baseUrl}/incubations/:incubationId/view`),
   updateOneIncubation: PUT(`${baseUrl}/incubations/:incubationId/edit`),
   deleteOneIncubation: DELETE(`${baseUrl}/incubations/:incubationId/delete`),

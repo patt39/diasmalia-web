@@ -127,7 +127,6 @@ const CreateAnimals = ({
   } = GetLocationsAPI({
     take: 10,
     sort: 'desc',
-    status: true,
     sortBy: 'createdAt',
     animalTypeId: animalTypeId,
   });
@@ -229,7 +228,7 @@ const CreateAnimals = ({
                   <div className="flex items-center mt-6">
                     <TextInput
                       control={control}
-                      type="number"
+                      type="text"
                       name="code"
                       placeholder="Give a code"
                       errors={errors}
@@ -261,7 +260,7 @@ const CreateAnimals = ({
                   </div>
                   <div>
                     <Label>
-                      Poids:<span className="text-red-600">*</span>
+                      Poids<span className="text-red-600">*</span>
                     </Label>
                     <TextInput
                       control={control}
@@ -274,7 +273,7 @@ const CreateAnimals = ({
                 </div>
                 <div>
                   <Label>
-                    Genre:<span className="text-red-600">*</span>
+                    Genre<span className="text-red-600">*</span>
                   </Label>
                   <SelectInput
                     firstOptionName="Choose a production type"
@@ -290,7 +289,7 @@ const CreateAnimals = ({
                   />
                 </div>
                 <div className="my-2">
-                  <Label>Code de la mère:</Label>
+                  <Label>Code de la mère</Label>
                   <Controller
                     control={control}
                     name="codeMother"
@@ -342,7 +341,7 @@ const CreateAnimals = ({
                     )}
                   />
                   <div className="my-2">
-                    <Label>Code du père:</Label>
+                    <Label>Code du père</Label>
                     <Controller
                       control={control}
                       name="codeFather"
@@ -386,6 +385,23 @@ const CreateAnimals = ({
                           </SelectContent>
                         </Select>
                       )}
+                    />
+                  </div>
+                  <div className="mb-2">
+                    <Label>Phase de production</Label>
+                    <SelectInput
+                      firstOptionName="Choose a production type"
+                      control={control}
+                      errors={errors}
+                      placeholder="Select a production phase"
+                      valueType="text"
+                      name="productionPhase"
+                      dataItem={[
+                        { id: 1, name: 'GROWTH' },
+                        { id: 2, name: 'FATTENING' },
+                        { id: 3, name: 'REPRODUCTION' },
+                        { id: 4, name: 'GESTATION' },
+                      ]}
                     />
                   </div>
                 </div>

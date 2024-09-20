@@ -10,7 +10,6 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
@@ -102,12 +101,11 @@ const TabAvesAnimals = ({ animalTypeId }: { animalTypeId: string }) => {
                 <Button variant="outline" size="sm" className="h-8 gap-1">
                   <ListFilter className="h-3.5 w-3.5" />
                   <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    Filter
+                    {productionPhase === '' ? 'Filter' : productionPhase}
                   </span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="dark:border-gray-800">
-                <DropdownMenuLabel>Filter by</DropdownMenuLabel>
                 <DropdownMenuCheckboxItem
                   className="cursor-pointer"
                   checked

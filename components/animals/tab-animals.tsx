@@ -26,7 +26,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { TooltipProvider } from '@radix-ui/react-tooltip';
-import { ListFilter } from 'lucide-react';
+import { ListFilter, Replace, ReplaceAll } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { CreateAnimals } from './create-animal';
@@ -261,12 +261,14 @@ const TabAnimals = ({ animalTypeId }: { animalTypeId: string }) => {
                   className="cursor-pointer"
                   onClick={() => setIsOpen(true)}
                 >
+                  <Replace className="h-4 w-4  hover:shadow-xxl mr-1" />
                   {t.formatMessage({ id: 'ADD.AN.ANIMAL' })}
                 </DropdownMenuCheckboxItem>
                 <DropdownMenuCheckboxItem
                   className="cursor-pointer"
                   onClick={() => setIsBulkOpen(true)}
                 >
+                  <ReplaceAll className="h-4 w-4  hover:shadow-xxl mr-1" />
                   {t.formatMessage({ id: 'ADD.MANY.ANIMALS' })}
                 </DropdownMenuCheckboxItem>
               </DropdownMenuContent>

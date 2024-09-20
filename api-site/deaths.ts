@@ -76,6 +76,31 @@ export const CreateOrUpdateOneAvesDeathAPI = ({
   return result;
 };
 
+export const GetavesDeathsAnalyticAPI = (payload: {
+  periode?: string;
+  days?: string;
+  months?: string;
+  year?: string;
+  animalTypeId?: string;
+  organizationId?: string;
+}) => {
+  const { year, months, days, animalTypeId, organizationId } = payload;
+  return useQuery({
+    queryKey: ['aves-analytics', { ...payload }],
+    queryFn: async () =>
+      await makeApiCall({
+        action: 'getDeathAnalytics',
+        queryParams: {
+          year,
+          months,
+          days,
+          animalTypeId,
+          organizationId,
+        },
+      }),
+  });
+};
+
 export const CreateOrUpdateOneDeathAPI = ({
   onSuccess,
   onError,

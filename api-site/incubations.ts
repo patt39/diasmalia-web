@@ -119,6 +119,32 @@ export const GetIncubationsAPI = (
   });
 };
 
+export const GetIncubationsAnalyticAPI = (payload: {
+  periode?: string;
+  days?: string;
+  months?: string;
+  year?: string;
+  animalTypeId?: string;
+  organizationId?: string;
+}) => {
+  const { year, months, days, animalTypeId, organizationId } = payload;
+  return useQuery({
+    queryKey: ['incubations-analytics', { ...payload }],
+    queryFn: async () =>
+      await makeApiCall({
+        action: 'getIncubationsAnalytics',
+        queryParams: {
+          year,
+          months,
+          days,
+          animalTypeId,
+          organizationId,
+        },
+      }),
+    //staleTime: 6000,
+  });
+};
+
 export const DeleteOneIncubationAPI = ({
   onSuccess,
   onError,

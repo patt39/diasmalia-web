@@ -177,7 +177,7 @@ const CreateBreedings = ({
                   </div>
                 )}
 
-                <div className="mb-4 flex items-center space-x-4">
+                <div className="my-2 flex items-center space-x-4">
                   <Controller
                     control={control}
                     name="codeMale"
@@ -272,9 +272,9 @@ const CreateBreedings = ({
                     )}
                   />
                 </div>
-                <div className="mb-4">
+                <div className="my-2">
                   <Label>
-                    Sélectionnez la methode de croisement:
+                    Sélectionnez la methode de croisement
                     <span className="text-red-600">*</span>
                   </Label>
                   <SelectInput
@@ -291,9 +291,12 @@ const CreateBreedings = ({
                   />
                 </div>
                 <div className="mb-4">
+                  <Label>
+                    Description
+                    <span className="text-red-600">*</span>
+                  </Label>
                   <TextAreaInput
                     control={control}
-                    label="Description"
                     name="note"
                     placeholder="Note"
                     errors={errors}

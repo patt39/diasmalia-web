@@ -1,3 +1,4 @@
+import { GetOneAnimalTypeAPI } from '@/api-site/animal-type';
 import { GetAnimalsAPI } from '@/api-site/animals';
 import { CreateOrUpdateOneAvesIsolationAPI } from '@/api-site/isolations';
 import { useReactHookForm } from '@/components/hooks';
@@ -28,7 +29,9 @@ import { Label } from '../ui/label';
 
 const schema = yup.object({
   code: yup.string().optional(),
-  number: yup.number().required('number is a required field'),
+  male: yup.number().optional(),
+  female: yup.number().optional(),
+  number: yup.number().optional(),
   note: yup.string().required('note is a required field'),
 });
 
@@ -55,9 +58,13 @@ const CreateOrUpdateAvesIsolations = ({
   const { query, push } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
 
+  const { data: animalType } = GetOneAnimalTypeAPI({
+    animalTypeId: animalTypeId,
+  });
+
   useEffect(() => {
     if (isolation) {
-      const fields = ['code', 'number', 'note'];
+      const fields = ['code', 'number', 'note', 'male', 'female'];
       fields?.forEach((field: any) => setValue(field, isolation[field]));
     }
   }, [isolation, setValue]);
@@ -142,74 +149,117 @@ const CreateOrUpdateAvesIsolations = ({
                   </div>
                 )}
 
-                {!isolation?.id ? (
-                  <div className="mb-4">
-                    <Label>
-                      Sélectionez le code de la bande
-                      <span className="text-red-600">*</span>
-                    </Label>
-                    <Controller
-                      control={control}
-                      name="code"
-                      render={({ field: { value, onChange } }) => (
-                        <Select
-                          onValueChange={onChange}
-                          name={'code'}
-                          value={value}
-                        >
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select a code" />
-                          </SelectTrigger>
-                          <SelectContent className="dark:border-gray-800">
-                            <SelectGroup>
-                              <SelectLabel>Codes</SelectLabel>
-                              {isLoadingAnimals ? (
-                                <LoadingFile />
-                              ) : isErrorAnimals ? (
-                                <ErrorFile
-                                  title="404"
-                                  description="Error finding data please try again..."
-                                />
-                              ) : Number(dataAnimals?.pages[0]?.data?.total) <=
-                                0 ? (
-                                <ErrorFile description="Don't have active animals created yet please do" />
-                              ) : (
-                                dataAnimals?.pages
-                                  .flatMap((page: any) => page?.data?.value)
-                                  .map((item, index) => (
-                                    <>
-                                      <SelectItem key={index} value={item.code}>
-                                        {item.code}
-                                      </SelectItem>
-                                    </>
-                                  ))
-                              )}
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
-                  </div>
-                ) : null}
-
                 <div className="mb-4">
-                  <Label>
-                    Nombre animaux: <span className="text-red-600">*</span>
-                  </Label>
-                  <TextInput
-                    control={control}
-                    type="number"
-                    name="number"
-                    placeholder="Give a number"
-                    errors={errors}
-                  />
+                  {!isolation?.id ? (
+                    <>
+                      <Label>
+                        {t.formatMessage({ id: 'ANIMAL.CODE' })}
+                        <span className="text-red-600">*</span>
+                      </Label>
+                      <Controller
+                        control={control}
+                        name="code"
+                        render={({ field: { value, onChange } }) => (
+                          <Select
+                            onValueChange={onChange}
+                            name={'code'}
+                            value={value}
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select band code" />
+                            </SelectTrigger>
+                            <SelectContent className="dark:border-gray-800">
+                              <SelectGroup>
+                                <SelectLabel>Codes</SelectLabel>
+                                {isLoadingAnimals ? (
+                                  <LoadingFile />
+                                ) : isErrorAnimals ? (
+                                  <ErrorFile
+                                    title="404"
+                                    description="Error finding data please try again..."
+                                  />
+                                ) : Number(
+                                    dataAnimals?.pages[0]?.data?.total,
+                                  ) <= 0 ? (
+                                  <ErrorFile description="Don't have active animals yet" />
+                                ) : (
+                                  dataAnimals?.pages
+                                    .flatMap((page: any) => page?.data?.value)
+                                    .map((item, index) => (
+                                      <>
+                                        <SelectItem
+                                          key={index}
+                                          value={item?.code}
+                                        >
+                                          {item?.code}
+                                        </SelectItem>
+                                      </>
+                                    ))
+                                )}
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        )}
+                      />
+                    </>
+                  ) : (
+                    ''
+                  )}
+
+                  {['Poulet de chair', 'Pisciculture', 'Pondeuses'].includes(
+                    animalType?.name,
+                  ) ? (
+                    <div className="mt-4">
+                      <Label>
+                        {t.formatMessage({ id: 'NUMBER.ANIMALS' })}
+                        <span className="text-red-600">*</span>
+                      </Label>
+                      <TextInput
+                        control={control}
+                        type="number"
+                        name="number"
+                        placeholder="Give a number"
+                        errors={errors}
+                      />
+                    </div>
+                  ) : (
+                    <div className="my-4 flex items-center space-x-1">
+                      <Label>
+                        {t.formatMessage({ id: 'ANIMAL.MALES' })}:
+                        <span className="text-red-600">*</span>
+                      </Label>
+                      <TextInput
+                        control={control}
+                        type="number"
+                        name="male"
+                        defaultValue="0"
+                        placeholder="Number of males"
+                        errors={errors}
+                      />
+                      <Label>
+                        {t.formatMessage({ id: 'ANIMAL.FEMALES' })}:
+                        <span className="text-red-600">*</span>
+                      </Label>
+                      <TextInput
+                        control={control}
+                        type="number"
+                        name="female"
+                        defaultValue="0"
+                        placeholder="Number of females"
+                        errors={errors}
+                      />
+                    </div>
+                  )}
                 </div>
+                <Label>
+                  Motif
+                  <span className="text-red-600">*</span>
+                </Label>
                 <div className="mb-4">
                   <TextAreaInput
                     control={control}
-                    label="Description"
                     name="note"
-                    placeholder="Note"
+                    placeholder="Reason"
                     errors={errors}
                   />
                 </div>

@@ -1,5 +1,4 @@
 import { GetOneAnimalTypeAPI } from '@/api-site/animal-type';
-import { GetAnimalsAPI } from '@/api-site/animals';
 import { CreateOrUpdateAvesSaleAPI } from '@/api-site/sales';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
@@ -16,20 +15,9 @@ import {
 import { XIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import { Controller, SubmitHandler } from 'react-hook-form';
+import { SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
-import { LoadingFile } from '../ui-setting/ant';
-import { ErrorFile } from '../ui-setting/ant/error-file';
 import { Label } from '../ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '../ui/select';
 
 const schema = yup.object({
   code: yup.string().optional(),
@@ -46,7 +34,7 @@ const schema = yup.object({
   method: yup.string().required('method is required'),
 });
 
-const CreateOrUpdateAvesSales = ({
+const UpdateAvesSales = ({
   showModal,
   setShowModal,
   sale,
@@ -130,18 +118,6 @@ const CreateOrUpdateAvesSales = ({
     }
   };
 
-  const {
-    isLoading: isLoadingAnimals,
-    isError: isErrorAnimals,
-    data: dataAnimals,
-  } = GetAnimalsAPI({
-    take: 10,
-    sort: 'desc',
-    sortBy: 'createdAt',
-    status: 'ACTIVE',
-    animalTypeId: animalTypeId,
-  });
-
   return (
     <>
       {showModal ? (
@@ -171,117 +147,9 @@ const CreateOrUpdateAvesSales = ({
                     </div>
                   </div>
                 )}
-                {!sale?.id ? (
-                  <div className="mb-2 items-center">
-                    <Label>
-                      Code de la bande<span className="text-red-600">*</span>
-                    </Label>
-                    <Controller
-                      control={control}
-                      name="code"
-                      render={({ field: { value, onChange } }) => (
-                        <Select
-                          onValueChange={onChange}
-                          name={'code'}
-                          value={value}
-                        >
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select a band code" />
-                          </SelectTrigger>
-                          <SelectContent className="dark:border-gray-800">
-                            <SelectGroup>
-                              <SelectLabel>Codes</SelectLabel>
-                              {isLoadingAnimals ? (
-                                <LoadingFile />
-                              ) : isErrorAnimals ? (
-                                <ErrorFile
-                                  title="404"
-                                  description="Error finding data please try again..."
-                                />
-                              ) : Number(dataAnimals?.pages[0]?.data?.total) <=
-                                0 ? (
-                                <ErrorFile description="Don't have active animals yet" />
-                              ) : (
-                                dataAnimals?.pages
-                                  .flatMap((page: any) => page?.data?.value)
-                                  .map((item, index) => (
-                                    <>
-                                      <SelectItem
-                                        key={index}
-                                        value={item?.code}
-                                      >
-                                        {item?.code}
-                                      </SelectItem>
-                                    </>
-                                  ))
-                              )}
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
-                  </div>
-                ) : (
-                  ''
-                )}
                 {['Pisciculture'].includes(animalType?.name) ? (
-                  ''
-                ) : animalType.name === 'Pondeuses' ? (
-                  <div className="my-2">
-                    <Label>
-                      Choisissez un détail de vente
-                      <span className="text-red-600">*</span>
-                    </Label>
-                    <SelectInput
-                      className="cursor-pointer"
-                      firstOptionName="Choose selling detail"
-                      control={control}
-                      errors={errors}
-                      placeholder="Select a detail"
-                      valueType="text"
-                      name="detail"
-                      dataItem={[
-                        { id: 1, name: 'EGGS' },
-                        { id: 3, name: 'CHICKENS' },
-                      ]}
-                    />
-                  </div>
-                ) : (
-                  <div className="my-2">
-                    <Label>
-                      Choisissez un détail de vente
-                      <span className="text-red-600">*</span>
-                    </Label>
-                    <SelectInput
-                      firstOptionName="Choose selling detail"
-                      control={control}
-                      errors={errors}
-                      placeholder="Select a detail"
-                      valueType="text"
-                      name="detail"
-                      dataItem={[
-                        { id: 1, name: 'EGGS' },
-                        { id: 2, name: 'CHICKS' },
-                        { id: 3, name: 'CHICKENS' },
-                      ]}
-                    />
-                  </div>
-                )}
-                {['Pisciculture'].includes(animalType?.name) ? (
-                  <div className="mb-2 flex items-center space-x-1">
-                    <Label>
-                      Nombre:<span className="text-red-600">*</span>
-                    </Label>
-                    <TextInput
-                      control={control}
-                      type="number"
-                      name="number"
-                      placeholder="Give a number"
-                      errors={errors}
-                    />
-                    <Label>
-                      Prix:<span className="text-red-600">*</span>
-                    </Label>
+                  <div className="mb-2 items-center space-x-1">
+                    <Label>{t.formatMessage({ id: 'SALE.PRICE' })}</Label>
                     <TextInput
                       control={control}
                       type="number"
@@ -291,22 +159,10 @@ const CreateOrUpdateAvesSales = ({
                     />
                   </div>
                 ) : (
-                  <div className="my-2 flex items-center">
+                  <div className="my-2 items-center">
                     {watchDetail === 'EGGS' ? (
-                      <div className="my-2 flex items-center space-x-4">
-                        <Label>
-                          Nombre:<span className="text-red-600">*</span>
-                        </Label>
-                        <TextInput
-                          control={control}
-                          type="number"
-                          name="number"
-                          placeholder="Give a number"
-                          errors={errors}
-                        />
-                        <Label>
-                          Prix:<span className="text-red-600">*</span>
-                        </Label>
+                      <div className="my-2">
+                        <Label>{t.formatMessage({ id: 'SALE.PRICE' })}</Label>
                         <TextInput
                           control={control}
                           type="number"
@@ -317,38 +173,8 @@ const CreateOrUpdateAvesSales = ({
                       </div>
                     ) : (
                       <>
-                        <div className="pr-10">
-                          <Label>
-                            Nombre de males:
-                            <span className="text-red-600">*</span>
-                          </Label>
-                          <TextInput
-                            control={control}
-                            type="number"
-                            name="male"
-                            defaultValue="0"
-                            placeholder="Number of males"
-                            errors={errors}
-                          />
-                        </div>
-                        <div className="ml-4">
-                          <Label>
-                            Nombre de femèles:
-                            <span className="text-red-600">*</span>
-                          </Label>
-                          <TextInput
-                            control={control}
-                            type="number"
-                            name="female"
-                            defaultValue="0"
-                            placeholder="Number of females"
-                            errors={errors}
-                          />
-                        </div>
-                        <div className="pl-10">
-                          <Label>
-                            Prix:<span className="text-red-600">*</span>
-                          </Label>
+                        <div>
+                          <Label>{t.formatMessage({ id: 'SALE.PRICE' })}</Label>
                           <TextInput
                             control={control}
                             type="number"
@@ -363,7 +189,7 @@ const CreateOrUpdateAvesSales = ({
                 )}
 
                 <div className="my-2 items-center">
-                  <Label>Nom du client</Label>
+                  <Label>{t.formatMessage({ id: 'SALE.CUSTOMER' })}</Label>
                   <TextInput
                     control={control}
                     type="text"
@@ -402,8 +228,7 @@ const CreateOrUpdateAvesSales = ({
                     errors={errors}
                   />
                 </div>
-                <Label>Canal de vente</Label>
-                <span className="text-red-600">*</span>
+                <Label>{t.formatMessage({ id: 'SALE.METHOD' })}</Label>
                 <div className="mb-4 flex items-center">
                   <SelectInput
                     firstOptionName="Choose a sale method"
@@ -463,4 +288,4 @@ const CreateOrUpdateAvesSales = ({
   );
 };
 
-export { CreateOrUpdateAvesSales };
+export { UpdateAvesSales };

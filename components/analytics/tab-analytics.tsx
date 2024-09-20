@@ -23,7 +23,7 @@ const TabAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                 {t.formatMessage({ id: 'ANIMAL.FEMALE.REPRODUCTION' })}
               </CardDescription>
               <CardTitle className="text-4xl">
-                {animalStatistics?.sumFemaleReproduction}
+                {animalStatistics?.sumFemaleReproduction ?? 0}
               </CardTitle>
             </CardHeader>
           </Card>
@@ -36,7 +36,7 @@ const TabAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                 {t.formatMessage({ id: 'ANIMALTYPE.MALE.REPRODUCTION' })}
               </CardDescription>
               <CardTitle className="text-4xl">
-                {animalStatistics?.sumMaleReproduction}
+                {animalStatistics?.sumMaleReproduction ?? 0}
               </CardTitle>
             </CardHeader>
           </Card>
@@ -49,7 +49,7 @@ const TabAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                 {t.formatMessage({ id: 'ANIMAL.FEMALE.GESTATION' })}
               </CardDescription>
               <CardTitle className="text-4xl">
-                {animalStatistics?.sumFemaleGestation}
+                {animalStatistics?.sumFemaleGestation ?? 0}
               </CardTitle>
             </CardHeader>
           </Card>
@@ -62,7 +62,7 @@ const TabAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                 {t.formatMessage({ id: 'ANIMAL.FEMALE.LACTATION' })}
               </CardDescription>
               <CardTitle className="text-4xl">
-                {animalStatistics?.sumFemaleLactation}
+                {animalStatistics?.sumFemaleLactation ?? 0}
               </CardTitle>
             </CardHeader>
           </Card>
@@ -75,7 +75,7 @@ const TabAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                 {t.formatMessage({ id: 'SUM.FARROWINGS' })}
               </CardDescription>
               <CardTitle className="text-4xl">
-                {animalStatistics?.sumFarrowings}
+                {animalStatistics?.sumFarrowings ?? 0}
               </CardTitle>
             </CardHeader>
           </Card>
@@ -88,7 +88,7 @@ const TabAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                 {t.formatMessage({ id: 'SUM.WEANINGS' })}
               </CardDescription>
               <CardTitle className="text-4xl">
-                {animalStatistics?.sumWeanings}
+                {animalStatistics?.sumWeanings ?? 0}
               </CardTitle>
             </CardHeader>
           </Card>
@@ -101,7 +101,7 @@ const TabAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                 {t.formatMessage({ id: 'ANIMAL.FEMALE.GROWTH' })}
               </CardDescription>
               <CardTitle className="text-4xl">
-                {animalStatistics?.sumFemaleGrowth}
+                {animalStatistics?.sumFemaleGrowth ?? 0}
               </CardTitle>
             </CardHeader>
           </Card>
@@ -114,7 +114,7 @@ const TabAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                 {t.formatMessage({ id: 'ANIMAL.MALE.GROWTH' })}
               </CardDescription>
               <CardTitle className="text-4xl">
-                {animalStatistics?.sumMaleGrowth}
+                {animalStatistics?.sumMaleGrowth ?? 0}
               </CardTitle>
             </CardHeader>
           </Card>
@@ -127,7 +127,7 @@ const TabAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                 {t.formatMessage({ id: 'ANIMAL.GROWTH.SALE' })}
               </CardDescription>
               <CardTitle className="text-4xl">
-                {animalStatistics?.sumAnimalGrowthSale}
+                {animalStatistics?.sumAnimalGrowthSale ?? 0}
               </CardTitle>
             </CardHeader>
           </Card>
@@ -140,7 +140,7 @@ const TabAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                 {t.formatMessage({ id: 'ANIMAL.GROWTH.DEATH' })}
               </CardDescription>
               <CardTitle className="text-4xl">
-                {animalStatistics?.sumAnimalGrowthDead}
+                {animalStatistics?.sumAnimalGrowthDead ?? 0}
               </CardTitle>
             </CardHeader>
           </Card>
@@ -153,7 +153,7 @@ const TabAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                 {t.formatMessage({ id: 'ANIMAL.FATTENING' })}
               </CardDescription>
               <CardTitle className="text-4xl">
-                {animalStatistics?.sumAnimalFattening}
+                {animalStatistics?.sumAnimalFattening ?? 0}
               </CardTitle>
             </CardHeader>
           </Card>
@@ -166,7 +166,7 @@ const TabAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                 {t.formatMessage({ id: 'ANIMAL.FATTENING.SOLD' })}
               </CardDescription>
               <CardTitle className="text-4xl">
-                {animalStatistics?.sumAnimalFatteningSold}
+                {animalStatistics?.sumAnimalFatteningSold ?? 0}
               </CardTitle>
             </CardHeader>
           </Card>
@@ -179,7 +179,7 @@ const TabAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                 {t.formatMessage({ id: 'ANIMAL.FATTENING.DEAD' })}
               </CardDescription>
               <CardTitle className="text-4xl">
-                {animalStatistics?.sumAnimalFatteningDead}
+                {animalStatistics?.sumAnimalFatteningDead ?? 0}
               </CardTitle>
             </CardHeader>
           </Card>
@@ -192,7 +192,7 @@ const TabAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                 {t.formatMessage({ id: 'FEMALE.GESTATION.SOLD' })}
               </CardDescription>
               <CardTitle className="text-4xl">
-                {animalStatistics?.sumFemaleGestationSold}
+                {animalStatistics?.sumFemaleGestationSold ?? 0}
               </CardTitle>
             </CardHeader>
           </Card>
@@ -205,7 +205,7 @@ const TabAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                 {t.formatMessage({ id: 'FEMALE.REPRODUCTION.SOLD' })}
               </CardDescription>
               <CardTitle className="text-4xl">
-                {animalStatistics?.sumFemaleReproductionSold}
+                {animalStatistics?.sumFemaleReproductionSold ?? 0}
               </CardTitle>
             </CardHeader>
           </Card>
@@ -218,7 +218,7 @@ const TabAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                 {t.formatMessage({ id: 'MALE.REPRODUCTION.SOLD' })}
               </CardDescription>
               <CardTitle className="text-4xl">
-                {animalStatistics?.sumMaleReproductionSold}
+                {animalStatistics?.sumMaleReproductionSold ?? 0}
               </CardTitle>
             </CardHeader>
           </Card>

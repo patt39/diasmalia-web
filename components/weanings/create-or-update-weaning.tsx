@@ -7,7 +7,6 @@ import {
   AlertDangerNotification,
   AlertSuccessNotification,
 } from '@/utils/alert-notification';
-import { SelectLabel } from '@radix-ui/react-select';
 import { XIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
@@ -162,7 +161,6 @@ const CreateOrUpdateWeanings = ({
                           </SelectTrigger>
                           <SelectContent className="dark:border-gray-800">
                             <SelectGroup>
-                              <SelectLabel>Codes</SelectLabel>
                               {isLoadingAnimals ? (
                                 <LoadingFile />
                               ) : isErrorAnimals ? (

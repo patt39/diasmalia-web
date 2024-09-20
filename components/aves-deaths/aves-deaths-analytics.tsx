@@ -1,10 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
-import { GetAnimalStatisticsAPI } from '@/api-site/animals';
-import { ChickSalesAnalyticAPI } from '@/api-site/sales';
-import { dateTimeNowUtc, formatMMDate, getMonthNow } from '@/utils';
+import { GetavesDeathsAnalyticAPI } from '@/api-site/deaths';
+import { dateTimeNowUtc, formatMMDate } from '@/utils';
 import { Calendar, ListFilter } from 'lucide-react';
 import { Fragment, useState } from 'react';
-import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts';
+import { CartesianGrid, Line, LineChart, XAxis } from 'recharts';
 import { useInputState } from '../hooks';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
@@ -22,28 +21,25 @@ import {
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 
-const ChickSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
+const AvesDeathsAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
+  const { t, locale } = useInputState();
   const [periode, setPeriode] = useState('');
   const [year, setYear] = useState<String>(`${dateTimeNowUtc().getFullYear()}`);
-  const [months, setMonths] = useState<String>(`${getMonthNow(new Date())}`);
-  const { t, locale } = useInputState();
-  const { data: animalStatistics } = GetAnimalStatisticsAPI({
-    animalTypeId: animalTypeId,
-  });
+  const [months, setMonths] = useState<String>('');
 
-  const { data: dataSalesChicksAnalyticsDay } = ChickSalesAnalyticAPI({
+  const { data: dataAvesDeathsAnalyticsDay } = GetavesDeathsAnalyticAPI({
     year: String(year),
     months: String(months),
     periode: String(periode),
     animalTypeId: animalTypeId,
   });
 
-  const { data: dataSalesChicksAnalyticsMonth } = ChickSalesAnalyticAPI({
+  const { data: dataAvesDeathsAnalyticsMonth } = GetavesDeathsAnalyticAPI({
     year: String(year),
     animalTypeId: animalTypeId,
   });
 
-  const { data: dataSalesChicksAnalyticsYear } = ChickSalesAnalyticAPI({
+  const { data: dataAvesDeathsAnalyticsYear } = GetavesDeathsAnalyticAPI({
     animalTypeId: animalTypeId,
   });
 
@@ -60,13 +56,13 @@ const ChickSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
 
   return (
     <>
-      {animalStatistics?.sumSaleChicks?.price !== null ? (
+      {dataAvesDeathsAnalyticsDay !== '' ? (
         <Card className="dark:border-input dark:bg-background sm:col-span-2">
           <CardHeader>
             <div className="flex items-center">
               <div className="mr-auto items-center gap-2">
                 <CardTitle className="text-xl">
-                  {t.formatMessage({ id: 'AMOUNT.SALE.CHICKS' })}
+                  {t.formatMessage({ id: 'ANALYSIS.DEATHS' })}
                 </CardTitle>
               </div>
               <div className="ml-auto flex items-center gap-2">
@@ -81,7 +77,7 @@ const ChickSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="dark:border-gray-800 w-auto">
-                      {dataSalesChicksAnalyticsYear?.data?.map(
+                      {dataAvesDeathsAnalyticsYear?.data?.map(
                         (item: any, index: number) => (
                           <Fragment key={index}>
                             <DropdownMenuCheckboxItem
@@ -96,32 +92,37 @@ const ChickSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm" className="h-8 gap-1">
-                      <Calendar className="h-3.5 w-3.5" />
-                      <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                        {Number(months)
-                          ? formatMMDate(Number(months), locale)
-                          : months}
-                      </span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="dark:border-gray-800 w-auto">
-                    {dataSalesChicksAnalyticsMonth?.data?.map(
-                      (item: any, index: number) => (
-                        <Fragment key={index}>
-                          <DropdownMenuCheckboxItem
-                            className="cursor-pointer"
-                            onClick={() => setMonths(item?.dateNumeric)}
-                          >
-                            {item?.date}
-                          </DropdownMenuCheckboxItem>
-                        </Fragment>
-                      ),
-                    )}
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                {year ? (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" size="sm" className="h-8 gap-1">
+                        <Calendar className="h-3.5 w-3.5" />
+                        <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                          {Number(months)
+                            ? formatMMDate(Number(months), locale)
+                            : months}
+                        </span>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="dark:border-gray-800 w-auto">
+                      {dataAvesDeathsAnalyticsMonth?.data?.map(
+                        (item: any, index: number) => (
+                          <Fragment key={index}>
+                            <DropdownMenuCheckboxItem
+                              className="cursor-pointer"
+                              onClick={() => setMonths(item?.dateNumeric)}
+                            >
+                              {item?.date}
+                            </DropdownMenuCheckboxItem>
+                          </Fragment>
+                        ),
+                      )}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                ) : (
+                  ''
+                )}
+
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" size="sm" className="h-8 gap-1">
@@ -154,11 +155,7 @@ const ChickSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                     </DropdownMenuCheckboxItem>
                     <DropdownMenuCheckboxItem
                       className="cursor-pointer"
-                      onClick={() =>
-                        setPeriode(
-                          `${t.formatMessage({ id: 'ACTIVITY.LAST15DAYS' })}`,
-                        )
-                      }
+                      onClick={() => setPeriode('15')}
                     >
                       {t.formatMessage({ id: 'ACTIVITY.LAST15DAYS' })}
                     </DropdownMenuCheckboxItem>
@@ -176,13 +173,13 @@ const ChickSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
           <CardContent>
             <ChartContainer
               config={chartConfig}
-              className="lg:h-[400px] w-full"
+              className="lg:h-[600px] w-full"
             >
-              <AreaChart
+              <LineChart
                 accessibilityLayer
-                data={dataSalesChicksAnalyticsDay?.data}
+                data={dataAvesDeathsAnalyticsDay?.data}
                 margin={{
-                  top: 12,
+                  top: 10,
                   left: 12,
                   right: 12,
                 }}
@@ -197,16 +194,16 @@ const ChickSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                 />
                 <ChartTooltip
                   cursor={false}
-                  content={<ChartTooltipContent indicator="line" />}
+                  content={<ChartTooltipContent hideLabel />}
                 />
-                <Area
+                <Line
                   dataKey="sum"
                   type="natural"
-                  fill="var(--color-desktop)"
-                  fillOpacity={0.4}
                   stroke="var(--color-desktop)"
+                  strokeWidth={2}
+                  dot={false}
                 />
-              </AreaChart>
+              </LineChart>
             </ChartContainer>
           </CardContent>
         </Card>
@@ -216,4 +213,4 @@ const ChickSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
     </>
   );
 };
-export { ChickSalesAnalytics };
+export { AvesDeathsAnalytics };

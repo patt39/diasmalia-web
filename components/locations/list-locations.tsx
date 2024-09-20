@@ -216,8 +216,7 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
                 ) : (
                   ''
                 )}
-                {['FATTENING', 'GROWTH'].includes(item?.productionPhase) &&
-                ![
+                {![
                   'Pisciculture',
                   'Poulets Goliaths',
                   'Pondeuses',

@@ -39,12 +39,6 @@ const AvesStatistics = () => {
     Number(animalStatistics?.sumHatched / animalStatistics?.sumIncubations) *
     100;
 
-  const deathPercentage =
-    Number(
-      animalStatistics?.sumDeath /
-        animalStatistics?.sumAnimalsQuantity?.quantity,
-    ) * 100;
-
   return (
     <>
       {!['Poulet de chair', 'Pisciculture'].includes(animalType?.name) ? (
@@ -88,6 +82,19 @@ const AvesStatistics = () => {
                   </CardDescription>
                   <CardTitle className="text-4xl">
                     {animalStatistics?.sumAnimalsQuantity?.female ?? 0}
+                  </CardTitle>
+                </CardHeader>
+              </Card>
+              <Card
+                x-chunk="dashboard-05-chunk-2"
+                className=" dark:border-gray-800"
+              >
+                <CardHeader className="pb-2">
+                  <CardDescription>
+                    {t.formatMessage({ id: 'ANIMAL.ISOLATED' })}
+                  </CardDescription>
+                  <CardTitle className="text-4xl">
+                    {animalStatistics?.sumIsolations ?? 0}
                   </CardTitle>
                 </CardHeader>
               </Card>
@@ -190,33 +197,8 @@ const AvesStatistics = () => {
               </CardHeader>
             </Card>
           ) : (
-            <Card
-              x-chunk="dashboard-05-chunk-2"
-              className=" dark:border-gray-800"
-            >
-              <CardHeader className="pb-2">
-                <CardDescription>
-                  {t.formatMessage({ id: 'HATCHING.PERCENTAGE' })}
-                </CardDescription>
-                <CardTitle className="text-4xl">
-                  {Math.floor(hatchingPercentage * 100 || 0) / 100}%
-                </CardTitle>
-              </CardHeader>
-            </Card>
+            ''
           )}
-          <Card
-            x-chunk="dashboard-05-chunk-2"
-            className=" dark:border-gray-800"
-          >
-            <CardHeader className="pb-2">
-              <CardDescription>
-                {t.formatMessage({ id: 'DEATH.PERCENTAGE' })}
-              </CardDescription>
-              <CardTitle className="text-4xl">
-                {Math.floor(deathPercentage * 100) / 100 || 0}%
-              </CardTitle>
-            </CardHeader>
-          </Card>
           <Card
             x-chunk="dashboard-05-chunk-2"
             className=" dark:border-gray-800"
@@ -227,6 +209,19 @@ const AvesStatistics = () => {
               </CardDescription>
               <CardTitle className="text-4xl">
                 {animalStatistics?.sumFeedings ?? 0}kg
+              </CardTitle>
+            </CardHeader>
+          </Card>
+          <Card
+            x-chunk="dashboard-05-chunk-2"
+            className=" dark:border-gray-800"
+          >
+            <CardHeader className="pb-2">
+              <CardDescription>
+                {t.formatMessage({ id: 'ANIMAL.SUM.DEATH' })}
+              </CardDescription>
+              <CardTitle className="text-4xl">
+                {animalStatistics?.sumDeaths ?? 0}
               </CardTitle>
             </CardHeader>
           </Card>

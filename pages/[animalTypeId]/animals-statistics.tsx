@@ -34,17 +34,18 @@ const AnimalStatistics = () => {
       animalStatistics?.sumFarrowings / animalStatistics?.sumFemaleReproduction,
     ) * 100;
 
-  const fertilityPercentage =
+  const fertilityRate =
     Number(
-      animalStatistics?.sumBreedingPregnant / animalStatistics?.sumBreedings,
+      animalStatistics?.totalPositiveBreedings /
+        animalStatistics?.totalBreedings,
     ) * 100;
 
+  const totalAnimals = Number(
+    animalStatistics?.sumFemaleGrowth + animalStatistics?.sumMaleGrowth,
+  );
+
   const youngDeathPercentage =
-    Number(
-      animalStatistics?.sumAnimalGrowthDead /
-        animalStatistics?.sumFemaleGrowth +
-        animalStatistics?.sumMaleGrowth,
-    ) * 100;
+    Number(animalStatistics?.sumAnimalGrowthDead / totalAnimals) * 100;
 
   const chartData = [
     { month: 'January', desktop: 186 },
@@ -65,25 +66,6 @@ const AnimalStatistics = () => {
     },
   } satisfies ChartConfig;
 
-  const chartDataTwo = [
-    { month: 'January', desktop: 186, mobile: 80 },
-    { month: 'February', desktop: 305, mobile: 200 },
-    { month: 'March', desktop: 237, mobile: 120 },
-    { month: 'April', desktop: 73, mobile: 190 },
-    { month: 'May', desktop: 209, mobile: 130 },
-    { month: 'June', desktop: 214, mobile: 140 },
-  ];
-  const chartConfigTwo = {
-    desktop: {
-      label: 'Desktop',
-      color: 'hsl(var(--chart-1))',
-    },
-    mobile: {
-      label: 'Mobile',
-      color: 'hsl(var(--chart-2))',
-    },
-  } satisfies ChartConfig;
-
   return (
     <>
       <Card x-chunk="dashboard-05-chunk-1" className=" dark:border-gray-800">
@@ -92,7 +74,7 @@ const AnimalStatistics = () => {
             {t.formatMessage({ id: 'ANIMALTYPE.FEMALE' })}
           </CardDescription>
           <CardTitle className="text-4xl">
-            {animalStatistics?.sumFemales}
+            {animalStatistics?.sumFemales ?? 0}
           </CardTitle>
         </CardHeader>
       </Card>
@@ -102,14 +84,16 @@ const AnimalStatistics = () => {
             {t.formatMessage({ id: 'ANIMALTYPE.MALE' })}
           </CardDescription>
           <CardTitle className="text-4xl">
-            {animalStatistics?.sumMales}
+            {animalStatistics?.sumMales ?? 0}
           </CardTitle>
         </CardHeader>
       </Card>
       <Card x-chunk="dashboard-05-chunk-2" className=" dark:border-gray-800">
         <CardHeader className="pb-2">
           <CardDescription>Taux de Reproduction</CardDescription>
-          <CardTitle className="text-4xl">{fertilityPercentage}</CardTitle>
+          <CardTitle className="text-4xl">
+            {Math.floor(fertilityRate * 100) / 100 || 0}%
+          </CardTitle>
         </CardHeader>
       </Card>
       <Card x-chunk="dashboard-05-chunk-2" className=" dark:border-gray-800">

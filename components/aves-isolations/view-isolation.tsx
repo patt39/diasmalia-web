@@ -1,8 +1,9 @@
 import { GetOneIsolationAPI } from '@/api-site/isolations';
 import { useReactHookForm } from '@/components/hooks';
-import { TextAreaInput } from '@/components/ui-setting/shadcn';
+import { TextAreaInput, TextInput } from '@/components/ui-setting/shadcn';
 import { XIcon } from 'lucide-react';
 import * as yup from 'yup';
+import { Label } from '../ui/label';
 
 const schema = yup.object({});
 
@@ -15,7 +16,7 @@ const ViewAvesIsolation = ({
   setShowModal: any;
   isolation?: any;
 }) => {
-  const { control, errors } = useReactHookForm({ schema });
+  const { t, control, errors } = useReactHookForm({ schema });
 
   const { data: getOneIsolation } = GetOneIsolationAPI({
     isolationId: isolation?.id,
@@ -37,6 +38,82 @@ const ViewAvesIsolation = ({
             </button>
             <form className="mt-4">
               <div className="flex-auto justify-center p-2">
+                {['Poulet de chair', 'Pisciculture', 'Pondeuses'].includes(
+                  getOneIsolation?.animalType?.name,
+                ) ? (
+                  <div className="my-4">
+                    <Label>
+                      {t.formatMessage({ id: 'NUMBER.ANIMALS' })}
+                      <span className="text-red-600">*</span>
+                    </Label>
+                    <TextInput
+                      control={control}
+                      type="number"
+                      name="number"
+                      defaultValue={getOneIsolation?.number}
+                      placeholder="Give a number"
+                      errors={errors}
+                      disabled
+                    />
+                  </div>
+                ) : getOneIsolation?.male !== 0 ? (
+                  <div className="my-4">
+                    <Label>
+                      {t.formatMessage({ id: 'ANIMAL.MALES' })}:
+                      <span className="text-red-600">*</span>
+                    </Label>
+                    <TextInput
+                      control={control}
+                      type="number"
+                      name="number"
+                      defaultValue={getOneIsolation?.male}
+                      errors={errors}
+                      disabled
+                    />
+                  </div>
+                ) : getOneIsolation?.female !== 0 ? (
+                  <div className="my-4">
+                    <Label>
+                      {t.formatMessage({ id: 'ANIMAL.FEMALES' })}:
+                      <span className="text-red-600">*</span>
+                    </Label>
+                    <TextInput
+                      control={control}
+                      type="number"
+                      name="female"
+                      defaultValue={getOneIsolation?.female}
+                      errors={errors}
+                      disabled
+                    />
+                  </div>
+                ) : (
+                  <div className="my-4 flex items-center space-x-1">
+                    <Label>
+                      {t.formatMessage({ id: 'ANIMAL.MALES' })}:
+                      <span className="text-red-600">*</span>
+                    </Label>
+                    <TextInput
+                      control={control}
+                      type="number"
+                      name="male"
+                      defaultValue={getOneIsolation?.male}
+                      errors={errors}
+                      disabled
+                    />
+                    <Label>
+                      {t.formatMessage({ id: 'ANIMAL.FEMALES' })}:
+                      <span className="text-red-600">*</span>
+                    </Label>
+                    <TextInput
+                      control={control}
+                      type="number"
+                      name="female"
+                      defaultValue={getOneIsolation?.female}
+                      errors={errors}
+                      disabled
+                    />
+                  </div>
+                )}
                 <div className="mb-4">
                   <TextAreaInput
                     control={control}

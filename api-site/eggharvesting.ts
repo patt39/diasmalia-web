@@ -90,9 +90,10 @@ export const GetEggHarvestingsAPI = (
 };
 
 export const GetEggHarvestingsAnalyticAPI = (payload: {
-  days?: number;
-  months?: number;
-  year?: number;
+  periode?: string;
+  days?: string;
+  months?: string;
+  year?: string;
   animalTypeId?: string;
   organizationId?: string;
 }) => {
@@ -110,7 +111,6 @@ export const GetEggHarvestingsAnalyticAPI = (payload: {
           organizationId,
         },
       }),
-    staleTime: 6000,
   });
 };
 

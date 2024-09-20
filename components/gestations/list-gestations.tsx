@@ -23,7 +23,7 @@ const ListGestations = ({ item, index }: { item: any; index: number }) => {
   const [isView, setIsView] = useState(false);
 
   const currentDate: Date = new Date();
-  const createdAt: Date = new Date(item.createdAt);
+  const createdAt: Date = new Date(item?.createdAt);
   const differenceInMilliseconds: number =
     currentDate.getTime() - createdAt.getTime();
   const millisecondsInOneDay: number = 24 * 60 * 60 * 1000;
@@ -59,7 +59,7 @@ const ListGestations = ({ item, index }: { item: any; index: number }) => {
                   {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
                 </span>
               </DropdownMenuItem>
-              {daysDifference < 30 ? (
+              {daysDifference < 30 && item?.checkPregnancyId !== null ? (
                 <DropdownMenuItem onClick={() => setIsCheck(true)}>
                   <Check className="size-4 text-gray-600 hover:text-red-400 cursor-pointer" />
                   <span className="ml-2 cursor-pointer hover:text-red-400">

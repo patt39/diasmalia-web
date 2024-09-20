@@ -84,10 +84,27 @@ const ListSales = ({ item, index }: { item: any; index: number }) => {
               : item?.email || 'N/A'}
           </div>
         </TableCell>
-        <TableCell className="font-medium">{item?.method}</TableCell>
+        <TableCell className="font-medium">
+          {item?.method === 'FARM' ? (
+            <p className="font-medium">{t.formatMessage({ id: 'FARM' })}</p>
+          ) : item?.method === 'MARKET' ? (
+            <p className="font-medium">{t.formatMessage({ id: 'MARKET' })}</p>
+          ) : item?.method === 'AUCTION' ? (
+            <p className="font-medium">{t.formatMessage({ id: 'AUCTION' })}</p>
+          ) : item?.method === 'CONTRACT' ? (
+            <p className="font-medium">{t.formatMessage({ id: 'CONTRACT' })}</p>
+          ) : item?.method === 'SOCIALMEDIA' ? (
+            <p className="font-medium">
+              {t.formatMessage({ id: 'SOCIALMEDIA' })}
+            </p>
+          ) : (
+            item?.method.toLowerCase()
+          )}
+        </TableCell>
         <TableCell className="hidden md:table-cell">{item?.number}</TableCell>
         <TableCell className="hidden md:table-cell">
-          {item?.price} {user?.profile?.currency?.symbol}
+          {item?.price.toLocaleString('en-US')}{' '}
+          {user?.profile?.currency?.symbol}
         </TableCell>
         <TableCell className="hidden md:table-cell">
           {formatDateDDMMYY(item?.createdAt as Date)}

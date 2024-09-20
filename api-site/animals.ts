@@ -55,6 +55,28 @@ export const GetOneAnimalAPI = (payload: { animalId: string }) => {
   };
 };
 
+export const GetAnimalByAnimalTypeAPI = (payload: { animalTypeId: string }) => {
+  const { animalTypeId } = payload;
+  const { data, isError, isLoading, status, isPending, refetch } = useQuery({
+    queryKey: ['animal-type', animalTypeId],
+    queryFn: async () =>
+      await makeApiCall({
+        action: 'getAnimalByAnimalType',
+        urlParams: { animalTypeId },
+      }),
+    refetchOnWindowFocus: false,
+  });
+
+  return {
+    data: data?.data as any,
+    isError,
+    isLoading,
+    status,
+    isPending,
+    refetch,
+  };
+};
+
 export const CreateOneAnimalAPI = ({
   onSuccess,
   onError,

@@ -248,7 +248,7 @@ const CreateBulkAnimals = ({
                   </div>
                   <div className="px-4">
                     <Label>
-                      Date de naissance:
+                      Date de naissance
                       <span className="text-red-600">*</span>
                     </Label>
                     <DateInput
@@ -260,7 +260,7 @@ const CreateBulkAnimals = ({
                   </div>
                   <div>
                     <Label>
-                      Poids:<span className="text-red-600">*</span>
+                      Poids<span className="text-red-600">*</span>
                     </Label>
                     <TextInput
                       control={control}
@@ -273,7 +273,7 @@ const CreateBulkAnimals = ({
                 </div>
                 <div>
                   <Label>
-                    Genre:<span className="text-red-600">*</span>
+                    Genre<span className="text-red-600">*</span>
                   </Label>
                   <SelectInput
                     firstOptionName="Choose a production type"
@@ -289,7 +289,7 @@ const CreateBulkAnimals = ({
                   />
                 </div>
                 <div className="my-2">
-                  <Label>Code de la mère:</Label>
+                  <Label>Code de la mère</Label>
                   <Controller
                     control={control}
                     name="codeMother"
@@ -341,7 +341,7 @@ const CreateBulkAnimals = ({
                     )}
                   />
                   <div className="my-2">
-                    <Label>Code du père:</Label>
+                    <Label>Code du père</Label>
                     <Controller
                       control={control}
                       name="codeFather"
@@ -388,6 +388,33 @@ const CreateBulkAnimals = ({
                     />
                   </div>
                 </div>
+                <div className="mb-2">
+                  <Label>
+                    Phase de production<span className="text-red-600">*</span>
+                  </Label>
+                  <SelectInput
+                    firstOptionName="Choose a production type"
+                    control={control}
+                    errors={errors}
+                    placeholder="Select a production phase"
+                    valueType="text"
+                    name="productionPhase"
+                    dataItem={[
+                      {
+                        id: 1,
+                        name: t.formatMessage({ id: 'PRODUCTIONPHASE.GROWTH' }),
+                      },
+                      {
+                        id: 2,
+                        name: t.formatMessage({
+                          id: 'PRODUCTIONTYPE.FATTENING',
+                        }),
+                      },
+                      { id: 3, name: 'REPRODUCTION' },
+                      { id: 4, name: 'GESTATION' },
+                    ]}
+                  />
+                </div>
                 <div className="my-2">
                   <Label>
                     Sélectionnez la race
@@ -423,8 +450,8 @@ const CreateBulkAnimals = ({
                                 .flatMap((page: any) => page?.data?.value)
                                 .map((item, index) => (
                                   <>
-                                    <SelectItem key={index} value={item.name}>
-                                      {item.name}
+                                    <SelectItem key={index} value={item?.name}>
+                                      {item?.name}
                                     </SelectItem>
                                   </>
                                 ))

@@ -25,7 +25,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { ActionModalDialog } from '../ui-setting/shadcn';
-import { CreateOrUpdateAvesSales } from './create-or-update-aves-sales';
+import { UpdateAvesSales } from './update-aves-sales';
 import { ViewAvesSale } from './view-sale';
 
 const ListAvesSales = ({ item, index }: { item: any; index: number }) => {
@@ -156,7 +156,7 @@ const ListAvesSales = ({ item, index }: { item: any; index: number }) => {
           </DropdownMenu>
         </TableCell>
       </TableRow>
-      <CreateOrUpdateAvesSales
+      <UpdateAvesSales
         sale={item}
         showModal={isEdit}
         setShowModal={setIsEdit}

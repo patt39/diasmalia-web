@@ -178,11 +178,11 @@ const CreateOrUpdateFarrowings = ({
                     </Label>
                     <Controller
                       control={control}
-                      name="code"
+                      name="codeFemale"
                       render={({ field: { value, onChange } }) => (
                         <Select
                           onValueChange={onChange}
-                          name={'code'}
+                          name={'codeFemale'}
                           value={value}
                         >
                           <SelectTrigger className="w-full">

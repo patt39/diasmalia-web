@@ -145,7 +145,7 @@ const CreateOrUpdateEggHarvestings = ({
 
                 <div className="mb-2">
                   <Label>
-                    Sélectionnez le code de la bande:
+                    {t.formatMessage({ id: 'ANIMAL.CODE' })}
                     <span className="text-red-600">*</span>
                   </Label>
                   <Controller
@@ -192,7 +192,7 @@ const CreateOrUpdateEggHarvestings = ({
                 </div>
                 <div className="mb-2">
                   <Label>
-                    Nombre oeufs rammassés:
+                    {t.formatMessage({ id: 'NUMBER.EGGHARVESTED' })}
                     <span className="text-red-600">*</span>
                   </Label>
                   <TextInput
@@ -205,7 +205,7 @@ const CreateOrUpdateEggHarvestings = ({
                 </div>
                 <div className="mb-4">
                   <Label>
-                    Taille:
+                    {t.formatMessage({ id: 'TABEGGHAVESTING.SIZE' })}
                     <span className="text-red-600">*</span>
                   </Label>
                   <SelectInput

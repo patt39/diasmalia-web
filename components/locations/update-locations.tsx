@@ -156,7 +156,7 @@ const UpdateLocations = ({
                 ].includes(animalType?.name) ? (
                   <div className="my-2">
                     <Label>
-                      Phase de production
+                      {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
                       <span className="text-red-600">*</span>
                     </Label>
                     <SelectInput
@@ -174,7 +174,9 @@ const UpdateLocations = ({
                   </div>
                 ) : (
                   <div className="my-2">
-                    <Label>Phase de production: </Label>
+                    <Label>
+                      {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
+                    </Label>
                     <SelectInput
                       firstOptionName="Choose a production type"
                       control={control}
@@ -186,6 +188,7 @@ const UpdateLocations = ({
                         { id: 1, name: 'GROWTH' },
                         { id: 2, name: 'FATTENING' },
                         { id: 3, name: 'GESTATION' },
+                        { id: 4, name: 'REPRODUCTION' },
                       ]}
                     />
                   </div>
@@ -209,7 +212,8 @@ const UpdateLocations = ({
                       <div className="items-center flex space-x-9 my-2">
                         <div>
                           <Label>
-                            Superficie<span className="text-red-600">*</span>
+                            {t.formatMessage({ id: 'SURFACE.AREA' })}
+                            <span className="text-red-600">*</span>
                           </Label>
                           <TextInput
                             control={control}
@@ -221,7 +225,7 @@ const UpdateLocations = ({
                         </div>
                         <div>
                           <Label>
-                            Nombre de mangeoirs
+                            {t.formatMessage({ id: 'NUMBER.MANGERS' })}
                             <span className="text-red-600">*</span>
                           </Label>
                           <TextInput
@@ -234,7 +238,7 @@ const UpdateLocations = ({
                         </div>
                         <div>
                           <Label>
-                            Nombre abreuvoirs
+                            {t.formatMessage({ id: 'NUMBER.THROUGHS' })}
                             <span className="text-red-600">*</span>
                           </Label>
                           <TextInput
@@ -250,7 +254,8 @@ const UpdateLocations = ({
                       animalType?.name !== 'Pisciculture' ? (
                         <div>
                           <Label>
-                            Nids<span className="text-red-600">*</span>
+                            {t.formatMessage({ id: 'NUMBER.NESTS' })}
+                            <span className="text-red-600">*</span>
                           </Label>
                           <TextInput
                             control={control}

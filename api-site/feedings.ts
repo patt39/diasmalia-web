@@ -146,6 +146,31 @@ export const GetFeedingsAPI = (
   });
 };
 
+export const FeedingsAnalyticAPI = (payload: {
+  periode?: string;
+  days?: string;
+  months?: string;
+  year?: string;
+  animalTypeId?: string;
+  organizationId?: string;
+}) => {
+  const { year, months, days, animalTypeId, organizationId } = payload;
+  return useQuery({
+    queryKey: ['feedings-analytics', { ...payload }],
+    queryFn: async () =>
+      await makeApiCall({
+        action: 'getFeedingsAnalytics',
+        queryParams: {
+          year,
+          months,
+          days,
+          animalTypeId,
+          organizationId,
+        },
+      }),
+  });
+};
+
 export const DeleteOneFeedingAPI = ({
   onSuccess,
   onError,

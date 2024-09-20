@@ -27,7 +27,6 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
@@ -93,12 +92,17 @@ const TabAvesDeaths = ({ animalTypeId }: { animalTypeId: string }) => {
                 <Button variant="outline" size="sm" className="h-8 gap-1">
                   <ListFilter className="h-3.5 w-3.5" />
                   <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    Filter
+                    {periode == ''
+                      ? t.formatMessage({ id: 'ACTIVITY.FILTERALL' })
+                      : periode == '7'
+                        ? t.formatMessage({ id: 'ACTIVITY.LAST7DAYS' })
+                        : periode == '15'
+                          ? t.formatMessage({ id: 'ACTIVITY.LAST15DAYS' })
+                          : t.formatMessage({ id: 'ACTIVITY.LAST30DAYS' })}
                   </span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="dark:border-gray-800">
-                <DropdownMenuLabel>Filter by</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuCheckboxItem
                   className="cursor-pointer"
@@ -149,7 +153,10 @@ const TabAvesDeaths = ({ animalTypeId }: { animalTypeId: string }) => {
                 <TableHead>
                   {t.formatMessage({ id: 'AVESDEATH.NUMBER' })}
                 </TableHead>
-                <TableHead>Note</TableHead>
+                <TableHead>Cause</TableHead>
+                <TableHead>
+                  {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
+                </TableHead>
                 <TableHead>Date</TableHead>
                 <TableHead>
                   <span>Actions</span>

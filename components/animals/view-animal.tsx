@@ -190,7 +190,7 @@ const ViewAnimal = ({
                     <Input disabled type="text" value={getOneAnimal?.weight} />
                   </div>
                   <div>
-                    <Label>{t.formatMessage({ id: 'VIEW.BIRTHDATE' })}:</Label>
+                    <Label>{t.formatMessage({ id: 'VIEW.BIRTHDATE' })}</Label>
                     <Input
                       disabled
                       value={formatDateDDMMYY(getOneAnimal?.birthday) || 'N/A'}
@@ -225,7 +225,7 @@ const ViewAnimal = ({
                 </div>
                 {getOneAnimal?.status === 'ACTIVE' ? (
                   <div>
-                    <div className="mb-2 flex items-center space-x-4">
+                    <div className="mb-2 flex items-center space-x-10">
                       <div>
                         <Label>
                           {t.formatMessage({ id: 'VIEW.ISOLATED' })}?
@@ -263,13 +263,13 @@ const ViewAnimal = ({
                         <Input
                           disabled
                           type="text"
-                          value={feedConversionIndex}
+                          value={feedConversionIndex.toFixed(1)}
                         />
                       </div>
                     </div>
                   </div>
                 ) : getOneAnimal?.status === 'SOLD' ? (
-                  <div className="mb-2 flex items-center space-x-7">
+                  <div className="mb-2 flex items-center space-x-10">
                     <div>
                       <Label>Client</Label>
                       <Input

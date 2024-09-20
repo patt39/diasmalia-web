@@ -70,9 +70,9 @@ const ViewAvesTreatment = ({
                   <Input disabled type="number" value={getOneTreatment?.dose} />
                 </div>
                 <div className="mb-2 disabled">
+                  <Label htmlFor="text">Note</Label>
                   <TextAreaInput
                     control={control}
-                    label="Note"
                     name="note"
                     defaultValue={getOneTreatment?.note}
                     errors={errors}

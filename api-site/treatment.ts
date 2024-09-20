@@ -76,39 +76,6 @@ export const CreateOrUpdateOneTreatmentAPI = ({
   return result;
 };
 
-export const GetTreatmentsAPI = (
-  payload: {
-    search?: string;
-    take: number;
-    periode?: string;
-    animalTypeId?: string;
-    organizationId?: string;
-  } & PaginationRequest,
-) => {
-  const { take, sort, search, periode, sortBy, animalTypeId, organizationId } =
-    payload;
-  return useInfiniteQuery({
-    queryKey: ['treatments', 'infinite', { ...payload }],
-    getNextPageParam: (lastPage: any) => lastPage.data.next_page,
-    queryFn: async ({ pageParam = 1 }) =>
-      await makeApiCall({
-        action: 'getTreatments',
-        queryParams: {
-          take,
-          sort,
-          search,
-          sortBy,
-          periode,
-          animalTypeId,
-          organizationId,
-          page: pageParam,
-        },
-      }),
-    staleTime: 60_000,
-    initialPageParam: 1,
-  });
-};
-
 export const CreateOrUpdateOneAvesTreatmentAPI = ({
   onSuccess,
   onError,
@@ -156,6 +123,39 @@ export const CreateOrUpdateOneAvesTreatmentAPI = ({
   });
 
   return result;
+};
+
+export const GetTreatmentsAPI = (
+  payload: {
+    search?: string;
+    take: number;
+    periode?: string;
+    animalTypeId?: string;
+    organizationId?: string;
+  } & PaginationRequest,
+) => {
+  const { take, sort, search, periode, sortBy, animalTypeId, organizationId } =
+    payload;
+  return useInfiniteQuery({
+    queryKey: ['treatments', 'aves-treatments', 'infinite', { ...payload }],
+    getNextPageParam: (lastPage: any) => lastPage.data.next_page,
+    queryFn: async ({ pageParam = 1 }) =>
+      await makeApiCall({
+        action: 'getTreatments',
+        queryParams: {
+          take,
+          sort,
+          search,
+          sortBy,
+          periode,
+          animalTypeId,
+          organizationId,
+          page: pageParam,
+        },
+      }),
+    staleTime: 60_000,
+    initialPageParam: 1,
+  });
 };
 
 export const DeleteOneTreatmentAPI = ({

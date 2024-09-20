@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+import { DeleteOneIncubationAPI } from '@/api-site/incubations';
 import { useInputState } from '@/components/hooks';
 import { Button } from '@/components/ui/button';
 import {
@@ -8,15 +9,44 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { formatDateDDMMYY } from '@/utils';
-import { MoreHorizontal, PencilIcon } from 'lucide-react';
+import {
+  AlertDangerNotification,
+  AlertSuccessNotification,
+  formatDateDDMMYY,
+} from '@/utils';
+import { MoreHorizontal, PencilIcon, TrashIcon } from 'lucide-react';
 import { useState } from 'react';
+import { ActionModalDialog } from '../ui-setting/shadcn';
 import { TableCell, TableRow } from '../ui/table';
-import { CreateOrUpdateIncubations } from './create-or-update-incubations';
+import { UpdateIncubations } from './update-incubations';
 
 const ListIncubations = ({ item, index }: { item: any; index: number }) => {
-  const { t } = useInputState();
+  const { t, setLoading, setIsOpen, isOpen, loading } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
+
+  const { mutateAsync: deleteMutation } = DeleteOneIncubationAPI({
+    onSuccess: () => {},
+    onError: (error?: any) => {},
+  });
+
+  const deleteItem = async (item: any) => {
+    setLoading(true);
+    setIsOpen(true);
+    try {
+      await deleteMutation({ incubationId: item?.id });
+      AlertSuccessNotification({
+        text: 'Incubation deleted successfully',
+      });
+      setLoading(false);
+      setIsOpen(false);
+    } catch (error: any) {
+      setLoading(false);
+      setIsOpen(true);
+      AlertDangerNotification({
+        text: `${error.response.data.message}`,
+      });
+    }
+  };
 
   return (
     <>
@@ -43,11 +73,27 @@ const ListIncubations = ({ item, index }: { item: any; index: number }) => {
                   {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
                 </span>
               </DropdownMenuItem>
+              {item?.animal?.quantity === 0 ? (
+                <DropdownMenuItem onClick={() => setIsOpen(true)}>
+                  <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
+                  <span className="ml-2 cursor-pointer hover:text-red-600">
+                    {t.formatMessage({ id: 'TABANIMAL.DELETE' })}
+                  </span>
+                </DropdownMenuItem>
+              ) : (
+                ''
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </TableCell>
       </TableRow>
-      <CreateOrUpdateIncubations
+      <ActionModalDialog
+        loading={loading}
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+        onClick={() => deleteItem(item)}
+      />
+      <UpdateIncubations
         incubation={item}
         showModal={isEdit}
         setShowModal={setIsEdit}

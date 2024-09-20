@@ -9,20 +9,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-  AlertDangerNotification,
-  AlertSuccessNotification,
-  formatDateDDMMYY,
-} from '@/utils';
-import {
-  Check,
-  Eye,
-  MoreHorizontal,
-  PencilIcon,
-  TrashIcon,
-} from 'lucide-react';
+import { formatDateDDMMYY } from '@/utils';
+import { Check, Eye, MoreHorizontal, PencilIcon } from 'lucide-react';
 import { useState } from 'react';
-import { ActionModalDialog } from '../ui-setting/shadcn';
 import { Badge } from '../ui/badge';
 import { TableCell, TableRow } from '../ui/table';
 import { CheckPregnancy } from './check-pregnancy';
@@ -40,31 +29,12 @@ const ListBreedings = ({ item, index }: { item: any; index: number }) => {
     onError: (error?: any) => {},
   });
 
-  const deleteItem = async (item: any) => {
-    setLoading(true);
-    setIsOpen(true);
-    try {
-      await deleteMutation({ deathId: item.id });
-      AlertSuccessNotification({
-        text: 'Breeding deleted successfully',
-      });
-      setLoading(false);
-      setIsOpen(false);
-    } catch (error: any) {
-      setLoading(false);
-      setIsOpen(true);
-      AlertDangerNotification({
-        text: `${error.response.data.message}`,
-      });
-    }
-  };
-
   return (
     <>
       <TableRow key={index} className="dark:border-gray-800">
         <TableCell className="font-medium">{item?.maleCode}</TableCell>
         <TableCell className="font-medium">{item?.femaleCode}</TableCell>
-        <TableCell>{item.method.toLowerCase()}</TableCell>
+        <TableCell>{item?.method.toLowerCase()}</TableCell>
         <TableCell>
           {item?.checkStatus === true && item?.result === 'PREGNANT' ? (
             <Badge className="text-xs" variant="secondary">
@@ -97,7 +67,8 @@ const ListBreedings = ({ item, index }: { item: any; index: number }) => {
                   {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
                 </span>
               </DropdownMenuItem>
-              {item?.checkStatus === false ? (
+              {item?.checkStatus === false &&
+              item?.checkPregnancyId !== null ? (
                 <DropdownMenuItem onClick={() => setIsCheck(true)}>
                   <Check className="size-4 text-gray-600 hover:text-red-400 cursor-pointer" />
                   <span className="ml-2 cursor-pointer hover:text-red-400">
@@ -113,22 +84,10 @@ const ListBreedings = ({ item, index }: { item: any; index: number }) => {
                   {t.formatMessage({ id: 'TABANIMAL.VIEW' })}
                 </span>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setIsOpen(true)}>
-                <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
-                <span className="ml-2 cursor-pointer hover:text-red-600">
-                  {t.formatMessage({ id: 'TABANIMAL.DELETE' })}
-                </span>
-              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </TableCell>
       </TableRow>
-      <ActionModalDialog
-        loading={loading}
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        onClick={() => deleteItem(item)}
-      />
       <UpdateBreedings
         breeding={item}
         showModal={isEdit}

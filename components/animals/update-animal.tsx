@@ -392,7 +392,10 @@ const UpdateAnimals = ({
                       placeholder="Select a production phase"
                       valueType="text"
                       name="productionPhase"
-                      dataItem={[{ id: 3, name: 'REPRODUCTION' }]}
+                      dataItem={[
+                        { id: 1, name: 'GROWTH' },
+                        { id: 3, name: 'REPRODUCTION' },
+                      ]}
                     />
                   </div>
                 </div>

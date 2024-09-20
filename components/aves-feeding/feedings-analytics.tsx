@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { GetEggHarvestingsAnalyticAPI } from '@/api-site/eggharvesting';
+import { FeedingsAnalyticAPI } from '@/api-site/feedings';
 import { dateTimeNowUtc, formatMMDate, getMonthNow } from '@/utils';
 import { Calendar, ListFilter } from 'lucide-react';
 import { Fragment, useState } from 'react';
@@ -17,42 +17,36 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 
-const EggHarvestingsAnalytics = ({
-  animalTypeId,
-}: {
-  animalTypeId: string;
-}) => {
+const FeedingsAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
   const { t, locale } = useInputState();
   const [periode, setPeriode] = useState('');
   const [year, setYear] = useState<String>(`${dateTimeNowUtc().getFullYear()}`);
   const [months, setMonths] = useState<String>(`${getMonthNow(new Date())}`);
 
-  const { data: dataEggHarvestingAnalyticsDay } = GetEggHarvestingsAnalyticAPI({
+  const { data: dataFeedingAnalyticsDay } = FeedingsAnalyticAPI({
     year: String(year),
     months: String(months),
     periode: String(periode),
     animalTypeId: animalTypeId,
   });
 
-  const { data: dataEggHarvestingAnalyticsMonth } =
-    GetEggHarvestingsAnalyticAPI({
-      year: String(year),
-      animalTypeId: animalTypeId,
-    });
+  const { data: dataFeedingAnalyticsMonth } = FeedingsAnalyticAPI({
+    year: String(year),
+    animalTypeId: animalTypeId,
+  });
 
-  const { data: dataEggHarvestingAnalyticsYear } = GetEggHarvestingsAnalyticAPI(
-    { animalTypeId: animalTypeId },
-  );
+  const { data: dataFeedingAnalyticsYear } = FeedingsAnalyticAPI({
+    animalTypeId: animalTypeId,
+  });
 
   const chartConfig = {
-    edge: {
-      label: 'Edge',
-      color: 'hsl(var(--chart-4))',
+    desktop: {
+      label: 'Desktop',
+      color: 'hsl(var(--chart-1))',
     },
     mobile: {
       label: 'Mobile',
@@ -67,7 +61,7 @@ const EggHarvestingsAnalytics = ({
           <div className="flex items-center">
             <div className="mr-auto items-center gap-2">
               <CardTitle className="text-xl">
-                {t.formatMessage({ id: 'ANIMAL.EGGHAVESTED' })}
+                {t.formatMessage({ id: 'ANIMAL.FEED' })}
               </CardTitle>
             </div>
             <div className="ml-auto flex items-center gap-2">
@@ -82,7 +76,7 @@ const EggHarvestingsAnalytics = ({
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="dark:border-gray-800 w-auto">
-                    {dataEggHarvestingAnalyticsYear?.data?.map(
+                    {dataFeedingAnalyticsYear?.data?.map(
                       (item: any, index: number) => (
                         <Fragment key={index}>
                           <DropdownMenuCheckboxItem
@@ -109,7 +103,7 @@ const EggHarvestingsAnalytics = ({
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="dark:border-gray-800 w-auto">
-                  {dataEggHarvestingAnalyticsMonth?.data?.map(
+                  {dataFeedingAnalyticsMonth?.data?.map(
                     (item: any, index: number) => (
                       <Fragment key={index}>
                         <DropdownMenuCheckboxItem
@@ -139,7 +133,6 @@ const EggHarvestingsAnalytics = ({
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="dark:border-gray-800 w-auto">
-                  <DropdownMenuLabel>Filter by</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuCheckboxItem
                     className="cursor-pointer"
@@ -156,7 +149,11 @@ const EggHarvestingsAnalytics = ({
                   </DropdownMenuCheckboxItem>
                   <DropdownMenuCheckboxItem
                     className="cursor-pointer"
-                    onClick={() => setPeriode('15')}
+                    onClick={() =>
+                      setPeriode(
+                        `${t.formatMessage({ id: 'ACTIVITY.LAST15DAYS' })}`,
+                      )
+                    }
                   >
                     {t.formatMessage({ id: 'ACTIVITY.LAST15DAYS' })}
                   </DropdownMenuCheckboxItem>
@@ -175,7 +172,7 @@ const EggHarvestingsAnalytics = ({
           <ChartContainer config={chartConfig} className="lg:h-[400px] w-full">
             <AreaChart
               accessibilityLayer
-              data={dataEggHarvestingAnalyticsDay?.data}
+              data={dataFeedingAnalyticsDay?.data}
               margin={{
                 top: 12,
                 left: 12,
@@ -188,6 +185,7 @@ const EggHarvestingsAnalytics = ({
                 tickLine={false}
                 axisLine={false}
                 tickMargin={8}
+                tickFormatter={(value) => value.slice(0, 3)}
               />
               <ChartTooltip
                 cursor={false}
@@ -196,9 +194,9 @@ const EggHarvestingsAnalytics = ({
               <Area
                 dataKey="sum"
                 type="natural"
-                fill="var(--color-edge)"
+                fill="var(--color-desktop)"
                 fillOpacity={0.4}
-                stroke="var(--color-edge)"
+                stroke="var(--color-desktop)"
               />
             </AreaChart>
           </ChartContainer>
@@ -207,4 +205,4 @@ const EggHarvestingsAnalytics = ({
     </>
   );
 };
-export { EggHarvestingsAnalytics };
+export { FeedingsAnalytics };

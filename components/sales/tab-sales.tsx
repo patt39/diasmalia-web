@@ -1,6 +1,8 @@
 import { exportSalesAPI, GetSalesAPI } from '@/api-site/sales';
 import { useInputState } from '@/components/hooks';
 
+import { GetAnimalStatisticsAPI } from '@/api-site/animals';
+import { GetOneUserMeAPI } from '@/api-site/user';
 import { SearchInput } from '@/components/ui-setting';
 import { LoadingFile } from '@/components/ui-setting/ant';
 import { ErrorFile } from '@/components/ui-setting/ant/error-file';
@@ -38,6 +40,12 @@ const TabSales = ({ animalTypeId }: { animalTypeId: string }) => {
   const { t, isOpen, setIsOpen } = useInputState();
   const [periode, setPeriode] = useState('');
   const [pageItem, setPageItem] = useState(1);
+  const { data: user } = GetOneUserMeAPI();
+
+  const { data: animalStatistics } = GetAnimalStatisticsAPI({
+    periode,
+    animalTypeId: animalTypeId,
+  });
 
   const handleExport = async () => {
     try {
@@ -77,6 +85,26 @@ const TabSales = ({ animalTypeId }: { animalTypeId: string }) => {
             />
           </div>
           <div className="ml-auto flex items-center gap-2">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="outline">
+                    {animalStatistics?.sumSaleAnimals?.toLocaleString(
+                      'en-US',
+                    ) || 0}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className="dark:border-gray-800">
+                  <p>
+                    {t.formatMessage({ id: 'SOLD.FOR.ANIMALS' })}{' '}
+                    {animalStatistics?.sumSaleAnimals?.toLocaleString(
+                      'en-US',
+                    ) || 0}
+                    {user?.profile?.currency?.symbol}
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>

@@ -29,6 +29,81 @@ export const GetOneSaleAPI = (payload: { saleId: string }) => {
   };
 };
 
+export const ChickenSalesAnalyticsAPI = (payload: {
+  periode?: string;
+  days?: string;
+  months?: string;
+  year?: string;
+  animalTypeId?: string;
+  organizationId?: string;
+}) => {
+  const { year, months, days, animalTypeId, organizationId } = payload;
+  return useQuery({
+    queryKey: ['chickens-analytics', { ...payload }],
+    queryFn: async () =>
+      await makeApiCall({
+        action: 'getchickensAnalytics',
+        queryParams: {
+          year,
+          months,
+          days,
+          animalTypeId,
+          organizationId,
+        },
+      }),
+  });
+};
+
+export const ChickSalesAnalyticAPI = (payload: {
+  periode?: string;
+  days?: string;
+  months?: string;
+  year?: string;
+  animalTypeId?: string;
+  organizationId?: string;
+}) => {
+  const { year, months, days, animalTypeId, organizationId } = payload;
+  return useQuery({
+    queryKey: ['chicks-analytics', { ...payload }],
+    queryFn: async () =>
+      await makeApiCall({
+        action: 'getchicksAnalytics',
+        queryParams: {
+          year,
+          months,
+          days,
+          animalTypeId,
+          organizationId,
+        },
+      }),
+  });
+};
+
+export const EggsAnalyticAPI = (payload: {
+  periode?: string;
+  days?: string;
+  months?: string;
+  year?: string;
+  animalTypeId?: string;
+  organizationId?: string;
+}) => {
+  const { year, months, days, animalTypeId, organizationId } = payload;
+  return useQuery({
+    queryKey: ['eggs-analytics', { ...payload }],
+    queryFn: async () =>
+      await makeApiCall({
+        action: 'getEggsAnalytics',
+        queryParams: {
+          year,
+          months,
+          days,
+          animalTypeId,
+          organizationId,
+        },
+      }),
+  });
+};
+
 export const SalesPdfDownloadAPI = async (payload: { saleId: string }) => {
   const { saleId } = payload;
   const data = await makeApiCall({

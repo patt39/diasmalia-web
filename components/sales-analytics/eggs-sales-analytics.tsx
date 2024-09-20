@@ -1,7 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
 import { GetAnimalStatisticsAPI } from '@/api-site/animals';
-import { ListFilter } from 'lucide-react';
-import { useState } from 'react';
+import { EggsAnalyticAPI } from '@/api-site/sales';
+import { dateTimeNowUtc, formatMMDate, getMonthNow } from '@/utils';
+import { Calendar, ListFilter } from 'lucide-react';
+import { Fragment, useState } from 'react';
 import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts';
 import { useInputState } from '../hooks';
 import { Button } from '../ui/button';
@@ -16,34 +18,35 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 
 const EggSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
   const [periode, setPeriode] = useState('');
-  const [pageItem, setPageItem] = useState(1);
-  const { t } = useInputState();
-
+  const [year, setYear] = useState<String>(`${dateTimeNowUtc().getFullYear()}`);
+  const [months, setMonths] = useState<String>(`${getMonthNow(new Date())}`);
+  const { t, locale } = useInputState();
   const { data: animalStatistics } = GetAnimalStatisticsAPI({
     animalTypeId: animalTypeId,
   });
 
-  const chartData = [
-    { month: 'January', desktop: 186 },
-    { month: 'February', desktop: 305 },
-    { month: 'March', desktop: 237 },
-    { month: 'April', desktop: 73 },
-    { month: 'May', desktop: 209 },
-    { month: 'June', desktop: 214 },
-    { month: 'July', desktop: 14 },
-    { month: 'August', desktop: 254 },
-    { month: 'September', desktop: 614 },
-    { month: 'October', desktop: 934 },
-    { month: 'November', desktop: 193 },
-    { month: 'December', desktop: 134 },
-  ];
+  const { data: dataSalesEggsAnalyticsDay } = EggsAnalyticAPI({
+    year: String(year),
+    months: String(months),
+    periode: String(periode),
+    animalTypeId: animalTypeId,
+  });
+
+  const { data: dataSalesEggsAnalyticsMonth } = EggsAnalyticAPI({
+    year: String(year),
+    animalTypeId: animalTypeId,
+  });
+
+  const { data: dataSalesEggsAnalyticsYear } = EggsAnalyticAPI({
+    animalTypeId: animalTypeId,
+  });
+
   const chartConfig = {
     desktop: {
       label: 'Desktop',
@@ -52,6 +55,10 @@ const EggSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
     mobile: {
       label: 'Mobile',
       color: 'hsl(var(--chart-2))',
+    },
+    firefox: {
+      label: 'Firefox',
+      color: 'hsl(var(--chart-3))',
     },
   } satisfies ChartConfig;
 
@@ -62,23 +69,79 @@ const EggSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
           <CardHeader>
             <div className="flex items-center">
               <div className="mr-auto items-center gap-2">
-                <CardTitle className="text-xl">Vente des oeufs</CardTitle>
+                <CardTitle className="text-xl">
+                  {t.formatMessage({ id: 'AMOUNT.SALE.EGGS' })}
+                </CardTitle>
               </div>
               <div className="ml-auto flex items-center gap-2">
+                <>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" size="sm" className="h-8 gap-1">
+                        <Calendar className="h-3.5 w-3.5" />
+                        <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                          {year}
+                        </span>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent className="dark:border-gray-800 w-auto">
+                      {dataSalesEggsAnalyticsYear?.data?.map(
+                        (item: any, index: number) => (
+                          <Fragment key={index}>
+                            <DropdownMenuCheckboxItem
+                              className="cursor-pointer"
+                              onClick={() => setYear(item?.dateNumeric)}
+                            >
+                              {item?.date}
+                            </DropdownMenuCheckboxItem>
+                          </Fragment>
+                        ),
+                      )}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" size="sm" className="h-8 gap-1">
+                      <Calendar className="h-3.5 w-3.5" />
+                      <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                        {Number(months)
+                          ? formatMMDate(Number(months), locale)
+                          : months}
+                      </span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="dark:border-gray-800 w-auto">
+                    {dataSalesEggsAnalyticsMonth?.data?.map(
+                      (item: any, index: number) => (
+                        <Fragment key={index}>
+                          <DropdownMenuCheckboxItem
+                            className="cursor-pointer"
+                            onClick={() => setMonths(item?.dateNumeric)}
+                          >
+                            {item?.date}
+                          </DropdownMenuCheckboxItem>
+                        </Fragment>
+                      ),
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" size="sm" className="h-8 gap-1">
                       <ListFilter className="h-3.5 w-3.5" />
                       <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                        Filter
+                        {periode == ''
+                          ? t.formatMessage({ id: 'ACTIVITY.FILTERALL' })
+                          : periode == '7'
+                            ? t.formatMessage({ id: 'ACTIVITY.LAST7DAYS' })
+                            : periode == '15'
+                              ? t.formatMessage({ id: 'ACTIVITY.LAST15DAYS' })
+                              : t.formatMessage({ id: 'ACTIVITY.LAST30DAYS' })}
                       </span>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    align="end"
-                    className="dark:border-gray-800"
-                  >
-                    <DropdownMenuLabel>Filter by</DropdownMenuLabel>
+                  <DropdownMenuContent className="dark:border-gray-800 w-auto">
                     <DropdownMenuSeparator />
                     <DropdownMenuCheckboxItem
                       className="cursor-pointer"
@@ -95,7 +158,11 @@ const EggSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                     </DropdownMenuCheckboxItem>
                     <DropdownMenuCheckboxItem
                       className="cursor-pointer"
-                      onClick={() => setPeriode('15')}
+                      onClick={() =>
+                        setPeriode(
+                          `${t.formatMessage({ id: 'ACTIVITY.LAST15DAYS' })}`,
+                        )
+                      }
                     >
                       {t.formatMessage({ id: 'ACTIVITY.LAST15DAYS' })}
                     </DropdownMenuCheckboxItem>
@@ -113,19 +180,20 @@ const EggSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
           <CardContent>
             <ChartContainer
               config={chartConfig}
-              className="lg:h-[300px] w-full"
+              className="lg:h-[400px] w-full"
             >
               <AreaChart
                 accessibilityLayer
-                data={chartData}
+                data={dataSalesEggsAnalyticsDay?.data}
                 margin={{
+                  top: 12,
                   left: 12,
                   right: 12,
                 }}
               >
                 <CartesianGrid vertical={false} />
                 <XAxis
-                  dataKey="month"
+                  dataKey="date"
                   tickLine={false}
                   axisLine={false}
                   tickMargin={8}
@@ -136,11 +204,11 @@ const EggSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                   content={<ChartTooltipContent indicator="line" />}
                 />
                 <Area
-                  dataKey="desktop"
+                  dataKey="sum"
                   type="natural"
-                  fill="var(--color-desktop)"
+                  fill="var(--color-firefox)"
                   fillOpacity={0.4}
-                  stroke="var(--color-desktop)"
+                  stroke="var(--color-firefox)"
                 />
               </AreaChart>
             </ChartContainer>
