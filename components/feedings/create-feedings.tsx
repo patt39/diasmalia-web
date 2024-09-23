@@ -166,7 +166,7 @@ const CreateFeedings = ({
                         {countSelectedAnimals || 0}
                       </Button>
                     </TooltipTrigger>
-                    <TooltipContent>
+                    <TooltipContent className="dark:border-gray-800">
                       <p>
                         {countSelectedAnimals}
                         {t.formatMessage({ id: 'ANIMAL.SELECTED.COUNT' })}

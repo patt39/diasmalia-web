@@ -9,7 +9,6 @@ import {
 } from '@/utils/alert-notification';
 import { FileQuestion, XIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
 import { SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
 import { SelectInput, TextInput } from '../ui-setting/shadcn';
@@ -24,16 +23,15 @@ import {
 const schema = yup.object({
   code: yup.string().optional(),
   nest: yup.number().optional(),
-  manger: yup.number().optional(),
-  through: yup.number().optional(),
-  productionPhase: yup.string().optional(),
+  manger: yup.number().required('manger is required field'),
+  through: yup.number().required('through is required field'),
+  productionPhase: yup.string().required('productionPhase is required field'),
   squareMeter: yup.number().required('squareMeter is required field'),
 });
 
 const CreateLocations = ({
   showModal,
   setShowModal,
-  location,
 }: {
   showModal: boolean;
   setShowModal: any;
@@ -44,7 +42,6 @@ const CreateLocations = ({
     watch,
     control,
     errors,
-    setValue,
     handleSubmit,
     loading,
     setLoading,
@@ -57,20 +54,6 @@ const CreateLocations = ({
   const { data: animalType } = GetOneAnimalTypeAPI({
     animalTypeId: animalTypeId,
   });
-
-  useEffect(() => {
-    if (location) {
-      const fields = [
-        'code',
-        'nest',
-        'productionPhase',
-        'squareMeter',
-        'manger',
-        'through',
-      ];
-      fields?.forEach((field: any) => setValue(field, location[field]));
-    }
-  }, [location, setValue]);
 
   // Create data
   const { mutateAsync: saveMutation } = CreateOneLocationAPI({

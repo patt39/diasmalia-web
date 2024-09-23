@@ -111,7 +111,7 @@ const UpdateAnimals = ({
       setHasErrors(false);
       setLoading(false);
       AlertSuccessNotification({
-        text: 'Animal saved successfully',
+        text: 'Animal updated successfully',
       });
       setShowModal(false);
     } catch (error: any) {

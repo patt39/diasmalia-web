@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { DeleteOneDeathAPI } from '@/api-site/deaths';
+import { DeleteOneBreedingAPI } from '@/api-site/breedings';
 import { useInputState } from '@/components/hooks';
 import { Button } from '@/components/ui/button';
 import {
@@ -9,7 +9,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { formatDateDDMMYY } from '@/utils';
+import {
+  AlertDangerNotification,
+  AlertSuccessNotification,
+  formatDateDDMMYY,
+} from '@/utils';
 import { Check, Eye, MoreHorizontal, PencilIcon } from 'lucide-react';
 import { useState } from 'react';
 import { Badge } from '../ui/badge';
@@ -24,10 +28,29 @@ const ListBreedings = ({ item, index }: { item: any; index: number }) => {
   const [isCheck, setIsCheck] = useState(false);
   const [isView, setIsView] = useState(false);
 
-  const { mutateAsync: deleteMutation } = DeleteOneDeathAPI({
+  const { mutateAsync: deleteMutation } = DeleteOneBreedingAPI({
     onSuccess: () => {},
     onError: (error?: any) => {},
   });
+
+  const deleteItem = async (item: any) => {
+    setLoading(true);
+    setIsOpen(true);
+    try {
+      await deleteMutation({ breedingId: item?.id });
+      AlertSuccessNotification({
+        text: 'Breeding deleted successfully',
+      });
+      setLoading(false);
+      setIsOpen(false);
+    } catch (error: any) {
+      setLoading(false);
+      setIsOpen(true);
+      AlertDangerNotification({
+        text: `${error.response.data.message}`,
+      });
+    }
+  };
 
   return (
     <>

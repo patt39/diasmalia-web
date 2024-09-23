@@ -29,6 +29,48 @@ export const GetOneLocationAPI = (payload: { locationId: string }) => {
   };
 };
 
+export const CreateBulkLocationsAPI = ({
+  onSuccess,
+  onError,
+}: {
+  onSuccess?: () => void;
+  onError?: (error: any) => void;
+} = {}) => {
+  const queryKey = ['locations'];
+  const queryClient = useQueryClient();
+  const result = useMutation({
+    mutationKey: queryKey,
+    mutationFn: async (payload: LocationModel & { animalTypeId: string }) => {
+      const { animalTypeId } = payload;
+      await makeApiCall({
+        action: 'createBulkLocations',
+        body: { ...payload },
+        urlParams: { animalTypeId },
+      });
+    },
+    onError: async (error) => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onError) {
+        onError(error);
+      }
+    },
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+  });
+
+  return result;
+};
+
 export const CreateOneLocationAPI = ({
   onSuccess,
   onError,

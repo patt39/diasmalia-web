@@ -1,20 +1,13 @@
 import { GetAnimalStatisticsAPI } from '@/api-site/animals';
 import {
   Card,
-  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from '@/components/ui/chart';
+import { ChartConfig } from '@/components/ui/chart';
 import { useRouter } from 'next/router';
 import { useIntl } from 'react-intl';
-import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts';
 
 const AnimalStatistics = () => {
   const t = useIntl();
@@ -124,7 +117,7 @@ const AnimalStatistics = () => {
           </CardTitle>
         </CardHeader>
       </Card>
-      <Card className="dark:border-input dark:bg-background sm:col-span-2">
+      {/* <Card className="dark:border-input dark:bg-background sm:col-span-2">
         <CardHeader>
           <CardDescription>
             Showing total visitors for the last 6 months
@@ -207,7 +200,7 @@ const AnimalStatistics = () => {
             </AreaChart>
           </ChartContainer>
         </CardContent>
-      </Card>
+      </Card> */}
     </>
   );
 };

@@ -59,10 +59,6 @@ export function AnimalType() {
                 <h6 className="font-bold tracking-tight text-center sm:text-4xl lg:text-4xl">
                   {t.formatMessage({ id: 'ANIMALTYPE.TITLE' })}
                 </h6>
-                {/* <p className="mt-4 text-base leading-relaxed text-gray-600">
-                  Amet minim mollit non deserunt ullamco est sit aliqua dolor do
-                  amet sint. Velit officia consequat duis enim velit mollit.
-                </p> */}
               </div>
 
               <div className="grid grid-cols-1 gap-5 mt-12 sm:grid-cols-3 lg:mt-20 lg:gap-x-12">
@@ -77,7 +73,11 @@ export function AnimalType() {
                     .flatMap((page: any) => page?.data?.value)
                     .map((item, index) => (
                       <>
-                        <ListAnimalType item={item} index={index} key={index} />
+                        <ListAnimalType
+                          item={item}
+                          index={index}
+                          key={item?.id}
+                        />
                       </>
                     ))
                 )}

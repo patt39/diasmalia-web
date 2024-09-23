@@ -8,6 +8,7 @@ import { TabAvesDeaths } from '@/components/aves-deaths/tab-aves-deaths';
 import { FeedingsAnalytics } from '@/components/aves-feeding/feedings-analytics';
 import { TabAvesFeedings } from '@/components/aves-feeding/tab-aves-feedings';
 import { TabAvesIsolations } from '@/components/aves-isolations/tab-aves-isolations';
+import { TabAvesLocations } from '@/components/aves-locations/tab-aves-locations';
 import { TabAvesSales } from '@/components/aves-sales/tab-aves-sales';
 import { TabAvesTreatments } from '@/components/aves-treatments/tab-aves-treatment';
 import { TabBreedings } from '@/components/breedings/tab-breedings';
@@ -70,10 +71,13 @@ export function Index() {
                   x-chunk="dashboard-05-chunk-0"
                 >
                   <CardHeader className="pb-3">
-                    <CardTitle>
-                      {t.formatMessage({ id: 'DIASMALIA.WELCOME' })}
-                      {animalType?.slug}
-                    </CardTitle>
+                    {animalType?.slug === 'porcs' ? (
+                      <CardTitle>
+                        {t.formatMessage({ id: 'DIASMALIA.WELCOME.PIGS' })}
+                      </CardTitle>
+                    ) : (
+                      ''
+                    )}
                     <CardDescription className="max-w-lg text-balance leading-relaxed">
                       {t.formatMessage({ id: 'ANIMALTYPE.DESCRIPTION' })}
                     </CardDescription>
@@ -88,10 +92,13 @@ export function Index() {
                   x-chunk="dashboard-05-chunk-0"
                 >
                   <CardHeader className="pb-3">
-                    <CardTitle>
-                      {t.formatMessage({ id: 'DIASMALIA.WELCOME' })}
-                      {animalType?.slug}
-                    </CardTitle>
+                    {animalType?.slug === 'lapins' ? (
+                      <CardTitle>
+                        {t.formatMessage({ id: 'DIASMALIA.WELCOME.RABBITS' })}
+                      </CardTitle>
+                    ) : (
+                      ''
+                    )}
                     <CardDescription className="max-w-lg text-balance leading-relaxed">
                       {t.formatMessage({ id: 'ANIMALTYPE.DESCRIPTION' })}
                     </CardDescription>
@@ -106,10 +113,13 @@ export function Index() {
                   x-chunk="dashboard-05-chunk-0"
                 >
                   <CardHeader className="pb-3">
-                    <CardTitle>
-                      {t.formatMessage({ id: 'DIASMALIA.WELCOME' })}
-                      {animalType?.slug}
-                    </CardTitle>
+                    {animalType?.slug === 'boeufs' ? (
+                      <CardTitle>
+                        {t.formatMessage({ id: 'DIASMALIA.WELCOME.COW' })}
+                      </CardTitle>
+                    ) : (
+                      ''
+                    )}
                     <CardDescription className="max-w-lg text-balance leading-relaxed">
                       {t.formatMessage({ id: 'ANIMALTYPE.DESCRIPTION' })}
                     </CardDescription>
@@ -124,10 +134,13 @@ export function Index() {
                   x-chunk="dashboard-05-chunk-0"
                 >
                   <CardHeader className="pb-3">
-                    <CardTitle>
-                      {t.formatMessage({ id: 'DIASMALIA.WELCOME' })}
-                      {animalType?.slug}
-                    </CardTitle>
+                    {animalType?.slug === 'chèvres' ? (
+                      <CardTitle>
+                        {t.formatMessage({ id: 'DIASMALIA.WELCOME.GOATS' })}
+                      </CardTitle>
+                    ) : (
+                      ''
+                    )}
                     <CardDescription className="max-w-lg text-balance leading-relaxed">
                       {t.formatMessage({ id: 'ANIMALTYPE.DESCRIPTION' })}
                     </CardDescription>
@@ -142,10 +155,13 @@ export function Index() {
                   x-chunk="dashboard-05-chunk-0"
                 >
                   <CardHeader className="pb-3">
-                    <CardTitle>
-                      {t.formatMessage({ id: 'DIASMALIA.WELCOME' })}
-                      {animalType?.slug}
-                    </CardTitle>
+                    {animalType?.slug === 'moutons' ? (
+                      <CardTitle>
+                        {t.formatMessage({ id: 'DIASMALIA.WELCOME.SHEEPS' })}
+                      </CardTitle>
+                    ) : (
+                      ''
+                    )}
                     <CardDescription className="max-w-lg text-balance leading-relaxed">
                       {t.formatMessage({ id: 'ANIMALTYPE.DESCRIPTION' })}
                     </CardDescription>
@@ -160,10 +176,13 @@ export function Index() {
                   x-chunk="dashboard-05-chunk-0"
                 >
                   <CardHeader className="pb-3">
-                    <CardTitle>
-                      {t.formatMessage({ id: 'DIASMALIA.WELCOME' })}
-                      {animalType?.slug}
-                    </CardTitle>
+                    {animalType?.slug === 'pondeuses' ? (
+                      <CardTitle>
+                        {t.formatMessage({ id: 'DIASMALIA.WELCOME.LAYERS' })}
+                      </CardTitle>
+                    ) : (
+                      ''
+                    )}
                     <CardDescription className="max-w-lg text-balance leading-relaxed">
                       {t.formatMessage({ id: 'ANIMALTYPE.LAYERS.DESCRIPTION' })}
                     </CardDescription>
@@ -178,10 +197,13 @@ export function Index() {
                   x-chunk="dashboard-05-chunk-0"
                 >
                   <CardHeader className="pb-3">
-                    <CardTitle>
-                      {t.formatMessage({ id: 'DIASMALIA.WELCOME' })}
-                      {animalType?.slug}
-                    </CardTitle>
+                    {animalType?.slug === 'canards' ? (
+                      <CardTitle>
+                        {t.formatMessage({ id: 'DIASMALIA.WELCOME.DUCKS' })}
+                      </CardTitle>
+                    ) : (
+                      ''
+                    )}
                     <CardDescription className="max-w-lg text-balance leading-relaxed">
                       {t.formatMessage({ id: 'ANIMALTYPE.LAYERS.DESCRIPTION' })}
                     </CardDescription>
@@ -196,10 +218,13 @@ export function Index() {
                   x-chunk="dashboard-05-chunk-0"
                 >
                   <CardHeader className="pb-3">
-                    <CardTitle>
-                      {t.formatMessage({ id: 'DIASMALIA.WELCOME' })}
-                      {animalType?.slug}
-                    </CardTitle>
+                    {animalType?.slug === 'dindons' ? (
+                      <CardTitle>
+                        {t.formatMessage({ id: 'DIASMALIA.WELCOME.TURKEY' })}
+                      </CardTitle>
+                    ) : (
+                      ''
+                    )}
                     <CardDescription className="max-w-lg text-balance leading-relaxed">
                       {t.formatMessage({ id: 'ANIMALTYPE.LAYERS.DESCRIPTION' })}
                     </CardDescription>
@@ -250,10 +275,13 @@ export function Index() {
                   x-chunk="dashboard-05-chunk-0"
                 >
                   <CardHeader className="pb-3">
-                    <CardTitle>
-                      {t.formatMessage({ id: 'DIASMALIA.WELCOME' })}
-                      {animalType?.slug}
-                    </CardTitle>
+                    {animalType?.slug === 'poulets de chair' ? (
+                      <CardTitle>
+                        {t.formatMessage({ id: 'DIASMALIA.WELCOME.BROILERS' })}
+                      </CardTitle>
+                    ) : (
+                      ''
+                    )}
                     <CardDescription className="max-w-lg text-balance leading-relaxed">
                       {t.formatMessage({
                         id: 'ANIMALTYPE.BROILERS.DESCRIPTION',
@@ -270,10 +298,13 @@ export function Index() {
                   x-chunk="dashboard-05-chunk-0"
                 >
                   <CardHeader className="pb-3">
-                    <CardTitle>
-                      {t.formatMessage({ id: 'DIASMALIA.WELCOME' })}
-                      {animalType?.slug || 'pisciculture'}
-                    </CardTitle>
+                    {animalType?.slug === 'poissons' ? (
+                      <CardTitle>
+                        {t.formatMessage({ id: 'DIASMALIA.WELCOME.FISH' })}
+                      </CardTitle>
+                    ) : (
+                      ''
+                    )}
                     <CardDescription className="max-w-lg text-balance leading-relaxed">
                       {t.formatMessage({
                         id: 'ANIMALTYPE.FISH.DESCRIPTION',
@@ -286,464 +317,482 @@ export function Index() {
             ) : (
               ''
             )}
-            <Tabs defaultValue="locations">
-              <div className="flex items-center">
-                {[
-                  'Porciculture',
-                  'Bovins',
-                  'Cuniculture',
-                  'Caprins',
-                  'Ovins',
-                ].includes(animalType?.name) ? (
-                  <TabsList>
-                    {['Porciculture'].includes(animalType?.name) ? (
-                      <TabsTrigger value="locations">
-                        {t.formatMessage({ id: 'ANIMALTYPE.LOCATIONS.PIGS' })}
-                      </TabsTrigger>
-                    ) : ['Cuniculture'].includes(animalType?.name) ? (
-                      <TabsTrigger value="locations">
-                        {t.formatMessage({
-                          id: 'ANIMALTYPE.LOCATIONS.RABBITS',
-                        })}
-                      </TabsTrigger>
-                    ) : (
-                      <TabsTrigger value="locations">
-                        {t.formatMessage({ id: 'ANIMALTYPE.LOCATIONS' })}
-                      </TabsTrigger>
-                    )}
-                    {['Porciculture'].includes(animalType?.name) ? (
-                      <TabsTrigger value="animals">
-                        {t.formatMessage({ id: 'ANIMALTYPE.ANIMALS.PIGS' })}
-                      </TabsTrigger>
-                    ) : ['Cuniculture'].includes(animalType?.name) ? (
-                      <TabsTrigger value="animals">
-                        {t.formatMessage({
-                          id: 'ANIMALTYPE.ANIMALS.RABBITS',
-                        })}
-                      </TabsTrigger>
-                    ) : ['Bovins'].includes(animalType?.name) ? (
-                      <TabsTrigger value="animals">
-                        {t.formatMessage({
-                          id: 'ANIMALTYPE.ANIMALS.BOVINS',
-                        })}
-                      </TabsTrigger>
-                    ) : ['Caprins'].includes(animalType?.name) ? (
-                      <TabsTrigger value="animals">
-                        {t.formatMessage({
-                          id: 'ANIMALTYPE.ANIMALS.CAPRINS',
-                        })}
-                      </TabsTrigger>
-                    ) : (
-                      <TabsTrigger value="animals">
-                        {t.formatMessage({
-                          id: 'ANIMALTYPE.ANIMALS.SHEEPS',
-                        })}
-                      </TabsTrigger>
-                    )}
-                    <TabsTrigger value="feedings">
-                      {t.formatMessage({ id: 'ANIMALTYPE.FEEDINGS' })}
-                    </TabsTrigger>
-                    {!['Bovins', 'Caprins', 'Ovins'].includes(
-                      animalType?.name,
-                    ) ? (
-                      <TabsTrigger value="fattenings">
-                        {t.formatMessage({ id: 'ANIMALTYPE.FATTENING' })}
-                      </TabsTrigger>
-                    ) : (
-                      ''
-                    )}
-                    <TabsTrigger value="breedings">
-                      {t.formatMessage({ id: 'ANIMALTYPE.BREEDING' })}
-                    </TabsTrigger>
-                    <TabsTrigger value="gestations">
-                      {t.formatMessage({ id: 'ANIMALTYPE.GESTATIONS' })}
-                    </TabsTrigger>
-                    <TabsTrigger value="farrowings">
-                      {t.formatMessage({ id: 'ANIMALTYPE.FARROWING' })}
-                    </TabsTrigger>
-                    {!['Bovins', 'Caprins'].includes(animalType?.name) ? (
-                      <TabsTrigger value="weanings">
-                        {t.formatMessage({ id: 'ANIMALTYPE.WEANINGS' })}
-                      </TabsTrigger>
-                    ) : (
-                      ''
-                    )}
-                    {['Bovins', 'Caprins'].includes(animalType?.name) ? (
-                      <TabsTrigger value="milkings">
-                        {t.formatMessage({ id: 'ANIMALTYPE.MILKINGS' })}
-                      </TabsTrigger>
-                    ) : (
-                      ''
-                    )}
-                    <TabsTrigger value="deaths">
-                      {t.formatMessage({ id: 'ANIMALTYPE.DEATHS' })}
-                    </TabsTrigger>
-                    <TabsTrigger value="isolations">
-                      {t.formatMessage({ id: 'ANIMALTYPE.ISOLATIONS' })}
-                    </TabsTrigger>
-                    <TabsTrigger value="treatments">
-                      {t.formatMessage({ id: 'ANIMALTYPE.CARE' })}
-                    </TabsTrigger>
-                    <TabsTrigger value="sales">
-                      {t.formatMessage({ id: 'MENU.SALES' })}
-                    </TabsTrigger>
-                    <TabsTrigger value="analytics">Analytics</TabsTrigger>
-                  </TabsList>
-                ) : [
-                    'Pondeuses',
-                    'Dinde',
-                    'Canards',
-                    'Pintarde',
-                    'Poulets Brahma',
-                    'Poulets Goliaths',
+            {animalType?.tab ? (
+              <Tabs defaultValue={animalType?.tab}>
+                <div className="flex items-center">
+                  {[
+                    'Porciculture',
+                    'Bovins',
+                    'Cuniculture',
+                    'Caprins',
+                    'Ovins',
                   ].includes(animalType?.name) ? (
-                  <TabsList>
-                    <TabsTrigger value="locations">
-                      {t.formatMessage({ id: 'ANIMALTYPE.LOCATIONS.AVES' })}
-                    </TabsTrigger>
-                    <TabsTrigger value="aves-animals">
-                      {t.formatMessage({ id: 'ANIMALTYPE.ANIMALS.AVES' })}
-                    </TabsTrigger>
-                    <TabsTrigger value="aves-feedings">
-                      {t.formatMessage({ id: 'ANIMALTYPE.FEEDINGS' })}
-                    </TabsTrigger>
-                    <TabsTrigger value="egg-harvestings">
-                      {t.formatMessage({ id: 'ANIMALTYPE.EGGHAVESTING' })}
-                    </TabsTrigger>
-                    {animalType?.name === 'Pondeuses' ? (
-                      ''
-                    ) : (
-                      <TabsTrigger value="incubations">
-                        {t.formatMessage({ id: 'ANIMALTYPE.INCUBATION' })}
-                      </TabsTrigger>
-                    )}
-                    <TabsTrigger value="aves-deaths">
-                      {t.formatMessage({ id: 'ANIMALTYPE.DEATHS' })}
-                    </TabsTrigger>
-                    <TabsTrigger value="aves-isolations">
-                      {t.formatMessage({ id: 'ANIMALTYPE.ISOLATIONS' })}
-                    </TabsTrigger>
-                    <TabsTrigger value="aves-treatments">
-                      {t.formatMessage({ id: 'ANIMALTYPE.CARE' })}
-                    </TabsTrigger>
-                    <TabsTrigger value="aves-sales">
-                      {t.formatMessage({ id: 'MENU.SALES' })}
-                    </TabsTrigger>
-                    {animalByType?._count?.sales !== 0 ? (
-                      <TabsTrigger value="sales-analytics">
-                        {t.formatMessage({ id: 'SALES.ANALYTICS' })}
-                      </TabsTrigger>
-                    ) : (
-                      ''
-                    )}
-                  </TabsList>
-                ) : (
-                  <TabsList>
-                    {['Poulet de chair'].includes(animalType?.name) ? (
-                      <TabsTrigger value="locations">
-                        {t.formatMessage({
-                          id: 'ANIMALTYPE.LOCATIONS.AVES',
-                        })}
-                      </TabsTrigger>
-                    ) : (
-                      <TabsTrigger value="locations">
-                        {t.formatMessage({ id: 'ANIMALTYPE.LOCATIONS.FISH' })}
-                      </TabsTrigger>
-                    )}
-                    <TabsTrigger value="aves-animals">
-                      {t.formatMessage({ id: 'ANIMALTYPE.ANIMALS.AVES' })}
-                    </TabsTrigger>
-                    <TabsTrigger value="aves-feedings">
-                      {t.formatMessage({ id: 'ANIMALTYPE.FEEDINGS' })}
-                    </TabsTrigger>
-                    {animalByType?.productionPhase === 'LAYING' ? (
-                      <>
-                        <TabsTrigger value="egg-harvestings">
-                          {t.formatMessage({ id: 'ANIMALTYPE.EGGHAVESTING' })}
+                    <TabsList>
+                      {['Porciculture'].includes(animalType?.name) ? (
+                        <TabsTrigger value="locations">
+                          {t.formatMessage({ id: 'ANIMALTYPE.LOCATIONS.PIGS' })}
                         </TabsTrigger>
+                      ) : ['Cuniculture'].includes(animalType?.name) ? (
+                        <TabsTrigger value="locations">
+                          {t.formatMessage({
+                            id: 'ANIMALTYPE.LOCATIONS.RABBITS',
+                          })}
+                        </TabsTrigger>
+                      ) : (
+                        <TabsTrigger value="locations">
+                          {t.formatMessage({ id: 'ANIMALTYPE.LOCATIONS' })}
+                        </TabsTrigger>
+                      )}
+                      {['Porciculture'].includes(animalType?.name) ? (
+                        <TabsTrigger value="animals">
+                          {t.formatMessage({ id: 'ANIMALTYPE.ANIMALS.PIGS' })}
+                        </TabsTrigger>
+                      ) : ['Cuniculture'].includes(animalType?.name) ? (
+                        <TabsTrigger value="animals">
+                          {t.formatMessage({
+                            id: 'ANIMALTYPE.ANIMALS.RABBITS',
+                          })}
+                        </TabsTrigger>
+                      ) : ['Bovins'].includes(animalType?.name) ? (
+                        <TabsTrigger value="animals">
+                          {t.formatMessage({
+                            id: 'ANIMALTYPE.ANIMALS.BOVINS',
+                          })}
+                        </TabsTrigger>
+                      ) : ['Caprins'].includes(animalType?.name) ? (
+                        <TabsTrigger value="animals">
+                          {t.formatMessage({
+                            id: 'ANIMALTYPE.ANIMALS.CAPRINS',
+                          })}
+                        </TabsTrigger>
+                      ) : (
+                        <TabsTrigger value="animals">
+                          {t.formatMessage({
+                            id: 'ANIMALTYPE.ANIMALS.SHEEPS',
+                          })}
+                        </TabsTrigger>
+                      )}
+                      <TabsTrigger value="feedings">
+                        {t.formatMessage({ id: 'ANIMALTYPE.FEEDINGS' })}
+                      </TabsTrigger>
+                      {!['Bovins', 'Caprins', 'Ovins'].includes(
+                        animalType?.name,
+                      ) ? (
+                        <TabsTrigger value="fattenings">
+                          {t.formatMessage({ id: 'ANIMALTYPE.FATTENING' })}
+                        </TabsTrigger>
+                      ) : (
+                        ''
+                      )}
+                      <TabsTrigger value="breedings">
+                        {t.formatMessage({ id: 'ANIMALTYPE.BREEDING' })}
+                      </TabsTrigger>
+                      <TabsTrigger value="gestations">
+                        {t.formatMessage({ id: 'ANIMALTYPE.GESTATIONS' })}
+                      </TabsTrigger>
+                      <TabsTrigger value="farrowings">
+                        {t.formatMessage({ id: 'ANIMALTYPE.FARROWING' })}
+                      </TabsTrigger>
+                      {!['Bovins', 'Caprins'].includes(animalType?.name) ? (
+                        <TabsTrigger value="weanings">
+                          {t.formatMessage({ id: 'ANIMALTYPE.WEANINGS' })}
+                        </TabsTrigger>
+                      ) : (
+                        ''
+                      )}
+                      {['Bovins', 'Caprins'].includes(animalType?.name) ? (
+                        <TabsTrigger value="milkings">
+                          {t.formatMessage({ id: 'ANIMALTYPE.MILKINGS' })}
+                        </TabsTrigger>
+                      ) : (
+                        ''
+                      )}
+                      <TabsTrigger value="deaths">
+                        {t.formatMessage({ id: 'ANIMALTYPE.DEATHS' })}
+                      </TabsTrigger>
+                      <TabsTrigger value="isolations">
+                        {t.formatMessage({ id: 'ANIMALTYPE.ISOLATIONS' })}
+                      </TabsTrigger>
+                      <TabsTrigger value="treatments">
+                        {t.formatMessage({ id: 'ANIMALTYPE.CARE' })}
+                      </TabsTrigger>
+                      <TabsTrigger value="sales">
+                        {t.formatMessage({ id: 'MENU.SALES' })}
+                      </TabsTrigger>
+                      <TabsTrigger value="analytics">Resume</TabsTrigger>
+                    </TabsList>
+                  ) : [
+                      'Pondeuses',
+                      'Dinde',
+                      'Canards',
+                      'Pintarde',
+                      'Poulets Brahma',
+                      'Poulets Goliaths',
+                    ].includes(animalType?.name) ? (
+                    <TabsList>
+                      <TabsTrigger value="aves-locations">
+                        {t.formatMessage({ id: 'ANIMALTYPE.LOCATIONS.AVES' })}
+                      </TabsTrigger>
+                      <TabsTrigger value="aves-animals">
+                        {t.formatMessage({ id: 'ANIMALTYPE.ANIMALS.AVES' })}
+                      </TabsTrigger>
+                      <TabsTrigger value="aves-feedings">
+                        {t.formatMessage({ id: 'ANIMALTYPE.FEEDINGS' })}
+                      </TabsTrigger>
+                      <TabsTrigger value="egg-harvestings">
+                        {t.formatMessage({ id: 'ANIMALTYPE.EGGHAVESTING' })}
+                      </TabsTrigger>
+                      {animalType?.name === 'Pondeuses' ? (
+                        ''
+                      ) : (
                         <TabsTrigger value="incubations">
                           {t.formatMessage({ id: 'ANIMALTYPE.INCUBATION' })}
                         </TabsTrigger>
-                      </>
-                    ) : (
-                      ''
-                    )}
-                    <TabsTrigger value="aves-deaths">
-                      {t.formatMessage({ id: 'ANIMALTYPE.DEATHS' })}
-                    </TabsTrigger>
-                    <TabsTrigger value="aves-isolations">
-                      {t.formatMessage({ id: 'ANIMALTYPE.ISOLATIONS' })}
-                    </TabsTrigger>
-                    <TabsTrigger value="aves-treatments">
-                      {t.formatMessage({ id: 'ANIMALTYPE.CARE' })}
-                    </TabsTrigger>
-                    <TabsTrigger value="aves-sales">
-                      {t.formatMessage({ id: 'SALE.TITLE.PAGE' })}
-                    </TabsTrigger>
-                    {animalByType?._count?.sales !== 0 &&
-                    animalByType?.productionPhase === 'LAYING' ? (
-                      <TabsTrigger value="sales-analytics">
-                        {t.formatMessage({ id: 'SALES.ANALYTICS' })}
+                      )}
+                      <TabsTrigger value="aves-deaths">
+                        {t.formatMessage({ id: 'ANIMALTYPE.DEATHS' })}
                       </TabsTrigger>
-                    ) : (
-                      ''
-                    )}
-                  </TabsList>
-                )}
-              </div>
-              <TabsContent value="locations">
-                <Card
-                  x-chunk="dashboard-06-chunk-0"
-                  className="dark:border-gray-800"
-                >
-                  <TabLocations animalTypeId={animalTypeId} />
-                </Card>
-              </TabsContent>
-              <TabsContent value="aves-animals">
-                <Card
-                  x-chunk="dashboard-06-chunk-0"
-                  className="dark:border-gray-800"
-                >
-                  <TabAvesAnimals animalTypeId={animalTypeId} />
-                </Card>
-              </TabsContent>
-              <TabsContent value="animals">
-                <Card
-                  x-chunk="dashboard-06-chunk-0"
-                  className="dark:border-gray-800"
-                >
-                  <TabAnimals animalTypeId={animalTypeId} />
-                </Card>
-              </TabsContent>
-              <TabsContent value="feedings">
-                <Card
-                  x-chunk="dashboard-06-chunk-0"
-                  className="dark:border-gray-800"
-                >
-                  <TabFeedings animalTypeId={animalTypeId} />
-                </Card>
-              </TabsContent>
-              <TabsContent value="aves-feedings">
-                <Card
-                  x-chunk="dashboard-06-chunk-0"
-                  className="dark:border-gray-800"
-                >
-                  <TabAvesFeedings animalTypeId={animalTypeId} />
-                </Card>
-              </TabsContent>
-              <TabsContent value="aves-feedings">
-                <Card
-                  x-chunk="dashboard-06-chunk-0"
-                  className="dark:border-gray-800"
-                >
-                  <FeedingsAnalytics animalTypeId={animalTypeId} />
-                </Card>
-              </TabsContent>
-              <TabsContent value="fattenings">
-                <Card
-                  x-chunk="dashboard-06-chunk-0"
-                  className="dark:border-gray-800"
-                >
-                  <TabFattenings animalTypeId={animalTypeId} />
-                </Card>
-              </TabsContent>
-              <TabsContent value="breedings">
-                <Card
-                  x-chunk="dashboard-06-chunk-0"
-                  className="dark:border-gray-800"
-                >
-                  <TabBreedings animalTypeId={animalTypeId} />
-                </Card>
-              </TabsContent>
-              <TabsContent value="gestations">
-                <Card
-                  x-chunk="dashboard-06-chunk-0"
-                  className="dark:border-gray-800"
-                >
-                  <TabGestations animalTypeId={animalTypeId} />
-                </Card>
-              </TabsContent>
-              <TabsContent value="farrowings">
-                <Card
-                  x-chunk="dashboard-06-chunk-0"
-                  className="dark:border-gray-800"
-                >
-                  <TabFarrowings animalTypeId={animalTypeId} />
-                </Card>
-              </TabsContent>
-              <TabsContent value="weanings">
-                <Card
-                  x-chunk="dashboard-06-chunk-0"
-                  className="dark:border-gray-800"
-                >
-                  <TabWeanings animalTypeId={animalTypeId} />
-                </Card>
-              </TabsContent>
-              <TabsContent value="weanings">
-                <Card
-                  x-chunk="dashboard-06-chunk-0"
-                  className="dark:border-gray-800"
-                >
-                  <FarrowingsWeaningsAnalytics animalTypeId={animalTypeId} />
-                </Card>
-              </TabsContent>
-              <TabsContent value="milkings">
-                <Card
-                  x-chunk="dashboard-06-chunk-0"
-                  className="dark:border-gray-800"
-                >
-                  <TabMilkings animalTypeId={animalTypeId} />
-                </Card>
-              </TabsContent>
-              <TabsContent value="deaths">
-                <Card
-                  x-chunk="dashboard-06-chunk-0"
-                  className="dark:border-gray-800"
-                >
-                  <TabDeaths animalTypeId={animalTypeId} />
-                </Card>
-              </TabsContent>
-              <TabsContent value="aves-deaths">
-                <Card
-                  x-chunk="dashboard-06-chunk-0"
-                  className="dark:border-gray-800"
-                >
-                  <TabAvesDeaths animalTypeId={animalTypeId} />
-                </Card>
-              </TabsContent>
-              <TabsContent value="aves-deaths">
-                <Card
-                  x-chunk="dashboard-06-chunk-0"
-                  className="dark:border-gray-800"
-                >
-                  <AvesDeathsAnalytics animalTypeId={animalTypeId} />
-                </Card>
-              </TabsContent>
-              <TabsContent value="egg-harvestings">
-                <Card
-                  x-chunk="dashboard-06-chunk-0"
-                  className="dark:border-gray-800"
-                >
-                  <TabEggHarvestings animalTypeId={animalTypeId} />
-                </Card>
-              </TabsContent>
-              <TabsContent value="egg-harvestings">
-                <Card
-                  x-chunk="dashboard-06-chunk-0"
-                  className="dark:border-gray-800"
-                >
-                  <EggHarvestingsAnalytics animalTypeId={animalTypeId} />
-                </Card>
-              </TabsContent>
-              <TabsContent value="incubations">
-                <Card
-                  x-chunk="dashboard-06-chunk-0"
-                  className="dark:border-gray-800"
-                >
-                  <TabIncubations animalTypeId={animalTypeId} />
-                </Card>
-              </TabsContent>
-              <TabsContent value="incubations">
-                <Card
-                  x-chunk="dashboard-06-chunk-0"
-                  className="dark:border-gray-800"
-                >
-                  <TabIncubationsAnalytics animalTypeId={animalTypeId} />
-                </Card>
-              </TabsContent>
-              <TabsContent value="isolations">
-                <Card
-                  x-chunk="dashboard-06-chunk-0"
-                  className="dark:border-gray-800"
-                >
-                  <TabIsolations animalTypeId={animalTypeId} />
-                </Card>
-              </TabsContent>
-              <TabsContent value="aves-isolations">
-                <Card
-                  x-chunk="dashboard-06-chunk-0"
-                  className="dark:border-gray-800"
-                >
-                  <TabAvesIsolations animalTypeId={animalTypeId} />
-                </Card>
-              </TabsContent>
-              <TabsContent value="treatments">
-                <Card
-                  x-chunk="dashboard-06-chunk-0"
-                  className="dark:border-gray-800"
-                >
-                  <TabTreatments animalTypeId={animalTypeId} />
-                </Card>
-              </TabsContent>
-              <TabsContent value="aves-treatments">
-                <Card
-                  x-chunk="dashboard-06-chunk-0"
-                  className="dark:border-gray-800"
-                >
-                  <TabAvesTreatments animalTypeId={animalTypeId} />
-                </Card>
-              </TabsContent>
-              <TabsContent value="aves-sales">
-                <Card
-                  x-chunk="dashboard-06-chunk-0"
-                  className="dark:border-gray-800"
-                >
-                  <TabAvesSales animalTypeId={animalTypeId} />
-                </Card>
-              </TabsContent>
-              <TabsContent value="sales">
-                <Card
-                  x-chunk="dashboard-06-chunk-0"
-                  className="dark:border-gray-800"
-                >
-                  <TabSales animalTypeId={animalTypeId} />
-                </Card>
-              </TabsContent>
-              <TabsContent value="analytics">
-                <Card
-                  x-chunk="dashboard-06-chunk-0"
-                  className="dark:border-gray-800"
-                >
-                  <TabAnalytics animalTypeId={animalTypeId} />
-                </Card>
-              </TabsContent>
-              <TabsContent value="sales-analytics">
-                <Card
-                  x-chunk="dashboard-06-chunk-0"
-                  className="dark:border-gray-800"
-                >
-                  <TabSalesAnalytics animalTypeId={animalTypeId} />
-                </Card>
-              </TabsContent>
-              <TabsContent value="sales-analytics">
-                <Card
-                  x-chunk="dashboard-06-chunk-0"
-                  className="dark:border-gray-800"
-                >
-                  <ChickenSalesAnalytics animalTypeId={animalTypeId} />
-                </Card>
-              </TabsContent>
-              {animalType?.name !== 'Pondeuses' ? (
+                      <TabsTrigger value="aves-isolations">
+                        {t.formatMessage({ id: 'ANIMALTYPE.ISOLATIONS' })}
+                      </TabsTrigger>
+                      <TabsTrigger value="aves-treatments">
+                        {t.formatMessage({ id: 'ANIMALTYPE.CARE' })}
+                      </TabsTrigger>
+                      <TabsTrigger value="aves-sales">
+                        {t.formatMessage({ id: 'MENU.SALES' })}
+                      </TabsTrigger>
+                      {animalByType?._count?.sales !== 0 ? (
+                        <TabsTrigger value="sales-analytics">
+                          {t.formatMessage({ id: 'SALES.ANALYTICS' })}
+                        </TabsTrigger>
+                      ) : (
+                        ''
+                      )}
+                    </TabsList>
+                  ) : (
+                    <TabsList>
+                      {['Poulet de chair'].includes(animalType?.name) ? (
+                        <TabsTrigger value="aves-locations">
+                          {t.formatMessage({
+                            id: 'ANIMALTYPE.LOCATIONS.AVES',
+                          })}
+                        </TabsTrigger>
+                      ) : (
+                        <TabsTrigger value="aves-locations">
+                          {t.formatMessage({ id: 'ANIMALTYPE.LOCATIONS.FISH' })}
+                        </TabsTrigger>
+                      )}
+                      <TabsTrigger value="aves-animals">
+                        {t.formatMessage({ id: 'ANIMALTYPE.ANIMALS.AVES' })}
+                      </TabsTrigger>
+                      <TabsTrigger value="aves-feedings">
+                        {t.formatMessage({ id: 'ANIMALTYPE.FEEDINGS' })}
+                      </TabsTrigger>
+                      {animalByType?.productionPhase === 'LAYING' ? (
+                        <>
+                          <TabsTrigger value="egg-harvestings">
+                            {t.formatMessage({ id: 'ANIMALTYPE.EGGHAVESTING' })}
+                          </TabsTrigger>
+                          <TabsTrigger value="incubations">
+                            {t.formatMessage({ id: 'ANIMALTYPE.INCUBATION' })}
+                          </TabsTrigger>
+                        </>
+                      ) : (
+                        ''
+                      )}
+                      <TabsTrigger value="aves-deaths">
+                        {t.formatMessage({ id: 'ANIMALTYPE.DEATHS' })}
+                      </TabsTrigger>
+                      <TabsTrigger value="aves-isolations">
+                        {t.formatMessage({ id: 'ANIMALTYPE.ISOLATIONS' })}
+                      </TabsTrigger>
+                      <TabsTrigger value="aves-treatments">
+                        {t.formatMessage({ id: 'ANIMALTYPE.CARE' })}
+                      </TabsTrigger>
+                      <TabsTrigger value="aves-sales">
+                        {t.formatMessage({ id: 'SALE.TITLE.PAGE' })}
+                      </TabsTrigger>
+                      {animalByType?._count?.sales !== 0 &&
+                      animalByType?.productionPhase === 'LAYING' ? (
+                        <TabsTrigger value="sales-analytics">
+                          {t.formatMessage({ id: 'SALES.ANALYTICS' })}
+                        </TabsTrigger>
+                      ) : (
+                        ''
+                      )}
+                    </TabsList>
+                  )}
+                </div>
+                <TabsContent value="locations">
+                  <Card
+                    x-chunk="dashboard-06-chunk-0"
+                    className="dark:border-gray-800"
+                  >
+                    <TabLocations animalTypeId={animalTypeId} />
+                  </Card>
+                </TabsContent>
+                <TabsContent value="aves-locations">
+                  <Card
+                    x-chunk="dashboard-06-chunk-0"
+                    className="dark:border-gray-800"
+                  >
+                    <TabAvesLocations animalTypeId={animalTypeId} />
+                  </Card>
+                </TabsContent>
+                <TabsContent value="aves-animals">
+                  <Card
+                    x-chunk="dashboard-06-chunk-0"
+                    className="dark:border-gray-800"
+                  >
+                    <TabAvesAnimals animalTypeId={animalTypeId} />
+                  </Card>
+                </TabsContent>
+                <TabsContent value="animals">
+                  <Card
+                    x-chunk="dashboard-06-chunk-0"
+                    className="dark:border-gray-800"
+                  >
+                    <TabAnimals animalTypeId={animalTypeId} />
+                  </Card>
+                </TabsContent>
+                <TabsContent value="feedings">
+                  <Card
+                    x-chunk="dashboard-06-chunk-0"
+                    className="dark:border-gray-800"
+                  >
+                    <TabFeedings animalTypeId={animalTypeId} />
+                  </Card>
+                </TabsContent>
+                <TabsContent value="feedings">
+                  <Card
+                    x-chunk="dashboard-06-chunk-0"
+                    className="dark:border-gray-800"
+                  >
+                    <FeedingsAnalytics animalTypeId={animalTypeId} />
+                  </Card>
+                </TabsContent>
+                <TabsContent value="aves-feedings">
+                  <Card
+                    x-chunk="dashboard-06-chunk-0"
+                    className="dark:border-gray-800"
+                  >
+                    <TabAvesFeedings animalTypeId={animalTypeId} />
+                  </Card>
+                </TabsContent>
+                <TabsContent value="aves-feedings">
+                  <Card
+                    x-chunk="dashboard-06-chunk-0"
+                    className="dark:border-gray-800"
+                  >
+                    <FeedingsAnalytics animalTypeId={animalTypeId} />
+                  </Card>
+                </TabsContent>
+                <TabsContent value="fattenings">
+                  <Card
+                    x-chunk="dashboard-06-chunk-0"
+                    className="dark:border-gray-800"
+                  >
+                    <TabFattenings animalTypeId={animalTypeId} />
+                  </Card>
+                </TabsContent>
+                <TabsContent value="breedings">
+                  <Card
+                    x-chunk="dashboard-06-chunk-0"
+                    className="dark:border-gray-800"
+                  >
+                    <TabBreedings animalTypeId={animalTypeId} />
+                  </Card>
+                </TabsContent>
+                <TabsContent value="gestations">
+                  <Card
+                    x-chunk="dashboard-06-chunk-0"
+                    className="dark:border-gray-800"
+                  >
+                    <TabGestations animalTypeId={animalTypeId} />
+                  </Card>
+                </TabsContent>
+                <TabsContent value="farrowings">
+                  <Card
+                    x-chunk="dashboard-06-chunk-0"
+                    className="dark:border-gray-800"
+                  >
+                    <TabFarrowings animalTypeId={animalTypeId} />
+                  </Card>
+                </TabsContent>
+                <TabsContent value="weanings">
+                  <Card
+                    x-chunk="dashboard-06-chunk-0"
+                    className="dark:border-gray-800"
+                  >
+                    <TabWeanings animalTypeId={animalTypeId} />
+                  </Card>
+                </TabsContent>
+                <TabsContent value="weanings">
+                  <Card
+                    x-chunk="dashboard-06-chunk-0"
+                    className="dark:border-gray-800"
+                  >
+                    <FarrowingsWeaningsAnalytics animalTypeId={animalTypeId} />
+                  </Card>
+                </TabsContent>
+                <TabsContent value="milkings">
+                  <Card
+                    x-chunk="dashboard-06-chunk-0"
+                    className="dark:border-gray-800"
+                  >
+                    <TabMilkings animalTypeId={animalTypeId} />
+                  </Card>
+                </TabsContent>
+                <TabsContent value="deaths">
+                  <Card
+                    x-chunk="dashboard-06-chunk-0"
+                    className="dark:border-gray-800"
+                  >
+                    <TabDeaths animalTypeId={animalTypeId} />
+                  </Card>
+                </TabsContent>
+                <TabsContent value="aves-deaths">
+                  <Card
+                    x-chunk="dashboard-06-chunk-0"
+                    className="dark:border-gray-800"
+                  >
+                    <TabAvesDeaths animalTypeId={animalTypeId} />
+                  </Card>
+                </TabsContent>
+                <TabsContent value="aves-deaths">
+                  <Card
+                    x-chunk="dashboard-06-chunk-0"
+                    className="dark:border-gray-800"
+                  >
+                    <AvesDeathsAnalytics animalTypeId={animalTypeId} />
+                  </Card>
+                </TabsContent>
+                <TabsContent value="egg-harvestings">
+                  <Card
+                    x-chunk="dashboard-06-chunk-0"
+                    className="dark:border-gray-800"
+                  >
+                    <TabEggHarvestings animalTypeId={animalTypeId} />
+                  </Card>
+                </TabsContent>
+                <TabsContent value="egg-harvestings">
+                  <Card
+                    x-chunk="dashboard-06-chunk-0"
+                    className="dark:border-gray-800"
+                  >
+                    <EggHarvestingsAnalytics animalTypeId={animalTypeId} />
+                  </Card>
+                </TabsContent>
+                <TabsContent value="incubations">
+                  <Card
+                    x-chunk="dashboard-06-chunk-0"
+                    className="dark:border-gray-800"
+                  >
+                    <TabIncubations animalTypeId={animalTypeId} />
+                  </Card>
+                </TabsContent>
+                <TabsContent value="incubations">
+                  <Card
+                    x-chunk="dashboard-06-chunk-0"
+                    className="dark:border-gray-800"
+                  >
+                    <TabIncubationsAnalytics animalTypeId={animalTypeId} />
+                  </Card>
+                </TabsContent>
+                <TabsContent value="isolations">
+                  <Card
+                    x-chunk="dashboard-06-chunk-0"
+                    className="dark:border-gray-800"
+                  >
+                    <TabIsolations animalTypeId={animalTypeId} />
+                  </Card>
+                </TabsContent>
+                <TabsContent value="aves-isolations">
+                  <Card
+                    x-chunk="dashboard-06-chunk-0"
+                    className="dark:border-gray-800"
+                  >
+                    <TabAvesIsolations animalTypeId={animalTypeId} />
+                  </Card>
+                </TabsContent>
+                <TabsContent value="treatments">
+                  <Card
+                    x-chunk="dashboard-06-chunk-0"
+                    className="dark:border-gray-800"
+                  >
+                    <TabTreatments animalTypeId={animalTypeId} />
+                  </Card>
+                </TabsContent>
+                <TabsContent value="aves-treatments">
+                  <Card
+                    x-chunk="dashboard-06-chunk-0"
+                    className="dark:border-gray-800"
+                  >
+                    <TabAvesTreatments animalTypeId={animalTypeId} />
+                  </Card>
+                </TabsContent>
+                <TabsContent value="aves-sales">
+                  <Card
+                    x-chunk="dashboard-06-chunk-0"
+                    className="dark:border-gray-800"
+                  >
+                    <TabAvesSales animalTypeId={animalTypeId} />
+                  </Card>
+                </TabsContent>
+                <TabsContent value="sales">
+                  <Card
+                    x-chunk="dashboard-06-chunk-0"
+                    className="dark:border-gray-800"
+                  >
+                    <TabSales animalTypeId={animalTypeId} />
+                  </Card>
+                </TabsContent>
+                <TabsContent value="analytics">
+                  <Card
+                    x-chunk="dashboard-06-chunk-0"
+                    className="dark:border-gray-800"
+                  >
+                    <TabAnalytics animalTypeId={animalTypeId} />
+                  </Card>
+                </TabsContent>
                 <TabsContent value="sales-analytics">
                   <Card
                     x-chunk="dashboard-06-chunk-0"
                     className="dark:border-gray-800"
                   >
-                    <ChickSalesAnalytics animalTypeId={animalTypeId} />
+                    <TabSalesAnalytics animalTypeId={animalTypeId} />
                   </Card>
                 </TabsContent>
-              ) : (
-                ''
-              )}
-              <TabsContent value="sales-analytics">
-                <Card
-                  x-chunk="dashboard-06-chunk-0"
-                  className="dark:border-gray-800"
-                >
-                  <EggSalesAnalytics animalTypeId={animalTypeId} />
-                </Card>
-              </TabsContent>
-            </Tabs>
+                <TabsContent value="sales-analytics">
+                  <Card
+                    x-chunk="dashboard-06-chunk-0"
+                    className="dark:border-gray-800"
+                  >
+                    <ChickenSalesAnalytics animalTypeId={animalTypeId} />
+                  </Card>
+                </TabsContent>
+                {animalType?.name !== 'Pondeuses' ? (
+                  <TabsContent value="sales-analytics">
+                    <Card
+                      x-chunk="dashboard-06-chunk-0"
+                      className="dark:border-gray-800"
+                    >
+                      <ChickSalesAnalytics animalTypeId={animalTypeId} />
+                    </Card>
+                  </TabsContent>
+                ) : (
+                  ''
+                )}
+                <TabsContent value="sales-analytics">
+                  <Card
+                    x-chunk="dashboard-06-chunk-0"
+                    className="dark:border-gray-800"
+                  >
+                    <EggSalesAnalytics animalTypeId={animalTypeId} />
+                  </Card>
+                </TabsContent>
+              </Tabs>
+            ) : null}
           </main>
         </div>
       </LayoutDashboard>

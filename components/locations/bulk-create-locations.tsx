@@ -1,5 +1,4 @@
-import { GetOneAnimalTypeAPI } from '@/api-site/animal-type';
-import { UpdateOneLoctionAPI } from '@/api-site/locations';
+import { CreateBulkLocationsAPI } from '@/api-site/locations';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
 import { LocationModel } from '@/types/location';
@@ -7,26 +6,30 @@ import {
   AlertDangerNotification,
   AlertSuccessNotification,
 } from '@/utils/alert-notification';
-import { XIcon } from 'lucide-react';
+import { FileQuestion, XIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
 import { SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
 import { SelectInput, TextInput } from '../ui-setting/shadcn';
 import { Label } from '../ui/label';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '../ui/tooltip';
 
 const schema = yup.object({
-  code: yup.string().optional(),
-  productionPhase: yup.string().optional(),
-  squareMeter: yup.number().optional(),
-  manger: yup.number().optional(),
-  through: yup.number().optional(),
+  manger: yup.number().required(),
+  through: yup.number().required(),
+  productionPhase: yup.string().required(),
+  number: yup.number().required('number is required field'),
+  squareMeter: yup.number().required('squareMeter is required field'),
 });
 
-const UpdateLocations = ({
+const CreateBulkLocations = ({
   showModal,
   setShowModal,
-  location,
 }: {
   showModal: boolean;
   setShowModal: any;
@@ -34,10 +37,8 @@ const UpdateLocations = ({
 }) => {
   const {
     t,
-    watch,
     control,
     errors,
-    setValue,
     handleSubmit,
     loading,
     setLoading,
@@ -46,25 +47,9 @@ const UpdateLocations = ({
   } = useReactHookForm({ schema });
   const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
-  const { data: animalType } = GetOneAnimalTypeAPI({
-    animalTypeId: animalTypeId,
-  });
 
-  useEffect(() => {
-    if (location) {
-      const fields = [
-        'code',
-        'productionPhase',
-        'squareMeter',
-        'manger',
-        'through',
-      ];
-      fields?.forEach((field: any) => setValue(field, location[field]));
-    }
-  }, [location, setValue]);
-
-  // Update data
-  const { mutateAsync: saveMutation } = UpdateOneLoctionAPI({
+  // Create data
+  const { mutateAsync: saveMutation } = CreateBulkLocationsAPI({
     onSuccess: () => {
       setHasErrors(false);
       setLoading(false);
@@ -83,12 +68,12 @@ const UpdateLocations = ({
     try {
       await saveMutation({
         ...payload,
-        locationId: location.id,
+        animalTypeId: animalTypeId,
       });
       setHasErrors(false);
       setLoading(false);
       AlertSuccessNotification({
-        text: 'Location updated successfully',
+        text: 'Locations created successfully',
       });
       setShowModal(false);
     } catch (error: any) {
@@ -115,6 +100,7 @@ const UpdateLocations = ({
                 <XIcon />
               </span>
             </button>
+
             <form className="mt-6" onSubmit={handleSubmit(onSubmit)}>
               <div className="flex-auto justify-center p-2">
                 {hasErrors && (
@@ -131,15 +117,26 @@ const UpdateLocations = ({
                   </div>
                 )}
 
-                <Label>Code</Label>
                 <div className="flex items-center">
                   <TextInput
                     control={control}
                     type="text"
-                    name="code"
-                    placeholder="Give a code"
+                    name="number"
+                    placeholder="Give a number"
                     errors={errors}
                   />
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <FileQuestion />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>
+                          {t.formatMessage({ id: 'BULK.LOCATIONS.TOOLTIP' })}
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
                 <div className="my-2">
                   <Label>
@@ -161,9 +158,12 @@ const UpdateLocations = ({
                   />
                 </div>
                 <div className="my-2 items-center space-x-1">
-                  {animalType?.name === 'Pisciculture' ? (
-                    <>
-                      <Label>Volume</Label>
+                  <div className="items-center flex space-x-9 my-2">
+                    <div>
+                      <Label>
+                        {t.formatMessage({ id: 'SURFACE.AREA' })}
+                        <span className="text-red-600">*</span>
+                      </Label>
                       <TextInput
                         control={control}
                         type="number"
@@ -171,49 +171,34 @@ const UpdateLocations = ({
                         placeholder="Square meters"
                         errors={errors}
                       />
-                    </>
-                  ) : (
-                    <>
-                      <div className="items-center flex space-x-9 my-2">
-                        <div>
-                          <Label>
-                            {t.formatMessage({ id: 'SURFACE.AREA' })}
-                          </Label>
-                          <TextInput
-                            control={control}
-                            type="number"
-                            name="squareMeter"
-                            placeholder="Square meters"
-                            errors={errors}
-                          />
-                        </div>
-                        <div>
-                          <Label>
-                            {t.formatMessage({ id: 'NUMBER.MANGERS' })}
-                          </Label>
-                          <TextInput
-                            control={control}
-                            type="number"
-                            name="manger"
-                            placeholder="Number of mangers"
-                            errors={errors}
-                          />
-                        </div>
-                        <div>
-                          <Label>
-                            {t.formatMessage({ id: 'NUMBER.THROUGHS' })}
-                          </Label>
-                          <TextInput
-                            control={control}
-                            type="number"
-                            name="through"
-                            placeholder="Number of throughs"
-                            errors={errors}
-                          />
-                        </div>
-                      </div>
-                    </>
-                  )}
+                    </div>
+                    <div>
+                      <Label>
+                        {t.formatMessage({ id: 'NUMBER.MANGERS' })}
+                        <span className="text-red-600">*</span>
+                      </Label>
+                      <TextInput
+                        control={control}
+                        type="number"
+                        name="manger"
+                        placeholder="Number of mangers"
+                        errors={errors}
+                      />
+                    </div>
+                    <div>
+                      <Label>
+                        {t.formatMessage({ id: 'NUMBER.THROUGHS' })}
+                        <span className="text-red-600">*</span>
+                      </Label>
+                      <TextInput
+                        control={control}
+                        type="number"
+                        name="through"
+                        placeholder="Number of throughs"
+                        errors={errors}
+                      />
+                    </div>
+                  </div>
                 </div>
                 <div className="mt-4 flex items-center space-x-3">
                   <ButtonInput
@@ -243,4 +228,4 @@ const UpdateLocations = ({
   );
 };
 
-export { UpdateLocations };
+export { CreateBulkLocations };

@@ -21,9 +21,10 @@ const schema = yup.object({
   squareMeter: yup.number().optional(),
   manger: yup.number().optional(),
   through: yup.number().optional(),
+  nest: yup.number().optional(),
 });
 
-const UpdateLocations = ({
+const UpdateLayingLocations = ({
   showModal,
   setShowModal,
   location,
@@ -46,6 +47,7 @@ const UpdateLocations = ({
   } = useReactHookForm({ schema });
   const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
+  const watchProductionPhase = watch('productionPhase');
   const { data: animalType } = GetOneAnimalTypeAPI({
     animalTypeId: animalTypeId,
   });
@@ -54,6 +56,7 @@ const UpdateLocations = ({
     if (location) {
       const fields = [
         'code',
+        'nest',
         'productionPhase',
         'squareMeter',
         'manger',
@@ -154,66 +157,64 @@ const UpdateLocations = ({
                     name="productionPhase"
                     dataItem={[
                       { id: 1, name: 'GROWTH' },
-                      { id: 2, name: 'FATTENING' },
-                      { id: 3, name: 'GESTATION' },
-                      { id: 4, name: 'REPRODUCTION' },
+                      { id: 2, name: 'LAYING' },
                     ]}
                   />
                 </div>
                 <div className="my-2 items-center space-x-1">
-                  {animalType?.name === 'Pisciculture' ? (
-                    <>
-                      <Label>Volume</Label>
-                      <TextInput
-                        control={control}
-                        type="number"
-                        name="squareMeter"
-                        placeholder="Square meters"
-                        errors={errors}
-                      />
-                    </>
-                  ) : (
-                    <>
-                      <div className="items-center flex space-x-9 my-2">
-                        <div>
-                          <Label>
-                            {t.formatMessage({ id: 'SURFACE.AREA' })}
-                          </Label>
-                          <TextInput
-                            control={control}
-                            type="number"
-                            name="squareMeter"
-                            placeholder="Square meters"
-                            errors={errors}
-                          />
-                        </div>
-                        <div>
-                          <Label>
-                            {t.formatMessage({ id: 'NUMBER.MANGERS' })}
-                          </Label>
-                          <TextInput
-                            control={control}
-                            type="number"
-                            name="manger"
-                            placeholder="Number of mangers"
-                            errors={errors}
-                          />
-                        </div>
-                        <div>
-                          <Label>
-                            {t.formatMessage({ id: 'NUMBER.THROUGHS' })}
-                          </Label>
-                          <TextInput
-                            control={control}
-                            type="number"
-                            name="through"
-                            placeholder="Number of throughs"
-                            errors={errors}
-                          />
-                        </div>
+                  <>
+                    <div className="items-center flex space-x-9 my-2">
+                      <div>
+                        <Label>{t.formatMessage({ id: 'SURFACE.AREA' })}</Label>
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="squareMeter"
+                          placeholder="Square meters"
+                          errors={errors}
+                        />
                       </div>
-                    </>
-                  )}
+                      <div>
+                        <Label>
+                          {t.formatMessage({ id: 'NUMBER.MANGERS' })}
+                        </Label>
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="manger"
+                          placeholder="Number of mangers"
+                          errors={errors}
+                        />
+                      </div>
+                      <div>
+                        <Label>
+                          {t.formatMessage({ id: 'NUMBER.THROUGHS' })}
+                        </Label>
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="through"
+                          placeholder="Number of throughs"
+                          errors={errors}
+                        />
+                      </div>
+                    </div>
+                    {watchProductionPhase === 'LAYING' &&
+                    animalType?.name !== 'Pisciculture' ? (
+                      <div>
+                        <Label>{t.formatMessage({ id: 'NUMBER.NESTS' })}</Label>
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="nest"
+                          placeholder="Number of nests"
+                          errors={errors}
+                        />
+                      </div>
+                    ) : (
+                      ''
+                    )}
+                  </>
                 </div>
                 <div className="mt-4 flex items-center space-x-3">
                   <ButtonInput
@@ -243,4 +244,4 @@ const UpdateLocations = ({
   );
 };
 
-export { UpdateLocations };
+export { UpdateLayingLocations };

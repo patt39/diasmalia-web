@@ -1,6 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
-import { ArchiveOneAnimalAPI, DeleteOneAnimalAPI } from '@/api-site/animals';
+import { DeleteOneAnimalAPI } from '@/api-site/animals';
 import { useInputState } from '@/components/hooks';
+import { ActionModalDialog } from '@/components/ui-setting/shadcn';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -15,31 +17,20 @@ import {
   formatWeight,
 } from '@/utils';
 import {
-  FileArchive,
   Hospital,
   ListCollapse,
   MoreHorizontal,
-  PencilIcon,
   TrashIcon,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
-import { ActionModalDialog } from '../ui-setting/shadcn';
-import { Badge } from '../ui/badge';
-import { UpdateAvesAnimals } from './update-aves';
-import { ViewAvesAnimal } from './view-aves-animal';
+import { ViewArchiveStatistics } from './view-archived-statistics';
 
-const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
+const ListArchives = ({ item, index }: { item: any; index: number }) => {
   const { t, isOpen, loading, setIsOpen, setLoading } = useInputState();
-  const [isEdit, setIsEdit] = useState(false);
   const [isView, setIsView] = useState(false);
 
   const { mutateAsync: deleteMutation } = DeleteOneAnimalAPI({
-    onSuccess: () => {},
-    onError: (error?: any) => {},
-  });
-
-  const { mutateAsync: archiveMutation } = ArchiveOneAnimalAPI({
     onSuccess: () => {},
     onError: (error?: any) => {},
   });
@@ -63,22 +54,6 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
     }
   };
 
-  const archiveItem = async (item: any) => {
-    setLoading(true);
-    try {
-      await archiveMutation({ animalId: item?.id });
-      AlertSuccessNotification({
-        text: 'Animal archived successfully',
-      });
-      setLoading(false);
-    } catch (error: any) {
-      setLoading(false);
-      AlertDangerNotification({
-        text: `${error.response.data.message}`,
-      });
-    }
-  };
-
   return (
     <>
       <div
@@ -87,19 +62,7 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
       >
         <div className="p-6 lg:px-10 lg:py-8">
           <div className="ml-2 mb-6">
-            {item?.status === 'ACTIVE' ? (
-              <Badge variant="default">
-                {t.formatMessage({ id: 'STATUS.ACTIVE' })}
-              </Badge>
-            ) : item?.status === 'SOLD' ? (
-              <Badge variant="secondary">
-                {t.formatMessage({ id: 'STATUS.SOLD' })}
-              </Badge>
-            ) : (
-              <Badge variant="destructive">
-                {t.formatMessage({ id: 'STATUS.DEATH' })}
-              </Badge>
-            )}
+            <Badge variant="default">{item?.animalType?.name}</Badge>
           </div>
           <div className="flex justify-center space-x-6">
             <div>
@@ -110,17 +73,11 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
               <h2 className="mt-2 text-sm font-medium text-gray-500 h-4">
                 Age: {formatDateDifference(item?.birthday)}
               </h2>
-              <h2 className="mt-2 text-sm font-medium text-gray-500 h-4">
-                {t.formatMessage({
-                  id: 'LOCATION.ANIMALS',
-                })}
-                : {item?.quantity <= 0 ? 0 : item?.quantity}
-              </h2>
             </div>
             <div className="flex-shrink-0 w-px h-20  bg-gray-200"></div>
             <div>
               <h3 className="text-sm font-bold text-gray-900 h-8 sm:text-base lg:text-lg">
-                {(item?.code).toUpperCase()}
+                {item?.code?.toUpperCase()}
               </h3>
               {item?.productionPhase === 'GROWTH' ? (
                 <p className=" text-sm font-medium text-gray-500">
@@ -149,16 +106,6 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="dark:border-gray-800">
-                {item?.quantity !== 0 ? (
-                  <DropdownMenuItem onClick={() => setIsEdit(true)}>
-                    <PencilIcon className="size-4 text-gray-600 hover:text-indigo-600" />
-                    <span className="ml-2 cursor-pointer hover:text-indigo-600">
-                      {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
-                    </span>
-                  </DropdownMenuItem>
-                ) : (
-                  ''
-                )}
                 <Link href={`/treatment/${item?.id}`}>
                   <DropdownMenuItem>
                     <Hospital className="size-4 text-gray-600 hover:text-indigo-600" />
@@ -173,26 +120,12 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
                     {t.formatMessage({ id: 'TABANIMAL.STATISTICS' })}
                   </span>
                 </DropdownMenuItem>
-                {item?.quantity === 0 ? (
-                  <DropdownMenuItem onClick={() => archiveItem(item)}>
-                    <FileArchive className="size-4 text-gray-600 hover:text-indigo-600" />
-                    <span className="ml-2 cursor-pointer hover:text-indigo-600">
-                      {t.formatMessage({ id: 'ARCHIVES' })}
-                    </span>
-                  </DropdownMenuItem>
-                ) : (
-                  ''
-                )}
-                {item?.quantity === 0 ? (
-                  <DropdownMenuItem onClick={() => setIsOpen(true)}>
-                    <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
-                    <span className="ml-2 cursor-pointer hover:text-red-600">
-                      {t.formatMessage({ id: 'TABANIMAL.DELETE' })}
-                    </span>
-                  </DropdownMenuItem>
-                ) : (
-                  ''
-                )}
+                <DropdownMenuItem onClick={() => setIsOpen(true)}>
+                  <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
+                  <span className="ml-2 cursor-pointer hover:text-red-600">
+                    {t.formatMessage({ id: 'TABANIMAL.DELETE' })}
+                  </span>
+                </DropdownMenuItem>
               </DropdownMenuContent>
               <ActionModalDialog
                 loading={loading}
@@ -201,12 +134,7 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
                 onClick={() => deleteItem(item)}
               />
             </DropdownMenu>
-            <UpdateAvesAnimals
-              animal={item}
-              showModal={isEdit}
-              setShowModal={setIsEdit}
-            />
-            <ViewAvesAnimal
+            <ViewArchiveStatistics
               animal={item}
               showModal={isView}
               setShowModal={setIsView}
@@ -217,4 +145,4 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
     </>
   );
 };
-export { ListAvesAnimals };
+export { ListArchives };

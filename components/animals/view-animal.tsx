@@ -1,8 +1,11 @@
 import { GetOneAnimalAPI } from '@/api-site/animals';
+import { GetOneFarrowingByAnimalIdAPI } from '@/api-site/farrowings';
+import { GetOneFatteningAPI } from '@/api-site/fattenings';
 import { GetOneSaleAnimalTypeAPI } from '@/api-site/sales';
 import { formatDateDDMMYY } from '@/utils';
 import { XIcon } from 'lucide-react';
 import { useIntl } from 'react-intl';
+import { formatWeight } from '../../utils/formate-date';
 import { Card, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
@@ -17,17 +20,21 @@ const ViewAnimal = ({
   animal?: any;
 }) => {
   const t = useIntl();
-
   const { data: getOneAnimal } = GetOneAnimalAPI({
     animalId: animal?.id,
+  });
+  const { data: getOneFattening } = GetOneFatteningAPI({
+    animalId: animal?.id,
+  });
+  const { data: getOneFarrowing } = GetOneFarrowingByAnimalIdAPI({
+    animalId: animal?.id,
+  });
+  const { data: getOneSaleAnimalType } = GetOneSaleAnimalTypeAPI({
+    animalTypeId: animal?.animalTypeId,
   });
 
   const feedConversionIndex =
     getOneAnimal?.feedingsCount / getOneAnimal?.weight;
-
-  const { data: getOneSaleAnimalType } = GetOneSaleAnimalTypeAPI({
-    animalTypeId: animal?.animalTypeId,
-  });
 
   return (
     <>
@@ -45,8 +52,128 @@ const ViewAnimal = ({
             </button>
             <form className="mt-8">
               <>
-                {getOneAnimal?.gender === 'FEMALE' ? (
-                  <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
+                {getOneAnimal?.gender === 'FEMALE' &&
+                getOneAnimal?.productionPhase === 'REPRODUCTION' ? (
+                  <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-2">
+                    <Card
+                      x-chunk="dashboard-05-chunk-1"
+                      className=" dark:border-gray-800"
+                    >
+                      <CardHeader className="pb-2">
+                        <CardDescription>
+                          {t.formatMessage({ id: 'FEMALE.BREEDING' })}
+                        </CardDescription>
+                        <CardTitle className="text-4xl">
+                          {getOneAnimal?.breedingFemaleCount || 0}
+                        </CardTitle>
+                      </CardHeader>
+                    </Card>
+                    <Card
+                      x-chunk="dashboard-05-chunk-1"
+                      className=" dark:border-gray-800"
+                    >
+                      <CardHeader className="pb-2">
+                        <CardDescription>
+                          {t.formatMessage({ id: 'VIEW.FEEDINGS' })}
+                        </CardDescription>
+                        <CardTitle className="text-4xl">
+                          {getOneAnimal?.feedingsCount}kg
+                        </CardTitle>
+                      </CardHeader>
+                    </Card>
+                  </div>
+                ) : getOneAnimal?.gender === 'MALE' &&
+                  getOneAnimal?.productionPhase === 'REPRODUCTION' ? (
+                  <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-2">
+                    <Card
+                      x-chunk="dashboard-05-chunk-1"
+                      className=" dark:border-gray-800"
+                    >
+                      <CardHeader className="pb-2">
+                        <CardDescription>
+                          {t.formatMessage({ id: 'VIEW.BREEDING' })}
+                        </CardDescription>
+                        <CardTitle className="text-4xl">
+                          {getOneAnimal?.breedingMaleCount || 0}
+                        </CardTitle>
+                      </CardHeader>
+                    </Card>
+                    <Card
+                      x-chunk="dashboard-05-chunk-1"
+                      className=" dark:border-gray-800"
+                    >
+                      <CardHeader className="pb-2">
+                        <CardDescription>
+                          {t.formatMessage({ id: 'VIEW.FEEDINGS' })}
+                        </CardDescription>
+                        <CardTitle className="text-4xl">
+                          {getOneAnimal?.feedingsCount || 0}kg
+                        </CardTitle>
+                      </CardHeader>
+                    </Card>
+                  </div>
+                ) : ['FATTENING', 'GROWTH'].includes(
+                    getOneAnimal?.productionPhase,
+                  ) ? (
+                  <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-2">
+                    <Card
+                      x-chunk="dashboard-05-chunk-1"
+                      className=" dark:border-gray-800"
+                    >
+                      <CardHeader className="pb-2">
+                        <CardDescription>
+                          {t.formatMessage({ id: 'VIEW.FEEDINGS' })}
+                        </CardDescription>
+                        <CardTitle className="text-4xl">
+                          {getOneAnimal?.feedingsCount || 0}kg
+                        </CardTitle>
+                      </CardHeader>
+                    </Card>
+                    <Card
+                      x-chunk="dashboard-05-chunk-1"
+                      className=" dark:border-gray-800"
+                    >
+                      <CardHeader className="pb-2">
+                        <CardDescription>
+                          <Label>{t.formatMessage({ id: 'FEED.INDEX' })}</Label>
+                        </CardDescription>
+                        <CardTitle className="text-4xl">
+                          {feedConversionIndex.toFixed(1) || 0}
+                        </CardTitle>
+                      </CardHeader>
+                    </Card>
+                  </div>
+                ) : getOneAnimal?.productionPhase === 'GESTATION' ? (
+                  <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-2">
+                    <Card
+                      x-chunk="dashboard-05-chunk-1"
+                      className=" dark:border-gray-800"
+                    >
+                      <CardHeader className="pb-2">
+                        <CardDescription>
+                          {t.formatMessage({ id: 'FEMALE.BREEDING' })}
+                        </CardDescription>
+                        <CardTitle className="text-4xl">
+                          {getOneAnimal?.breedingFemaleCount || 0}
+                        </CardTitle>
+                      </CardHeader>
+                    </Card>
+                    <Card
+                      x-chunk="dashboard-05-chunk-1"
+                      className=" dark:border-gray-800"
+                    >
+                      <CardHeader className="pb-2">
+                        <CardDescription>
+                          {t.formatMessage({ id: 'FEMALE.FARROWING' })}
+                        </CardDescription>
+                        <CardTitle className="text-4xl">
+                          {getOneAnimal?.farrowingCount || 0}
+                        </CardTitle>
+                      </CardHeader>
+                    </Card>
+                  </div>
+                ) : (
+                  <>
                     <Card
                       x-chunk="dashboard-05-chunk-1"
                       className=" dark:border-gray-800"
@@ -73,49 +200,7 @@ const ViewAnimal = ({
                         </CardTitle>
                       </CardHeader>
                     </Card>
-                    <Card
-                      x-chunk="dashboard-05-chunk-1"
-                      className=" dark:border-gray-800"
-                    >
-                      <CardHeader className="pb-2">
-                        <CardDescription>
-                          {t.formatMessage({ id: 'VIEW.FEEDINGS' })}
-                        </CardDescription>
-                        <CardTitle className="text-4xl">
-                          {getOneAnimal?.feedingsCount}kg
-                        </CardTitle>
-                      </CardHeader>
-                    </Card>
-                  </div>
-                ) : (
-                  <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-2">
-                    <Card
-                      x-chunk="dashboard-05-chunk-1"
-                      className=" dark:border-gray-800"
-                    >
-                      <CardHeader className="pb-2">
-                        <CardDescription>
-                          {t.formatMessage({ id: 'VIEW.BREEDING' })}
-                        </CardDescription>
-                        <CardTitle className="text-4xl">
-                          {getOneAnimal?.breedingCount || 0}
-                        </CardTitle>
-                      </CardHeader>
-                    </Card>
-                    <Card
-                      x-chunk="dashboard-05-chunk-1"
-                      className=" dark:border-gray-800"
-                    >
-                      <CardHeader className="pb-2">
-                        <CardDescription>
-                          {t.formatMessage({ id: 'VIEW.FEEDINGS' })} (kg)
-                        </CardDescription>
-                        <CardTitle className="text-4xl">
-                          {getOneAnimal?.feedingsCount || 0}
-                        </CardTitle>
-                      </CardHeader>
-                    </Card>
-                  </div>
+                  </>
                 )}
               </>
               <div className="mt-4 flex-auto justify-center p-2">
@@ -187,12 +272,17 @@ const ViewAnimal = ({
                   </div>
                   <div>
                     <Label>{t.formatMessage({ id: 'VIEW.WEIGHT' })}</Label>
-                    <Input disabled type="text" value={getOneAnimal?.weight} />
+                    <Input
+                      disabled
+                      type="text"
+                      value={formatWeight(getOneAnimal?.weight)}
+                    />
                   </div>
                   <div>
                     <Label>{t.formatMessage({ id: 'VIEW.BIRTHDATE' })}</Label>
                     <Input
                       disabled
+                      type="text"
                       value={formatDateDDMMYY(getOneAnimal?.birthday) || 'N/A'}
                     />
                   </div>
@@ -255,17 +345,54 @@ const ViewAnimal = ({
                             }
                           />
                         </div>
+                      ) : getOneAnimal?.productionPhase === 'FATTENING' ? (
+                        <div>
+                          <Label>
+                            {t.formatMessage({ id: 'FATTENING.DATE' })}
+                          </Label>
+                          <Input
+                            disabled
+                            type="text"
+                            value={
+                              formatDateDDMMYY(getOneFattening?.createdAt) ||
+                              'N/A'
+                            }
+                          />
+                        </div>
+                      ) : getOneAnimal?.productionPhase === 'REPRODUCTION' &&
+                        getOneAnimal?.farrowinglitterCount !== 0 ? (
+                        <div>
+                          <Label>
+                            {t.formatMessage({ id: 'FARROWING.DATE' })}
+                          </Label>
+                          <Input
+                            disabled
+                            type="text"
+                            value={
+                              formatDateDDMMYY(getOneFarrowing?.createdAt) ||
+                              'N/A'
+                            }
+                          />
+                        </div>
+                      ) : ['GESTATION', 'LACTATION'].includes(
+                          getOneAnimal?.productionPhase,
+                        ) ? (
+                        <div>
+                          <Label>
+                            {t.formatMessage({ id: 'FARROWING.DATE' })}
+                          </Label>
+                          <Input
+                            disabled
+                            type="text"
+                            value={
+                              formatDateDDMMYY(getOneFarrowing?.createdAt) ||
+                              'N/A'
+                            }
+                          />
+                        </div>
                       ) : (
                         ''
                       )}
-                      <div>
-                        <Label>{t.formatMessage({ id: 'FEED.INDEX' })}</Label>
-                        <Input
-                          disabled
-                          type="text"
-                          value={feedConversionIndex.toFixed(1)}
-                        />
-                      </div>
                     </div>
                   </div>
                 ) : getOneAnimal?.status === 'SOLD' ? (
@@ -291,7 +418,8 @@ const ViewAnimal = ({
                       <Input
                         disabled
                         value={
-                          formatDateDDMMYY(getOneAnimal?.createdAt) || 'N/A'
+                          formatDateDDMMYY(getOneSaleAnimalType?.createdAt) ||
+                          'N/A'
                         }
                       />
                     </div>

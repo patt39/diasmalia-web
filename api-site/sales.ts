@@ -29,6 +29,28 @@ export const GetOneSaleAPI = (payload: { saleId: string }) => {
   };
 };
 
+export const GetBestSaleChannelAPI = (payload: { animalTypeId: string }) => {
+  const { animalTypeId } = payload;
+  const { data, isError, isLoading, status, isPending, refetch } = useQuery({
+    queryKey: ['best-sale', animalTypeId],
+    queryFn: async () =>
+      await makeApiCall({
+        action: 'getBestSaleChannel',
+        urlParams: { animalTypeId },
+      }),
+    refetchOnWindowFocus: false,
+  });
+
+  return {
+    data: data?.data as any,
+    isError,
+    isLoading,
+    status,
+    isPending,
+    refetch,
+  };
+};
+
 export const ChickenSalesAnalyticsAPI = (payload: {
   periode?: string;
   days?: string;

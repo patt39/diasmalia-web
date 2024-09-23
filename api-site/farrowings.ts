@@ -29,6 +29,28 @@ export const GetOneFarrowingAPI = (payload: { farrowingId: string }) => {
   };
 };
 
+export const GetOneFarrowingByAnimalIdAPI = (payload: { animalId: string }) => {
+  const { animalId } = payload;
+  const { data, isError, isLoading, status, isPending, refetch } = useQuery({
+    queryKey: ['farrowing', animalId],
+    queryFn: async () =>
+      await makeApiCall({
+        action: 'getOneFarrowingByAnimalId',
+        urlParams: { animalId },
+      }),
+    refetchOnWindowFocus: false,
+  });
+
+  return {
+    data: data?.data as any,
+    isError,
+    isLoading,
+    status,
+    isPending,
+    refetch,
+  };
+};
+
 export const CreateOrUpdateOneFarrowingAPI = ({
   onSuccess,
   onError,

@@ -33,7 +33,6 @@ import {
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuPortal,
   DropdownMenuSeparator,
   DropdownMenuSub,
@@ -358,7 +357,6 @@ export function Finances() {
                       align="end"
                       className="dark:border-gray-80 cursor-pointer0 dark:border-gray-800"
                     >
-                      <DropdownMenuLabel>Filter by</DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       {periode ? (
                         <DropdownMenuCheckboxItem

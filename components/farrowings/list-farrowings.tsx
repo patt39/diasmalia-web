@@ -85,12 +85,16 @@ const ListFarrowings = ({ item, index }: { item: any; index: number }) => {
                   {t.formatMessage({ id: 'TABANIMAL.VIEW' })}
                 </span>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setIsOpen(true)}>
-                <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
-                <span className="ml-2 cursor-pointer hover:text-red-600">
-                  {t.formatMessage({ id: 'TABANIMAL.DELETE' })}
-                </span>
-              </DropdownMenuItem>
+              {item?.animal.status !== 'ACTIVE' ? (
+                <DropdownMenuItem onClick={() => setIsOpen(true)}>
+                  <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
+                  <span className="ml-2 cursor-pointer hover:text-red-600">
+                    {t.formatMessage({ id: 'TABANIMAL.DELETE' })}
+                  </span>
+                </DropdownMenuItem>
+              ) : (
+                ''
+              )}
             </DropdownMenuContent>
             <ActionModalDialog
               loading={loading}

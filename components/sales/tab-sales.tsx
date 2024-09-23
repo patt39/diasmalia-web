@@ -110,7 +110,7 @@ const TabSales = ({ animalTypeId }: { animalTypeId: string }) => {
                 <TooltipTrigger asChild>
                   <Button variant="outline">{dataSales?.data?.total}</Button>
                 </TooltipTrigger>
-                <TooltipContent>
+                <TooltipContent className="dark:border-gray-800">
                   <p>
                     {t.formatMessage({ id: 'ANIMALTYPE.TOOLTIP' })}{' '}
                     {dataSales?.data?.total || '0'}{' '}

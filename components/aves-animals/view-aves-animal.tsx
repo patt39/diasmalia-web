@@ -622,7 +622,7 @@ const ViewAvesAnimal = ({
                               <CardDescription>
                                 {t.formatMessage({ id: 'CHICKS.SOLD' })}
                               </CardDescription>
-                              <CardTitle className="text-4xl text-green-600">
+                              <CardTitle className="text-4xl">
                                 {getOneAnimal?.chickSaleCount}
                               </CardTitle>
                             </CardHeader>
@@ -635,8 +635,8 @@ const ViewAvesAnimal = ({
                               <CardDescription className="max-w-lg text-balance leading-relaxed">
                                 {t.formatMessage({ id: 'AMOUNT.SOLD' })}
                               </CardDescription>
-                              <CardTitle className="text-4xl">
-                                {getOneAnimal?.chickenSaleAmount.toLocaleString(
+                              <CardTitle className="text-4xl text-green-600">
+                                {getOneAnimal?.chickSaleAmount?.toLocaleString(
                                   'en-US',
                                   {
                                     minimumFractionDigits: 2,
@@ -668,8 +668,8 @@ const ViewAvesAnimal = ({
                               <CardDescription className="max-w-lg text-balance leading-relaxed">
                                 {t.formatMessage({ id: 'AMOUNT.SOLD' })}
                               </CardDescription>
-                              <CardTitle className="text-4xl">
-                                {getOneAnimal?.chickenSaleAmount.toLocaleString(
+                              <CardTitle className="text-4xl text-green-600">
+                                {getOneAnimal?.eggSaleAmount?.toLocaleString(
                                   'en-US',
                                   {
                                     minimumFractionDigits: 2,

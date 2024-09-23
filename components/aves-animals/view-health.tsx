@@ -8,7 +8,7 @@ import {
   AccordionTrigger,
 } from '../ui/accordion';
 
-const ViewAvesHealth = ({
+const ViewHealth = ({
   showModal,
   setShowModal,
   animal,
@@ -64,4 +64,4 @@ const ViewAvesHealth = ({
   );
 };
 
-export { ViewAvesHealth };
+export { ViewHealth };

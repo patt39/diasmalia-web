@@ -14,12 +14,10 @@ import {
 import { AlertDangerNotification, AlertSuccessNotification } from '@/utils';
 import {
   BadgeCheck,
-  Eye,
   MoreHorizontal,
   PencilIcon,
   TrashIcon,
 } from 'lucide-react';
-import Link from 'next/link';
 import { useState } from 'react';
 import { ActionModalDialog } from '../ui-setting/shadcn';
 import { ActionModalConfirmeDialog } from '../ui-setting/shadcn/action-modal-confirme-dialog';
@@ -30,10 +28,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '../ui/tooltip';
-import { UpdateLocations } from './update-locations';
-import { ViewLocation } from './view-location';
+import { UpdateGrowthLocations } from './update-growth-locations';
+import { UpdateLayingLocations } from './update-laying-locations';
 
-const ListLocations = ({ item, index }: { item: any; index: number }) => {
+const ListAvesLocations = ({ item, index }: { item: any; index: number }) => {
   const {
     t,
     isOpen,
@@ -44,7 +42,7 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
     setIsConfirmOpen,
   } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
-  const [isView, setIsView] = useState(false);
+  const [isGrowthEdit, setIsGrowthEdit] = useState(false);
 
   const { mutateAsync: deleteMutation } = DeleteOneLocationAPI({
     onSuccess: () => {},
@@ -94,9 +92,15 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
     }
   };
 
-  const animalPerSquareMeter = Number(
-    item?._count?.animals / item?.squareMeter,
+  const initialValue = 0;
+  const sumQuantity = item?.animals.reduce(
+    (accumulator: any, currentValue: any) =>
+      accumulator + currentValue.quantity,
+    initialValue,
   );
+
+  const animalPerSquareMeter = Number(sumQuantity / item?.squareMeter);
+  console.log('animalPerSquareMeter ==>', animalPerSquareMeter);
 
   return (
     <>
@@ -121,8 +125,8 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
             </div>
             <div>
               {item?.productionPhase === 'GROWTH' &&
-              item?.animalType?.name === 'Porciculture' &&
-              animalPerSquareMeter < 0.15 ? (
+              item?.animalType?.name === 'Poulet de chair' &&
+              animalPerSquareMeter > 20 ? (
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -138,9 +142,9 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
-              ) : item?.productionPhase === 'FATTENING' &&
-                item?.animalType?.name === 'Porciculture' &&
-                animalPerSquareMeter < 0.65 ? (
+              ) : item?.productionPhase === 'LAYING' &&
+                item?.animalType?.name === 'Pondeuses' &&
+                animalPerSquareMeter > 16 ? (
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -156,63 +160,9 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
-              ) : item?.productionPhase === 'REPRODUCTION' &&
-                ['Ovins', 'Caprins'].includes(item?.animalType?.name) &&
-                animalPerSquareMeter < 1.2 ? (
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div className="mt-2">
-                        <span className="relative flex size-4">
-                          <span className="absolute inline-flex size-full animate-ping rounded-full bg-red-400 opacity-75"></span>
-                          <span className="relative inline-flex size-4 rounded-full bg-red-500"></span>
-                        </span>
-                      </div>
-                    </TooltipTrigger>
-                    <TooltipContent className="dark:border-gray-800">
-                      {t.formatMessage({ id: 'POPULATION.DENSITY' })}
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              ) : item?.productionPhase === 'FATTENING' &&
-                ['Ovins', 'Caprins'].includes(item?.animalType?.name) &&
-                animalPerSquareMeter < 0.5 ? (
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div className="mt-2">
-                        <span className="relative flex size-4">
-                          <span className="absolute inline-flex size-full animate-ping rounded-full bg-red-400 opacity-75"></span>
-                          <span className="relative inline-flex size-4 rounded-full bg-red-500"></span>
-                        </span>
-                      </div>
-                    </TooltipTrigger>
-                    <TooltipContent className="dark:border-gray-800">
-                      {t.formatMessage({ id: 'POPULATION.DENSITY' })}
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              ) : item?.productionPhase === 'REPRODUCTION' &&
-                item?.animalType?.name === 'Cuniculture' &&
-                animalPerSquareMeter < 0.5 ? (
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div className="mt-2">
-                        <span className="relative flex size-4">
-                          <span className="absolute inline-flex size-full animate-ping rounded-full bg-red-400 opacity-75"></span>
-                          <span className="relative inline-flex size-4 rounded-full bg-red-500"></span>
-                        </span>
-                      </div>
-                    </TooltipTrigger>
-                    <TooltipContent className="dark:border-gray-800">
-                      {t.formatMessage({ id: 'POPULATION.DENSITY' })}
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              ) : item?.animalType?.name === 'Cuniculture' &&
-                ['FATTENING', 'GROWTH'].includes(item?.productionPhase) &&
-                animalPerSquareMeter < 0.07 ? (
+              ) : ['GROWTH', 'LAYING'].includes(item?.productionPhase) &&
+                ['Dind', 'Canard'].includes(item?.animalType?.name) &&
+                animalPerSquareMeter > 8 ? (
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -229,32 +179,22 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
                   </Tooltip>
                 </TooltipProvider>
               ) : (
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div className="mt-2">
-                        <span className="relative flex size-4 text-black">
-                          {item?._count?.animals}
-                        </span>
-                      </div>
-                    </TooltipTrigger>
-                    <TooltipContent className="dark:border-gray-800">
-                      {item?._count?.animals} {''}
-                      {item?._count?.animals === 1
-                        ? t.formatMessage({ id: 'LOCATION.ANIMAL' })
-                        : t.formatMessage({ id: 'LOCATION.ANIMALS' })}
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                ''
               )}
             </div>
           </div>
           <div className="flex items-center justify-center space-x-4">
             <div>
               <h2 className="text-sm font-medium text-gray-500 h-4">
-                <h2 className="mt-2 text-sm font-medium text-gray-500 h-4">
-                  Surface: {item?.squareMeter}m<sup>2</sup>
-                </h2>
+                {['Pisciculture'].includes(item?.animalType?.name) ? (
+                  <h2 className="mt-2 text-sm font-medium text-gray-500 h-4">
+                    Volume: {item?.squareMeter}m<sup>3</sup>
+                  </h2>
+                ) : (
+                  <h2 className="mt-2 text-sm font-medium text-gray-500 h-4">
+                    Surface: {item?.squareMeter}m<sup>2</sup>
+                  </h2>
+                )}
               </h2>
               {['Pisciculture'].includes(item?.animalType?.name) ? (
                 ''
@@ -287,14 +227,6 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
                 <p className=" text-sm font-medium text-gray-500">
                   {t.formatMessage({ id: 'PRODUCTIONPHASE.GROWTH' })}
                 </p>
-              ) : item?.productionPhase === 'REPRODUCTION' ? (
-                <p className=" text-sm font-medium text-gray-500">
-                  {item?.productionPhase}
-                </p>
-              ) : item?.productionPhase === 'GESTATION' ? (
-                <p className=" text-sm font-medium text-gray-500">
-                  {item?.productionPhase}
-                </p>
               ) : (
                 <p className=" text-sm font-medium text-gray-500">
                   {item?.productionPhase}
@@ -318,20 +250,23 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="dark:border-gray-800">
-                <DropdownMenuItem onClick={() => setIsEdit(true)}>
-                  <PencilIcon className="size-4 text-gray-600 hover:text-indigo-600" />
-                  <span className="ml-2 cursor-pointer hover:text-indigo-600">
-                    {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
-                  </span>
-                </DropdownMenuItem>
-                <Link href={`/location/${item?.id}`}>
-                  <DropdownMenuItem>
-                    <Eye className="size-4 text-gray-600 hover:text-indigo-600" />
+                {item?.productionPhase === 'LAYING' ? (
+                  <DropdownMenuItem onClick={() => setIsEdit(true)}>
+                    <PencilIcon className="size-4 text-gray-600 hover:text-indigo-600" />
                     <span className="ml-2 cursor-pointer hover:text-indigo-600">
-                      {t.formatMessage({ id: 'TABANIMAL.VIEW' })}
+                      {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
                     </span>
                   </DropdownMenuItem>
-                </Link>
+                ) : item?.productionPhase === 'GROWTH' ? (
+                  <DropdownMenuItem onClick={() => setIsGrowthEdit(true)}>
+                    <PencilIcon className="size-4 text-gray-600 hover:text-indigo-600" />
+                    <span className="ml-2 cursor-pointer hover:text-indigo-600">
+                      {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
+                    </span>
+                  </DropdownMenuItem>
+                ) : (
+                  ''
+                )}
                 <DropdownMenuItem onClick={() => setIsConfirmOpen(true)}>
                   <BadgeCheck className="size-4 text-gray-600 hover:text-red-400 cursor-pointer" />
                   <span className="ml-2 cursor-pointer hover:text-red-400">
@@ -365,17 +300,17 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
         setIsConfirmOpen={setIsConfirmOpen}
         onClick={() => changeItem(item)}
       />
-      <UpdateLocations
+      <UpdateLayingLocations
         location={item}
         showModal={isEdit}
         setShowModal={setIsEdit}
       />
-      <ViewLocation
+      <UpdateGrowthLocations
         location={item}
-        showModal={isView}
-        setShowModal={setIsView}
+        showModal={isGrowthEdit}
+        setShowModal={setIsGrowthEdit}
       />
     </>
   );
 };
-export { ListLocations };
+export { ListAvesLocations };

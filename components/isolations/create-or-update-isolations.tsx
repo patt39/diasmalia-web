@@ -134,7 +134,7 @@ const CreateOrUpdateIsolations = ({
                     <TooltipTrigger asChild>
                       <Button variant="outline">{countSelectedAnimals}</Button>
                     </TooltipTrigger>
-                    <TooltipContent>
+                    <TooltipContent className="dark:border-gray-800">
                       <p>
                         {countSelectedAnimals}
                         {t.formatMessage({ id: 'ANIMAL.SELECTED.COUNT' })}

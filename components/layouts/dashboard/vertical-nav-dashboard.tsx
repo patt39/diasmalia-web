@@ -4,6 +4,7 @@ import {
   Dice6Icon,
   ExternalLinkIcon,
   Fence,
+  FolderArchive,
   Footprints,
   HomeIcon,
   ImageIcon,
@@ -64,6 +65,11 @@ const VerticalNavDashboard = ({ user }: Props) => {
       title: `${t.formatMessage({ id: 'MENU.TASKS' })}`,
       href: '/tasks',
       icon: <Calendar className={classIcon} />,
+    },
+    {
+      title: `${t.formatMessage({ id: 'MENU.ARCHIVES' })}`,
+      href: '/archives',
+      icon: <FolderArchive className={classIcon} />,
     },
   ]);
   const [transactionItems] = useState<NavbarProps[]>([

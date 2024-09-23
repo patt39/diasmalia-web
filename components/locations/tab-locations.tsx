@@ -4,7 +4,7 @@ import { GetLocationsAPI } from '@/api-site/locations';
 import { useInputState } from '@/components/hooks';
 import { Button } from '@/components/ui/button';
 import { CardHeader } from '@/components/ui/card';
-import { Fence, ListFilter } from 'lucide-react';
+import { ListFilter, Replace, ReplaceAll } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { ButtonLoadMore, SearchInput } from '../ui-setting';
@@ -14,7 +14,6 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 import {
@@ -23,6 +22,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '../ui/tooltip';
+import { CreateBulkLocations } from './bulk-create-locations';
 import { CreateLocations } from './create-locations';
 import { ListLocations } from './list-locations';
 
@@ -31,6 +31,7 @@ const TabLocations = ({ animalTypeId }: { animalTypeId: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [productionPhase, setProductionPhase] = useState('');
   const { t, search, handleSetSearch } = useInputState();
+  const [isBulkOpen, setIsBulkOpen] = useState<boolean>(false);
 
   const { data: animalType } = GetOneAnimalTypeAPI({
     animalTypeId: animalTypeId,
@@ -111,7 +112,7 @@ const TabLocations = ({ animalTypeId }: { animalTypeId: string }) => {
                   <Button variant="outline" size="sm" className="h-8 gap-1">
                     <ListFilter className="h-3.5 w-3.5" />
                     <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                      Filter
+                      {productionPhase}
                     </span>
                   </Button>
                 </DropdownMenuTrigger>
@@ -119,7 +120,6 @@ const TabLocations = ({ animalTypeId }: { animalTypeId: string }) => {
                   align="end"
                   className="dark:border-gray-800"
                 >
-                  <DropdownMenuLabel>Filter by</DropdownMenuLabel>
                   <DropdownMenuCheckboxItem
                     className="cursor-pointer"
                     onClick={() => setProductionPhase('')}
@@ -151,23 +151,37 @@ const TabLocations = ({ animalTypeId }: { animalTypeId: string }) => {
               ''
             )}
 
-            <Button
-              size="sm"
-              className="h-8 gap-1"
-              onClick={() => setIsOpen(true)}
-            >
-              <Fence className="h-3.5 w-3.5  hover:shadow-xxl" />
-              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                {t.formatMessage({ id: 'ANIMALTYPE.LOCATION.CREATE' })}
-              </span>
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="h-8 gap-1">
+                  <ListFilter className="h-3.5 w-3.5" />
+                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                    {t.formatMessage({ id: 'CREATION.TYPE' })}
+                  </span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="end"
+                className="dark:border-gray-800 w-auto"
+              >
+                <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
+                  onClick={() => setIsOpen(true)}
+                >
+                  <Replace className="h-4 w-4  hover:shadow-xxl mr-1" />
+                  {t.formatMessage({ id: 'ADD.A.LOCATION' })}
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem
+                  className="cursor-pointer"
+                  onClick={() => setIsBulkOpen(true)}
+                >
+                  <ReplaceAll className="h-4 w-4  hover:shadow-xxl mr-1" />
+                  {t.formatMessage({ id: 'ADD.MANY.LOCATIONS' })}
+                </DropdownMenuCheckboxItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
-        {/* <div className="mr-auto items-center gap-2">
-          <CardDescription>
-            {t.formatMessage({ id: 'ANIMALTYPE.LOCATION.DESCRIPTION' })}
-          </CardDescription>
-        </div> */}
       </CardHeader>
       <section className="mt-8 mb-20">
         <div className="px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl">
@@ -186,7 +200,7 @@ const TabLocations = ({ animalTypeId }: { animalTypeId: string }) => {
                 .flatMap((page: any) => page?.data?.value)
                 .map((item, index) => (
                   <>
-                    <ListLocations key={index} item={item} index={index} />
+                    <ListLocations key={item?.id} item={item} index={index} />
                   </>
                 ))
             )}
@@ -206,6 +220,11 @@ const TabLocations = ({ animalTypeId }: { animalTypeId: string }) => {
         location={animalTypeId}
         showModal={isOpen}
         setShowModal={setIsOpen}
+      />
+      <CreateBulkLocations
+        location={animalTypeId}
+        showModal={isBulkOpen}
+        setShowModal={setIsBulkOpen}
       />
     </>
   );

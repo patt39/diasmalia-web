@@ -319,40 +319,87 @@ const UpdateAvesAnimals = ({
                       />
                     </div>
                     <div className="my-2 flex items-center space-x-10">
-                      <div>
-                        <Label>{t.formatMessage({ id: 'ANIMAL.MALES' })}</Label>
-                        <TextInput
-                          control={control}
-                          type="number"
-                          name="male"
-                          placeholder="Number of males"
-                          errors={errors}
-                        />
-                      </div>
-                      <div>
-                        <Label>
-                          {t.formatMessage({ id: 'ANIMAL.FEMALES' })}
-                        </Label>
-                        <TextInput
-                          control={control}
-                          type="number"
-                          name="female"
-                          placeholder="Number of females"
-                          errors={errors}
-                        />
-                      </div>
-                      <div>
-                        <Label>
-                          {t.formatMessage({ id: 'TABANIMAL.WEIGHT' })}(g)
-                        </Label>
-                        <TextInput
-                          control={control}
-                          type="number"
-                          name="weight"
-                          placeholder="Give weight"
-                          errors={errors}
-                        />
-                      </div>
+                      {animal?._count?.feedings !== 0 ? (
+                        <>
+                          <div>
+                            <Label>
+                              {t.formatMessage({ id: 'ANIMAL.MALES' })}
+                            </Label>
+                            <TextInput
+                              control={control}
+                              type="number"
+                              name="male"
+                              placeholder="Number of males"
+                              errors={errors}
+                              disabled
+                            />
+                          </div>
+                          <div>
+                            <Label>
+                              {t.formatMessage({ id: 'ANIMAL.FEMALES' })}
+                            </Label>
+                            <TextInput
+                              control={control}
+                              type="number"
+                              name="female"
+                              placeholder="Number of females"
+                              errors={errors}
+                              disabled
+                            />
+                          </div>
+                          <div>
+                            <Label>
+                              {t.formatMessage({ id: 'TABANIMAL.WEIGHT' })}(g)
+                            </Label>
+                            <TextInput
+                              control={control}
+                              type="number"
+                              name="weight"
+                              placeholder="Give weight"
+                              errors={errors}
+                            />
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div>
+                            <Label>
+                              {t.formatMessage({ id: 'ANIMAL.MALES' })}
+                            </Label>
+                            <TextInput
+                              control={control}
+                              type="number"
+                              name="male"
+                              placeholder="Number of males"
+                              errors={errors}
+                            />
+                          </div>
+                          <div>
+                            <Label>
+                              {t.formatMessage({ id: 'ANIMAL.FEMALES' })}
+                            </Label>
+                            <TextInput
+                              control={control}
+                              type="number"
+                              name="female"
+                              placeholder="Number of females"
+                              errors={errors}
+                            />
+                          </div>
+                          <div>
+                            <Label>
+                              {t.formatMessage({ id: 'TABANIMAL.WEIGHT' })}(g)
+                            </Label>
+                            <TextInput
+                              control={control}
+                              type="number"
+                              name="weight"
+                              placeholder="Give weight"
+                              errors={errors}
+                            />
+                          </div>
+                        </>
+                      )}
                     </div>
                     <div className="w-full">
                       <Label> {t.formatMessage({ id: 'LOCATION.CODE' })}</Label>

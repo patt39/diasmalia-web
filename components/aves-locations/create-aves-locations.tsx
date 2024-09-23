@@ -1,5 +1,5 @@
 import { GetOneAnimalTypeAPI } from '@/api-site/animal-type';
-import { UpdateOneLoctionAPI } from '@/api-site/locations';
+import { CreateOneLocationAPI } from '@/api-site/locations';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
 import { LocationModel } from '@/types/location';
@@ -7,26 +7,31 @@ import {
   AlertDangerNotification,
   AlertSuccessNotification,
 } from '@/utils/alert-notification';
-import { XIcon } from 'lucide-react';
+import { FileQuestion, XIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
 import { SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
 import { SelectInput, TextInput } from '../ui-setting/shadcn';
 import { Label } from '../ui/label';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '../ui/tooltip';
 
 const schema = yup.object({
   code: yup.string().optional(),
-  productionPhase: yup.string().optional(),
-  squareMeter: yup.number().optional(),
-  manger: yup.number().optional(),
-  through: yup.number().optional(),
+  nest: yup.number().optional(),
+  manger: yup.number().required('manger is required field'),
+  through: yup.number().required('through is required field'),
+  productionPhase: yup.string().required('productionPhase is required field'),
+  squareMeter: yup.number().required('squareMeter is required field'),
 });
 
-const UpdateLocations = ({
+const CreateAvesLocations = ({
   showModal,
   setShowModal,
-  location,
 }: {
   showModal: boolean;
   setShowModal: any;
@@ -37,7 +42,6 @@ const UpdateLocations = ({
     watch,
     control,
     errors,
-    setValue,
     handleSubmit,
     loading,
     setLoading,
@@ -46,25 +50,13 @@ const UpdateLocations = ({
   } = useReactHookForm({ schema });
   const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
+  const watchProductionPhase = watch('productionPhase');
   const { data: animalType } = GetOneAnimalTypeAPI({
     animalTypeId: animalTypeId,
   });
 
-  useEffect(() => {
-    if (location) {
-      const fields = [
-        'code',
-        'productionPhase',
-        'squareMeter',
-        'manger',
-        'through',
-      ];
-      fields?.forEach((field: any) => setValue(field, location[field]));
-    }
-  }, [location, setValue]);
-
-  // Update data
-  const { mutateAsync: saveMutation } = UpdateOneLoctionAPI({
+  // Create data
+  const { mutateAsync: saveMutation } = CreateOneLocationAPI({
     onSuccess: () => {
       setHasErrors(false);
       setLoading(false);
@@ -83,12 +75,12 @@ const UpdateLocations = ({
     try {
       await saveMutation({
         ...payload,
-        locationId: location.id,
+        animalTypeId: animalTypeId,
       });
       setHasErrors(false);
       setLoading(false);
       AlertSuccessNotification({
-        text: 'Location updated successfully',
+        text: 'Location created successfully',
       });
       setShowModal(false);
     } catch (error: any) {
@@ -131,7 +123,6 @@ const UpdateLocations = ({
                   </div>
                 )}
 
-                <Label>Code</Label>
                 <div className="flex items-center">
                   <TextInput
                     control={control}
@@ -140,10 +131,23 @@ const UpdateLocations = ({
                     placeholder="Give a code"
                     errors={errors}
                   />
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <FileQuestion />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>
+                          {t.formatMessage({ id: 'CODE.LOCATION.TOOLTIP' })}
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
                 <div className="my-2">
                   <Label>
                     {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
+                    <span className="text-red-600">*</span>
                   </Label>
                   <SelectInput
                     firstOptionName="Choose a production type"
@@ -154,21 +158,21 @@ const UpdateLocations = ({
                     name="productionPhase"
                     dataItem={[
                       { id: 1, name: 'GROWTH' },
-                      { id: 2, name: 'FATTENING' },
-                      { id: 3, name: 'GESTATION' },
-                      { id: 4, name: 'REPRODUCTION' },
+                      { id: 2, name: 'LAYING' },
                     ]}
                   />
                 </div>
                 <div className="my-2 items-center space-x-1">
                   {animalType?.name === 'Pisciculture' ? (
                     <>
-                      <Label>Volume</Label>
+                      <Label>
+                        Volume<span className="text-red-600">*</span>
+                      </Label>
                       <TextInput
                         control={control}
                         type="number"
                         name="squareMeter"
-                        placeholder="Square meters"
+                        placeholder="Meters cube"
                         errors={errors}
                       />
                     </>
@@ -178,6 +182,7 @@ const UpdateLocations = ({
                         <div>
                           <Label>
                             {t.formatMessage({ id: 'SURFACE.AREA' })}
+                            <span className="text-red-600">*</span>
                           </Label>
                           <TextInput
                             control={control}
@@ -190,6 +195,7 @@ const UpdateLocations = ({
                         <div>
                           <Label>
                             {t.formatMessage({ id: 'NUMBER.MANGERS' })}
+                            <span className="text-red-600">*</span>
                           </Label>
                           <TextInput
                             control={control}
@@ -202,6 +208,7 @@ const UpdateLocations = ({
                         <div>
                           <Label>
                             {t.formatMessage({ id: 'NUMBER.THROUGHS' })}
+                            <span className="text-red-600">*</span>
                           </Label>
                           <TextInput
                             control={control}
@@ -212,6 +219,24 @@ const UpdateLocations = ({
                           />
                         </div>
                       </div>
+                      {watchProductionPhase === 'LAYING' &&
+                      animalType?.name !== 'Pisciculture' ? (
+                        <div>
+                          <Label>
+                            {t.formatMessage({ id: 'NUMBER.NESTS' })}
+                            <span className="text-red-600">*</span>
+                          </Label>
+                          <TextInput
+                            control={control}
+                            type="number"
+                            name="nest"
+                            placeholder="Number of nests"
+                            errors={errors}
+                          />
+                        </div>
+                      ) : (
+                        ''
+                      )}
                     </>
                   )}
                 </div>
@@ -243,4 +268,4 @@ const UpdateLocations = ({
   );
 };
 
-export { UpdateLocations };
+export { CreateAvesLocations };

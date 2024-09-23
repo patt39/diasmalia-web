@@ -129,13 +129,22 @@ export const GetTreatmentsAPI = (
   payload: {
     search?: string;
     take: number;
+    animalId?: string;
     periode?: string;
     animalTypeId?: string;
     organizationId?: string;
   } & PaginationRequest,
 ) => {
-  const { take, sort, search, periode, sortBy, animalTypeId, organizationId } =
-    payload;
+  const {
+    take,
+    sort,
+    search,
+    animalId,
+    periode,
+    sortBy,
+    animalTypeId,
+    organizationId,
+  } = payload;
   return useInfiniteQuery({
     queryKey: ['treatments', 'aves-treatments', 'infinite', { ...payload }],
     getNextPageParam: (lastPage: any) => lastPage.data.next_page,
@@ -148,6 +157,7 @@ export const GetTreatmentsAPI = (
           search,
           sortBy,
           periode,
+          animalId,
           animalTypeId,
           organizationId,
           page: pageParam,

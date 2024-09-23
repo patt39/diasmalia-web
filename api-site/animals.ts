@@ -55,6 +55,28 @@ export const GetOneAnimalAPI = (payload: { animalId: string }) => {
   };
 };
 
+export const GetArchiveStatisticsAPI = (payload: { animalId: string }) => {
+  const { animalId } = payload;
+  const { data, isError, isLoading, status, isPending, refetch } = useQuery({
+    queryKey: ['animal', animalId],
+    queryFn: async () =>
+      await makeApiCall({
+        action: 'getArchivedStatistics',
+        urlParams: { animalId },
+      }),
+    refetchOnWindowFocus: false,
+  });
+
+  return {
+    data: data?.data as any,
+    isError,
+    isLoading,
+    status,
+    isPending,
+    refetch,
+  };
+};
+
 export const GetAnimalByAnimalTypeAPI = (payload: { animalTypeId: string }) => {
   const { animalTypeId } = payload;
   const { data, isError, isLoading, status, isPending, refetch } = useQuery({
@@ -291,6 +313,7 @@ export const GetAnimalsAPI = (
     gender?: string;
     quantity?: number;
     isIsolated?: string;
+    locationId?: string;
     animalTypeId?: string;
     productionPhase?: string;
     organizationId?: string;
@@ -303,6 +326,7 @@ export const GetAnimalsAPI = (
     status,
     sortBy,
     gender,
+    locationId,
     isIsolated,
     productionPhase,
     animalTypeId,
@@ -331,9 +355,40 @@ export const GetAnimalsAPI = (
           status,
           sortBy,
           gender,
+          locationId,
           isIsolated,
           animalTypeId,
           productionPhase,
+          page: pageParam,
+          organizationId,
+        },
+      }),
+    staleTime: 60_000,
+    initialPageParam: 1,
+  });
+};
+
+export const GetArchivesAPI = (
+  payload: {
+    search?: string;
+    take?: number;
+    status?: string;
+    organizationId?: string;
+  } & PaginationRequest,
+) => {
+  const { take, sort, search, status, sortBy, organizationId } = payload;
+  return useInfiniteQuery({
+    queryKey: ['animals', { ...payload }],
+    getNextPageParam: (lastPage: any) => lastPage.data.next_page,
+    queryFn: async ({ pageParam = 1 }) =>
+      await makeApiCall({
+        action: 'getArchives',
+        queryParams: {
+          take,
+          sort,
+          search,
+          status,
+          sortBy,
           page: pageParam,
           organizationId,
         },
@@ -358,6 +413,47 @@ export const DeleteOneAnimalAPI = ({
       const { animalId } = payload;
       return await makeApiCall({
         action: 'deleteOneAnimal',
+        urlParams: { animalId },
+      });
+    },
+    onError: async (error) => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onError) {
+        onError(error);
+      }
+    },
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+  });
+
+  return result;
+};
+
+export const ArchiveOneAnimalAPI = ({
+  onSuccess,
+  onError,
+}: {
+  onSuccess?: () => void;
+  onError?: (error: any) => void;
+} = {}) => {
+  const queryKey = ['animals'];
+  const queryClient = useQueryClient();
+  const result = useMutation({
+    mutationKey: queryKey,
+    mutationFn: async (payload: { animalId: string }) => {
+      const { animalId } = payload;
+      return await makeApiCall({
+        action: 'archiveOneAnimal',
         urlParams: { animalId },
       });
     },

@@ -12,7 +12,6 @@ import {
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuPortal,
   DropdownMenuSeparator,
   DropdownMenuSub,
@@ -131,7 +130,6 @@ const TabAnimals = ({ animalTypeId }: { animalTypeId: string }) => {
                   align="end"
                   className="dark:border-gray-80 cursor-pointer0 dark:border-gray-800"
                 >
-                  <DropdownMenuLabel>Filter by</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   {status ? (
                     <DropdownMenuCheckboxItem

@@ -3,8 +3,6 @@ import { TextAreaInput } from '@/components/ui-setting/shadcn';
 import { XIcon } from 'lucide-react';
 import * as yup from 'yup';
 import { useReactHookForm } from '../hooks';
-import { Input } from '../ui/input';
-import { Label } from '../ui/label';
 
 const schema = yup.object({});
 
@@ -39,10 +37,6 @@ const ViewFarrowing = ({
             </button>
             <form className="mt-4">
               <div className="flex-auto justify-center p-2">
-                <div className="mb-4 flex items-center space-x-4">
-                  <Label>Litter</Label>
-                  <Input disabled type="text" value={GetOneFarrowing?.litter} />
-                </div>
                 <div className="mb-4 disabled">
                   <TextAreaInput
                     control={control}

@@ -10,7 +10,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { AlertDangerNotification, AlertSuccessNotification } from '@/utils';
-import { firstLetterToLowerCase } from '@/utils/utils';
 import { MoreHorizontal, TrashIcon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -49,7 +48,7 @@ const ListAnimalType = ({ item, index }: { item: any; index: number }) => {
         key={index}
         className="transition-all duration-200 bg-gray-200 rounded-xl hover:shadow-xl"
       >
-        <Link href={firstLetterToLowerCase(`/${item?.animalTypeId}`)}>
+        <Link href={`/${item?.animalTypeId}`}>
           <div className="py-8 px-10">
             <Image
               height={260}

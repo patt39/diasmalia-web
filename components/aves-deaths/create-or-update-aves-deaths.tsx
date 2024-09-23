@@ -46,7 +46,6 @@ const CreateOrUpdateAvesDeaths = ({
 }) => {
   const {
     t,
-    watch,
     control,
     setValue,
     handleSubmit,

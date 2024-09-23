@@ -107,7 +107,7 @@ const CreateBulkAnimals = ({
       setHasErrors(false);
       setLoading(false);
       AlertSuccessNotification({
-        text: 'Animal saved successfully',
+        text: 'Animals created successfully',
       });
       setShowModal(false);
     } catch (error: any) {
@@ -400,16 +400,8 @@ const CreateBulkAnimals = ({
                     valueType="text"
                     name="productionPhase"
                     dataItem={[
-                      {
-                        id: 1,
-                        name: t.formatMessage({ id: 'PRODUCTIONPHASE.GROWTH' }),
-                      },
-                      {
-                        id: 2,
-                        name: t.formatMessage({
-                          id: 'PRODUCTIONTYPE.FATTENING',
-                        }),
-                      },
+                      { id: 1, name: 'GROWTH' },
+                      { id: 2, name: 'FATTENING' },
                       { id: 3, name: 'REPRODUCTION' },
                       { id: 4, name: 'GESTATION' },
                     ]}

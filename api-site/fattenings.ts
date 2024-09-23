@@ -7,6 +7,28 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 
+export const GetOneFatteningAPI = (payload: { animalId: string }) => {
+  const { animalId } = payload;
+  const { data, isError, isLoading, status, isPending, refetch } = useQuery({
+    queryKey: ['fattening', animalId],
+    queryFn: async () =>
+      await makeApiCall({
+        action: 'getOneFattening',
+        urlParams: { animalId },
+      }),
+    refetchOnWindowFocus: false,
+  });
+
+  return {
+    data: data?.data as any,
+    isError,
+    isLoading,
+    status,
+    isPending,
+    refetch,
+  };
+};
+
 export const CreateOrUpdateOneFatteningAPI = ({
   onSuccess,
   onError,

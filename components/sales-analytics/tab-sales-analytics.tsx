@@ -1,13 +1,19 @@
 /* eslint-disable @next/next/no-img-element */
 import { GetAnimalStatisticsAPI } from '@/api-site/animals';
+import { GetBestSaleChannelAPI } from '@/api-site/sales';
 import { GetOneUserMeAPI } from '@/api-site/user';
 import { useInputState } from '@/components/hooks';
 import { Card, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { TabBestSaleChannel } from './tab-best-channel';
 
 const TabSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
   const { t } = useInputState();
   const { data: user } = GetOneUserMeAPI();
   const { data: animalStatistics } = GetAnimalStatisticsAPI({
+    animalTypeId: animalTypeId,
+  });
+
+  const { data: saleChannel } = GetBestSaleChannelAPI({
     animalTypeId: animalTypeId,
   });
 
@@ -55,15 +61,9 @@ const TabSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                 </CardTitle>
               </CardHeader>
             </Card>
-            <Card
-              x-chunk="dashboard-05-chunk-1"
-              className=" dark:border-gray-800"
-            >
-              <CardHeader className="pb-2">
-                <CardDescription>Meilleur canal de vente </CardDescription>
-                <CardTitle className="text-3xl">Marché</CardTitle>
-              </CardHeader>
-            </Card>
+            {saleChannel ? (
+              <TabBestSaleChannel saleChannel={saleChannel} />
+            ) : null}
           </div>
           <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
             <Card

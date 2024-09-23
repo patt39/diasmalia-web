@@ -105,6 +105,7 @@ export const apiEndpoints: ClientApiMethods = {
   getEggsAnalytics: GET(`${baseUrl}/analytics/sales/eggs`),
   getchicksAnalytics: GET(`${baseUrl}/analytics/sales/chicks`),
   getchickensAnalytics: GET(`${baseUrl}/analytics/sales/chickens`),
+  getBestSaleChannel: GET(`${baseUrl}/sales/:animalTypeId/best-channel`),
   getOneSaleAnimalType: GET(`${baseUrl}/sales/:animalTypeId/view/animalType`),
 
   /****************** User route */
@@ -135,21 +136,25 @@ export const apiEndpoints: ClientApiMethods = {
   getLocations: GET(`${baseUrl}/locations`),
   getOneLocation: GET(`${baseUrl}/locations/:locationId/view`),
   createOneLocation: POST(`${baseUrl}/locations/:animalTypeId/create`),
+  createBulkLocations: POST(`${baseUrl}/locations/:animalTypeId/bulk`),
   updateOneLocation: PUT(`${baseUrl}/locations/:locationId/edit`),
   changeStatus: PUT(`${baseUrl}/locations/:locationId/change-status`),
   deleteOneLocation: DELETE(`${baseUrl}/locations/:locationId/delete`),
 
   /****************** Animals route */
   getAnimals: GET(`${baseUrl}/animals`),
+  getArchives: GET(`${baseUrl}/animals/archives`),
   createOneAnimal: POST(`${baseUrl}/animals/create`),
   getOneAnimal: GET(`${baseUrl}/animals/:animalId/view`),
   createBulkAnimal: POST(`${baseUrl}/animals/create/bulk`),
   updateOneAnimal: PUT(`${baseUrl}/animals/:animalId/edit`),
   updateOneAves: PUT(`${baseUrl}/animals/:animalId/edit`),
   createOneAvesAnimal: POST(`${baseUrl}/animals/:animalTypeId/create`),
+  getArchivedStatistics: GET(`${baseUrl}/animals/:animalId/view/archived`),
   getAnimalByAnimalType: GET(`${baseUrl}/animals/:animalTypeId/view/animal`),
   getAnimalStatistics: GET(`${baseUrl}/animals/:animalTypeId/statistics`),
   deleteOneAnimal: DELETE(`${baseUrl}/animals/:animalId/delete`),
+  archiveOneAnimal: DELETE(`${baseUrl}/animals/:animalId/archive/aves`),
 
   /****************** Feedings route */
   getFeedings: GET(`${baseUrl}/feedings`),
@@ -162,6 +167,7 @@ export const apiEndpoints: ClientApiMethods = {
 
   /****************** Fattenings route */
   getFattenings: GET(`${baseUrl}/fattenings`),
+  getOneFattening: GET(`${baseUrl}/fattenings/:animalId/view`),
   createOneFattening: POST(`${baseUrl}/fattenings/bulk/create`),
   updateOneFattening: PUT(`${baseUrl}/fattenings/:fatteningId/edit`),
   deleteOneFattening: DELETE(`${baseUrl}/fattenings/:fatteningId/delete`),
@@ -200,6 +206,7 @@ export const apiEndpoints: ClientApiMethods = {
   getFarrowings: GET(`${baseUrl}/farrowings`),
   createOneFarrowing: POST(`${baseUrl}/farrowings/create/`),
   getOneFarrowing: GET(`${baseUrl}/farrowings/:farrowingId/view`),
+  getOneFarrowingByAnimalId: GET(`${baseUrl}/farrowings/view/:animalId`),
   updateOneFarrowing: PUT(`${baseUrl}/farrowings/:farrowingId/edit`),
   deleteOneFarrowing: DELETE(`${baseUrl}/farrowings/:farrowingId/delete`),
 
