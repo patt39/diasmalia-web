@@ -24,3 +24,15 @@ export type FeedingAvesModel = {
     name: string;
   };
 };
+
+export type FeedStockModel = {
+  createdAt: string;
+  id: string;
+  weight: number;
+  quantity: number;
+  feedCategory: string;
+  animalTypeName: string;
+  animalType: {
+    name: string;
+  };
+};

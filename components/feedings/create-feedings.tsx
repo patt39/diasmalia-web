@@ -1,4 +1,5 @@
 import { GetAnimalsAPI } from '@/api-site/animals';
+import { GetFeedStockAPI } from '@/api-site/feed-stock';
 import { CreateOrUpdateOneFeedingAPI } from '@/api-site/feedings';
 import { useInputState, useReactHookForm } from '@/components/hooks';
 import { ButtonInput, ButtonLoadMore } from '@/components/ui-setting';
@@ -8,6 +9,7 @@ import {
   Select,
   SelectContent,
   SelectGroup,
+  SelectItem,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
@@ -19,10 +21,10 @@ import {
 import { XIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import { SubmitHandler } from 'react-hook-form';
+import { Controller, SubmitHandler } from 'react-hook-form';
 import { useInView } from 'react-intersection-observer';
 import * as yup from 'yup';
-import { SelectInput, TextInput } from '../ui-setting/shadcn';
+import { TextInput } from '../ui-setting/shadcn';
 import { Button } from '../ui/button';
 import { Label } from '../ui/label';
 import {
@@ -35,17 +37,19 @@ import {
 const schema = yup.object({
   animals: yup.array().optional(),
   quantity: yup.number().required('quantity is required'),
-  feedType: yup.string().required('feedType is required'),
+  feedStockId: yup.string().required('feedStock is required'),
 });
 
 const CreateFeedings = ({
   showModal,
   setShowModal,
   feeding,
+  location,
 }: {
   showModal: boolean;
   setShowModal: any;
   feeding?: any;
+  location?: any;
 }) => {
   const {
     t,
@@ -65,11 +69,13 @@ const CreateFeedings = ({
   const { userStorage } = useInputState();
   const animalTypeId = String(query?.animalTypeId);
   const selectedAnimals = watch('animals', '');
-  const countSelectedAnimals = selectedAnimals.length;
+  const countSelectedAnimals = selectedAnimals?.length;
+  // console.log('selectedAnimals==>', selectedAnimals);
+  // console.log('countSelectedAnimals==>', countSelectedAnimals);
 
   useEffect(() => {
     if (feeding) {
-      const fields = ['animals', 'quantity', 'feedType'];
+      const fields = ['animals', 'quantity', 'feedStockId'];
       fields?.forEach((field: any) => setValue(field, feeding[field]));
     }
   }, [feeding, setValue]);
@@ -125,8 +131,20 @@ const CreateFeedings = ({
     sort: 'desc',
     status: 'ACTIVE',
     sortBy: 'createdAt',
+    locationId: location?.id,
     animalTypeId: animalTypeId,
     organizationId: userStorage?.organizationId,
+  });
+
+  const {
+    isLoading: isLoadingFeedStock,
+    isError: isErrorFeedStock,
+    data: dataFeedStock,
+  } = GetFeedStockAPI({
+    take: 10,
+    sort: 'desc',
+    sortBy: 'createdAt',
+    animalTypeId: animalTypeId,
   });
 
   useEffect(() => {
@@ -186,7 +204,7 @@ const CreateFeedings = ({
                 </button>
               </div>
             </div>
-            <form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
+            <form className="mt-2" onSubmit={handleSubmit(onSubmit)}>
               <div className="flex-auto justify-center p-2">
                 {hasErrors && (
                   <div className="bg-white py-6 dark:bg-[#121212]">
@@ -204,7 +222,7 @@ const CreateFeedings = ({
 
                 <div className="mb-2 items-center w-full">
                   <Label>
-                    Sélectionnez les animaux à nourrir:
+                    Sélectionnez les animaux à nourrir
                     <span className="text-red-600">*</span>
                   </Label>
                   <Select>
@@ -267,33 +285,53 @@ const CreateFeedings = ({
                 </div>
                 <div className="mb-2">
                   <Label>
-                    Type aliment<span className="text-red-600">*</span>
+                    {t.formatMessage({ id: 'TABFEEDING.FEEDTYPE' })}
+                    <span className="text-red-600">*</span>
                   </Label>
-                  <SelectInput
-                    firstOptionName="Choose a feed type"
+                  <Controller
                     control={control}
-                    errors={errors}
-                    placeholder="Select type"
-                    valueType="text"
-                    name="feedType"
-                    dataItem={[
-                      { id: 1, name: 'FIBERS' },
-                      { id: 2, name: 'FORAGES' },
-                      { id: 3, name: 'PROTEINS' },
-                      { id: 4, name: 'VITAMINS' },
-                      { id: 6, name: 'CONCENTRATES' },
-                      { id: 7, name: 'BYPRODUCTS' },
-                      { id: 8, name: 'COMPLETEFEED' },
-                      { id: 9, name: 'MINERALSALTS' },
-                      { id: 10, name: 'ENERGYSUPPLIMENTS' },
-                      { id: 11, name: 'SYNTHETICADICTIVES' },
-                      { id: 12, name: 'OTHERS' },
-                    ]}
+                    name="feedStockId"
+                    render={({ field: { value, onChange } }) => (
+                      <Select
+                        onValueChange={onChange}
+                        name={'feedStockId'}
+                        value={value}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select a feed type" />
+                        </SelectTrigger>
+                        <SelectContent className="dark:border-gray-800">
+                          <SelectGroup>
+                            {isLoadingFeedStock ? (
+                              <LoadingFile />
+                            ) : isErrorFeedStock ? (
+                              <ErrorFile
+                                title="404"
+                                description="Error finding data please try again..."
+                              />
+                            ) : Number(dataFeedStock?.pages[0]?.data?.total) <=
+                              0 ? (
+                              <ErrorFile description="Don't have active animals yet" />
+                            ) : (
+                              dataFeedStock?.pages
+                                .flatMap((page: any) => page?.data?.value)
+                                .map((item, index) => (
+                                  <>
+                                    <SelectItem key={index} value={item?.id}>
+                                      {item?.feedCategory}
+                                    </SelectItem>
+                                  </>
+                                ))
+                            )}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    )}
                   />
                 </div>
                 <div>
                   <Label>
-                    Quantité (kg):<span className="text-red-600">*</span>
+                    Quantité (g)<span className="text-red-600">*</span>
                   </Label>
                   <TextInput
                     control={control}

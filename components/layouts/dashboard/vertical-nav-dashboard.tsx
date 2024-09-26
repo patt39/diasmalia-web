@@ -11,6 +11,7 @@ import {
   MailQuestion,
   MessageCircleQuestion,
   Wallet,
+  Warehouse,
   Webhook,
 } from 'lucide-react';
 import Link from 'next/link';
@@ -65,6 +66,11 @@ const VerticalNavDashboard = ({ user }: Props) => {
       title: `${t.formatMessage({ id: 'MENU.TASKS' })}`,
       href: '/tasks',
       icon: <Calendar className={classIcon} />,
+    },
+    {
+      title: `${t.formatMessage({ id: 'MENU.FEEDSTOCK' })}`,
+      href: '/feed-stock',
+      icon: <Warehouse className={classIcon} />,
     },
     {
       title: `${t.formatMessage({ id: 'MENU.ARCHIVES' })}`,

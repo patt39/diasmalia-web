@@ -14,13 +14,17 @@ import {
 import { AlertDangerNotification, AlertSuccessNotification } from '@/utils';
 import {
   BadgeCheck,
+  Droplets,
   Eye,
+  Grid2X2,
   MoreHorizontal,
   PencilIcon,
+  Salad,
   TrashIcon,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
+import { CreateFeedings } from '../feedings/create-feedings';
 import { ActionModalDialog } from '../ui-setting/shadcn';
 import { ActionModalConfirmeDialog } from '../ui-setting/shadcn/action-modal-confirme-dialog';
 import { Badge } from '../ui/badge';
@@ -45,6 +49,7 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
   } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
   const [isView, setIsView] = useState(false);
+  const [isFeeding, setIsFeeding] = useState(false);
 
   const { mutateAsync: deleteMutation } = DeleteOneLocationAPI({
     onSuccess: () => {},
@@ -95,7 +100,7 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
   };
 
   const animalPerSquareMeter = Number(
-    item?._count?.animals / item?.squareMeter,
+    item?.squareMeter / item?._count?.animals,
   );
 
   return (
@@ -249,10 +254,11 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
               )}
             </div>
           </div>
-          <div className="flex items-center justify-center space-x-4">
+          <div className="flex items-center justify-center space-x-2">
             <div>
               <h2 className="text-sm font-medium text-gray-500 h-4">
-                <h2 className="mt-2 text-sm font-medium text-gray-500 h-4">
+                <h2 className="mt-2 flex items-center text-sm font-medium text-gray-500 h-4">
+                  <Grid2X2 className="h-3.5 w-3.5  hover:shadow-xxl" />
                   Surface: {item?.squareMeter}m<sup>2</sup>
                 </h2>
               </h2>
@@ -260,21 +266,16 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
                 ''
               ) : (
                 <>
-                  <h2 className="mt-2 text-sm font-medium text-gray-500 h-4">
+                  <h2 className="mt-2 flex items-center text-sm font-medium text-gray-500 h-4">
+                    <Salad className="h-3.5 w-3.5  hover:shadow-xxl" />
                     {t.formatMessage({ id: 'LOCATION.MANGERS' })}:{' '}
                     {item?.manger}
                   </h2>
-                  <h2 className="mt-2 text-sm font-medium text-gray-500 h-4">
+                  <h2 className="mt-2 flex items-center text-sm font-medium text-gray-500 h-4">
+                    <Droplets className="h-3.5 w-3.5  hover:shadow-xxl" />
                     {t.formatMessage({ id: 'LOCATION.THROUGHS' })}:{' '}
                     {item?.through}
                   </h2>
-                  {item?.productionPhase === 'LAYING' ? (
-                    <h2 className="mt-2 text-sm font-medium text-gray-500 h-4">
-                      {t.formatMessage({ id: 'LOCATION.NEST' })}: {item?.nest}
-                    </h2>
-                  ) : (
-                    ''
-                  )}
                 </>
               )}
             </div>
@@ -319,15 +320,27 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="dark:border-gray-800">
                 <DropdownMenuItem onClick={() => setIsEdit(true)}>
-                  <PencilIcon className="size-4 text-gray-600 hover:text-indigo-600" />
-                  <span className="ml-2 cursor-pointer hover:text-indigo-600">
+                  <PencilIcon className="size-4 text-gray-600 hover:text-orange-600" />
+                  <span className="ml-2 cursor-pointer hover:text-orange-600">
                     {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
                   </span>
                 </DropdownMenuItem>
+                {item?._count?.animals !== 0 ? (
+                  <DropdownMenuItem onClick={() => setIsFeeding(true)}>
+                    <Salad className="size-4 text-gray-600 hover:text-amber-600" />
+                    <span className="ml-2 cursor-pointer hover:text-amber-600">
+                      {t.formatMessage({
+                        id: 'ANIMALTYPE.ANIMALS.FEEDINGS.CREATE',
+                      })}
+                    </span>
+                  </DropdownMenuItem>
+                ) : (
+                  ''
+                )}
                 <Link href={`/location/${item?.id}`}>
                   <DropdownMenuItem>
-                    <Eye className="size-4 text-gray-600 hover:text-indigo-600" />
-                    <span className="ml-2 cursor-pointer hover:text-indigo-600">
+                    <Eye className="size-4 text-gray-600 hover:text-yellow-600" />
+                    <span className="ml-2 cursor-pointer hover:text-yellow-600">
                       {t.formatMessage({ id: 'TABANIMAL.VIEW' })}
                     </span>
                   </DropdownMenuItem>
@@ -374,6 +387,12 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
         location={item}
         showModal={isView}
         setShowModal={setIsView}
+      />
+      <CreateFeedings
+        location={item}
+        feeding={item?.animalTypeId}
+        showModal={isFeeding}
+        setShowModal={setIsFeeding}
       />
     </>
   );

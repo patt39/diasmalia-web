@@ -1,6 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
 import { DeleteOneAnimalAPI } from '@/api-site/animals';
+import { UpdateAnimals } from '@/components/animals/update-animal';
+import { ViewAnimal } from '@/components/animals/view-animal';
+import { ViewHealth } from '@/components/aves-animals/view-health';
 import { useInputState } from '@/components/hooks';
+import { ActionModalDialog } from '@/components/ui-setting/shadcn';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -27,13 +32,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
-import { ViewHealth } from '../aves-animals/view-health';
-import { ActionModalDialog } from '../ui-setting/shadcn';
-import { Badge } from '../ui/badge';
-import { UpdateAnimals } from './update-animal';
-import { ViewAnimal } from './view-animal';
-
-const ListAnimals = ({ item, index }: { item: any; index: number }) => {
+const LocationList = ({ item, index }: { item: any; index: number }) => {
   const { t, isOpen, loading, setIsOpen, setLoading } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
   const [isView, setIsView] = useState(false);
@@ -68,7 +67,7 @@ const ListAnimals = ({ item, index }: { item: any; index: number }) => {
     <>
       <div
         key={index}
-        className="relative overflow-hidden transition-allduration-200 bg-gray-100 rounded-xl hover:bg-gray-200"
+        className="relative overflow-hidden transition-allduration-200 bg-gray-200 rounded-xl hover:bg-gray-400"
       >
         <div className="p-6 lg:px-10 lg:py-8">
           <div className="ml-auto mb-2">
@@ -86,7 +85,7 @@ const ListAnimals = ({ item, index }: { item: any; index: number }) => {
               </Badge>
             )}
           </div>
-          <div className="flex items-center justify-start space-x-2">
+          <div className="flex items-center justify-start space-x-4">
             <div>
               <h2 className="text-sm flex items-center font-medium text-gray-500">
                 <Anvil className="h-3.5 w-3.5  hover:shadow-xxl" />
@@ -229,4 +228,4 @@ const ListAnimals = ({ item, index }: { item: any; index: number }) => {
     </>
   );
 };
-export { ListAnimals };
+export { LocationList };

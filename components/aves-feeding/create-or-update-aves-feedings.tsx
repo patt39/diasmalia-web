@@ -1,10 +1,11 @@
 import { GetAnimalsAPI } from '@/api-site/animals';
+import { GetFeedStockAPI } from '@/api-site/feed-stock';
 import { CreateOrUpdateOneAvesFeedingAPI } from '@/api-site/feedings';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
 import { LoadingFile } from '@/components/ui-setting/ant';
 import { ErrorFile } from '@/components/ui-setting/ant/error-file';
-import { SelectInput, TextInput } from '@/components/ui-setting/shadcn';
+import { TextInput } from '@/components/ui-setting/shadcn';
 import {
   Select,
   SelectContent,
@@ -29,7 +30,7 @@ import { Label } from '../ui/label';
 const schema = yup.object({
   code: yup.string().required('code is a required field'),
   quantity: yup.number().required('quantity is a required field'),
-  feedType: yup.string().required('feedType is a required field'),
+  feedStockId: yup.string().required('feedStockId is a required field'),
 });
 
 const CreateOrUpdateAvesFeedings = ({
@@ -112,6 +113,20 @@ const CreateOrUpdateAvesFeedings = ({
     animalTypeId: animalTypeId,
   });
 
+  const {
+    isLoading: isLoadingFeedStock,
+    isError: isErrorFeedStock,
+    data: dataFeedStock,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+  } = GetFeedStockAPI({
+    take: 10,
+    sort: 'desc',
+    sortBy: 'createdAt',
+    animalTypeId: animalTypeId,
+  });
+
   return (
     <>
       {showModal ? (
@@ -190,28 +205,48 @@ const CreateOrUpdateAvesFeedings = ({
                 </div>
                 <div className="mb-2">
                   <Label>
-                    {t.formatMessage({ id: 'FEED.TYPE' })}
+                    {t.formatMessage({ id: 'ANIMAL.CODE' })}
                     <span className="text-red-600">*</span>
                   </Label>
-                  <SelectInput
-                    firstOptionName="Choose a feed type"
+                  <Controller
                     control={control}
-                    errors={errors}
-                    placeholder="Select feed type"
-                    valueType="text"
-                    name="feedType"
-                    dataItem={[
-                      { id: 1, name: 'FIBERS' },
-                      { id: 3, name: 'PROTEINS' },
-                      { id: 4, name: 'VITAMINS' },
-                      { id: 6, name: 'CONCENTRATES' },
-                      { id: 7, name: 'BYPRODUCTS' },
-                      { id: 8, name: 'COMPLETEFEED' },
-                      { id: 9, name: 'MINERALSALTS' },
-                      { id: 10, name: 'ENERGYSUPPLIMENTS' },
-                      { id: 11, name: 'SYNTHETICADICTIVES' },
-                      { id: 12, name: 'OTHERS' },
-                    ]}
+                    name="feedStockId"
+                    render={({ field: { value, onChange } }) => (
+                      <Select
+                        onValueChange={onChange}
+                        name={'feedStockId'}
+                        value={value}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select a band code" />
+                        </SelectTrigger>
+                        <SelectContent className="dark:border-gray-800">
+                          <SelectGroup>
+                            {isLoadingFeedStock ? (
+                              <LoadingFile />
+                            ) : isErrorFeedStock ? (
+                              <ErrorFile
+                                title="404"
+                                description="Error finding data please try again..."
+                              />
+                            ) : Number(dataFeedStock?.pages[0]?.data?.total) <=
+                              0 ? (
+                              <ErrorFile description="Don't have active animals yet" />
+                            ) : (
+                              dataFeedStock?.pages
+                                .flatMap((page: any) => page?.data?.value)
+                                .map((item, index) => (
+                                  <>
+                                    <SelectItem key={index} value={item?.id}>
+                                      {item?.feedCategory}
+                                    </SelectItem>
+                                  </>
+                                ))
+                            )}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    )}
                   />
                 </div>
                 <div className="mb-2">

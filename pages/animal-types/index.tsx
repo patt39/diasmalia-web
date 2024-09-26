@@ -12,7 +12,7 @@ import { AlertDangerNotification, AlertSuccessNotification } from '@/utils';
 import { ListAnimalType } from './list-animal-type';
 
 export function AnimalType() {
-  const { t, isOpen, loading, setIsOpen, setLoading } = useInputState();
+  const { t, setIsOpen, setLoading } = useInputState();
 
   const {
     isLoading: isLoadingAssignedTypes,

@@ -1,6 +1,6 @@
 import { makeApiCall, PaginationRequest } from '@/utils';
 import {
-  keepPreviousData,
+  useInfiniteQuery,
   useMutation,
   useQuery,
   useQueryClient,
@@ -166,7 +166,7 @@ export const GetBreedingsAPI = (
     periode?: string;
     sort?: string;
     sortBy?: string;
-    pageItem?: number;
+    animalId?: string;
     animalTypeId?: string;
     organizationId?: string;
   } & PaginationRequest,
@@ -175,16 +175,16 @@ export const GetBreedingsAPI = (
     take,
     sort,
     search,
-    pageItem,
     periode,
     sortBy,
+    animalId,
     animalTypeId,
     organizationId,
   } = payload;
-  return useQuery({
-    queryKey: ['breedings', { ...payload }],
-    placeholderData: keepPreviousData,
-    queryFn: async () =>
+  return useInfiniteQuery({
+    queryKey: ['breedings', 'infinite', { ...payload }],
+    getNextPageParam: (lastPage: any) => lastPage.data.next_page,
+    queryFn: async ({ pageParam = 1 }) =>
       await makeApiCall({
         action: 'getBreedings',
         queryParams: {
@@ -193,12 +193,59 @@ export const GetBreedingsAPI = (
           search,
           sortBy,
           periode,
+          animalId,
           animalTypeId,
-          page: pageItem,
+          page: pageParam,
           organizationId,
         },
       }),
     staleTime: 5000,
+    initialPageParam: 1,
+  });
+};
+
+export const GetBreedingHistoryAPI = (
+  payload: {
+    search?: string;
+    take?: number;
+    periode?: string;
+    sort?: string;
+    sortBy?: string;
+    animalId?: string;
+    animalTypeId?: string;
+    organizationId?: string;
+  } & PaginationRequest,
+) => {
+  const {
+    take,
+    sort,
+    search,
+    periode,
+    sortBy,
+    animalId,
+    animalTypeId,
+    organizationId,
+  } = payload;
+  return useInfiniteQuery({
+    queryKey: ['breedings', 'infinite', { ...payload }],
+    getNextPageParam: (lastPage: any) => lastPage.data.next_page,
+    queryFn: async ({ pageParam = 1 }) =>
+      await makeApiCall({
+        action: 'getBreedingHistory',
+        queryParams: {
+          take,
+          sort,
+          search,
+          sortBy,
+          periode,
+          animalId,
+          animalTypeId,
+          page: pageParam,
+          organizationId,
+        },
+      }),
+    staleTime: 5000,
+    initialPageParam: 1,
   });
 };
 

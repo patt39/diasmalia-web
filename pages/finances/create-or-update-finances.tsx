@@ -32,6 +32,7 @@ const CreateOrUpdateFinances = ({
   finance?: any;
 }) => {
   const {
+    t,
     control,
     setValue,
     handleSubmit,
@@ -155,9 +156,8 @@ const CreateOrUpdateFinances = ({
                     variant="outline"
                     onClick={() => setShowModal(false)}
                   >
-                    Cancel
+                    {t.formatMessage({ id: 'ALERT.CANCEL' })}
                   </ButtonInput>
-
                   <ButtonInput
                     type="submit"
                     className="w-full"
@@ -165,7 +165,7 @@ const CreateOrUpdateFinances = ({
                     disabled={loading}
                     loading={loading}
                   >
-                    Save
+                    {t.formatMessage({ id: 'ALERT.CONTINUE' })}
                   </ButtonInput>
                 </div>
               </div>

@@ -14,15 +14,13 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { PaginationPage } from '@/utils';
-import { ListFilter, Salad } from 'lucide-react';
+import { ListFilter } from 'lucide-react';
 import { useState } from 'react';
 import { SearchInput } from '../ui-setting';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 import {
@@ -101,8 +99,6 @@ const TabFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
                 align="end"
                 className="dark:border-gray-800 cursor-pointer"
               >
-                <DropdownMenuLabel>Filter by</DropdownMenuLabel>
-                <DropdownMenuSeparator />
                 <DropdownMenuCheckboxItem
                   onClick={() => setPeriode('')}
                   checked
@@ -130,16 +126,6 @@ const TabFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
                 </DropdownMenuCheckboxItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button
-              size="sm"
-              className="h-8 gap-1"
-              onClick={() => setIsOpen(true)}
-            >
-              <Salad className="h-3.5 w-3.5  hover:shadow-xxl" />
-              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                {t.formatMessage({ id: 'ANIMALTYPE.ANIMALS.FEEDINGS.CREATE' })}
-              </span>
-            </Button>
           </div>
         </div>
       </CardHeader>
@@ -153,10 +139,13 @@ const TabFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
                   {t.formatMessage({ id: 'TABFEEDING.FEEDTYPE' })}
                 </TableHead>
                 <TableHead>
-                  {t.formatMessage({ id: 'TABFEEDING.QUANTITY' })} (kg)
+                  {t.formatMessage({ id: 'TABFEEDING.QUANTITY' })}
                 </TableHead>
                 <TableHead>
                   {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
+                </TableHead>
+                <TableHead>
+                  {t.formatMessage({ id: 'VIEW.LOCATION' })}
                 </TableHead>
                 <TableHead>Date</TableHead>
                 <TableHead>

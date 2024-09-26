@@ -53,34 +53,62 @@ const ListAvesFeedings = ({ item, index }: { item: any; index: number }) => {
       <TableRow key={index} className="dark:border-gray-800">
         <TableCell className="font-medium">{item?.animal?.code}</TableCell>
         <TableCell className="font-medium">
-          {item?.feedType === 'FIBERS' ? (
-            <p className="font-medium">{t.formatMessage({ id: 'FIBERS' })}</p>
-          ) : item?.feedType === 'CONCENTRATES' ? (
-            <p className="font-medium">
-              {t.formatMessage({ id: 'CONCENTRATES' })}
+          {item?.feedStock?.feedCategory === 'PRESTARTER' ? (
+            <p className="font-medium text-orange-600">
+              {t.formatMessage({ id: 'FEED.PRESTARTER' })}
             </p>
-          ) : item?.feedType === 'BYPRODUCTS' ? (
-            <p className="font-medium">
+          ) : item?.feedStock?.feedCategory === 'FEED.CONCENTRATES' ? (
+            <p className="font-medium text-blue-600">
+              {t.formatMessage({ id: 'FEED.CONCENTRATES' })}
+            </p>
+          ) : item?.feedStock?.feedCategory === 'BYPRODUCTS' ? (
+            <p className="font-medium text-cyan-600">
               {t.formatMessage({ id: 'BYPRODUCTS' })}
             </p>
-          ) : item?.feedType === 'COMPLETEFEED' ? (
-            <p className="font-medium">
-              {t.formatMessage({ id: 'COMPLETEFEED' })}
+          ) : item?.feedStock?.feedCategory === 'COMPLETEFEED' ? (
+            <p className="font-medium text-sky-600">
+              {t.formatMessage({ id: 'FEED.COMPLETEFEED' })}
             </p>
-          ) : item?.feedType === 'MINARALSALTS' ? (
-            <p className="font-medium">
-              {t.formatMessage({ id: 'MINARALSALTS' })}
+          ) : item?.feedStock?.feedCategory === 'FORAGES' ? (
+            <p className="font-medium text-emerald-600 ">
+              {t.formatMessage({ id: 'FEED.FORAGES' })}
             </p>
-          ) : item?.feedType === 'ENERGYSUPPLIMENTS' ? (
-            <p className="font-medium">
-              {t.formatMessage({ id: 'ENERGYSUPPLIMENTS' })}
+          ) : item?.feedStock?.feedCategory === 'SILAGES' ? (
+            <p className="font-medium text-teal-600">
+              {t.formatMessage({ id: 'FORAGES.SILAGES' })}
             </p>
-          ) : item?.feedType === 'SYNTHETICADICTIVES' ? (
-            <p className="font-medium">
-              {t.formatMessage({ id: 'SYNTHETICADICTIVES' })}
+          ) : item?.feedStock?.feedCategory === 'LACTATING_FEMALES' ? (
+            <p className="font-medium text-indigo-600">
+              {t.formatMessage({ id: 'FEED.LACTATINGFEMALES' })}
             </p>
+          ) : item?.feedStock?.feedCategory === 'GESTATION_FEMALES' ? (
+            <p className="font-medium text-violet-600">
+              {t.formatMessage({ id: 'FEED.FEMALEGESTATION' })}
+            </p>
+          ) : item?.feedStock?.feedCategory === 'STARTER' ? (
+            <p className="font-medium text-amber-600">
+              {t.formatMessage({ id: 'FEED.STARTER' })}
+            </p>
+          ) : item?.feedStock?.feedCategory === 'GROWER' ? (
+            <p className="font-medium text-yellow-600">
+              {t.formatMessage({ id: 'FEED.GROWER' })}
+            </p>
+          ) : item?.feedStock?.feedCategory === 'FATTENER' ? (
+            <p className="font-medium text-lime-600">
+              {t.formatMessage({ id: 'FEED.FATTENER' })}
+            </p>
+          ) : item?.feedStock?.feedCategory === 'FINISHER' ? (
+            <p className="font-medium text-green-600">
+              {t.formatMessage({ id: 'FEED.FINISHER' })}
+            </p>
+          ) : item?.feedCategory === 'LAYERS_FEED' ? (
+            <div className="justify-items-start text-purple-600 text-sm font-bold mb-2">
+              {t.formatMessage({ id: 'FEED.LAYERSFEED' })}
+            </div>
           ) : (
-            item?.feedType.toLowerCase()
+            <p className="font-medium text-purple-600">
+              {item?.feedStock?.feedCategory}
+            </p>
           )}
         </TableCell>
         <TableCell className="font-medium">{item?.quantity}</TableCell>

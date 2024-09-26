@@ -14,8 +14,12 @@ import {
 import { AlertDangerNotification, AlertSuccessNotification } from '@/utils';
 import {
   BadgeCheck,
+  Droplets,
+  Egg,
+  Grid2X2,
   MoreHorizontal,
   PencilIcon,
+  Salad,
   TrashIcon,
 } from 'lucide-react';
 import { useState } from 'react';
@@ -100,7 +104,6 @@ const ListAvesLocations = ({ item, index }: { item: any; index: number }) => {
   );
 
   const animalPerSquareMeter = Number(sumQuantity / item?.squareMeter);
-  console.log('animalPerSquareMeter ==>', animalPerSquareMeter);
 
   return (
     <>
@@ -183,15 +186,17 @@ const ListAvesLocations = ({ item, index }: { item: any; index: number }) => {
               )}
             </div>
           </div>
-          <div className="flex items-center justify-center space-x-4">
+          <div className="flex items-center justify-center space-x-2">
             <div>
               <h2 className="text-sm font-medium text-gray-500 h-4">
                 {['Pisciculture'].includes(item?.animalType?.name) ? (
                   <h2 className="mt-2 text-sm font-medium text-gray-500 h-4">
+                    <Grid2X2 className="h-3.5 w-3.5  hover:shadow-xxl" />
                     Volume: {item?.squareMeter}m<sup>3</sup>
                   </h2>
                 ) : (
-                  <h2 className="mt-2 text-sm font-medium text-gray-500 h-4">
+                  <h2 className="mt-2 text-sm  items-center flex font-medium text-gray-500 h-4">
+                    <Grid2X2 className="h-3.5 w-3.5  hover:shadow-xxl" />
                     Surface: {item?.squareMeter}m<sup>2</sup>
                   </h2>
                 )}
@@ -200,16 +205,19 @@ const ListAvesLocations = ({ item, index }: { item: any; index: number }) => {
                 ''
               ) : (
                 <>
-                  <h2 className="mt-2 text-sm font-medium text-gray-500 h-4">
+                  <h2 className="mt-2 flex text-sm items-center font-medium text-gray-500 h-4">
+                    <Salad className="h-3.5 w-3.5  hover:shadow-xxl" />
                     {t.formatMessage({ id: 'LOCATION.MANGERS' })}:{' '}
                     {item?.manger}
                   </h2>
-                  <h2 className="mt-2 text-sm font-medium text-gray-500 h-4">
+                  <h2 className="mt-2 flex items-center text-sm font-medium text-gray-500 h-4">
+                    <Droplets className="h-3.5 w-3.5  hover:shadow-xxl" />
                     {t.formatMessage({ id: 'LOCATION.THROUGHS' })}:{' '}
                     {item?.through}
                   </h2>
                   {item?.productionPhase === 'LAYING' ? (
-                    <h2 className="mt-2 text-sm font-medium text-gray-500 h-4">
+                    <h2 className="mt-2 text-sm flex items-center font-medium text-gray-500 h-4">
+                      <Egg className="h-3.5 w-3.5  hover:shadow-xxl" />
                       {t.formatMessage({ id: 'LOCATION.NEST' })}: {item?.nest}
                     </h2>
                   ) : (

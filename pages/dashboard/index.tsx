@@ -200,14 +200,14 @@ export function Dashboard() {
                         <div key={index} className="flex items-center gap-4">
                           <div className="grid gap-1">
                             <p className="text-sm font-medium leading-none">
-                              {item.soldTo}
+                              {item?.soldTo}
                             </p>
                             <p className="text-sm text-muted-foreground">
-                              {item.email}
+                              {item?.email}
                             </p>
                           </div>
                           <div className="ml-auto font-medium">
-                            {item.price} {user?.profile?.currency?.symbol}
+                            {item?.price} {user?.profile?.currency?.symbol}
                           </div>
                         </div>
                       </>

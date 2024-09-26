@@ -363,7 +363,7 @@ export const GetAnimalsAPI = (
           organizationId,
         },
       }),
-    staleTime: 60_000,
+    staleTime: 6000,
     initialPageParam: 1,
   });
 };

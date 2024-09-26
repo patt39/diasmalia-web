@@ -102,7 +102,7 @@ const TabAvesLocations = ({ animalTypeId }: { animalTypeId: string }) => {
           </div>
         </div>
       </CardHeader>
-      <section className="mt-8 mb-20">
+      <section className="mb-20">
         <div className="px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl">
           <div className="grid grid-cols-1 gap-5 sm:mt-12 sm:grid-cols-2 xl:grid-cols-3 sm:gap-8 xl:gap-12">
             {isLoadingLocations ? (

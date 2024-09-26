@@ -9,7 +9,7 @@ import {
   AlertDangerNotification,
   AlertSuccessNotification,
 } from '@/utils/alert-notification';
-import { FileQuestion, XIcon } from 'lucide-react';
+import { XIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { Controller, SubmitHandler } from 'react-hook-form';
@@ -27,12 +27,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/select';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '../ui/tooltip';
 
 const schema = yup.object({
   code: yup.string().optional(),
@@ -214,7 +208,7 @@ const UpdateAnimals = ({
                 <XIcon />
               </span>
             </button>
-            <form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
+            <form className="mt-6" onSubmit={handleSubmit(onSubmit)}>
               <div className="flex-auto justify-center p-2">
                 {hasErrors && (
                   <div className="bg-white py-6 dark:bg-[#121212]">
@@ -229,7 +223,8 @@ const UpdateAnimals = ({
                     </div>
                   </div>
                 )}
-                <div className="flex items-center">
+                <div>
+                  <Label>Code</Label>
                   <TextInput
                     control={control}
                     type="text"
@@ -237,20 +232,12 @@ const UpdateAnimals = ({
                     placeholder="Give a code"
                     errors={errors}
                   />
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <FileQuestion />
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>{t.formatMessage({ id: 'CODE.ANIMALS.TOOLTIP' })}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
                 </div>
                 <div className="my-2 flex items-center space-x-1">
                   <div>
-                    <Label>Genre:</Label>
+                    <Label>
+                      {t.formatMessage({ id: 'ANIMALTYPE.GENDER' })}
+                    </Label>
                     <SelectInput
                       firstOptionName="Choose a production type"
                       control={control}
@@ -265,7 +252,7 @@ const UpdateAnimals = ({
                     />
                   </div>
                   <div className="px-4">
-                    <Label>Date de naissance:</Label>
+                    <Label>{t.formatMessage({ id: 'VIEW.BIRTHDATE' })}</Label>
                     <DateInput
                       control={control}
                       errors={errors}
@@ -274,7 +261,7 @@ const UpdateAnimals = ({
                     />
                   </div>
                   <div>
-                    <Label>Poids:</Label>
+                    <Label>{t.formatMessage({ id: 'WEIGHT' })}</Label>
                     <TextInput
                       control={control}
                       type="number"
@@ -285,7 +272,7 @@ const UpdateAnimals = ({
                   </div>
                 </div>
                 <div className="my-2">
-                  <Label>Code de la mère:</Label>
+                  <Label> {t.formatMessage({ id: 'VIEW.MOTHER' })}</Label>
                   <Controller
                     control={control}
                     name="codeMother"
@@ -337,7 +324,7 @@ const UpdateAnimals = ({
                     )}
                   />
                   <div className="my-2">
-                    <Label>Code du père:</Label>
+                    <Label>{t.formatMessage({ id: 'VIEW.FATHER' })}</Label>
                     <Controller
                       control={control}
                       name="codeFather"
@@ -384,7 +371,9 @@ const UpdateAnimals = ({
                     />
                   </div>
                   <div className="mb-2">
-                    <Label>Phase de production:</Label>
+                    <Label>
+                      {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
+                    </Label>
                     <SelectInput
                       firstOptionName="Choose a production type"
                       control={control}
@@ -400,7 +389,7 @@ const UpdateAnimals = ({
                   </div>
                 </div>
                 <div className="my-2">
-                  <Label>Sélectionnez la race</Label>
+                  <Label>{t.formatMessage({ id: 'SELECT.BREED' })}</Label>
                   <Controller
                     control={control}
                     name="breedName"
@@ -452,7 +441,7 @@ const UpdateAnimals = ({
                     )}
                   />
                   <div className="mt-2">
-                    <Label>Sélectionnez un emplacement</Label>
+                    <Label>{t.formatMessage({ id: 'SELECT.LOCATION' })}</Label>
                     <Controller
                       control={control}
                       name="locationCode"

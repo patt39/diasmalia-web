@@ -58,7 +58,7 @@ const ListArchives = ({ item, index }: { item: any; index: number }) => {
     <>
       <div
         key={index}
-        className="relative overflow-hidden transition-allduration-200 bg-gray-100 rounded-xl hover:bg-gray-200"
+        className="relative overflow-hidden transition-allduration-200 bg-gray-200 rounded-xl hover:bg-gray-400"
       >
         <div className="p-6 lg:px-10 lg:py-8">
           <div className="ml-2 mb-6">

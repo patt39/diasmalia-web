@@ -1,6 +1,5 @@
 import { GetAnimalsAPI } from '@/api-site/animals';
 import { GetOneLocationAPI } from '@/api-site/locations';
-import { ListAnimals } from '@/components/animals/list-animals';
 import { useInputState } from '@/components/hooks';
 import { LayoutDashboard } from '@/components/layouts/dashboard';
 import {
@@ -17,6 +16,7 @@ import { MoveLeftIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
+import { LocationList } from './location-list';
 
 export function ViewLocation() {
   const { t, search, handleSetSearch } = useInputState();
@@ -112,7 +112,7 @@ export function ViewLocation() {
                   .flatMap((page: any) => page?.data?.value)
                   .map((item: any, index: any) => (
                     <>
-                      <ListAnimals index={index} item={item} key={index} />
+                      <LocationList index={index} item={item} key={index} />
                     </>
                   ))
               )}

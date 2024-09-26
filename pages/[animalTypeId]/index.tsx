@@ -54,6 +54,7 @@ export function Index() {
   const { data: animalType } = GetOneAnimalTypeAPI({
     animalTypeId: animalTypeId,
   });
+  console.log('animalType ==>', animalType);
 
   const { data: animalByType } = GetAnimalByAnimalTypeAPI({
     animalTypeId: animalTypeId,
@@ -461,7 +462,7 @@ export function Index() {
                       <TabsTrigger value="aves-sales">
                         {t.formatMessage({ id: 'MENU.SALES' })}
                       </TabsTrigger>
-                      {animalByType?._count?.sales !== 0 ? (
+                      {animalType?._count?.sales !== 0 ? (
                         <TabsTrigger value="sales-analytics">
                           {t.formatMessage({ id: 'SALES.ANALYTICS' })}
                         </TabsTrigger>
@@ -563,14 +564,18 @@ export function Index() {
                     <TabFeedings animalTypeId={animalTypeId} />
                   </Card>
                 </TabsContent>
-                <TabsContent value="feedings">
-                  <Card
-                    x-chunk="dashboard-06-chunk-0"
-                    className="dark:border-gray-800"
-                  >
-                    <FeedingsAnalytics animalTypeId={animalTypeId} />
-                  </Card>
-                </TabsContent>
+                {animalType?._count?.feedings !== 0 ? (
+                  <TabsContent value="feedings">
+                    <Card
+                      x-chunk="dashboard-06-chunk-0"
+                      className="dark:border-gray-800"
+                    >
+                      <FeedingsAnalytics animalTypeId={animalTypeId} />
+                    </Card>
+                  </TabsContent>
+                ) : (
+                  ''
+                )}
                 <TabsContent value="aves-feedings">
                   <Card
                     x-chunk="dashboard-06-chunk-0"
@@ -579,14 +584,18 @@ export function Index() {
                     <TabAvesFeedings animalTypeId={animalTypeId} />
                   </Card>
                 </TabsContent>
-                <TabsContent value="aves-feedings">
-                  <Card
-                    x-chunk="dashboard-06-chunk-0"
-                    className="dark:border-gray-800"
-                  >
-                    <FeedingsAnalytics animalTypeId={animalTypeId} />
-                  </Card>
-                </TabsContent>
+                {animalType?._count?.feedings !== 0 ? (
+                  <TabsContent value="aves-feedings">
+                    <Card
+                      x-chunk="dashboard-06-chunk-0"
+                      className="dark:border-gray-800"
+                    >
+                      <FeedingsAnalytics animalTypeId={animalTypeId} />
+                    </Card>
+                  </TabsContent>
+                ) : (
+                  ''
+                )}
                 <TabsContent value="fattenings">
                   <Card
                     x-chunk="dashboard-06-chunk-0"
@@ -659,14 +668,18 @@ export function Index() {
                     <TabAvesDeaths animalTypeId={animalTypeId} />
                   </Card>
                 </TabsContent>
-                <TabsContent value="aves-deaths">
-                  <Card
-                    x-chunk="dashboard-06-chunk-0"
-                    className="dark:border-gray-800"
-                  >
-                    <AvesDeathsAnalytics animalTypeId={animalTypeId} />
-                  </Card>
-                </TabsContent>
+                {animalType?._count?.deaths !== 0 ? (
+                  <TabsContent value="aves-deaths">
+                    <Card
+                      x-chunk="dashboard-06-chunk-0"
+                      className="dark:border-gray-800"
+                    >
+                      <AvesDeathsAnalytics animalTypeId={animalTypeId} />
+                    </Card>
+                  </TabsContent>
+                ) : (
+                  ''
+                )}
                 <TabsContent value="egg-harvestings">
                   <Card
                     x-chunk="dashboard-06-chunk-0"
@@ -675,14 +688,18 @@ export function Index() {
                     <TabEggHarvestings animalTypeId={animalTypeId} />
                   </Card>
                 </TabsContent>
-                <TabsContent value="egg-harvestings">
-                  <Card
-                    x-chunk="dashboard-06-chunk-0"
-                    className="dark:border-gray-800"
-                  >
-                    <EggHarvestingsAnalytics animalTypeId={animalTypeId} />
-                  </Card>
-                </TabsContent>
+                {animalType?._count?.eggHavestings !== 0 ? (
+                  <TabsContent value="egg-harvestings">
+                    <Card
+                      x-chunk="dashboard-06-chunk-0"
+                      className="dark:border-gray-800"
+                    >
+                      <EggHarvestingsAnalytics animalTypeId={animalTypeId} />
+                    </Card>
+                  </TabsContent>
+                ) : (
+                  ''
+                )}
                 <TabsContent value="incubations">
                   <Card
                     x-chunk="dashboard-06-chunk-0"
@@ -691,14 +708,18 @@ export function Index() {
                     <TabIncubations animalTypeId={animalTypeId} />
                   </Card>
                 </TabsContent>
-                <TabsContent value="incubations">
-                  <Card
-                    x-chunk="dashboard-06-chunk-0"
-                    className="dark:border-gray-800"
-                  >
-                    <TabIncubationsAnalytics animalTypeId={animalTypeId} />
-                  </Card>
-                </TabsContent>
+                {animalType?._count?.incubations !== 0 ? (
+                  <TabsContent value="incubations">
+                    <Card
+                      x-chunk="dashboard-06-chunk-0"
+                      className="dark:border-gray-800"
+                    >
+                      <TabIncubationsAnalytics animalTypeId={animalTypeId} />
+                    </Card>
+                  </TabsContent>
+                ) : (
+                  ''
+                )}
                 <TabsContent value="isolations">
                   <Card
                     x-chunk="dashboard-06-chunk-0"

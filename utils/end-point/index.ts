@@ -89,6 +89,12 @@ export const apiEndpoints: ClientApiMethods = {
   getAnimalTypes: GET(`${baseUrl}/animal-type`),
   getOneAnimalType: GET(`${baseUrl}/animal-type/view/:animalTypeId`),
 
+  /****************** Feed stock route */
+  getFeedStocks: GET(`${baseUrl}/feed-stock`),
+  createOneFeedStock: POST(`${baseUrl}/feed-stock/create`),
+  updateOneFeedStock: PUT(`${baseUrl}/feed-stock/:feedStockId/edit`),
+  deleteOneFeedStock: DELETE(`${baseUrl}/feed-stock/:feedStockId/delete`),
+
   /****************** Activity logs route */
   getActivityLogs: GET(`${baseUrl}/activity-logs`),
 
@@ -186,6 +192,7 @@ export const apiEndpoints: ClientApiMethods = {
   getBreedings: GET(`${baseUrl}/breedings`),
   createOneBreeding: POST(`${baseUrl}/breedings/create`),
   getOneBreeding: GET(`${baseUrl}/breedings/:breedingId/view`),
+  getBreedingHistory: GET(`${baseUrl}/breedings/animal/history`),
   updateOneBreeding: PUT(`${baseUrl}/breedings/:breedingId/edit`),
   deleteOneBreeding: DELETE(`${baseUrl}/breedings/:breedingId/delete`),
   createOneCheck: POST(`${baseUrl}/check-pregnancies/:breedingId/check`),

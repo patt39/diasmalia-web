@@ -1,5 +1,5 @@
 import { GetOneAnimalAPI } from '@/api-site/animals';
-import { GetTreatmentsAPI } from '@/api-site/treatment';
+import { GetBreedingHistoryAPI } from '@/api-site/breedings';
 import { useInputState } from '@/components/hooks';
 import { LayoutDashboard } from '@/components/layouts/dashboard';
 
@@ -21,7 +21,7 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 
-export function AnimalTreatments() {
+export function Faq() {
   const { t } = useInputState();
   const { ref, inView } = useInView();
   const { query, back } = useRouter();
@@ -32,13 +32,13 @@ export function AnimalTreatments() {
   });
 
   const {
-    isLoading: isLoadingTreatments,
-    isError: isErrorTreatments,
-    data: dataTreatments,
+    isLoading: isLoadingHistory,
+    isError: isErrorHistory,
+    data: dataHistory,
     isFetchingNextPage,
     hasNextPage,
     fetchNextPage,
-  } = GetTreatmentsAPI({
+  } = GetBreedingHistoryAPI({
     take: 10,
     sort: 'desc',
     sortBy: 'createdAt',
@@ -70,7 +70,7 @@ export function AnimalTreatments() {
 
   return (
     <>
-      <LayoutDashboard title={`${getOneAnimal?.code} treatments`}>
+      <LayoutDashboard title={`${getOneAnimal?.code} breeding history`}>
         <CardHeader>
           <div className="flex items-center">
             <ButtonInput
@@ -89,50 +89,89 @@ export function AnimalTreatments() {
           </div>
         </CardHeader>
         <div className="flex min-h-screen w-full flex-col">
-          <div className="flex flex-col items-center gap-1 text-center">
-            {[
-              'Porciculture',
-              'Bovins',
-              'Cuniculture',
-              'Caprins',
-              'Ovins',
-            ].includes(getOneAnimal?.animalType?.name) ? (
-              <h4 className="mt-8 text-2xl font-bold tracking-tight text-center">
-                {t.formatMessage({ id: 'TREATMENT.PAGE' })}
-              </h4>
-            ) : (
-              <h4 className="mt-8 text-2xl font-bold tracking-tight text-center">
-                {t.formatMessage({ id: 'AVES.TREATMENT.PAGE' })}
-              </h4>
-            )}
-          </div>
           <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-            {isLoadingTreatments ? (
+            {isLoadingHistory ? (
               <LoadingFile />
-            ) : isErrorTreatments ? (
+            ) : isErrorHistory ? (
               <ErrorFile
                 title="404"
                 description="Error finding data please try again..."
               />
-            ) : Number(dataTreatments?.pages[0]?.data?.total) <= 0 ? (
+            ) : Number(dataHistory?.pages[0]?.data?.total) <= 0 ? (
               <ErrorFile
-                description={t.formatMessage({ id: 'TREATMENT.EMPTY' })}
+                description={t.formatMessage({ id: 'BREEDING.EMPTY' })}
               />
             ) : (
-              dataTreatments?.pages
+              dataHistory?.pages
                 .flatMap((page: any) => page?.data?.value)
                 .map((item, index) => (
                   <>
                     <Accordion type="single" collapsible key={index}>
                       <AccordionItem value="item-1">
-                        <AccordionTrigger>{item?.name}</AccordionTrigger>
+                        <AccordionTrigger>
+                          {t.formatMessage({ id: 'BREEDING.DATE' })}:{' '}
+                          {formatDateDDMMYY(item?.createdAt)}
+                        </AccordionTrigger>
                         <AccordionContent>
-                          <div>Date: {formatDateDDMMYY(item?.createdAt)} </div>
-                          <div>
-                            Medication: {item?.medication.toLowerCase()}{' '}
+                          <div className="mb-4">
+                            <div>Male: {item?.maleCode} </div>
+                            <div>
+                              {t.formatMessage({ id: 'RESULT' })}:{' '}
+                              {item?.result === 'PREGNANT'
+                                ? t.formatMessage({ id: 'BREEDING.POSITIVE' })
+                                : t.formatMessage({ id: 'BREEDING.NEGATIVE' })}
+                            </div>
+                            <div> Method: {item?.method.toLowerCase()}</div>
+                            <div> Note: {item?.note}</div>
                           </div>
-                          <div> Dose: {item?.dose} </div>
-                          <div> Voie: {item?.method.toLowerCase()}</div>
+                          {item?.weaning?.farrowing !== null ? (
+                            <>
+                              <h4 className="my-2 text-sm font-bold tracking-tight">
+                                {t.formatMessage({ id: 'FARROWING' })}{' '}
+                              </h4>
+                              <div className="mb-4">
+                                <div>
+                                  Date:{' '}
+                                  {formatDateDDMMYY(
+                                    item?.weaning?.farrowing?.createdAt,
+                                  )}
+                                </div>
+                                <div>
+                                  {t.formatMessage({
+                                    id: 'TABFARROWING.LITTER',
+                                  })}
+                                  : {item?.weaning?.farrowing?.litter}{' '}
+                                </div>
+                                <div>
+                                  Note: {item?.weaning?.farrowing?.note}{' '}
+                                </div>
+                              </div>
+                            </>
+                          ) : (
+                            ''
+                          )}
+                          {item?.weaning !== null ? (
+                            <>
+                              <h4 className="my-2 text-sm font-bold tracking-tight">
+                                {t.formatMessage({ id: 'WEANING' })}{' '}
+                              </h4>
+                              <div className="mb-4">
+                                <div>
+                                  Date:{' '}
+                                  {formatDateDDMMYY(item?.weaning?.createdAt)}{' '}
+                                </div>
+                                <div>
+                                  {' '}
+                                  {t.formatMessage({
+                                    id: 'TABFARROWING.LITTER',
+                                  })}
+                                  : {item?.weaning?.litter}{' '}
+                                </div>
+                              </div>
+                            </>
+                          ) : (
+                            ''
+                          )}
                         </AccordionContent>
                       </AccordionItem>
                     </Accordion>
@@ -155,4 +194,4 @@ export function AnimalTreatments() {
     </>
   );
 }
-export default PrivateComponent(AnimalTreatments);
+export default PrivateComponent(Faq);

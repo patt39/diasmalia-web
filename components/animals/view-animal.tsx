@@ -391,7 +391,16 @@ const ViewAnimal = ({
                           />
                         </div>
                       ) : (
-                        ''
+                        <div>
+                          <Label>
+                            {t.formatMessage({ id: 'FARROWING.DATE' })}
+                          </Label>
+                          <Input
+                            disabled
+                            type="text"
+                            defaultValue={'Pas encore'}
+                          />
+                        </div>
                       )}
                     </div>
                   </div>
@@ -417,6 +426,7 @@ const ViewAnimal = ({
                       <Label>Date de vente</Label>
                       <Input
                         disabled
+                        type="text"
                         value={
                           formatDateDDMMYY(getOneSaleAnimalType?.createdAt) ||
                           'N/A'

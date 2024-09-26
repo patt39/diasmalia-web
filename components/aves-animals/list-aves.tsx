@@ -15,6 +15,9 @@ import {
   formatWeight,
 } from '@/utils';
 import {
+  Anvil,
+  Bird,
+  Calendar,
   FileArchive,
   Hospital,
   ListCollapse,
@@ -103,14 +106,17 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
           </div>
           <div className="flex justify-center space-x-6">
             <div>
-              <h2 className="text-sm font-medium text-gray-500 h-4">
+              <h2 className="text-sm flex items-center font-medium text-gray-500 h-4">
+                <Anvil className="h-3.5 w-3.5  hover:shadow-xxl" />
                 {t.formatMessage({ id: 'TABANIMAL.WEIGHT' })}:{' '}
                 {formatWeight(item?.weight)}
               </h2>
-              <h2 className="mt-2 text-sm font-medium text-gray-500 h-4">
+              <h2 className="mt-2 flex items-center text-sm font-medium text-gray-500 h-4">
+                <Calendar className="h-3.5 w-3.5  hover:shadow-xxl" />
                 Age: {formatDateDifference(item?.birthday)}
               </h2>
-              <h2 className="mt-2 text-sm font-medium text-gray-500 h-4">
+              <h2 className="mt-2 flex items-center text-sm font-medium text-gray-500 h-4">
+                <Bird className="h-3.5 w-3.5  hover:shadow-xxl" />
                 {t.formatMessage({
                   id: 'LOCATION.ANIMALS',
                 })}

@@ -22,7 +22,6 @@ import {
 
 const schema = yup.object({
   code: yup.string().optional(),
-  nest: yup.number().optional(),
   manger: yup.number().required('manger is required field'),
   through: yup.number().required('through is required field'),
   productionPhase: yup.string().required('productionPhase is required field'),
@@ -39,7 +38,6 @@ const CreateLocations = ({
 }) => {
   const {
     t,
-    watch,
     control,
     errors,
     handleSubmit,
@@ -50,7 +48,6 @@ const CreateLocations = ({
   } = useReactHookForm({ schema });
   const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
-  const watchProductionPhase = watch('productionPhase');
   const { data: animalType } = GetOneAnimalTypeAPI({
     animalTypeId: animalTypeId,
   });
@@ -251,24 +248,6 @@ const CreateLocations = ({
                           />
                         </div>
                       </div>
-                      {watchProductionPhase === 'LAYING' &&
-                      animalType?.name !== 'Pisciculture' ? (
-                        <div>
-                          <Label>
-                            {t.formatMessage({ id: 'NUMBER.NESTS' })}
-                            <span className="text-red-600">*</span>
-                          </Label>
-                          <TextInput
-                            control={control}
-                            type="number"
-                            name="nest"
-                            placeholder="Number of nests"
-                            errors={errors}
-                          />
-                        </div>
-                      ) : (
-                        ''
-                      )}
                     </>
                   )}
                 </div>

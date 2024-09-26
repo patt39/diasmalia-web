@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { GetBreedingsAPI } from '@/api-site/breedings';
 import { useInputState } from '@/components/hooks';
-import { SearchInput } from '@/components/ui-setting';
+import { ButtonLoadMore, SearchInput } from '@/components/ui-setting';
 import { LoadingFile } from '@/components/ui-setting/ant';
 import { ErrorFile } from '@/components/ui-setting/ant/error-file';
 import { Button } from '@/components/ui/button';
@@ -19,9 +19,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { PaginationPage } from '@/utils';
 import { Drama, ListFilter } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useInView } from 'react-intersection-observer';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -36,23 +36,47 @@ const TabBreedings = ({ animalTypeId }: { animalTypeId: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [periode, setPeriode] = useState('');
   const [pageItem, setPageItem] = useState(1);
+  const { ref, inView } = useInView();
   const { t, search, handleSetSearch, userStorage } = useInputState();
 
   const {
     isLoading: isLoadingBreedings,
     isError: isErrorBreedings,
     data: dataBreedings,
-    isPlaceholderData,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
   } = GetBreedingsAPI({
     search,
     periode,
-    pageItem,
     take: 10,
     sort: 'desc',
     sortBy: 'createdAt',
     animalTypeId: animalTypeId,
     organizationId: userStorage?.organizationId,
   });
+
+  useEffect(() => {
+    let fetching = false;
+    if (inView) {
+      fetchNextPage();
+    }
+    const onScroll = async (event: any) => {
+      const { scrollHeight, scrollTop, clientHeight } =
+        event.target.scrollingElement;
+
+      if (!fetching && scrollHeight - scrollTop <= clientHeight * 1.5) {
+        fetching = true;
+        if (hasNextPage) await fetchNextPage();
+        fetching = false;
+      }
+    };
+
+    document.addEventListener('scroll', onScroll);
+    return () => {
+      document.removeEventListener('scroll', onScroll);
+    };
+  }, [fetchNextPage, hasNextPage, inView]);
 
   return (
     <>
@@ -83,13 +107,13 @@ const TabBreedings = ({ animalTypeId }: { animalTypeId: string }) => {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button variant="outline">
-                    {dataBreedings?.data?.total}
+                    {dataBreedings?.pages[0]?.data?.total}
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent className="dark:border-gray-800">
                   <p>
                     {t.formatMessage({ id: 'ANIMALTYPE.TOOLTIP' })}{' '}
-                    {dataBreedings?.data?.total}{' '}
+                    {dataBreedings?.pages[0]?.data?.total}{' '}
                     {t.formatMessage({ id: 'ANIMALTYPE.BREEDING' })}
                   </p>
                 </TooltipContent>
@@ -177,22 +201,27 @@ const TabBreedings = ({ animalTypeId }: { animalTypeId: string }) => {
                   title="404"
                   description="Error finding data please try again..."
                 />
-              ) : Number(dataBreedings?.data?.total) <= 0 ? (
+              ) : Number(dataBreedings?.pages[0]?.data?.total) <= 0 ? (
                 <ErrorFile description="Don't have breedings created yet please do" />
               ) : (
-                dataBreedings?.data?.value.map((item: any, index: number) => (
-                  <>
-                    <ListBreedings item={item} index={index} key={index} />
-                  </>
-                ))
+                dataBreedings?.pages[0]?.data?.value.map(
+                  (item: any, index: number) => (
+                    <>
+                      <ListBreedings item={item} index={index} key={index} />
+                    </>
+                  ),
+                )
               )}
             </TableBody>
-            <PaginationPage
-              setPageItem={setPageItem}
-              data={dataBreedings?.data}
-              pageItem={Number(pageItem)}
-              isPlaceholderData={isPlaceholderData}
-            />
+            {hasNextPage && (
+              <div className="mx-auto mt-4 justify-center text-center">
+                <ButtonLoadMore
+                  ref={ref}
+                  isFetchingNextPage={isFetchingNextPage}
+                  onClick={() => fetchNextPage()}
+                />
+              </div>
+            )}
           </Table>
         </CardContent>
       </main>
