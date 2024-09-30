@@ -1,4 +1,4 @@
-import { FeedingAvesModel, FeedingsModel } from '@/types/feeding';
+import { FeedingAvesModel, FeedingsPostModel } from '@/types/feeding';
 import { makeApiCall, PaginationRequest } from '@/utils';
 import {
   keepPreviousData,
@@ -18,7 +18,7 @@ export const CreateOrUpdateOneFeedingAPI = ({
   const queryClient = useQueryClient();
   const result = useMutation({
     mutationKey: queryKey,
-    mutationFn: async (payload: FeedingsModel & { feedingId: string }) => {
+    mutationFn: async (payload: FeedingsPostModel & { feedingId: string }) => {
       const { feedingId } = payload;
       return feedingId
         ? await makeApiCall({
@@ -108,6 +108,7 @@ export const GetFeedingsAPI = (
     sortBy: string;
     periode?: string;
     pageItem?: number;
+    productionPhase?: string;
     feedingsCount?: string;
     animalTypeId?: string;
     organizationId?: string;
@@ -120,6 +121,7 @@ export const GetFeedingsAPI = (
     search,
     pageItem,
     periode,
+    productionPhase,
     animalTypeId,
     feedingsCount,
     organizationId,
@@ -136,6 +138,7 @@ export const GetFeedingsAPI = (
           search,
           sortBy,
           periode,
+          productionPhase,
           feedingsCount,
           animalTypeId,
           page: pageItem,

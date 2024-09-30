@@ -17,6 +17,7 @@ import {
   Droplets,
   Eye,
   Grid2X2,
+  Hospital,
   MoreHorizontal,
   PencilIcon,
   Salad,
@@ -25,6 +26,7 @@ import {
 import Link from 'next/link';
 import { useState } from 'react';
 import { CreateFeedings } from '../feedings/create-feedings';
+import { CreateOrUpdatetreatments } from '../treatments/create-or-update-treatments';
 import { ActionModalDialog } from '../ui-setting/shadcn';
 import { ActionModalConfirmeDialog } from '../ui-setting/shadcn/action-modal-confirme-dialog';
 import { Badge } from '../ui/badge';
@@ -50,6 +52,7 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
   const [isEdit, setIsEdit] = useState(false);
   const [isView, setIsView] = useState(false);
   const [isFeeding, setIsFeeding] = useState(false);
+  const [isTreatment, setIsTreatment] = useState(false);
 
   const { mutateAsync: deleteMutation } = DeleteOneLocationAPI({
     onSuccess: () => {},
@@ -319,12 +322,26 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="dark:border-gray-800">
-                <DropdownMenuItem onClick={() => setIsEdit(true)}>
-                  <PencilIcon className="size-4 text-gray-600 hover:text-orange-600" />
-                  <span className="ml-2 cursor-pointer hover:text-orange-600">
-                    {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
-                  </span>
-                </DropdownMenuItem>
+                <Link href={`/location/${item?.id}`}>
+                  <DropdownMenuItem>
+                    <Eye className="size-4 text-gray-600 hover:text-yellow-600" />
+                    <span className="ml-2 cursor-pointer hover:text-yellow-600">
+                      {t.formatMessage({ id: 'TABANIMAL.VIEW' })}
+                    </span>
+                  </DropdownMenuItem>
+                </Link>
+                {item?._count?.animals !== 0 ? (
+                  <DropdownMenuItem onClick={() => setIsTreatment(true)}>
+                    <Hospital className="size-4 text-gray-600 hover:text-lime-600" />
+                    <span className="ml-2 cursor-pointer hover:text-lime-600">
+                      {t.formatMessage({
+                        id: 'ANIMALTYPE.CARE',
+                      })}
+                    </span>
+                  </DropdownMenuItem>
+                ) : (
+                  ''
+                )}
                 {item?._count?.animals !== 0 ? (
                   <DropdownMenuItem onClick={() => setIsFeeding(true)}>
                     <Salad className="size-4 text-gray-600 hover:text-amber-600" />
@@ -337,18 +354,16 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
                 ) : (
                   ''
                 )}
-                <Link href={`/location/${item?.id}`}>
-                  <DropdownMenuItem>
-                    <Eye className="size-4 text-gray-600 hover:text-yellow-600" />
-                    <span className="ml-2 cursor-pointer hover:text-yellow-600">
-                      {t.formatMessage({ id: 'TABANIMAL.VIEW' })}
-                    </span>
-                  </DropdownMenuItem>
-                </Link>
                 <DropdownMenuItem onClick={() => setIsConfirmOpen(true)}>
                   <BadgeCheck className="size-4 text-gray-600 hover:text-red-400 cursor-pointer" />
                   <span className="ml-2 cursor-pointer hover:text-red-400">
                     {t.formatMessage({ id: 'CHANGE.STATUS' })}
+                  </span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setIsEdit(true)}>
+                  <PencilIcon className="size-4 text-gray-600 hover:text-orange-600" />
+                  <span className="ml-2 cursor-pointer hover:text-orange-600">
+                    {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
                   </span>
                 </DropdownMenuItem>
                 {item?._count?.animals === 0 ? (
@@ -393,6 +408,12 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
         feeding={item?.animalTypeId}
         showModal={isFeeding}
         setShowModal={setIsFeeding}
+      />
+      <CreateOrUpdatetreatments
+        location={item}
+        treatment={item?.animalTypeId}
+        showModal={isTreatment}
+        setShowModal={setIsTreatment}
       />
     </>
   );

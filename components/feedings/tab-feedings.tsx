@@ -36,6 +36,7 @@ const TabFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [periode, setPeriode] = useState('');
   const [pageItem, setPageItem] = useState(1);
+  const [productionPhase, setProductionPhase] = useState('');
   const { t, search, handleSetSearch, userStorage } = useInputState();
 
   const { data: animalStatistics } = GetAnimalStatisticsAPI({
@@ -55,6 +56,7 @@ const TabFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
     take: 10,
     sort: 'desc',
     sortBy: 'createdAt',
+    productionPhase,
     animalTypeId: animalTypeId,
     organizationId: userStorage?.organizationId,
   });
@@ -91,7 +93,9 @@ const TabFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
                 <Button variant="outline" size="sm" className="h-8 gap-1">
                   <ListFilter className="h-3.5 w-3.5" />
                   <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    Filter
+                    {productionPhase === ''
+                      ? t.formatMessage({ id: 'ACTIVITY.FILTERALL' })
+                      : productionPhase}
                   </span>
                 </Button>
               </DropdownMenuTrigger>

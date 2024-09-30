@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { FeedingsModel } from '@/types/feeding';
+import { FeedingsPostModel } from '@/types/feeding';
 import {
   AlertDangerNotification,
   AlertSuccessNotification,
@@ -26,6 +26,7 @@ import { useInView } from 'react-intersection-observer';
 import * as yup from 'yup';
 import { TextInput } from '../ui-setting/shadcn';
 import { Button } from '../ui/button';
+import { Checkbox } from '../ui/checkbox';
 import { Label } from '../ui/label';
 import {
   Tooltip,
@@ -68,10 +69,8 @@ const CreateFeedings = ({
   const { ref, inView } = useInView();
   const { userStorage } = useInputState();
   const animalTypeId = String(query?.animalTypeId);
-  const selectedAnimals = watch('animals', '');
+  const selectedAnimals = watch('animals', []);
   const countSelectedAnimals = selectedAnimals?.length;
-  // console.log('selectedAnimals==>', selectedAnimals);
-  // console.log('countSelectedAnimals==>', countSelectedAnimals);
 
   useEffect(() => {
     if (feeding) {
@@ -92,8 +91,8 @@ const CreateFeedings = ({
     },
   });
 
-  const onSubmit: SubmitHandler<FeedingsModel> = async (
-    payload: FeedingsModel,
+  const onSubmit: SubmitHandler<FeedingsPostModel> = async (
+    payload: FeedingsPostModel,
   ) => {
     setLoading(true);
     setHasErrors(undefined);
@@ -245,28 +244,41 @@ const CreateFeedings = ({
                             .flatMap((page: any) => page?.data?.value)
                             .map((item, index) => (
                               <>
-                                <div key={index}>
-                                  <label
-                                    htmlFor={item?.id}
-                                    className="flex cursor-pointer items-start gap-4 rounded-lg border border-gray-200 p-4 transition hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-900"
-                                  >
-                                    <div className="flex items-center">
-                                      &#8203;
-                                      <input
-                                        type="checkbox"
-                                        className="size-4 rounded cursor-pointer border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:ring-offset-gray-900"
-                                        id={item?.id}
-                                        {...register('animals')}
-                                        value={item?.code}
-                                      />
-                                    </div>
-                                    <div>
-                                      <strong className="font-medium text-gray-900 dark:text-white">
-                                        {item?.code}
-                                      </strong>
-                                    </div>
-                                  </label>
-                                </div>
+                                <Controller
+                                  key={item?.code}
+                                  control={control}
+                                  name="animals"
+                                  render={({ field: { ...field } }) => (
+                                    <>
+                                      <div
+                                        className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow"
+                                        key={item?.code}
+                                      >
+                                        <Checkbox
+                                          checked={field?.value?.includes(
+                                            item?.code,
+                                          )}
+                                          onCheckedChange={(checked) => {
+                                            return checked
+                                              ? field.onChange([
+                                                  ...(field.value || []),
+                                                  item?.code,
+                                                ])
+                                              : field?.onChange(
+                                                  field?.value?.filter(
+                                                    (value: any) =>
+                                                      value !== item?.code,
+                                                  ),
+                                                );
+                                          }}
+                                        />
+                                        <div className="space-y-1 leading-none">
+                                          <Label>{item?.code}</Label>
+                                        </div>
+                                      </div>
+                                    </>
+                                  )}
+                                />
                               </>
                             ))
                         )}
@@ -283,6 +295,7 @@ const CreateFeedings = ({
                     </SelectContent>
                   </Select>
                 </div>
+
                 <div className="mb-2">
                   <Label>
                     {t.formatMessage({ id: 'TABFEEDING.FEEDTYPE' })}

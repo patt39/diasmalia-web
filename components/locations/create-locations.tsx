@@ -207,7 +207,7 @@ const CreateLocations = ({
                     </>
                   ) : (
                     <>
-                      <div className="items-center flex space-x-9 my-2">
+                      <div className="items-center flex space-x-16 my-2">
                         <div>
                           <Label>
                             {t.formatMessage({ id: 'SURFACE.AREA' })}

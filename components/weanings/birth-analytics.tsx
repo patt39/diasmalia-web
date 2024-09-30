@@ -1,10 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
 import { GetAnimalStatisticsAPI } from '@/api-site/animals';
-import { EggsAnalyticAPI } from '@/api-site/sales';
-import { dateTimeNowUtc, formatMMDate, getMonthNow } from '@/utils';
+import { GetBirthAnalyticAPI } from '@/api-site/weanings';
+import { dateTimeNowUtc, formatMMDate } from '@/utils';
 import { Calendar, ListFilter } from 'lucide-react';
 import { Fragment, useState } from 'react';
-import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts';
+import { CartesianGrid, Line, LineChart, XAxis } from 'recharts';
 import { useInputState } from '../hooks';
 import { Button } from '../ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
@@ -22,32 +22,32 @@ import {
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 
-const TabAnimalSalesAnalytics = ({
+const FarrowingsWeaningsAnalytics = ({
   animalTypeId,
 }: {
   animalTypeId: string;
 }) => {
+  const { t, locale } = useInputState();
   const [periode, setPeriode] = useState('');
   const [year, setYear] = useState<String>(`${dateTimeNowUtc().getFullYear()}`);
-  const [months, setMonths] = useState<String>(`${getMonthNow(new Date())}`);
-  const { t, locale } = useInputState();
+  const [months, setMonths] = useState<String>('');
   const { data: animalStatistics } = GetAnimalStatisticsAPI({
     animalTypeId: animalTypeId,
   });
 
-  const { data: dataSalesEggsAnalyticsDay } = EggsAnalyticAPI({
+  const { data: dataBirthsAnalyticsDay } = GetBirthAnalyticAPI({
     year: String(year),
     months: String(months),
     periode: String(periode),
     animalTypeId: animalTypeId,
   });
 
-  const { data: dataSalesEggsAnalyticsMonth } = EggsAnalyticAPI({
+  const { data: dataBirthsAnalyticsMonth } = GetBirthAnalyticAPI({
     year: String(year),
     animalTypeId: animalTypeId,
   });
 
-  const { data: dataSalesEggsAnalyticsYear } = EggsAnalyticAPI({
+  const { data: dataBirthsAnalyticsYear } = GetBirthAnalyticAPI({
     animalTypeId: animalTypeId,
   });
 
@@ -60,22 +60,17 @@ const TabAnimalSalesAnalytics = ({
       label: 'Mobile',
       color: 'hsl(var(--chart-2))',
     },
-    firefox: {
-      label: 'Firefox',
-      color: 'hsl(var(--chart-3))',
-    },
   } satisfies ChartConfig;
 
   return (
     <>
-      {animalStatistics?.sumSaleEggs?.price !== null ? (
+      {animalStatistics?.sumFarrowings ||
+      animalStatistics?.sumWeanings !== null ? (
         <Card className="dark:border-input dark:bg-background sm:col-span-2">
           <CardHeader>
             <div className="flex items-center">
               <div className="mr-auto items-center gap-2">
-                <CardTitle className="text-xl">
-                  {t.formatMessage({ id: 'AMOUNT.SALE.EGGS' })}
-                </CardTitle>
+                <CardTitle className="text-xl">Vente animaux</CardTitle>
               </div>
               <div className="ml-auto flex items-center gap-2">
                 <>
@@ -89,7 +84,7 @@ const TabAnimalSalesAnalytics = ({
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="dark:border-gray-800 w-auto">
-                      {dataSalesEggsAnalyticsYear?.data?.map(
+                      {dataBirthsAnalyticsYear?.data?.map(
                         (item: any, index: number) => (
                           <Fragment key={index}>
                             <DropdownMenuCheckboxItem
@@ -116,7 +111,7 @@ const TabAnimalSalesAnalytics = ({
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="dark:border-gray-800 w-auto">
-                    {dataSalesEggsAnalyticsMonth?.data?.map(
+                    {dataBirthsAnalyticsMonth?.data?.map(
                       (item: any, index: number) => (
                         <Fragment key={index}>
                           <DropdownMenuCheckboxItem
@@ -182,39 +177,43 @@ const TabAnimalSalesAnalytics = ({
             </div>
           </CardHeader>
           <CardContent>
-            <ChartContainer
-              config={chartConfig}
-              className="lg:h-[400px] w-full"
-            >
-              <AreaChart
+            <ChartContainer config={chartConfig}>
+              <LineChart
                 accessibilityLayer
-                data={dataSalesEggsAnalyticsDay?.data}
+                data={dataBirthsAnalyticsDay?.data}
                 margin={{
-                  top: 12,
                   left: 12,
                   right: 12,
                 }}
               >
-                <CartesianGrid vertical={false} />
+                <CartesianGrid vertical={true} />
                 <XAxis
                   dataKey="date"
                   tickLine={false}
                   axisLine={false}
-                  tickMargin={8}
-                  tickFormatter={(value) => value.slice(0, 3)}
+                  tickMargin={12}
+                  //tickFormatter={(value) => value.slice(0, 3)}
                 />
                 <ChartTooltip
                   cursor={false}
-                  content={<ChartTooltipContent indicator="line" />}
+                  labelClassName="w-40"
+                  content={<ChartTooltipContent />}
                 />
-                <Area
-                  dataKey="sum"
-                  type="natural"
-                  fill="var(--color-firefox)"
-                  fillOpacity={0.4}
-                  stroke="var(--color-firefox)"
+                <Line
+                  dataKey="farrowingLitter"
+                  type="monotone"
+                  stroke="var(--color-desktop)"
+                  strokeWidth={2}
+                  dot={false}
                 />
-              </AreaChart>
+                <Line
+                  dataKey="litter"
+                  type="monotone"
+                  stroke="var(--color-mobile)"
+                  strokeWidth={2}
+                  dot={false}
+                />
+              </LineChart>
             </ChartContainer>
           </CardContent>
         </Card>
@@ -224,4 +223,4 @@ const TabAnimalSalesAnalytics = ({
     </>
   );
 };
-export { TabAnimalSalesAnalytics };
+export { FarrowingsWeaningsAnalytics };

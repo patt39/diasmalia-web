@@ -143,11 +143,10 @@ const TabFattenings = ({ animalTypeId }: { animalTypeId: string }) => {
               <TableRow className="dark:border-gray-800">
                 <TableHead>Code</TableHead>
                 <TableHead>
-                  {t.formatMessage({ id: 'TABFATTENING.INITIALWEIGHT' })} (kg)
+                  {t.formatMessage({ id: 'TABFATTENING.INITIALWEIGHT' })}
                 </TableHead>
                 <TableHead>
                   {t.formatMessage({ id: 'TABFATTENING.ACTUALWEIGHTEDIT' })}{' '}
-                  (kg)
                 </TableHead>
                 <TableHead>Date</TableHead>
                 <TableHead>

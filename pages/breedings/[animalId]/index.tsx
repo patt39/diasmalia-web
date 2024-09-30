@@ -86,6 +86,12 @@ export function Faq() {
                 {t.formatMessage({ id: 'UTIL.COME_BACK' })}
               </span>
             </ButtonInput>
+            <div className="ml-80 flex flex-col items-center gap-1 text-center">
+              <h4 className="mx-auto text-2xl font-semibold text-zinc-600 tracking-tight text-center">
+                {t.formatMessage({ id: 'REPRODUCTION.CAREER' })}{' '}
+                {getOneAnimal?.code}
+              </h4>
+            </div>
           </div>
         </CardHeader>
         <div className="flex min-h-screen w-full flex-col">
@@ -115,6 +121,7 @@ export function Faq() {
                         <AccordionContent>
                           <div className="mb-4">
                             <div>Male: {item?.maleCode} </div>
+                            <div>Female: {item?.femaleCode} </div>
                             <div>
                               {t.formatMessage({ id: 'RESULT' })}:{' '}
                               {item?.result === 'PREGNANT'
@@ -124,10 +131,10 @@ export function Faq() {
                             <div> Method: {item?.method.toLowerCase()}</div>
                             <div> Note: {item?.note}</div>
                           </div>
-                          {item?.weaning?.farrowing !== null ? (
+                          {item?.weaning !== null ? (
                             <>
                               <h4 className="my-2 text-sm font-bold tracking-tight">
-                                {t.formatMessage({ id: 'FARROWING' })}{' '}
+                                {t.formatMessage({ id: 'FARROWING' })}
                               </h4>
                               <div className="mb-4">
                                 <div>
@@ -140,10 +147,10 @@ export function Faq() {
                                   {t.formatMessage({
                                     id: 'TABFARROWING.LITTER',
                                   })}
-                                  : {item?.weaning?.farrowing?.litter}{' '}
+                                  : {item?.weaning?.farrowing?.litter}
                                 </div>
                                 <div>
-                                  Note: {item?.weaning?.farrowing?.note}{' '}
+                                  Note: {item?.weaning?.farrowing?.note}
                                 </div>
                               </div>
                             </>

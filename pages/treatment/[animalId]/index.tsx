@@ -86,26 +86,29 @@ export function AnimalTreatments() {
                 {t.formatMessage({ id: 'UTIL.COME_BACK' })}
               </span>
             </ButtonInput>
+            <div className="ml-60 flex flex-col items-center gap-1 text-center">
+              {[
+                'Porciculture',
+                'Bovins',
+                'Cuniculture',
+                'Caprins',
+                'Ovins',
+              ].includes(getOneAnimal?.animalType?.name) ? (
+                <h4 className="mx-auto text-2xl font-semibold text-zinc-600">
+                  {t.formatMessage({ id: 'TREATMENT.PAGE' })}{' '}
+                  {getOneAnimal?.code}
+                </h4>
+              ) : (
+                <h4 className="mx-auto  text-2xl font-bold text-zinc-600">
+                  {t.formatMessage({ id: 'AVES.TREATMENT.PAGE' })}
+                  {getOneAnimal?.code}
+                </h4>
+              )}
+            </div>
+            <div className="ml-auto text-xl font-semibold text-zinc-600"></div>
           </div>
         </CardHeader>
         <div className="flex min-h-screen w-full flex-col">
-          <div className="flex flex-col items-center gap-1 text-center">
-            {[
-              'Porciculture',
-              'Bovins',
-              'Cuniculture',
-              'Caprins',
-              'Ovins',
-            ].includes(getOneAnimal?.animalType?.name) ? (
-              <h4 className="mt-8 text-2xl font-bold tracking-tight text-center">
-                {t.formatMessage({ id: 'TREATMENT.PAGE' })}
-              </h4>
-            ) : (
-              <h4 className="mt-8 text-2xl font-bold tracking-tight text-center">
-                {t.formatMessage({ id: 'AVES.TREATMENT.PAGE' })}
-              </h4>
-            )}
-          </div>
           <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
             {isLoadingTreatments ? (
               <LoadingFile />
@@ -132,7 +135,10 @@ export function AnimalTreatments() {
                             Medication: {item?.medication.toLowerCase()}{' '}
                           </div>
                           <div> Dose: {item?.dose} </div>
-                          <div> Voie: {item?.method.toLowerCase()}</div>
+                          <div>
+                            {t.formatMessage({ id: 'SALE.METHOD' })}:{' '}
+                            {item?.method.toLowerCase()}
+                          </div>
                         </AccordionContent>
                       </AccordionItem>
                     </Accordion>

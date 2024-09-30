@@ -87,7 +87,7 @@ export function AnimalSaleProfile() {
         <div className="flex min-h-screen w-full flex-col">
           <div className="flex flex-col items-center gap-1 text-center">
             <h4 className="mt-8 text-2xl font-bold tracking-tight text-center">
-              Animal profile
+              {t.formatMessage({ id: 'ANIMAL.PROFILE' })}
             </h4>
           </div>
           <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
@@ -416,7 +416,10 @@ export function AnimalSaleProfile() {
                               Medication: {item?.medication.toLowerCase()}{' '}
                             </div>
                             <div> Dose: {item?.dose} </div>
-                            <div> Voie: {item?.method.toLowerCase()}</div>
+                            <div>
+                              {t.formatMessage({ id: 'SALE.METHOD' })}:{' '}
+                              {item?.method.toLowerCase()}
+                            </div>
                           </AccordionContent>
                         </AccordionItem>
                       </Accordion>

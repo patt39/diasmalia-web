@@ -223,35 +223,18 @@ const UpdateAnimals = ({
                     </div>
                   </div>
                 )}
-                <div>
-                  <Label>Code</Label>
-                  <TextInput
-                    control={control}
-                    type="text"
-                    name="code"
-                    placeholder="Give a code"
-                    errors={errors}
-                  />
-                </div>
-                <div className="my-2 flex items-center space-x-1">
+                <div className="my-2 flex items-center space-x-2">
                   <div>
-                    <Label>
-                      {t.formatMessage({ id: 'ANIMALTYPE.GENDER' })}
-                    </Label>
-                    <SelectInput
-                      firstOptionName="Choose a production type"
+                    <Label>Code</Label>
+                    <TextInput
                       control={control}
+                      type="text"
+                      name="code"
+                      placeholder="Give a code"
                       errors={errors}
-                      placeholder="Select gender"
-                      valueType="text"
-                      name="gender"
-                      dataItem={[
-                        { id: 1, name: 'MALE' },
-                        { id: 2, name: 'FEMALE' },
-                      ]}
                     />
                   </div>
-                  <div className="px-4">
+                  <div>
                     <Label>{t.formatMessage({ id: 'VIEW.BIRTHDATE' })}</Label>
                     <DateInput
                       control={control}
@@ -261,7 +244,7 @@ const UpdateAnimals = ({
                     />
                   </div>
                   <div>
-                    <Label>{t.formatMessage({ id: 'WEIGHT' })}</Label>
+                    <Label>{t.formatMessage({ id: 'TABANIMAL.WEIGHT' })}</Label>
                     <TextInput
                       control={control}
                       type="number"
@@ -270,6 +253,21 @@ const UpdateAnimals = ({
                       errors={errors}
                     />
                   </div>
+                </div>
+                <div>
+                  <Label>{t.formatMessage({ id: 'ANIMALTYPE.GENDER' })}</Label>
+                  <SelectInput
+                    firstOptionName="Choose a production type"
+                    control={control}
+                    errors={errors}
+                    placeholder="Select gender"
+                    valueType="text"
+                    name="gender"
+                    dataItem={[
+                      { id: 1, name: 'MALE' },
+                      { id: 2, name: 'FEMALE' },
+                    ]}
+                  />
                 </div>
                 <div className="my-2">
                   <Label> {t.formatMessage({ id: 'VIEW.MOTHER' })}</Label>
@@ -383,7 +381,7 @@ const UpdateAnimals = ({
                       name="productionPhase"
                       dataItem={[
                         { id: 1, name: 'GROWTH' },
-                        { id: 3, name: 'REPRODUCTION' },
+                        { id: 2, name: 'REPRODUCTION' },
                       ]}
                     />
                   </div>

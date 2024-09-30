@@ -1,41 +1,11 @@
 import { MilkingsModel } from '@/types/milking';
 import { makeApiCall, PaginationRequest } from '@/utils';
 import {
-  useInfiniteQuery,
+  keepPreviousData,
   useMutation,
+  useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
-
-export const GetMilkingsAPI = (
-  payload: {
-    search?: string;
-    take?: number;
-    sortBy?: string;
-    animalTypeId?: string;
-    organizationId?: string;
-  } & PaginationRequest,
-) => {
-  const { take, sort, search, sortBy, animalTypeId, organizationId } = payload;
-  return useInfiniteQuery({
-    queryKey: ['milkings', 'infinite', { ...payload }],
-    getNextPageParam: (lastPage: any) => lastPage.data.next_page,
-    queryFn: async ({ pageParam = 1 }) =>
-      await makeApiCall({
-        action: 'getmilkings',
-        queryParams: {
-          take,
-          sort,
-          search,
-          sortBy,
-          animalTypeId,
-          page: pageParam,
-          organizationId,
-        },
-      }),
-    staleTime: 60_000,
-    initialPageParam: 1,
-  });
-};
 
 export const CreateOrUpdateOneMilkingAPI = ({
   onSuccess,
@@ -44,7 +14,7 @@ export const CreateOrUpdateOneMilkingAPI = ({
   onSuccess?: () => void;
   onError?: (error: any) => void;
 } = {}) => {
-  const queryKey = ['milking'];
+  const queryKey = ['milkings'];
   const queryClient = useQueryClient();
   const result = useMutation({
     mutationKey: queryKey,
@@ -82,4 +52,74 @@ export const CreateOrUpdateOneMilkingAPI = ({
   });
 
   return result;
+};
+
+export const GetMilkingsAPI = (
+  payload: {
+    search?: string;
+    take: number;
+    sortBy: string;
+    periode?: string;
+    pageItem?: number;
+    productionPhase?: string;
+    animalTypeId?: string;
+    organizationId?: string;
+  } & PaginationRequest,
+) => {
+  const {
+    take,
+    sort,
+    sortBy,
+    search,
+    pageItem,
+    periode,
+    productionPhase,
+    animalTypeId,
+    organizationId,
+  } = payload;
+  return useQuery({
+    queryKey: ['milkings', { ...payload }],
+    placeholderData: keepPreviousData,
+    queryFn: async () =>
+      await makeApiCall({
+        action: 'getMilkings',
+        queryParams: {
+          take,
+          sort,
+          search,
+          sortBy,
+          periode,
+          productionPhase,
+          animalTypeId,
+          page: pageItem,
+          organizationId,
+        },
+      }),
+    staleTime: 6000,
+  });
+};
+
+export const MilkingsAnalyticAPI = (payload: {
+  periode?: string;
+  days?: string;
+  months?: string;
+  year?: string;
+  animalTypeId?: string;
+  organizationId?: string;
+}) => {
+  const { year, months, days, animalTypeId, organizationId } = payload;
+  return useQuery({
+    queryKey: ['milkings-analytics', { ...payload }],
+    queryFn: async () =>
+      await makeApiCall({
+        action: 'getMilkingsAnalytics',
+        queryParams: {
+          year,
+          days,
+          months,
+          animalTypeId,
+          organizationId,
+        },
+      }),
+  });
 };

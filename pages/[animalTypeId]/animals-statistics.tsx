@@ -83,7 +83,9 @@ const AnimalStatistics = () => {
       </Card>
       <Card x-chunk="dashboard-05-chunk-2" className=" dark:border-gray-800">
         <CardHeader className="pb-2">
-          <CardDescription>Taux de Reproduction</CardDescription>
+          <CardDescription>
+            {t.formatMessage({ id: 'FERTILITY.RATE' })}
+          </CardDescription>
           <CardTitle className="text-4xl">
             {Math.floor(fertilityRate * 100) / 100 || 0}%
           </CardTitle>
@@ -91,9 +93,11 @@ const AnimalStatistics = () => {
       </Card>
       <Card x-chunk="dashboard-05-chunk-2" className=" dark:border-gray-800">
         <CardHeader className="pb-2">
-          <CardDescription>Taux de Naissances</CardDescription>
+          <CardDescription>
+            {t.formatMessage({ id: 'FECONDITY.RATE' })}
+          </CardDescription>
           <CardTitle className="text-4xl">
-            {Math.floor(farrowingPercentage * 100 || 0) / 100}%
+            {Math.floor(farrowingPercentage * 100) / 100 || 0}%
           </CardTitle>
         </CardHeader>
       </Card>
@@ -103,7 +107,7 @@ const AnimalStatistics = () => {
             {t.formatMessage({ id: 'WEANING.PERCENTAGE' })}
           </CardDescription>
           <CardTitle className="text-4xl">
-            {Math.floor(weaningPercentage * 100 || 0) / 100}%
+            {Math.floor(weaningPercentage * 100) / 100 || 0}%
           </CardTitle>
         </CardHeader>
       </Card>
@@ -113,7 +117,7 @@ const AnimalStatistics = () => {
             {t.formatMessage({ id: 'YOUTH.DEATH.PERCENTAGE' })}
           </CardDescription>
           <CardTitle className="text-4xl">
-            {Math.floor(youngDeathPercentage * 100 || 0) / 100}%
+            {Math.floor(youngDeathPercentage * 100) / 100 || 0}%
           </CardTitle>
         </CardHeader>
       </Card>

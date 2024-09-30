@@ -16,6 +16,7 @@ import {
 } from '@/utils';
 import { Eye, MoreHorizontal, PencilIcon, TrashIcon } from 'lucide-react';
 import { useState } from 'react';
+import { capitalizeFirstLetter } from '../../utils/utils';
 import { ActionModalDialog } from '../ui-setting/shadcn';
 import { TableCell, TableRow } from '../ui/table';
 import { CreateOrUpdateDeaths } from './create-or-update-deaths';
@@ -54,6 +55,29 @@ const ListDeaths = ({ item, index }: { item: any; index: number }) => {
     <>
       <TableRow key={index} className="dark:border-gray-800">
         <TableCell className="font-medium">{item?.animal?.code}</TableCell>
+        <TableCell className="font-medium">
+          {item?.animal?.productionPhase === 'REPRODUCTION' ? (
+            <p className="font-medium text-orange-600">
+              {capitalizeFirstLetter(item?.animal?.productionPhase)}
+            </p>
+          ) : item?.animal?.productionPhase === 'FATTENING' ? (
+            <p className="font-medium text-blue-600">
+              {t.formatMessage({ id: 'PRODUCTIONTYPE.FATTENING' })}
+            </p>
+          ) : item?.animal?.productionPhase === 'GROWTH' ? (
+            <p className="font-medium text-cyan-600">
+              {t.formatMessage({ id: 'FEED.GROWER' })}
+            </p>
+          ) : item?.animal?.productionPhase === 'GESTATION' ? (
+            <p className="font-medium text-sky-600">
+              {t.formatMessage({ id: 'ANIMALTYPE.GESTATIONS' })}
+            </p>
+          ) : (
+            <p className="font-medium text-purple-600">
+              {capitalizeFirstLetter(item?.animal?.productionPhase)}
+            </p>
+          )}
+        </TableCell>
         <TableCell>
           {item?.note?.length > 20
             ? item?.note?.substring(0, 20) + '...'

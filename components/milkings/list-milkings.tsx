@@ -19,7 +19,6 @@ import { useState } from 'react';
 import { ActionModalDialog } from '../ui-setting/shadcn';
 import { TableCell, TableRow } from '../ui/table';
 import { CreateOrUpdateMilkings } from './create-or-update-milkings';
-import { ViewIsolation } from './view-isolation';
 
 const ListMilkings = ({ item, index }: { item: any; index: number }) => {
   const { t, isOpen, loading, setIsOpen, setLoading } = useInputState();
@@ -66,20 +65,24 @@ const ListMilkings = ({ item, index }: { item: any; index: number }) => {
                 </span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="dark:border-gray-800">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setIsEdit(true)}>
                 <PencilIcon className="size-4 text-gray-600 hover:text-indigo-600" />
                 <span className="ml-2 cursor-pointer hover:text-indigo-600">
                   {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
                 </span>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setIsOpen(true)}>
-                <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
-                <span className="ml-2 cursor-pointer hover:text-red-600">
-                  {t.formatMessage({ id: 'TABANIMAL.DELETE' })}
-                </span>
-              </DropdownMenuItem>
+              {['DEAD', 'SOLD'].includes(item?.animal?.status) ? (
+                <DropdownMenuItem onClick={() => setIsOpen(true)}>
+                  <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
+                  <span className="ml-2 cursor-pointer hover:text-red-600">
+                    {t.formatMessage({ id: 'TABANIMAL.DELETE' })}
+                  </span>
+                </DropdownMenuItem>
+              ) : (
+                ''
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </TableCell>
@@ -94,11 +97,6 @@ const ListMilkings = ({ item, index }: { item: any; index: number }) => {
         milking={item}
         showModal={isEdit}
         setShowModal={setIsEdit}
-      />
-      <ViewIsolation
-        isolation={item}
-        showModal={isView}
-        setShowModal={setIsView}
       />
     </>
   );

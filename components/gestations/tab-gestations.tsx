@@ -20,8 +20,6 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 import {
@@ -110,13 +108,17 @@ const TabGestations = ({ animalTypeId }: { animalTypeId: string }) => {
                 <Button variant="outline" size="sm" className="h-8 gap-1">
                   <ListFilter className="h-3.5 w-3.5" />
                   <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    Filter
+                    {periode == ''
+                      ? t.formatMessage({ id: 'ACTIVITY.FILTERALL' })
+                      : periode == '7'
+                        ? t.formatMessage({ id: 'ACTIVITY.LAST7DAYS' })
+                        : periode == '15'
+                          ? t.formatMessage({ id: 'ACTIVITY.LAST15DAYS' })
+                          : t.formatMessage({ id: 'ACTIVITY.LAST30DAYS' })}
                   </span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="dark:border-gray-800">
-                <DropdownMenuLabel>Filter by</DropdownMenuLabel>
-                <DropdownMenuSeparator />
                 <DropdownMenuCheckboxItem
                   className="cursor-pointer"
                   onClick={() => setPeriode('')}

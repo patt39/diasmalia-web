@@ -68,7 +68,7 @@ export function ViewLocation() {
 
   return (
     <>
-      <LayoutDashboard title={`${getOneLocation?.code}`}>
+      <LayoutDashboard title={`Location - ${getOneLocation?.code}`}>
         <CardHeader>
           <div className="flex items-center">
             <ButtonInput
@@ -84,7 +84,9 @@ export function ViewLocation() {
                 {t.formatMessage({ id: 'UTIL.COME_BACK' })}
               </span>
             </ButtonInput>
-            <div className="mr-auto items-center gap-2"></div>
+            <h4 className="text-xl text-zinc-950 ml-96 font-bold items-center">
+              {getOneLocation?.code}
+            </h4>
             <div className="ml-auto flex items-center gap-2">
               <SearchInput
                 placeholder="Search by code"

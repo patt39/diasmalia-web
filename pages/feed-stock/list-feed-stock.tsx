@@ -19,16 +19,19 @@ import { AlertDangerNotification, AlertSuccessNotification } from '@/utils';
 import {
   Anvil,
   Backpack,
+  ListChecks,
   MoreHorizontal,
   PencilIcon,
   TrashIcon,
 } from 'lucide-react';
 import { useState } from 'react';
+import { CreateOrUpdateFeedComposition } from './create-or-update-feed-composition';
 import { CreateOrUpdateFeedStock } from './create-or-update-feed-stock';
 
 const ListFeedStock = ({ item, index }: { item: any; index: number }) => {
   const { t, isOpen, loading, setIsOpen, setLoading } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
+  const [isComposition, setIsComposition] = useState(false);
 
   const { mutateAsync: deleteMutation } = DeleteOneFeedStockAPI({
     onSuccess: () => {},
@@ -178,6 +181,12 @@ const ListFeedStock = ({ item, index }: { item: any; index: number }) => {
                     {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
                   </span>
                 </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setIsComposition(true)}>
+                  <ListChecks className="size-4 text-gray-600 hover:text-cyan-600" />
+                  <span className="ml-2 cursor-pointer hover:text-cyan-600">
+                    Composition
+                  </span>
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setIsOpen(true)}>
                   <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
                   <span className="ml-2 cursor-pointer hover:text-red-600">
@@ -196,6 +205,11 @@ const ListFeedStock = ({ item, index }: { item: any; index: number }) => {
               feedStock={item}
               showModal={isEdit}
               setShowModal={setIsEdit}
+            />
+            <CreateOrUpdateFeedComposition
+              feedStock={item}
+              showModal={isComposition}
+              setShowModal={setIsComposition}
             />
           </div>
         </div>

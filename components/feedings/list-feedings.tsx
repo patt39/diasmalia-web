@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { formatDateDDMMYY } from '@/utils';
+import { capitalizeFirstLetter } from '@/utils/utils';
 import { MoreHorizontal, PencilIcon } from 'lucide-react';
 import { useState } from 'react';
 import { formatWeight } from '../../utils/formate-date';
@@ -28,7 +29,7 @@ const ListFeedings = ({ item, index }: { item: any; index: number }) => {
             <p className="font-medium text-orange-600">
               {t.formatMessage({ id: 'FEED.PRESTARTER' })}
             </p>
-          ) : item?.feedStock?.feedCategory === 'FEED.CONCENTRATES' ? (
+          ) : item?.feedStock?.feedCategory === 'CONCENTRATES' ? (
             <p className="font-medium text-blue-600">
               {t.formatMessage({ id: 'FEED.CONCENTRATES' })}
             </p>
@@ -85,7 +86,9 @@ const ListFeedings = ({ item, index }: { item: any; index: number }) => {
         <TableCell className="font-medium">
           {formatWeight(item?.quantity)}
         </TableCell>
-        <TableCell>{item?.animal?.productionPhase.toLowerCase()}</TableCell>
+        <TableCell>
+          {capitalizeFirstLetter(item?.animal?.productionPhase)}
+        </TableCell>
         <TableCell className="font-medium">
           {item.animal?.location?.code}
         </TableCell>

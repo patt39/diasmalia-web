@@ -146,6 +146,7 @@ const TabDeaths = ({ animalTypeId }: { animalTypeId: string }) => {
             <TableHeader>
               <TableRow className="dark:border-gray-800">
                 <TableHead>Code</TableHead>
+                <TableHead>Production phase</TableHead>
                 <TableHead>Note</TableHead>
                 <TableHead>Date</TableHead>
                 <TableHead>

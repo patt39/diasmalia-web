@@ -123,14 +123,17 @@ const TabAnimals = ({ animalTypeId }: { animalTypeId: string }) => {
                     className="h-7 gap-1 text-sm"
                   >
                     <ListFilter className="h-3.5 w-3.5" />
-                    <span className="sr-only sm:not-sr-only">Filter</span>
+                    <span className="sr-only sm:not-sr-only">
+                      {productionPhase === ''
+                        ? t.formatMessage({ id: 'ACTIVITY.FILTERALL' })
+                        : productionPhase}
+                    </span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   align="end"
                   className="dark:border-gray-80 cursor-pointer0 dark:border-gray-800"
                 >
-                  <DropdownMenuSeparator />
                   {status ? (
                     <DropdownMenuCheckboxItem
                       checked

@@ -111,6 +111,7 @@ export const apiEndpoints: ClientApiMethods = {
   getEggsAnalytics: GET(`${baseUrl}/analytics/sales/eggs`),
   getchicksAnalytics: GET(`${baseUrl}/analytics/sales/chicks`),
   getchickensAnalytics: GET(`${baseUrl}/analytics/sales/chickens`),
+  getAnimalsAnalytics: GET(`${baseUrl}/analytics/sales/animals`),
   getBestSaleChannel: GET(`${baseUrl}/sales/:animalTypeId/best-channel`),
   getOneSaleAnimalType: GET(`${baseUrl}/sales/:animalTypeId/view/animalType`),
 
@@ -228,6 +229,7 @@ export const apiEndpoints: ClientApiMethods = {
 
   /****************** Milkings route */
   getMilkings: GET(`${baseUrl}/milkings`),
+  getMilkingsAnalytics: GET(`${baseUrl}/analytics/milkings`),
   createOneMilking: POST(`${baseUrl}/milkings/bulk/create`),
   updateOneMilking: GET(`${baseUrl}/milkings/:milkingId/edit`),
   deleteOneMilking: DELETE(`${baseUrl}/milkings/:milkingId/delete`),
@@ -243,6 +245,7 @@ export const apiEndpoints: ClientApiMethods = {
   /****************** Weaning route */
   getWeanings: GET(`${baseUrl}/weanings`),
   createOneWeaning: POST(`${baseUrl}/weanings/create`),
+  getBirthAnalytics: GET(`${baseUrl}/analytics/weanings`),
   updateOneWeaning: PUT(`${baseUrl}/weanings/:weaningId/edit`),
   deleteOneWeaning: DELETE(`${baseUrl}/weanings/:weaningId/delete`),
 

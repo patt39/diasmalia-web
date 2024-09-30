@@ -63,6 +63,7 @@
   "MENU.REGISTER": "Sign up",
   "MENU.PAYMENT": "Payment",
   "MENU.FEEDSTOCK": "Feed stock",
+  "MENU.HEALTH": "Health box",
   "STOCK.TITLE": "Feeds stock",
   "TOTAL.WEIGHT": "Total feeds weight",
   "FARM.NUMBER": "Number of livestocks",
@@ -117,6 +118,9 @@
   "OUTOFSTOCK": "Out of stocks",
   "SELECT.LOCATION": "Select location",
   "SELECT.BREED": "Select breed",
+  "SELECT.FATTENING": "Select animals for fattening",
+  "FERTILITY.RATE": "Fertility rate",
+  "FECONDITY.RATE": "Birth rate",
 
   "LOCATION.MANGERS": "Mangers",
   "LOCATION.THROUGHS": "Throughs",
@@ -233,7 +237,7 @@
   "ANIMALTYPE.FEEDING": "feed consumed",
   "ANIMALTYPE.FATTENING": "Fattenings",
   "ANIMALTYPE.BREEDING": "Breedings",
-  "ANIMALTYPE.GESTATIONS": "Gestations",
+  "ANIMALTYPE.GESTATIONS": "Gestation",
   "ANIMALTYPE.FARROWING": "Farrowings",
   "ANIMALTYPE.WEANINGS": "Weanings",
   "ANIMALTYPE.MILKINGS": "Milkings",
@@ -292,6 +296,7 @@
 
   "ANIMAL.SOLD": "Animals sold",
   "ANIMAL.ACTIVE": "Active",
+  "ANIMAL.PROFILE": "Animal profile",
   "PRODUCTIONTYPE.GROWTH": "Growth",
   "PRODUCTIONTYPE.FATTENING": "FATTENING",
   "ANIMAL.SUM.DEATH": "Total number of deaths",
@@ -384,6 +389,7 @@
   "LOCATION.EMPTY": "This location is empty",
   "ARCHIVES.EMPTY": "You haven't archived anything yet",
   "POPULATION.DENSITY": "Overpopulation too many animals per square meter",
+  "REPRODUCTION.CAREER": "Reproductive career",
 
   "STATUS.ACTIVE": "ACTIVE",
   "STATUS.SOLD": "SOLD",

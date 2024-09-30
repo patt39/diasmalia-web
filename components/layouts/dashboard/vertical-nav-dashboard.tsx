@@ -5,8 +5,8 @@ import {
   ExternalLinkIcon,
   Fence,
   FolderArchive,
-  Footprints,
   HomeIcon,
+  Hospital,
   ImageIcon,
   MailQuestion,
   MessageCircleQuestion,
@@ -63,6 +63,11 @@ const VerticalNavDashboard = ({ user }: Props) => {
       icon: <Fence className={classIcon} />,
     },
     {
+      title: `${t.formatMessage({ id: 'MENU.HEALTH' })}`,
+      href: '/health',
+      icon: <Hospital className={classIcon} />,
+    },
+    {
       title: `${t.formatMessage({ id: 'MENU.TASKS' })}`,
       href: '/tasks',
       icon: <Calendar className={classIcon} />,
@@ -105,11 +110,6 @@ const VerticalNavDashboard = ({ user }: Props) => {
       title: `${t.formatMessage({ id: 'MENU.CONTACT' })}`,
       href: '/contact',
       icon: <MailQuestion className={classIcon} />,
-    },
-    {
-      title: `${t.formatMessage({ id: 'MENU.HOWTOUSE' })}`,
-      href: '/site-plan',
-      icon: <Footprints className={classIcon} />,
     },
   ]);
 

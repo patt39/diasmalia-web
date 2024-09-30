@@ -3,7 +3,7 @@ export type FeedingsModel = {
   id: string;
   quantity: number;
   feedType: string;
-  animal: {
+  animals: {
     code: string;
   };
   animalType: {
@@ -32,6 +32,17 @@ export type FeedStockModel = {
   quantity: number;
   feedCategory: string;
   animalTypeName: string;
+  animalType: {
+    name: string;
+  };
+};
+
+export type FeedingsPostModel = {
+  createdAt: Date;
+  id: string;
+  quantity: number;
+  feedType: string;
+  animals: any;
   animalType: {
     name: string;
   };

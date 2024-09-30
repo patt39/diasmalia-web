@@ -15,12 +15,13 @@ import {
 import { FileQuestion, XIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import { SubmitHandler } from 'react-hook-form';
+import { Controller, SubmitHandler } from 'react-hook-form';
 import { useInView } from 'react-intersection-observer';
 import * as yup from 'yup';
 import { LoadingFile } from '../ui-setting/ant';
 import { ErrorFile } from '../ui-setting/ant/error-file';
 import { Button } from '../ui/button';
+import { Checkbox } from '../ui/checkbox';
 import { Label } from '../ui/label';
 import {
   Select,
@@ -219,7 +220,7 @@ const CreateOrUpdateSales = ({
                   <div className="flex mb-4 w-full items-center mt-2">
                     <Select>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select animals for sale / Choisissez les animaux à vendre " />
+                        <SelectValue placeholder="Select animals" />
                       </SelectTrigger>
                       <SelectContent className="dark:border-gray-800">
                         <SelectGroup>
@@ -238,28 +239,41 @@ const CreateOrUpdateSales = ({
                               .flatMap((page: any) => page?.data?.value)
                               .map((item, index) => (
                                 <>
-                                  <div key={index}>
-                                    <label
-                                      htmlFor={item?.id}
-                                      className="flex cursor-pointer items-start gap-4 rounded-lg border border-gray-200 p-4 transition hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-900"
-                                    >
-                                      <div className="flex items-center">
-                                        &#8203;
-                                        <input
-                                          type="checkbox"
-                                          className="size-4 rounded cursor-pointer border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:ring-offset-gray-900"
-                                          id={item?.id}
-                                          {...register('animals')}
-                                          value={item?.code}
-                                        />
-                                      </div>
-                                      <div>
-                                        <strong className="font-medium text-gray-900 dark:text-white">
-                                          {item?.code}
-                                        </strong>
-                                      </div>
-                                    </label>
-                                  </div>
+                                  <Controller
+                                    key={item?.code}
+                                    control={control}
+                                    name="animals"
+                                    render={({ field: { ...field } }) => (
+                                      <>
+                                        <div
+                                          className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow"
+                                          key={item?.code}
+                                        >
+                                          <Checkbox
+                                            checked={field?.value?.includes(
+                                              item?.code,
+                                            )}
+                                            onCheckedChange={(checked) => {
+                                              return checked
+                                                ? field.onChange([
+                                                    ...(field.value || []),
+                                                    item?.code,
+                                                  ])
+                                                : field?.onChange(
+                                                    field?.value?.filter(
+                                                      (value: any) =>
+                                                        value !== item?.code,
+                                                    ),
+                                                  );
+                                            }}
+                                          />
+                                          <div className="space-y-1 leading-none">
+                                            <Label>{item?.code}</Label>
+                                          </div>
+                                        </div>
+                                      </>
+                                    )}
+                                  />
                                 </>
                               ))
                           )}

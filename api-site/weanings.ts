@@ -95,6 +95,31 @@ export const GetWeaningsAPI = (
   });
 };
 
+export const GetBirthAnalyticAPI = (payload: {
+  periode?: string;
+  days?: string;
+  months?: string;
+  year?: string;
+  animalTypeId?: string;
+  organizationId?: string;
+}) => {
+  const { year, months, days, animalTypeId, organizationId } = payload;
+  return useQuery({
+    queryKey: ['birth-analytics', { ...payload }],
+    queryFn: async () =>
+      await makeApiCall({
+        action: 'getBirthAnalytics',
+        queryParams: {
+          year,
+          months,
+          days,
+          animalTypeId,
+          organizationId,
+        },
+      }),
+  });
+};
+
 export const DeleteOneWeaningAPI = ({
   onSuccess,
   onError,

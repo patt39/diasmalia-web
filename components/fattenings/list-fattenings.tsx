@@ -16,6 +16,7 @@ import {
 } from '@/utils';
 import { MoreHorizontal, PencilIcon, TrashIcon } from 'lucide-react';
 import { useState } from 'react';
+import { formatWeight } from '../../utils/formate-date';
 import { ActionModalDialog } from '../ui-setting/shadcn';
 import { TableCell, TableRow } from '../ui/table';
 import { CreateOrUpdateFattenings } from './create-or-update-fattenings';
@@ -52,8 +53,8 @@ const ListFattenings = ({ item, index }: { item: any; index: number }) => {
     <>
       <TableRow key={index} className="dark:border-gray-800">
         <TableCell className="font-medium">{item.animal?.code}</TableCell>
-        <TableCell>{item?.initialWeight}</TableCell>
-        <TableCell>{item?.actualWeight}</TableCell>
+        <TableCell>{formatWeight(item?.initialWeight)}</TableCell>
+        <TableCell>{formatWeight(item?.actualWeight)}</TableCell>
         <TableCell>{formatDateDDMMYY(item?.createdAt as Date)}</TableCell>
         <TableCell>{formatDateDDMMYY(item?.updatedAt as Date)}</TableCell>
         <TableCell>

@@ -86,7 +86,7 @@ const ListAnimals = ({ item, index }: { item: any; index: number }) => {
               </Badge>
             )}
           </div>
-          <div className="flex items-center justify-start space-x-2">
+          <div className="flex items-center justify-start space-x-4">
             <div>
               <h2 className="text-sm flex items-center font-medium text-gray-500">
                 <Anvil className="h-3.5 w-3.5  hover:shadow-xxl" />
@@ -159,7 +159,6 @@ const ListAnimals = ({ item, index }: { item: any; index: number }) => {
                     {t.formatMessage({ id: 'TABANIMAL.VIEW' })}
                   </span>
                 </DropdownMenuItem>
-
                 <Link href={`/treatment/${item?.id}`}>
                   <DropdownMenuItem>
                     <Hospital className="size-4 text-gray-600 hover:text-green-600" />

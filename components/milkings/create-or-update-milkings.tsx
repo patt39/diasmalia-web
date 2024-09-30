@@ -1,7 +1,7 @@
 import { GetAnimalsAPI } from '@/api-site/animals';
 import { CreateOrUpdateOneMilkingAPI } from '@/api-site/milkings';
 import { useReactHookForm } from '@/components/hooks';
-import { ButtonInput } from '@/components/ui-setting';
+import { ButtonInput, ButtonLoadMore } from '@/components/ui-setting';
 import { MilkingsModel } from '@/types/milking';
 import {
   AlertDangerNotification,
@@ -10,12 +10,14 @@ import {
 import { XIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import { SubmitHandler } from 'react-hook-form';
+import { Controller, SubmitHandler } from 'react-hook-form';
+import { useInView } from 'react-intersection-observer';
 import * as yup from 'yup';
 import { LoadingFile } from '../ui-setting/ant';
 import { ErrorFile } from '../ui-setting/ant/error-file';
 import { TextAreaInput, TextInput } from '../ui-setting/shadcn';
 import { Button } from '../ui/button';
+import { Checkbox } from '../ui/checkbox';
 import { Label } from '../ui/label';
 import {
   Select,
@@ -60,6 +62,7 @@ const CreateOrUpdateMilkings = ({
     register,
   } = useReactHookForm({ schema });
   const { query } = useRouter();
+  const { ref, inView } = useInView();
   const animalTypeId = String(query?.animalTypeId);
   const selectedAnimals = watch('animals', '');
   const countSelectedAnimals = selectedAnimals.length;
@@ -113,6 +116,9 @@ const CreateOrUpdateMilkings = ({
     isLoading: isLoadingAnimals,
     isError: isErrorAnimals,
     data: dataAnimals,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
   } = GetAnimalsAPI({
     take: 10,
     sort: 'desc',
@@ -123,6 +129,28 @@ const CreateOrUpdateMilkings = ({
     productionPhase: 'LACTATION',
     animalTypeId: animalTypeId,
   });
+
+  useEffect(() => {
+    let fetching = false;
+    if (inView) {
+      fetchNextPage();
+    }
+    const onScroll = async (event: any) => {
+      const { scrollHeight, scrollTop, clientHeight } =
+        event.target.scrollingElement;
+
+      if (!fetching && scrollHeight - scrollTop <= clientHeight * 1.5) {
+        fetching = true;
+        if (hasNextPage) await fetchNextPage();
+        fetching = false;
+      }
+    };
+
+    document.addEventListener('scroll', onScroll);
+    return () => {
+      document.removeEventListener('scroll', onScroll);
+    };
+  }, [fetchNextPage, hasNextPage, inView]);
 
   return (
     <>
@@ -176,14 +204,14 @@ const CreateOrUpdateMilkings = ({
                 )}
 
                 {!milking.id ? (
-                  <div className="mb-2 w-full mt-2">
+                  <div className="mb-2 w-full">
                     <Label>
                       Sélectionez les animaux à traire
                       <span className="text-red-600">*</span>
                     </Label>
                     <Select>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select animals for milking" />
+                        <SelectValue placeholder="Select animals" />
                       </SelectTrigger>
                       <SelectContent className="dark:border-gray-800">
                         <SelectGroup>
@@ -196,37 +224,58 @@ const CreateOrUpdateMilkings = ({
                             />
                           ) : Number(dataAnimals?.pages[0]?.data?.total) <=
                             0 ? (
-                            <ErrorFile description="Don't have active animals" />
+                            <ErrorFile description="Don't have active animals created yet please do" />
                           ) : (
                             dataAnimals?.pages
                               .flatMap((page: any) => page?.data?.value)
                               .map((item, index) => (
                                 <>
-                                  <div key={index}>
-                                    <label
-                                      htmlFor={item?.id}
-                                      className="flex cursor-pointer items-start gap-4 rounded-lg border border-gray-200 p-4 transition hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-900"
-                                    >
-                                      <div className="flex items-center">
-                                        &#8203;
-                                        <input
-                                          type="checkbox"
-                                          className="size-4 rounded cursor-pointer border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:ring-offset-gray-900"
-                                          id={item?.id}
-                                          {...register('animals')}
-                                          value={item?.code}
-                                        />
-                                      </div>
-
-                                      <div>
-                                        <strong className="font-medium text-gray-900 dark:text-white">
-                                          {item?.code}
-                                        </strong>
-                                      </div>
-                                    </label>
-                                  </div>
+                                  <Controller
+                                    key={item?.code}
+                                    control={control}
+                                    name="animals"
+                                    render={({ field: { ...field } }) => (
+                                      <>
+                                        <div
+                                          className="flex flex-row items-start space-x-3 space-y-0 rounded-md dark:border-gray-800 p-4 shadow cursor-pointer"
+                                          key={item?.code}
+                                        >
+                                          <Checkbox
+                                            checked={field?.value?.includes(
+                                              item?.code,
+                                            )}
+                                            onCheckedChange={(checked) => {
+                                              return checked
+                                                ? field.onChange([
+                                                    ...(field.value || []),
+                                                    item?.code,
+                                                  ])
+                                                : field?.onChange(
+                                                    field?.value?.filter(
+                                                      (value: any) =>
+                                                        value !== item?.code,
+                                                    ),
+                                                  );
+                                            }}
+                                          />
+                                          <div className="space-y-1 leading-none">
+                                            <Label>{item?.code}</Label>
+                                          </div>
+                                        </div>
+                                      </>
+                                    )}
+                                  />
                                 </>
                               ))
+                          )}
+                          {hasNextPage && (
+                            <div className="mx-auto mt-4 justify-center text-center">
+                              <ButtonLoadMore
+                                ref={ref}
+                                isFetchingNextPage={isFetchingNextPage}
+                                onClick={() => fetchNextPage()}
+                              />
+                            </div>
                           )}
                         </SelectGroup>
                       </SelectContent>

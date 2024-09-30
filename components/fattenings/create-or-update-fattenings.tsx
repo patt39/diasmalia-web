@@ -27,6 +27,7 @@ import { Controller, SubmitHandler } from 'react-hook-form';
 import { useInView } from 'react-intersection-observer';
 import * as yup from 'yup';
 import { Button } from '../ui/button';
+import { Checkbox } from '../ui/checkbox';
 import { Label } from '../ui/label';
 import {
   Tooltip,
@@ -217,12 +218,12 @@ const CreateOrUpdateFattenings = ({
                   <>
                     <div className="mb-2 items-center w-full">
                       <Label>
-                        Sélectionnez les animaux à engraisser
+                        {t.formatMessage({ id: 'SELECT.FATTENING' })}
                         <span className="text-red-600">*</span>
                       </Label>
                       <Select>
                         <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select animals for fattening" />
+                          <SelectValue placeholder="Select animals" />
                         </SelectTrigger>
                         <SelectContent className="dark:border-gray-800">
                           <SelectGroup>
@@ -235,34 +236,47 @@ const CreateOrUpdateFattenings = ({
                               />
                             ) : Number(dataAnimals?.pages[0]?.data?.total) <=
                               0 ? (
-                              <ErrorFile description="Don't have animals in growth phase yet please add" />
+                              <ErrorFile description="Don't have active animals created yet please do" />
                             ) : (
                               dataAnimals?.pages
                                 .flatMap((page: any) => page?.data?.value)
-                                .map((item, index) => (
+                                .map((item) => (
                                   <>
-                                    <div key={index}>
-                                      <label
-                                        htmlFor={item?.id}
-                                        className="flex cursor-pointer items-start gap-4 rounded-lg border border-gray-200 p-4 transition hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-900"
-                                      >
-                                        <div className="flex items-center">
-                                          &#8203;
-                                          <input
-                                            type="checkbox"
-                                            className="size-4 rounded cursor-pointer border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:ring-offset-gray-900"
-                                            id={item?.id}
-                                            {...register('animals')}
-                                            value={item?.code}
-                                          />
-                                        </div>
-                                        <div>
-                                          <strong className="font-medium text-gray-900 dark:text-white">
-                                            {item?.code}
-                                          </strong>
-                                        </div>
-                                      </label>
-                                    </div>
+                                    <Controller
+                                      key={item?.code}
+                                      control={control}
+                                      name="animals"
+                                      render={({ field: { ...field } }) => (
+                                        <>
+                                          <div
+                                            className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow"
+                                            key={item?.code}
+                                          >
+                                            <Checkbox
+                                              checked={field?.value?.includes(
+                                                item?.code,
+                                              )}
+                                              onCheckedChange={(checked) => {
+                                                return checked
+                                                  ? field.onChange([
+                                                      ...(field.value || []),
+                                                      item?.code,
+                                                    ])
+                                                  : field?.onChange(
+                                                      field?.value?.filter(
+                                                        (value: any) =>
+                                                          value !== item?.code,
+                                                      ),
+                                                    );
+                                              }}
+                                            />
+                                            <div className="space-y-1 leading-none">
+                                              <Label>{item?.code}</Label>
+                                            </div>
+                                          </div>
+                                        </>
+                                      )}
+                                    />
                                   </>
                                 ))
                             )}
@@ -281,7 +295,7 @@ const CreateOrUpdateFattenings = ({
                     </div>
                     <div className="mt-2">
                       <Label>
-                        Sélectionnez un emplacement
+                        {t.formatMessage({ id: 'SELECT.LOCATION' })}
                         <span className="text-red-600">*</span>
                       </Label>
                       <Controller
@@ -343,8 +357,10 @@ const CreateOrUpdateFattenings = ({
                 ) : null}
                 {fattening.id ? (
                   <div className="mb-4">
+                    <Label>
+                      {t.formatMessage({ id: 'TABFATTENING.ACTUALWEIGHTEDIT' })}
+                    </Label>
                     <TextInput
-                      label="Actual weight"
                       control={control}
                       type="number"
                       name="actualWeight"

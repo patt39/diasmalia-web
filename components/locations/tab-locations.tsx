@@ -112,7 +112,9 @@ const TabLocations = ({ animalTypeId }: { animalTypeId: string }) => {
                   <Button variant="outline" size="sm" className="h-8 gap-1">
                     <ListFilter className="h-3.5 w-3.5" />
                     <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                      {productionPhase}
+                      {productionPhase === ''
+                        ? t.formatMessage({ id: 'ACTIVITY.FILTERALL' })
+                        : productionPhase}
                     </span>
                   </Button>
                 </DropdownMenuTrigger>

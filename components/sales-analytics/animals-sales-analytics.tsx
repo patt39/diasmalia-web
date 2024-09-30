@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { GetAnimalStatisticsAPI } from '@/api-site/animals';
-import { ChickenSalesAnalyticsAPI } from '@/api-site/sales';
+import { AnimalsAnalyticAPI } from '@/api-site/sales';
 import { dateTimeNowUtc, formatMMDate, getMonthNow } from '@/utils';
 import { Calendar, ListFilter } from 'lucide-react';
 import { Fragment, useState } from 'react';
@@ -31,19 +31,19 @@ const AnimalSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
     animalTypeId: animalTypeId,
   });
 
-  const { data: dataSalesChickenAnalyticsDay } = ChickenSalesAnalyticsAPI({
+  const { data: dataAnimalsAnalyticsDay } = AnimalsAnalyticAPI({
     year: String(year),
     months: String(months),
     periode: String(periode),
     animalTypeId: animalTypeId,
   });
 
-  const { data: dataSalesChickenAnalyticsMonth } = ChickenSalesAnalyticsAPI({
+  const { data: dataAnimalsAnalyticsMonth } = AnimalsAnalyticAPI({
     year: String(year),
     animalTypeId: animalTypeId,
   });
 
-  const { data: dataSalesChickenAnalyticsYear } = ChickenSalesAnalyticsAPI({
+  const { data: dataAnimalsAnalyticsYear } = AnimalsAnalyticAPI({
     animalTypeId: animalTypeId,
   });
 
@@ -60,7 +60,7 @@ const AnimalSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
 
   return (
     <>
-      {animalStatistics?.sumSaleAnimals?.price !== null ? (
+      {animalStatistics?.sumSaleAnimals !== null ? (
         <Card className="dark:border-input dark:bg-background sm:col-span-2">
           <CardHeader>
             <div className="flex items-center">
@@ -81,7 +81,7 @@ const AnimalSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="dark:border-gray-800 w-auto">
-                      {dataSalesChickenAnalyticsYear?.data?.map(
+                      {dataAnimalsAnalyticsYear?.data?.map(
                         (item: any, index: number) => (
                           <Fragment key={index}>
                             <DropdownMenuCheckboxItem
@@ -108,7 +108,7 @@ const AnimalSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="dark:border-gray-800 w-auto">
-                    {dataSalesChickenAnalyticsMonth?.data?.map(
+                    {dataAnimalsAnalyticsMonth?.data?.map(
                       (item: any, index: number) => (
                         <Fragment key={index}>
                           <DropdownMenuCheckboxItem
@@ -180,7 +180,7 @@ const AnimalSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
             >
               <AreaChart
                 accessibilityLayer
-                data={dataSalesChickenAnalyticsDay}
+                data={dataAnimalsAnalyticsDay?.data}
                 margin={{
                   left: 12,
                   right: 12,
@@ -188,7 +188,7 @@ const AnimalSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
               >
                 <CartesianGrid vertical={false} />
                 <XAxis
-                  dataKey="month"
+                  dataKey="date"
                   tickLine={false}
                   axisLine={false}
                   tickMargin={8}
@@ -199,7 +199,7 @@ const AnimalSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                   content={<ChartTooltipContent indicator="line" />}
                 />
                 <Area
-                  dataKey="desktop"
+                  dataKey="sum"
                   type="natural"
                   fill="var(--color-desktop)"
                   fillOpacity={0.4}

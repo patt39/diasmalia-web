@@ -126,6 +126,31 @@ export const EggsAnalyticAPI = (payload: {
   });
 };
 
+export const AnimalsAnalyticAPI = (payload: {
+  periode?: string;
+  days?: string;
+  months?: string;
+  year?: string;
+  animalTypeId?: string;
+  organizationId?: string;
+}) => {
+  const { year, months, days, animalTypeId, organizationId } = payload;
+  return useQuery({
+    queryKey: ['animals-analytics', { ...payload }],
+    queryFn: async () =>
+      await makeApiCall({
+        action: 'getAnimalsAnalytics',
+        queryParams: {
+          year,
+          days,
+          months,
+          animalTypeId,
+          organizationId,
+        },
+      }),
+  });
+};
+
 export const SalesPdfDownloadAPI = async (payload: { saleId: string }) => {
   const { saleId } = payload;
   const data = await makeApiCall({

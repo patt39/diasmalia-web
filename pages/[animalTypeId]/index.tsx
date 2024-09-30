@@ -24,7 +24,9 @@ import { TabIncubationsAnalytics } from '@/components/incubations/tab-incubation
 import { TabIsolations } from '@/components/isolations/tab-isolations';
 import { LayoutDashboard } from '@/components/layouts/dashboard';
 import { TabLocations } from '@/components/locations/tab-locations';
+import { MilkingsAnalytics } from '@/components/milkings/milkings-analytics';
 import { TabMilkings } from '@/components/milkings/tab-milkings';
+import { AnimalSalesAnalytics } from '@/components/sales-analytics/animals-sales-analytics';
 import { ChickenSalesAnalytics } from '@/components/sales-analytics/chickens-sales-analytics';
 import { ChickSalesAnalytics } from '@/components/sales-analytics/chicks-sales-analytics';
 import { EggSalesAnalytics } from '@/components/sales-analytics/eggs-sales-analytics';
@@ -39,7 +41,7 @@ import {
 } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PrivateComponent } from '@/components/util/private-component';
-import { FarrowingsWeaningsAnalytics } from '@/components/weanings/farrowings-weanings-analytics';
+import { FarrowingsWeaningsAnalytics } from '@/components/weanings/birth-analytics';
 import { TabWeanings } from '@/components/weanings/tab-weanings';
 import { useRouter } from 'next/router';
 import { useIntl } from 'react-intl';
@@ -54,7 +56,6 @@ export function Index() {
   const { data: animalType } = GetOneAnimalTypeAPI({
     animalTypeId: animalTypeId,
   });
-  console.log('animalType ==>', animalType);
 
   const { data: animalByType } = GetAnimalByAnimalTypeAPI({
     animalTypeId: animalTypeId,
@@ -394,13 +395,9 @@ export function Index() {
                       <TabsTrigger value="farrowings">
                         {t.formatMessage({ id: 'ANIMALTYPE.FARROWING' })}
                       </TabsTrigger>
-                      {!['Bovins', 'Caprins'].includes(animalType?.name) ? (
-                        <TabsTrigger value="weanings">
-                          {t.formatMessage({ id: 'ANIMALTYPE.WEANINGS' })}
-                        </TabsTrigger>
-                      ) : (
-                        ''
-                      )}
+                      <TabsTrigger value="weanings">
+                        {t.formatMessage({ id: 'ANIMALTYPE.WEANINGS' })}
+                      </TabsTrigger>
                       {['Bovins', 'Caprins'].includes(animalType?.name) ? (
                         <TabsTrigger value="milkings">
                           {t.formatMessage({ id: 'ANIMALTYPE.MILKINGS' })}
@@ -652,6 +649,14 @@ export function Index() {
                     <TabMilkings animalTypeId={animalTypeId} />
                   </Card>
                 </TabsContent>
+                <TabsContent value="milkings">
+                  <Card
+                    x-chunk="dashboard-06-chunk-0"
+                    className="dark:border-gray-800"
+                  >
+                    <MilkingsAnalytics animalTypeId={animalTypeId} />
+                  </Card>
+                </TabsContent>
                 <TabsContent value="deaths">
                   <Card
                     x-chunk="dashboard-06-chunk-0"
@@ -766,6 +771,14 @@ export function Index() {
                     className="dark:border-gray-800"
                   >
                     <TabSales animalTypeId={animalTypeId} />
+                  </Card>
+                </TabsContent>
+                <TabsContent value="sales">
+                  <Card
+                    x-chunk="dashboard-06-chunk-0"
+                    className="dark:border-gray-800"
+                  >
+                    <AnimalSalesAnalytics animalTypeId={animalTypeId} />
                   </Card>
                 </TabsContent>
                 <TabsContent value="analytics">
