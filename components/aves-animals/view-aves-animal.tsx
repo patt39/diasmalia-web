@@ -3,6 +3,7 @@ import { GetOneUserMeAPI } from '@/api-site/user';
 import { formatDateDDMMYY } from '@/utils';
 import { XIcon } from 'lucide-react';
 import { useIntl } from 'react-intl';
+import { formatWeight } from '../../utils/formate-date';
 import { Card, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
@@ -168,7 +169,7 @@ const ViewAvesAnimal = ({
                             {t.formatMessage({ id: 'ANIMAL.FEED' })}
                           </CardDescription>
                           <CardTitle className="text-4xl">
-                            {getOneAnimal?.feedingsCount}kg
+                            {formatWeight(getOneAnimal?.feedingsCount ?? 0)}
                           </CardTitle>
                         </CardHeader>
                       </Card>
@@ -335,7 +336,7 @@ const ViewAvesAnimal = ({
                                 {t.formatMessage({ id: 'ANIMAL.FEED' })}
                               </CardDescription>
                               <CardTitle className="text-4xl">
-                                {getOneAnimal?.feedingsCount}kg
+                                {formatWeight(getOneAnimal?.feedingsCount ?? 0)}
                               </CardTitle>
                             </CardHeader>
                           </Card>
@@ -381,7 +382,7 @@ const ViewAvesAnimal = ({
                                 {t.formatMessage({ id: 'ANIMAL.FEED' })}
                               </CardDescription>
                               <CardTitle className="text-4xl">
-                                {getOneAnimal?.feedingsCount}kg
+                                {formatWeight(getOneAnimal?.feedingsCount ?? 0)}
                               </CardTitle>
                             </CardHeader>
                           </Card>

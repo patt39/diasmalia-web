@@ -28,6 +28,7 @@ import {
 const schema = yup.object({
   code: yup.string().optional(),
   litter: yup.number().required('litter is a required field'),
+  weight: yup.number().required('weight is a required field'),
 });
 
 const CreateOrUpdateWeanings = ({
@@ -55,7 +56,7 @@ const CreateOrUpdateWeanings = ({
 
   useEffect(() => {
     if (weaning) {
-      const fields = ['code', 'litter'];
+      const fields = ['code', 'litter', 'weight'];
       fields?.forEach((field: any) => setValue(field, weaning[field]));
     }
   }, [weaning, setValue]);
@@ -144,7 +145,7 @@ const CreateOrUpdateWeanings = ({
                 {!weaning?.id ? (
                   <div className="mb-2">
                     <Label>
-                      Sélectionnez une femèle allaitante:
+                      Sélectionnez une femèle allaitante
                       <span className="text-red-600">*</span>
                     </Label>
                     <Controller
@@ -192,15 +193,29 @@ const CreateOrUpdateWeanings = ({
                     />
                   </div>
                 ) : null}
-                <div className="mb-4">
+                <div className="mb-2">
                   <Label>
-                    Portée:<span className="text-red-600">*</span>
+                    {t.formatMessage({ id: 'TABFARROWING.LITTER' })}
+                    <span className="text-red-600">*</span>
                   </Label>
                   <TextInput
                     control={control}
                     type="number"
                     name="litter"
                     placeholder="Litter"
+                    errors={errors}
+                  />
+                </div>
+                <div className="mb-4">
+                  <Label>
+                    {t.formatMessage({ id: 'VIEW.WEIGHT' })}(g)
+                    <span className="text-red-600">*</span>
+                  </Label>
+                  <TextInput
+                    control={control}
+                    type="number"
+                    name="weight"
+                    placeholder="Unit weight"
                     errors={errors}
                   />
                 </div>

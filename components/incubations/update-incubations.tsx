@@ -1,4 +1,4 @@
-import { CreateOrUpdateOneIncubationAPI } from '@/api-site/incubations';
+import { UpdateOneIncubationAPI } from '@/api-site/incubations';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
 import { IncubationsModel } from '@/types/incubation';
@@ -49,8 +49,8 @@ const UpdateIncubations = ({
     }
   }, [incubation, setValue]);
 
-  // Create or Update data
-  const { mutateAsync: saveMutation } = CreateOrUpdateOneIncubationAPI({
+  // Update
+  const { mutateAsync: saveMutation } = UpdateOneIncubationAPI({
     onSuccess: () => {
       setHasErrors(false);
       setLoading(false);
@@ -61,20 +61,17 @@ const UpdateIncubations = ({
     },
   });
 
-  const onSubmit: SubmitHandler<IncubationsModel> = async (
-    payload: IncubationsModel,
-  ) => {
+  const onSubmit: SubmitHandler<IncubationsModel> = async () => {
     setLoading(true);
     setHasErrors(undefined);
     try {
       await saveMutation({
-        ...payload,
         incubationId: incubation?.id,
       });
       setHasErrors(false);
       setLoading(false);
       AlertSuccessNotification({
-        text: 'Incubation saved successfully',
+        text: 'Incubation updated successfully',
       });
       setShowModal(false);
     } catch (error: any) {

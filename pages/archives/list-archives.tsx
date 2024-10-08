@@ -108,8 +108,8 @@ const ListArchives = ({ item, index }: { item: any; index: number }) => {
               <DropdownMenuContent align="end" className="dark:border-gray-800">
                 <Link href={`/treatment/${item?.id}`}>
                   <DropdownMenuItem>
-                    <Hospital className="size-4 text-gray-600 hover:text-indigo-600" />
-                    <span className="ml-2 cursor-pointer hover:text-indigo-600">
+                    <Hospital className="size-4 text-gray-600 hover:text-green-600" />
+                    <span className="ml-2 cursor-pointer hover:text-green-600">
                       {t.formatMessage({ id: 'HEALTH' })}
                     </span>
                   </DropdownMenuItem>

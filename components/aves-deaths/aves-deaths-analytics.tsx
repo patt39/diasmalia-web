@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { GetavesDeathsAnalyticAPI } from '@/api-site/deaths';
 import { dateTimeNowUtc, formatMMDate } from '@/utils';
-import { Calendar, ListFilter } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 import { Fragment, useState } from 'react';
 import { CartesianGrid, Line, LineChart, XAxis } from 'recharts';
 import { useInputState } from '../hooks';
@@ -17,20 +17,17 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 
 const AvesDeathsAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
   const { t, locale } = useInputState();
-  const [periode, setPeriode] = useState('');
   const [year, setYear] = useState<String>(`${dateTimeNowUtc().getFullYear()}`);
   const [months, setMonths] = useState<String>('');
 
   const { data: dataAvesDeathsAnalyticsDay } = GetavesDeathsAnalyticAPI({
     year: String(year),
     months: String(months),
-    periode: String(periode),
     animalTypeId: animalTypeId,
   });
 
@@ -100,11 +97,18 @@ const AvesDeathsAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                         <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                           {Number(months)
                             ? formatMMDate(Number(months), locale)
-                            : months}
+                            : 'Select month'}
                         </span>
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="dark:border-gray-800 w-auto">
+                      <DropdownMenuCheckboxItem
+                        className="cursor-pointer"
+                        onClick={() => setMonths('')}
+                        checked
+                      >
+                        {t.formatMessage({ id: 'ACTIVITY.FILTERALL' })}
+                      </DropdownMenuCheckboxItem>
                       {dataAvesDeathsAnalyticsMonth?.data?.map(
                         (item: any, index: number) => (
                           <Fragment key={index}>
@@ -122,64 +126,19 @@ const AvesDeathsAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                 ) : (
                   ''
                 )}
-
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm" className="h-8 gap-1">
-                      <ListFilter className="h-3.5 w-3.5" />
-                      <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                        {periode == ''
-                          ? t.formatMessage({ id: 'ACTIVITY.FILTERALL' })
-                          : periode == '7'
-                            ? t.formatMessage({ id: 'ACTIVITY.LAST7DAYS' })
-                            : periode == '15'
-                              ? t.formatMessage({ id: 'ACTIVITY.LAST15DAYS' })
-                              : t.formatMessage({ id: 'ACTIVITY.LAST30DAYS' })}
-                      </span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="dark:border-gray-800 w-auto">
-                    <DropdownMenuSeparator />
-                    <DropdownMenuCheckboxItem
-                      className="cursor-pointer"
-                      onClick={() => setPeriode('')}
-                      checked
-                    >
-                      {t.formatMessage({ id: 'ACTIVITY.FILTERALL' })}
-                    </DropdownMenuCheckboxItem>
-                    <DropdownMenuCheckboxItem
-                      className="cursor-pointer"
-                      onClick={() => setPeriode('7')}
-                    >
-                      {t.formatMessage({ id: 'ACTIVITY.LAST7DAYS' })}
-                    </DropdownMenuCheckboxItem>
-                    <DropdownMenuCheckboxItem
-                      className="cursor-pointer"
-                      onClick={() => setPeriode('15')}
-                    >
-                      {t.formatMessage({ id: 'ACTIVITY.LAST15DAYS' })}
-                    </DropdownMenuCheckboxItem>
-                    <DropdownMenuCheckboxItem
-                      className="cursor-pointer"
-                      onClick={() => setPeriode('30')}
-                    >
-                      {t.formatMessage({ id: 'ACTIVITY.LAST30DAYS' })}
-                    </DropdownMenuCheckboxItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
               </div>
             </div>
           </CardHeader>
           <CardContent>
             <ChartContainer
               config={chartConfig}
-              className="lg:h-[600px] w-full"
+              className="lg:h-[400px] w-full"
             >
               <LineChart
                 accessibilityLayer
                 data={dataAvesDeathsAnalyticsDay?.data}
                 margin={{
-                  top: 10,
+                  top: 12,
                   left: 12,
                   right: 12,
                 }}

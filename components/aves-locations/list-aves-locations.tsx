@@ -14,6 +14,7 @@ import {
 import { AlertDangerNotification, AlertSuccessNotification } from '@/utils';
 import {
   BadgeCheck,
+  Columns4,
   Droplets,
   Egg,
   Grid2X2,
@@ -194,6 +195,11 @@ const ListAvesLocations = ({ item, index }: { item: any; index: number }) => {
                     <Grid2X2 className="h-3.5 w-3.5  hover:shadow-xxl" />
                     Volume: {item?.squareMeter}m<sup>3</sup>
                   </h2>
+                ) : item?.addCages === 'YES' ? (
+                  <h2 className="mt-2 text-sm  items-center flex font-medium text-gray-500 h-4">
+                    <Grid2X2 className="h-3.5 w-3.5  hover:shadow-xxl" />
+                    Dimension: {item?.squareMeter}m<sup>2</sup>
+                  </h2>
                 ) : (
                   <h2 className="mt-2 text-sm  items-center flex font-medium text-gray-500 h-4">
                     <Grid2X2 className="h-3.5 w-3.5  hover:shadow-xxl" />
@@ -215,10 +221,17 @@ const ListAvesLocations = ({ item, index }: { item: any; index: number }) => {
                     {t.formatMessage({ id: 'LOCATION.THROUGHS' })}:{' '}
                     {item?.through}
                   </h2>
-                  {item?.productionPhase === 'LAYING' ? (
+                  {item?.productionPhase === 'LAYING' &&
+                  item?.addCages === 'NO' ? (
                     <h2 className="mt-2 text-sm flex items-center font-medium text-gray-500 h-4">
                       <Egg className="h-3.5 w-3.5  hover:shadow-xxl" />
                       {t.formatMessage({ id: 'LOCATION.NEST' })}: {item?.nest}
+                    </h2>
+                  ) : item?.productionPhase === 'LAYING' &&
+                    item?.addCages === 'YES' ? (
+                    <h2 className="mt-2 text-sm flex items-center font-medium text-gray-500 h-4">
+                      <Columns4 className="h-3.5 w-3.5  hover:shadow-xxl" />
+                      Cages: {item?.cages}
                     </h2>
                   ) : (
                     ''
@@ -231,13 +244,22 @@ const ListAvesLocations = ({ item, index }: { item: any; index: number }) => {
               <h3 className="text-sm font-bold text-gray-900 h-8 sm:text-base lg:text-lg">
                 {(item?.code).toUpperCase()}
               </h3>
+              {/* {item?.productionPhase === 'LAYING' &&
+              item?.animalType?.name === 'Pondeuses' &&
+              item?.type === 'CAGES' ? (
+                <p className="text-sm font-medium text-gray-500">
+                  {(item?.type).toUpperCase()}
+                </p>
+              ) : (
+                ''
+              )} */}
               {item?.productionPhase === 'GROWTH' ? (
                 <p className=" text-sm font-medium text-gray-500">
                   {t.formatMessage({ id: 'PRODUCTIONPHASE.GROWTH' })}
                 </p>
               ) : (
                 <p className=" text-sm font-medium text-gray-500">
-                  {item?.productionPhase}
+                  {t.formatMessage({ id: 'PRODUCTIONPHASE.LAYING' })}
                 </p>
               )}
             </div>
@@ -276,8 +298,8 @@ const ListAvesLocations = ({ item, index }: { item: any; index: number }) => {
                   ''
                 )}
                 <DropdownMenuItem onClick={() => setIsConfirmOpen(true)}>
-                  <BadgeCheck className="size-4 text-gray-600 hover:text-red-400 cursor-pointer" />
-                  <span className="ml-2 cursor-pointer hover:text-red-400">
+                  <BadgeCheck className="size-4 text-gray-600 hover:text-violet-600 cursor-pointer" />
+                  <span className="ml-2 cursor-pointer hover:text-violet-600">
                     {t.formatMessage({ id: 'CHANGE.STATUS' })}
                   </span>
                 </DropdownMenuItem>

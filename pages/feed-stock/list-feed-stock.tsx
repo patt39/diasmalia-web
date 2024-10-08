@@ -149,8 +149,8 @@ const ListFeedStock = ({ item, index }: { item: any; index: number }) => {
           <div className="flex items-center justify-center space-x-6 mt-4">
             <div>
               <h2 className="mb-3 items-center flex text-base font-bold text-gray-500 h-4">
-                <Backpack className="h-3.5 w-3.5 hover:shadow-xxl" /> Sacs:{' '}
-                {item?.number}
+                <Backpack className="h-3.5 w-3.5 hover:shadow-xxl" />{' '}
+                {t.formatMessage({ id: 'BAGS' })}: {item?.number}
               </h2>
               <h2 className="flex mt-2 items-center text-base font-bold text-gray-500 h-4 space-x-2">
                 <Anvil className="h-3.5 w-3.5  hover:shadow-xxl" />

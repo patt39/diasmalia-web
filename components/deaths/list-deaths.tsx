@@ -83,6 +83,9 @@ const ListDeaths = ({ item, index }: { item: any; index: number }) => {
             ? item?.note?.substring(0, 20) + '...'
             : item?.note}
         </TableCell>
+        <TableCell className="font-medium">
+          {item?.animal?.location?.code.toUpperCase()}
+        </TableCell>
         <TableCell>{formatDateDDMMYY(item?.createdAt as Date)}</TableCell>
         <TableCell>
           <DropdownMenu>

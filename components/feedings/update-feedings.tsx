@@ -1,5 +1,6 @@
 import { GetAnimalsAPI } from '@/api-site/animals';
-import { CreateOrUpdateOneFeedingAPI } from '@/api-site/feedings';
+import { GetFeedStockAPI } from '@/api-site/feed-stock';
+import { UpdateOneFeedingAPI } from '@/api-site/feedings';
 import { useInputState, useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
 import { LoadingFile } from '@/components/ui-setting/ant';
@@ -23,12 +24,13 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { Controller, SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
-import { SelectInput, TextInput } from '../ui-setting/shadcn';
+import { TextInput } from '../ui-setting/shadcn';
+import { Label } from '../ui/label';
 
 const schema = yup.object({
   animals: yup.array().optional(),
   quantity: yup.number().required('quantity is required'),
-  feedType: yup.string().required('feedType is required'),
+  feedStockId: yup.string().required('feed type is required'),
 });
 
 const UpdateFeedings = ({
@@ -41,6 +43,7 @@ const UpdateFeedings = ({
   feeding?: any;
 }) => {
   const {
+    t,
     control,
     errors,
     setValue,
@@ -49,7 +52,6 @@ const UpdateFeedings = ({
     setLoading,
     hasErrors,
     setHasErrors,
-    register,
   } = useReactHookForm({ schema });
   const { query } = useRouter();
   const { userStorage } = useInputState();
@@ -57,13 +59,13 @@ const UpdateFeedings = ({
 
   useEffect(() => {
     if (feeding) {
-      const fields = ['animals', 'quantity', 'feedType'];
+      const fields = ['animals', 'quantity', 'feedStockId'];
       fields?.forEach((field: any) => setValue(field, feeding[field]));
     }
   }, [feeding, setValue]);
 
   // Create or Update data
-  const { mutateAsync: saveMutation } = CreateOrUpdateOneFeedingAPI({
+  const { mutateAsync: saveMutation } = UpdateOneFeedingAPI({
     onSuccess: () => {
       setHasErrors(false);
       setLoading(false);
@@ -113,6 +115,17 @@ const UpdateFeedings = ({
     sortBy: 'createdAt',
     animalTypeId: animalTypeId,
     organizationId: userStorage?.organizationId,
+  });
+
+  const {
+    isLoading: isLoadingFeedStock,
+    isError: isErrorFeedStock,
+    data: dataFeedStock,
+  } = GetFeedStockAPI({
+    take: 10,
+    sort: 'desc',
+    sortBy: 'createdAt',
+    animalTypeId: animalTypeId,
   });
 
   return (
@@ -195,29 +208,50 @@ const UpdateFeedings = ({
                     errors={errors}
                   />
                 </div>
-
-                <div className="mb-4">
-                  <SelectInput
-                    firstOptionName="Choose a feed type"
+                <div className="mb-2">
+                  <Label>
+                    {t.formatMessage({ id: 'TABFEEDING.FEEDTYPE' })}
+                    <span className="text-red-600">*</span>
+                  </Label>
+                  <Controller
                     control={control}
-                    errors={errors}
-                    placeholder="Select type"
-                    valueType="text"
-                    name="feedType"
-                    dataItem={[
-                      { id: 1, name: 'FIBERS' },
-                      { id: 2, name: 'FORAGES' },
-                      { id: 3, name: 'PROTEINS' },
-                      { id: 4, name: 'VITAMINS' },
-                      { id: 5, name: 'ROUGHAGES' },
-                      { id: 6, name: 'CONCENTRATES' },
-                      { id: 7, name: 'BYPRODUCTS' },
-                      { id: 8, name: 'COMPLETEFEED' },
-                      { id: 9, name: 'MINERALSALTS' },
-                      { id: 10, name: 'ENERGYSUPPLIMENTS' },
-                      { id: 11, name: 'SYNTHETICADICTIVES' },
-                      { id: 12, name: 'OTHERS' },
-                    ]}
+                    name="feedStockId"
+                    render={({ field: { value, onChange } }) => (
+                      <Select
+                        onValueChange={onChange}
+                        name={'feedStockId'}
+                        value={value}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select a feed type" />
+                        </SelectTrigger>
+                        <SelectContent className="dark:border-gray-800">
+                          <SelectGroup>
+                            {isLoadingFeedStock ? (
+                              <LoadingFile />
+                            ) : isErrorFeedStock ? (
+                              <ErrorFile
+                                title="404"
+                                description="Error finding data please try again..."
+                              />
+                            ) : Number(dataFeedStock?.pages[0]?.data?.total) <=
+                              0 ? (
+                              <ErrorFile description="Don't have active animals yet" />
+                            ) : (
+                              dataFeedStock?.pages
+                                .flatMap((page: any) => page?.data?.value)
+                                .map((item, index) => (
+                                  <>
+                                    <SelectItem key={index} value={item?.id}>
+                                      {item?.feedCategory}
+                                    </SelectItem>
+                                  </>
+                                ))
+                            )}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    )}
                   />
                 </div>
                 <div className="mt-4 flex items-center space-x-4">

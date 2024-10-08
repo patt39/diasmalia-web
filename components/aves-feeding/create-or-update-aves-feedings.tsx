@@ -1,4 +1,3 @@
-import { GetAnimalsAPI } from '@/api-site/animals';
 import { GetFeedStockAPI } from '@/api-site/feed-stock';
 import { CreateOrUpdateOneAvesFeedingAPI } from '@/api-site/feedings';
 import { useReactHookForm } from '@/components/hooks';
@@ -11,7 +10,6 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
@@ -28,7 +26,6 @@ import * as yup from 'yup';
 import { Label } from '../ui/label';
 
 const schema = yup.object({
-  code: yup.string().required('code is a required field'),
   quantity: yup.number().required('quantity is a required field'),
   feedStockId: yup.string().required('feedStockId is a required field'),
 });
@@ -37,10 +34,12 @@ const CreateOrUpdateAvesFeedings = ({
   showModal,
   setShowModal,
   feeding,
+  animal,
 }: {
   showModal: boolean;
   setShowModal: any;
   feeding?: any;
+  animal?: any;
 }) => {
   const {
     t,
@@ -53,15 +52,22 @@ const CreateOrUpdateAvesFeedings = ({
     hasErrors,
     setHasErrors,
   } = useReactHookForm({ schema });
-  const { query, push } = useRouter();
+  const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
 
   useEffect(() => {
     if (feeding) {
-      const fields = ['code', 'quantity', 'feedType'];
+      const fields = ['code', 'quantity', 'feedStockId'];
       fields?.forEach((field: any) => setValue(field, feeding[field]));
     }
   }, [feeding, setValue]);
+
+  useEffect(() => {
+    if (animal) {
+      const fields = ['code'];
+      fields?.forEach((field: any) => setValue(field, animal[field]));
+    }
+  }, [animal, setValue]);
 
   // Create or Update data
   const { mutateAsync: saveMutation } = CreateOrUpdateOneAvesFeedingAPI({
@@ -102,24 +108,9 @@ const CreateOrUpdateAvesFeedings = ({
   };
 
   const {
-    isLoading: isLoadingAnimals,
-    isError: isErrorAnimals,
-    data: dataAnimals,
-  } = GetAnimalsAPI({
-    take: 10,
-    sort: 'desc',
-    status: 'ACTIVE',
-    sortBy: 'createdAt',
-    animalTypeId: animalTypeId,
-  });
-
-  const {
     isLoading: isLoadingFeedStock,
     isError: isErrorFeedStock,
     data: dataFeedStock,
-    isFetchingNextPage,
-    hasNextPage,
-    fetchNextPage,
   } = GetFeedStockAPI({
     take: 10,
     sort: 'desc',
@@ -156,56 +147,19 @@ const CreateOrUpdateAvesFeedings = ({
                     </div>
                   </div>
                 )}
-                <div className="mb-2">
-                  <Label>
-                    {t.formatMessage({ id: 'ANIMAL.CODE' })}
-                    <span className="text-red-600">*</span>
-                  </Label>
-                  <Controller
+                <div className="items-center">
+                  <Label>{t.formatMessage({ id: 'ANIMAL.CODE' })}</Label>
+                  <TextInput
                     control={control}
+                    type="text"
                     name="code"
-                    render={({ field: { value, onChange } }) => (
-                      <Select
-                        onValueChange={onChange}
-                        name={'code'}
-                        value={value}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select a band code" />
-                        </SelectTrigger>
-                        <SelectContent className="dark:border-gray-800">
-                          <SelectGroup>
-                            <SelectLabel>Codes</SelectLabel>
-                            {isLoadingAnimals ? (
-                              <LoadingFile />
-                            ) : isErrorAnimals ? (
-                              <ErrorFile
-                                title="404"
-                                description="Error finding data please try again..."
-                              />
-                            ) : Number(dataAnimals?.pages[0]?.data?.total) <=
-                              0 ? (
-                              <ErrorFile description="Don't have active animals yet" />
-                            ) : (
-                              dataAnimals?.pages
-                                .flatMap((page: any) => page?.data?.value)
-                                .map((item, index) => (
-                                  <>
-                                    <SelectItem key={index} value={item.code}>
-                                      {item?.code}
-                                    </SelectItem>
-                                  </>
-                                ))
-                            )}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    )}
+                    placeholder="Give a code"
+                    errors={errors}
                   />
                 </div>
                 <div className="mb-2">
                   <Label>
-                    {t.formatMessage({ id: 'ANIMAL.CODE' })}
+                    {t.formatMessage({ id: 'SELECT.FEEDTYPE' })}
                     <span className="text-red-600">*</span>
                   </Label>
                   <Controller
@@ -218,7 +172,7 @@ const CreateOrUpdateAvesFeedings = ({
                         value={value}
                       >
                         <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select a band code" />
+                          <SelectValue placeholder="Select feed type" />
                         </SelectTrigger>
                         <SelectContent className="dark:border-gray-800">
                           <SelectGroup>
@@ -251,7 +205,7 @@ const CreateOrUpdateAvesFeedings = ({
                 </div>
                 <div className="mb-2">
                   <Label>
-                    {t.formatMessage({ id: 'FEED.TYPE' })}(kg)
+                    {t.formatMessage({ id: 'FEED.TYPE' })}(g)
                     <span className="text-red-600">*</span>
                   </Label>
                   <TextInput

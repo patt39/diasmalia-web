@@ -57,7 +57,7 @@ const CreateBreedings = ({
 
   const { ref, inView } = useInView();
 
-  // Create or Update data
+  // Create
   const { mutateAsync: saveMutation } = CreateOrUpdateOneBreedingAPI({
     onSuccess: () => {
       setHasErrors(false);

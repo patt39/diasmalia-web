@@ -19,17 +19,17 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { PaginationPage } from '@/utils';
-import { Egg, ListFilter } from 'lucide-react';
+import { ListFilter } from 'lucide-react';
 import { useState } from 'react';
 import { SearchInput } from '../ui-setting';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
-import { CreateOrUpdateEggHarvestings } from './create-or-update-egg-harvestings';
 import { ListEggHarvestings } from './list-egg-harvestings';
 
 const TabEggHarvestings = ({ animalTypeId }: { animalTypeId: string }) => {
@@ -114,6 +114,7 @@ const TabEggHarvestings = ({ animalTypeId }: { animalTypeId: string }) => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="dark:border-gray-800">
+                <DropdownMenuLabel>Filter by</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuCheckboxItem
                   className="cursor-pointer"
@@ -142,18 +143,6 @@ const TabEggHarvestings = ({ animalTypeId }: { animalTypeId: string }) => {
                 </DropdownMenuCheckboxItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button
-              size="sm"
-              className="h-8 gap-1"
-              onClick={() => setIsOpen(true)}
-            >
-              <Egg className="h-3.5 w-3.5  hover:shadow-xxl" />
-              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                {t.formatMessage({
-                  id: 'ANIMALTYPE.ANIMALS.EGGHARVESTINGS.CREATE',
-                })}
-              </span>
-            </Button>
           </div>
         </div>
       </CardHeader>
@@ -208,11 +197,6 @@ const TabEggHarvestings = ({ animalTypeId }: { animalTypeId: string }) => {
           />
         </CardContent>
       </main>
-      <CreateOrUpdateEggHarvestings
-        eggHarvesting={animalTypeId}
-        showModal={isOpen}
-        setShowModal={setIsOpen}
-      />
     </>
   );
 };

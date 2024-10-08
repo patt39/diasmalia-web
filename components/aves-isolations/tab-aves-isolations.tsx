@@ -20,7 +20,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { Eclipse, ListFilter } from 'lucide-react';
+import { ListFilter } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useIntl } from 'react-intl';
@@ -169,18 +169,6 @@ const TabAvesIsolations = ({ animalTypeId }: { animalTypeId: string }) => {
                 </DropdownMenuCheckboxItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button
-              size="sm"
-              className="h-8 gap-1"
-              onClick={() => setIsOpen(true)}
-            >
-              <Eclipse className="h-3.5 w-3.5  hover:shadow-xxl" />
-              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                {t.formatMessage({
-                  id: 'ANIMALTYPE.ANIMALS.ISOLATIONS.CREATE',
-                })}
-              </span>
-            </Button>
           </div>
         </div>
       </CardHeader>

@@ -90,7 +90,7 @@ const ListFeedings = ({ item, index }: { item: any; index: number }) => {
           {capitalizeFirstLetter(item?.animal?.productionPhase)}
         </TableCell>
         <TableCell className="font-medium">
-          {item.animal?.location?.code}
+          {item?.animal?.location?.code}
         </TableCell>
         <TableCell>{formatDateDDMMYY(item?.createdAt as Date)}</TableCell>
         <TableCell>

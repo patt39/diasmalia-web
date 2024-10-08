@@ -71,6 +71,7 @@ const ListAvesDeaths = ({ item, index }: { item: any; index: number }) => {
             </p>
           )}
         </TableCell>
+        <TableCell>{item?.animal?.location?.code.toUpperCase()}</TableCell>
         <TableCell>{formatDateDDMMYY(item?.createdAt as Date)}</TableCell>
         <TableCell>
           <DropdownMenu>

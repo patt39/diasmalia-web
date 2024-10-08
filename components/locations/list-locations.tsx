@@ -26,7 +26,7 @@ import {
 import Link from 'next/link';
 import { useState } from 'react';
 import { CreateFeedings } from '../feedings/create-feedings';
-import { CreateOrUpdatetreatments } from '../treatments/create-or-update-treatments';
+import { CreateTreatments } from '../treatments/create-treatments';
 import { ActionModalDialog } from '../ui-setting/shadcn';
 import { ActionModalConfirmeDialog } from '../ui-setting/shadcn/action-modal-confirme-dialog';
 import { Badge } from '../ui/badge';
@@ -240,7 +240,7 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <div className="mt-2">
+                      <div>
                         <span className="relative flex size-4 text-black">
                           {item?._count?.animals}
                         </span>
@@ -347,7 +347,7 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
                     <Salad className="size-4 text-gray-600 hover:text-amber-600" />
                     <span className="ml-2 cursor-pointer hover:text-amber-600">
                       {t.formatMessage({
-                        id: 'ANIMALTYPE.ANIMALS.FEEDINGS.CREATE',
+                        id: 'ANIMALTYPE.FEEDINGS',
                       })}
                     </span>
                   </DropdownMenuItem>
@@ -355,8 +355,8 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
                   ''
                 )}
                 <DropdownMenuItem onClick={() => setIsConfirmOpen(true)}>
-                  <BadgeCheck className="size-4 text-gray-600 hover:text-red-400 cursor-pointer" />
-                  <span className="ml-2 cursor-pointer hover:text-red-400">
+                  <BadgeCheck className="size-4 text-gray-600 hover:text-yellow-600 cursor-pointer" />
+                  <span className="ml-2 cursor-pointer hover:text-yellow-400">
                     {t.formatMessage({ id: 'CHANGE.STATUS' })}
                   </span>
                 </DropdownMenuItem>
@@ -405,13 +405,13 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
       />
       <CreateFeedings
         location={item}
-        feeding={item?.animalTypeId}
+        feeding={item}
         showModal={isFeeding}
         setShowModal={setIsFeeding}
       />
-      <CreateOrUpdatetreatments
+      <CreateTreatments
         location={item}
-        treatment={item?.animalTypeId}
+        treatment={item}
         showModal={isTreatment}
         setShowModal={setIsTreatment}
       />

@@ -1,7 +1,11 @@
 import { GetAnimalsAPI } from '@/api-site/animals';
 import { CreateOrUpdateOneIsolationAPI } from '@/api-site/isolations';
-import { useReactHookForm } from '@/components/hooks';
-import { ButtonInput } from '@/components/ui-setting';
+import { useInputState, useReactHookForm } from '@/components/hooks';
+import {
+  ButtonInput,
+  ButtonLoadMore,
+  SearchInput,
+} from '@/components/ui-setting';
 import { IsolationsModel } from '@/types/isolations';
 import {
   AlertDangerNotification,
@@ -10,12 +14,14 @@ import {
 import { XIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import { SubmitHandler } from 'react-hook-form';
+import { Controller, SubmitHandler } from 'react-hook-form';
+import { useInView } from 'react-intersection-observer';
 import * as yup from 'yup';
 import { LoadingFile } from '../ui-setting/ant';
 import { ErrorFile } from '../ui-setting/ant/error-file';
 import { TextAreaInput } from '../ui-setting/shadcn';
 import { Button } from '../ui/button';
+import { Checkbox } from '../ui/checkbox';
 import { Label } from '../ui/label';
 import {
   Select,
@@ -56,9 +62,10 @@ const CreateOrUpdateIsolations = ({
     setLoading,
     hasErrors,
     setHasErrors,
-    register,
   } = useReactHookForm({ schema });
+  const { search, handleSetSearch } = useInputState();
   const { query } = useRouter();
+  const { ref, inView } = useInView();
   const animalTypeId = String(query?.animalTypeId);
   const selectedAnimals = watch('animals', '');
   const countSelectedAnimals = selectedAnimals.length;
@@ -112,7 +119,11 @@ const CreateOrUpdateIsolations = ({
     isLoading: isLoadingAnimals,
     isError: isErrorAnimals,
     data: dataAnimals,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
   } = GetAnimalsAPI({
+    search,
     take: 10,
     sort: 'desc',
     status: 'ACTIVE',
@@ -120,6 +131,28 @@ const CreateOrUpdateIsolations = ({
     isIsolated: 'NO',
     animalTypeId: animalTypeId,
   });
+
+  useEffect(() => {
+    let fetching = false;
+    if (inView) {
+      fetchNextPage();
+    }
+    const onScroll = async (event: any) => {
+      const { scrollHeight, scrollTop, clientHeight } =
+        event.target.scrollingElement;
+
+      if (!fetching && scrollHeight - scrollTop <= clientHeight * 1.5) {
+        fetching = true;
+        if (hasNextPage) await fetchNextPage();
+        fetching = false;
+      }
+    };
+
+    document.addEventListener('scroll', onScroll);
+    return () => {
+      document.removeEventListener('scroll', onScroll);
+    };
+  }, [fetchNextPage, hasNextPage, inView]);
 
   return (
     <>
@@ -178,9 +211,15 @@ const CreateOrUpdateIsolations = ({
                     </Label>
                     <Select>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select animals for isolation" />
+                        <SelectValue placeholder="Select animals" />
                       </SelectTrigger>
                       <SelectContent className="dark:border-gray-800">
+                        <div className="mr-auto items-center gap-2">
+                          <SearchInput
+                            placeholder="Search by code"
+                            onChange={handleSetSearch}
+                          />
+                        </div>
                         <SelectGroup>
                           {isLoadingAnimals ? (
                             <LoadingFile />
@@ -191,37 +230,58 @@ const CreateOrUpdateIsolations = ({
                             />
                           ) : Number(dataAnimals?.pages[0]?.data?.total) <=
                             0 ? (
-                            <ErrorFile description="Don't have active animals" />
+                            <ErrorFile description="Don't have active animals created yet please do" />
                           ) : (
                             dataAnimals?.pages
                               .flatMap((page: any) => page?.data?.value)
-                              .map((item, index) => (
+                              .map((item) => (
                                 <>
-                                  <div key={index}>
-                                    <label
-                                      htmlFor={item?.id}
-                                      className="flex cursor-pointer items-start gap-4 rounded-lg border border-gray-200 p-4 transition hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-900"
-                                    >
-                                      <div className="flex items-center">
-                                        &#8203;
-                                        <input
-                                          type="checkbox"
-                                          className="size-4 rounded cursor-pointer border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:ring-offset-gray-900"
-                                          id={item?.id}
-                                          {...register('animals')}
-                                          value={item?.code}
-                                        />
-                                      </div>
-
-                                      <div>
-                                        <strong className="font-medium text-gray-900 dark:text-white">
-                                          {item?.code}
-                                        </strong>
-                                      </div>
-                                    </label>
-                                  </div>
+                                  <Controller
+                                    key={item?.code}
+                                    control={control}
+                                    name="animals"
+                                    render={({ field: { ...field } }) => (
+                                      <>
+                                        <div
+                                          className="flex flex-row items-start space-x-3 space-y-0 rounded-md p-4"
+                                          key={item?.code}
+                                        >
+                                          <Checkbox
+                                            checked={field?.value?.includes(
+                                              item?.code,
+                                            )}
+                                            onCheckedChange={(checked) => {
+                                              return checked
+                                                ? field.onChange([
+                                                    ...(field.value || []),
+                                                    item?.code,
+                                                  ])
+                                                : field?.onChange(
+                                                    field?.value?.filter(
+                                                      (value: any) =>
+                                                        value !== item?.code,
+                                                    ),
+                                                  );
+                                            }}
+                                          />
+                                          <div className="space-y-1 leading-none">
+                                            <Label>{item?.code}</Label>
+                                          </div>
+                                        </div>
+                                      </>
+                                    )}
+                                  />
                                 </>
                               ))
+                          )}
+                          {hasNextPage && (
+                            <div className="mx-auto mt-4 justify-center text-center">
+                              <ButtonLoadMore
+                                ref={ref}
+                                isFetchingNextPage={isFetchingNextPage}
+                                onClick={() => fetchNextPage()}
+                              />
+                            </div>
                           )}
                         </SelectGroup>
                       </SelectContent>
@@ -230,7 +290,6 @@ const CreateOrUpdateIsolations = ({
                 ) : (
                   ''
                 )}
-
                 <div className="mb-4">
                   <TextAreaInput
                     control={control}

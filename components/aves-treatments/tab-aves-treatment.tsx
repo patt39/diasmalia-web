@@ -29,7 +29,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '../ui/tooltip';
-import { CreateOrUpdateAvestreatments } from './create-or-update-aves-treatments';
+import { CreateBulkAvestreatments } from './create-bulk-aves-treatments';
 import { ListAvesTreatments } from './list-aves-treatments';
 
 const TabAvesTreatments = ({ animalTypeId }: { animalTypeId: string }) => {
@@ -216,7 +216,7 @@ const TabAvesTreatments = ({ animalTypeId }: { animalTypeId: string }) => {
           )}
         </CardContent>
       </main>
-      <CreateOrUpdateAvestreatments
+      <CreateBulkAvestreatments
         treatment={animalTypeId}
         showModal={isOpen}
         setShowModal={setIsOpen}

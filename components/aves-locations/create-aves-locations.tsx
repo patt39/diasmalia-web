@@ -23,6 +23,8 @@ import {
 const schema = yup.object({
   code: yup.string().optional(),
   nest: yup.number().optional(),
+  cages: yup.number().optional(),
+  addCages: yup.string().optional(),
   manger: yup.number().required('manger is required field'),
   through: yup.number().required('through is required field'),
   productionPhase: yup.string().required('productionPhase is required field'),
@@ -51,6 +53,7 @@ const CreateAvesLocations = ({
   const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
   const watchProductionPhase = watch('productionPhase');
+  const watchCages = watch('addCages');
   const { data: animalType } = GetOneAnimalTypeAPI({
     animalTypeId: animalTypeId,
   });
@@ -122,7 +125,6 @@ const CreateAvesLocations = ({
                     </div>
                   </div>
                 )}
-
                 <div className="flex items-center">
                   <TextInput
                     control={control}
@@ -162,6 +164,29 @@ const CreateAvesLocations = ({
                     ]}
                   />
                 </div>
+                {animalType?.name === 'Pondeuses' &&
+                watchProductionPhase === 'LAYING' ? (
+                  <div className="my-2">
+                    <Label>
+                      Ajouter des cages?
+                      <span className="text-red-600">*</span>
+                    </Label>
+                    <SelectInput
+                      firstOptionName="Choose a production type"
+                      control={control}
+                      errors={errors}
+                      placeholder="Add cages?"
+                      valueType="text"
+                      name="addCages"
+                      dataItem={[
+                        { id: 1, name: 'YES' },
+                        { id: 2, name: 'NO' },
+                      ]}
+                    />
+                  </div>
+                ) : (
+                  ''
+                )}
                 <div className="my-2 items-center space-x-1">
                   {animalType?.name === 'Pisciculture' ? (
                     <>
@@ -180,10 +205,17 @@ const CreateAvesLocations = ({
                     <>
                       <div className="items-center flex space-x-9 my-2">
                         <div>
-                          <Label>
-                            {t.formatMessage({ id: 'SURFACE.AREA' })}
-                            <span className="text-red-600">*</span>
-                          </Label>
+                          {watchCages === 'YES' ? (
+                            <Label>
+                              Dimensions
+                              <span className="text-red-600">*</span>
+                            </Label>
+                          ) : (
+                            <Label>
+                              {t.formatMessage({ id: 'SURFACE.AREA' })}
+                              <span className="text-red-600">*</span>
+                            </Label>
+                          )}
                           <TextInput
                             control={control}
                             type="number"
@@ -220,7 +252,8 @@ const CreateAvesLocations = ({
                         </div>
                       </div>
                       {watchProductionPhase === 'LAYING' &&
-                      animalType?.name !== 'Pisciculture' ? (
+                      animalType?.name !== 'Pisciculture' &&
+                      watchCages === 'NO' ? (
                         <div>
                           <Label>
                             {t.formatMessage({ id: 'NUMBER.NESTS' })}
@@ -231,6 +264,21 @@ const CreateAvesLocations = ({
                             type="number"
                             name="nest"
                             placeholder="Number of nests"
+                            errors={errors}
+                          />
+                        </div>
+                      ) : watchCages === 'YES' ? (
+                        <div>
+                          <Label>
+                            {/* {t.formatMessage({ id: 'NUMBER.NESTS' })} */}
+                            Nombre de cages
+                            <span className="text-red-600">*</span>
+                          </Label>
+                          <TextInput
+                            control={control}
+                            type="number"
+                            name="cages"
+                            placeholder="Number of cages"
                             errors={errors}
                           />
                         </div>

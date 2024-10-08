@@ -1,7 +1,11 @@
 import { GetAnimalsAPI } from '@/api-site/animals';
 import { CreateOrUpdateOneSaleAPI } from '@/api-site/sales';
-import { useReactHookForm } from '@/components/hooks';
-import { ButtonInput, ButtonLoadMore } from '@/components/ui-setting';
+import { useInputState, useReactHookForm } from '@/components/hooks';
+import {
+  ButtonInput,
+  ButtonLoadMore,
+  SearchInput,
+} from '@/components/ui-setting';
 import {
   SelectInput,
   TextAreaInput,
@@ -68,8 +72,8 @@ const CreateOrUpdateSales = ({
     setLoading,
     hasErrors,
     setHasErrors,
-    register,
   } = useReactHookForm({ schema });
+  const { search, handleSetSearch } = useInputState();
   const { query } = useRouter();
   const { ref, inView } = useInView();
   const selectedAnimals = watch('animals', '');
@@ -136,6 +140,7 @@ const CreateOrUpdateSales = ({
     hasNextPage,
     fetchNextPage,
   } = GetAnimalsAPI({
+    search,
     take: 10,
     sort: 'desc',
     status: 'ACTIVE',
@@ -223,6 +228,12 @@ const CreateOrUpdateSales = ({
                         <SelectValue placeholder="Select animals" />
                       </SelectTrigger>
                       <SelectContent className="dark:border-gray-800">
+                        <div className="mr-auto items-center gap-2">
+                          <SearchInput
+                            placeholder="Search by code"
+                            onChange={handleSetSearch}
+                          />
+                        </div>
                         <SelectGroup>
                           {isLoadingAnimals ? (
                             <LoadingFile />
@@ -237,7 +248,7 @@ const CreateOrUpdateSales = ({
                           ) : (
                             dataAnimals?.pages
                               .flatMap((page: any) => page?.data?.value)
-                              .map((item, index) => (
+                              .map((item) => (
                                 <>
                                   <Controller
                                     key={item?.code}
@@ -246,7 +257,7 @@ const CreateOrUpdateSales = ({
                                     render={({ field: { ...field } }) => (
                                       <>
                                         <div
-                                          className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow"
+                                          className="flex flex-row items-start space-x-3 space-y-0 rounded-md p-4"
                                           key={item?.code}
                                         >
                                           <Checkbox

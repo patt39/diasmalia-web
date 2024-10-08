@@ -1,18 +1,24 @@
 import { GetAnimalStatisticsAPI } from '@/api-site/animals';
+import { GetBestSaleChannelAPI } from '@/api-site/sales';
+import { TabBestSaleChannel } from '@/components/sales-analytics/tab-best-channel';
 import {
   Card,
   CardDescription,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { ChartConfig } from '@/components/ui/chart';
 import { useRouter } from 'next/router';
 import { useIntl } from 'react-intl';
+import { formatWeight } from '../../utils/formate-date';
 
 const AnimalStatistics = () => {
   const t = useIntl();
   const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
+
+  const { data: saleChannel } = GetBestSaleChannelAPI({
+    animalTypeId: animalTypeId,
+  });
 
   const { data: animalStatistics } = GetAnimalStatisticsAPI({
     animalTypeId: animalTypeId,
@@ -39,25 +45,6 @@ const AnimalStatistics = () => {
 
   const youngDeathPercentage =
     Number(animalStatistics?.sumAnimalGrowthDead / totalAnimals) * 100;
-
-  const chartData = [
-    { month: 'January', desktop: 186 },
-    { month: 'February', desktop: 305 },
-    { month: 'March', desktop: 237 },
-    { month: 'April', desktop: 73 },
-    { month: 'May', desktop: 209 },
-    { month: 'June', desktop: 214 },
-  ];
-  const chartConfig = {
-    desktop: {
-      label: 'Desktop',
-      color: 'hsl(var(--chart-1))',
-    },
-    mobile: {
-      label: 'Mobile',
-      color: 'hsl(var(--chart-2))',
-    },
-  } satisfies ChartConfig;
 
   return (
     <>
@@ -114,6 +101,21 @@ const AnimalStatistics = () => {
       <Card x-chunk="dashboard-05-chunk-2" className=" dark:border-gray-800">
         <CardHeader className="pb-2">
           <CardDescription>
+            {t.formatMessage({ id: 'PROLIFICITY' })}
+          </CardDescription>
+          <CardTitle className="text-4xl flex">
+            {Math.floor(animalStatistics?.prolificity * 100) / 100 || 0}
+            <CardDescription>
+              <div className="pt-5 text-xs">
+                / {t.formatMessage({ id: 'LITTER.PER.FEMALE' })}
+              </div>
+            </CardDescription>
+          </CardTitle>
+        </CardHeader>
+      </Card>
+      <Card x-chunk="dashboard-05-chunk-2" className=" dark:border-gray-800">
+        <CardHeader className="pb-2">
+          <CardDescription>
             {t.formatMessage({ id: 'YOUTH.DEATH.PERCENTAGE' })}
           </CardDescription>
           <CardTitle className="text-4xl">
@@ -121,90 +123,27 @@ const AnimalStatistics = () => {
           </CardTitle>
         </CardHeader>
       </Card>
-      {/* <Card className="dark:border-input dark:bg-background sm:col-span-2">
-        <CardHeader>
+      <Card x-chunk="dashboard-05-chunk-2" className=" dark:border-gray-800">
+        <CardHeader className="pb-2">
           <CardDescription>
-            Showing total visitors for the last 6 months
+            {t.formatMessage({ id: 'ANIMAL.ISOLATED' })}
           </CardDescription>
+          <CardTitle className="text-4xl">
+            {animalStatistics?.sumIsolations ?? 0}
+          </CardTitle>
         </CardHeader>
-        <CardContent>
-          <ChartContainer
-            config={chartConfig}
-            className="lg:h-[200px] lg:w-[500px]"
-          >
-            <AreaChart
-              accessibilityLayer
-              data={chartData}
-              margin={{
-                left: 12,
-                right: 12,
-              }}
-            >
-              <CartesianGrid vertical={false} />
-              <XAxis
-                dataKey="month"
-                tickLine={false}
-                axisLine={false}
-                tickMargin={8}
-                tickFormatter={(value) => value.slice(0, 3)}
-              />
-              <ChartTooltip
-                cursor={false}
-                content={<ChartTooltipContent indicator="line" />}
-              />
-              <Area
-                dataKey="desktop"
-                type="natural"
-                fill="var(--color-desktop)"
-                fillOpacity={0.4}
-                stroke="var(--color-desktop)"
-              />
-            </AreaChart>
-          </ChartContainer>
-        </CardContent>
       </Card>
-      <Card className="dark:border-input dark:bg-background sm:col-span-2">
-        <CardHeader>
+      <Card x-chunk="dashboard-05-chunk-2" className=" dark:border-gray-800">
+        <CardHeader className="pb-2">
           <CardDescription>
-            Showing total visitors for the last 6 months
+            {t.formatMessage({ id: 'ANIMAL.FEED' })}
           </CardDescription>
+          <CardTitle className="text-4xl">
+            {formatWeight(animalStatistics?.sumFeedings ?? 0)}
+          </CardTitle>
         </CardHeader>
-        <CardContent>
-          <ChartContainer
-            config={chartConfig}
-            className="lg:h-[200px] lg:w-[500px]"
-          >
-            <AreaChart
-              accessibilityLayer
-              data={chartData}
-              margin={{
-                left: 12,
-                right: 12,
-              }}
-            >
-              <CartesianGrid vertical={false} />
-              <XAxis
-                dataKey="month"
-                tickLine={false}
-                axisLine={false}
-                tickMargin={8}
-                tickFormatter={(value) => value.slice(0, 3)}
-              />
-              <ChartTooltip
-                cursor={false}
-                content={<ChartTooltipContent indicator="line" />}
-              />
-              <Area
-                dataKey="desktop"
-                type="natural"
-                fill="var(--color-desktop)"
-                fillOpacity={0.4}
-                stroke="var(--color-desktop)"
-              />
-            </AreaChart>
-          </ChartContainer>
-        </CardContent>
-      </Card> */}
+      </Card>
+      {saleChannel ? <TabBestSaleChannel saleChannel={saleChannel} /> : null}
     </>
   );
 };

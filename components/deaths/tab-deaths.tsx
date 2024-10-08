@@ -148,6 +148,9 @@ const TabDeaths = ({ animalTypeId }: { animalTypeId: string }) => {
                 <TableHead>Code</TableHead>
                 <TableHead>Production phase</TableHead>
                 <TableHead>Note</TableHead>
+                <TableHead>
+                  {t.formatMessage({ id: 'VIEW.LOCATION' })}
+                </TableHead>
                 <TableHead>Date</TableHead>
                 <TableHead>
                   <span>Actions</span>

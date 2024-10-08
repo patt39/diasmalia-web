@@ -179,6 +179,48 @@ export const CreateBulkAnimalsAPI = ({
   return result;
 };
 
+export const CreateBulkAvesAnimalsAPI = ({
+  onSuccess,
+  onError,
+}: {
+  onSuccess?: () => void;
+  onError?: (error: any) => void;
+} = {}) => {
+  const queryKey = ['animals'];
+  const queryClient = useQueryClient();
+  const result = useMutation({
+    mutationKey: queryKey,
+    mutationFn: async (payload: AnimalModel & { animalTypeId: string }) => {
+      const { animalTypeId } = payload;
+      return await makeApiCall({
+        action: 'createBulkAves',
+        body: { ...payload },
+        urlParams: { animalTypeId },
+      });
+    },
+    onError: async (error) => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onError) {
+        onError(error);
+      }
+    },
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+  });
+
+  return result;
+};
+
 export const CreateOneAvesAnimalAPI = ({
   onSuccess,
   onError,
@@ -340,8 +382,8 @@ export const GetAnimalsAPI = (
       'breedings',
       'weanings',
       'deaths',
-      'aves-deaths',
       'farrowings',
+      'isolations',
       { ...payload },
     ],
     getNextPageParam: (lastPage: any) => lastPage.data.next_page,

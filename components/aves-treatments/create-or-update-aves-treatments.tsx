@@ -1,4 +1,4 @@
-import { GetAnimalsAPI } from '@/api-site/animals';
+import { GetHealthsAPI } from '@/api-site/health';
 import { CreateOrUpdateOneAvesTreatmentAPI } from '@/api-site/treatment';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
@@ -25,7 +25,6 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '../ui/select';
@@ -35,19 +34,21 @@ const schema = yup.object({
   note: yup.string().optional(),
   dose: yup.number().optional(),
   diagnosis: yup.string().optional(),
+  healthId: yup.string().optional(),
   name: yup.string().required('name is required'),
   method: yup.string().required('method is required'),
-  medication: yup.string().required('medication is required'),
 });
 
 const CreateOrUpdateAvestreatments = ({
   showModal,
   setShowModal,
   treatment,
+  animal,
 }: {
   showModal: boolean;
   setShowModal: any;
   treatment?: any;
+  animal?: any;
 }) => {
   const {
     t,
@@ -70,13 +71,20 @@ const CreateOrUpdateAvestreatments = ({
         'note',
         'name',
         'diagnosis',
-        'medication',
+        'healthId',
         'method',
         'dose',
       ];
       fields?.forEach((field: any) => setValue(field, treatment[field]));
     }
   }, [treatment, setValue]);
+
+  useEffect(() => {
+    if (animal) {
+      const fields = ['code'];
+      fields?.forEach((field: any) => setValue(field, animal[field]));
+    }
+  }, [animal, setValue]);
 
   // Create or Update data
   const { mutateAsync: saveMutation } = CreateOrUpdateOneAvesTreatmentAPI({
@@ -117,14 +125,15 @@ const CreateOrUpdateAvestreatments = ({
   };
 
   const {
-    isLoading: isLoadingAnimals,
-    isError: isErrorAnimals,
-    data: dataAnimals,
-  } = GetAnimalsAPI({
+    isLoading: isLoadingTreatments,
+    isError: isErrorTreatments,
+    data: dataTreatments,
+  } = GetHealthsAPI({
     take: 10,
     sort: 'desc',
-    status: 'ACTIVE',
+    status: true,
     sortBy: 'createdAt',
+    category: 'MEDICATION',
     animalTypeId: animalTypeId,
   });
 
@@ -157,58 +166,19 @@ const CreateOrUpdateAvestreatments = ({
                     </div>
                   </div>
                 )}
-
-                <div className="mb-4">
-                  <Label>
-                    Sélectionnez le code de la bande:
-                    <span className="text-red-600">*</span>
-                  </Label>
-                  <Controller
+                <div className="items-center">
+                  <Label>{t.formatMessage({ id: 'ANIMAL.CODE' })}</Label>
+                  <TextInput
                     control={control}
+                    type="text"
                     name="code"
-                    render={({ field: { value, onChange } }) => (
-                      <Select
-                        onValueChange={onChange}
-                        name={'code'}
-                        value={value}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select a code" />
-                        </SelectTrigger>
-                        <SelectContent className="dark:border-gray-800">
-                          <SelectGroup>
-                            <SelectLabel>Codes</SelectLabel>
-                            {isLoadingAnimals ? (
-                              <LoadingFile />
-                            ) : isErrorAnimals ? (
-                              <ErrorFile
-                                title="404"
-                                description="Error finding data please try again..."
-                              />
-                            ) : Number(dataAnimals?.pages[0]?.data?.total) <=
-                              0 ? (
-                              <ErrorFile description="Don't have active animals yet" />
-                            ) : (
-                              dataAnimals?.pages
-                                .flatMap((page: any) => page?.data?.value)
-                                .map((item, index) => (
-                                  <>
-                                    <SelectItem key={index} value={item.code}>
-                                      {item.code}
-                                    </SelectItem>
-                                  </>
-                                ))
-                            )}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    )}
+                    placeholder="Give a code"
+                    errors={errors}
                   />
                 </div>
-
                 <div className="mb-2">
                   <Label>
-                    Treatement:<span className="text-red-600">*</span>
+                    Treatement<span className="text-red-600">*</span>
                   </Label>
                   <TextInput
                     control={control}
@@ -220,7 +190,7 @@ const CreateOrUpdateAvestreatments = ({
                 </div>
                 <div className="mb-2">
                   <Label>
-                    Diagnostic:<span className="text-red-600">*</span>
+                    Diagnostic<span className="text-red-600">*</span>
                   </Label>
                   <TextInput
                     control={control}
@@ -232,31 +202,47 @@ const CreateOrUpdateAvestreatments = ({
                 </div>
                 <div className="mb-4">
                   <Label>
-                    Medication:<span className="text-red-600">*</span>
+                    Medication<span className="text-red-600">*</span>
                   </Label>
-                  <SelectInput
-                    firstOptionName="Give a medication"
+                  <Controller
                     control={control}
-                    errors={errors}
-                    placeholder="Select medication"
-                    valueType="text"
-                    name="medication"
-                    dataItem={[
-                      { id: 1, name: 'VACCINS' },
-                      { id: 2, name: 'ANTIVIRALS' },
-                      { id: 3, name: 'ANALGESICS' },
-                      { id: 4, name: 'PROBIOTICS' },
-                      { id: 5, name: 'ANTIBIOTICS' },
-                      { id: 6, name: 'ANTIFUNGALS' },
-                      { id: 7, name: 'ANTHALMITICS' },
-                      { id: 8, name: 'COCCIDIOSTATS' },
-                      { id: 9, name: 'BRONCODILATORS' },
-                      { id: 10, name: 'GROWTHPROMOTER' },
-                      { id: 11, name: 'ANTIPARASITICS' },
-                      { id: 12, name: 'MINERALVITAMINS' },
-                      { id: 13, name: 'CORTICOSTEROIDS' },
-                      { id: 14, name: 'TROPICALTREATMENTS' },
-                    ]}
+                    name="healthId"
+                    render={({ field: { value, onChange } }) => (
+                      <Select
+                        onValueChange={onChange}
+                        name={'healthId'}
+                        value={value}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select medication" />
+                        </SelectTrigger>
+                        <SelectContent className="dark:border-gray-800">
+                          <SelectGroup>
+                            {isLoadingTreatments ? (
+                              <LoadingFile />
+                            ) : isErrorTreatments ? (
+                              <ErrorFile
+                                title="404"
+                                description="Error finding data please try again..."
+                              />
+                            ) : Number(dataTreatments?.pages[0]?.data?.total) <=
+                              0 ? (
+                              <ErrorFile description="Don't have active animals yet" />
+                            ) : (
+                              dataTreatments?.pages
+                                .flatMap((page: any) => page?.data?.value)
+                                .map((item: any, index: any) => (
+                                  <>
+                                    <SelectItem key={index} value={item?.id}>
+                                      {item?.name}
+                                    </SelectItem>
+                                  </>
+                                ))
+                            )}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    )}
                   />
                 </div>
                 <div className="mb-4 flex items-center space-x-1">

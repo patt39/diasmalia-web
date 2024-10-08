@@ -1,6 +1,6 @@
 import { GetAnimalsAPI } from '@/api-site/animals';
 import { GetFeedStockAPI } from '@/api-site/feed-stock';
-import { CreateOrUpdateOneFeedingAPI } from '@/api-site/feedings';
+import { CreateOneFeedingAPI } from '@/api-site/feedings';
 import { useInputState, useReactHookForm } from '@/components/hooks';
 import { ButtonInput, ButtonLoadMore } from '@/components/ui-setting';
 import { LoadingFile } from '@/components/ui-setting/ant';
@@ -38,13 +38,12 @@ import {
 const schema = yup.object({
   animals: yup.array().optional(),
   quantity: yup.number().required('quantity is required'),
-  feedStockId: yup.string().required('feedStock is required'),
+  feedStockId: yup.string().required('feed type is required'),
 });
 
 const CreateFeedings = ({
   showModal,
   setShowModal,
-  feeding,
   location,
 }: {
   showModal: boolean;
@@ -57,13 +56,11 @@ const CreateFeedings = ({
     watch,
     control,
     errors,
-    setValue,
     handleSubmit,
     loading,
     setLoading,
     hasErrors,
     setHasErrors,
-    register,
   } = useReactHookForm({ schema });
   const { query } = useRouter();
   const { ref, inView } = useInView();
@@ -72,15 +69,8 @@ const CreateFeedings = ({
   const selectedAnimals = watch('animals', []);
   const countSelectedAnimals = selectedAnimals?.length;
 
-  useEffect(() => {
-    if (feeding) {
-      const fields = ['animals', 'quantity', 'feedStockId'];
-      fields?.forEach((field: any) => setValue(field, feeding[field]));
-    }
-  }, [feeding, setValue]);
-
-  // Create or Update data
-  const { mutateAsync: saveMutation } = CreateOrUpdateOneFeedingAPI({
+  // Create
+  const { mutateAsync: saveMutation } = CreateOneFeedingAPI({
     onSuccess: () => {
       setHasErrors(false);
       setLoading(false);
@@ -99,9 +89,7 @@ const CreateFeedings = ({
     try {
       await saveMutation({
         ...payload,
-        feedingId: feeding?.id,
       });
-
       setHasErrors(false);
       setLoading(false);
       AlertSuccessNotification({
@@ -242,7 +230,7 @@ const CreateFeedings = ({
                         ) : (
                           dataAnimals?.pages
                             .flatMap((page: any) => page?.data?.value)
-                            .map((item, index) => (
+                            .map((item) => (
                               <>
                                 <Controller
                                   key={item?.code}
@@ -295,7 +283,6 @@ const CreateFeedings = ({
                     </SelectContent>
                   </Select>
                 </div>
-
                 <div className="mb-2">
                   <Label>
                     {t.formatMessage({ id: 'TABFEEDING.FEEDTYPE' })}

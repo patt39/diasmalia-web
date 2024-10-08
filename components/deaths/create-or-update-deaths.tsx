@@ -1,7 +1,11 @@
 import { GetAnimalsAPI } from '@/api-site/animals';
 import { CreateOrUpdateOneDeathAPI } from '@/api-site/deaths';
-import { useReactHookForm } from '@/components/hooks';
-import { ButtonInput, ButtonLoadMore } from '@/components/ui-setting';
+import { useInputState, useReactHookForm } from '@/components/hooks';
+import {
+  ButtonInput,
+  ButtonLoadMore,
+  SearchInput,
+} from '@/components/ui-setting';
 import { LoadingFile } from '@/components/ui-setting/ant';
 import { ErrorFile } from '@/components/ui-setting/ant/error-file';
 import { TextAreaInput } from '@/components/ui-setting/shadcn';
@@ -20,10 +24,11 @@ import {
 import { XIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import { SubmitHandler } from 'react-hook-form';
+import { Controller, SubmitHandler } from 'react-hook-form';
 import { useInView } from 'react-intersection-observer';
 import * as yup from 'yup';
 import { Button } from '../ui/button';
+import { Checkbox } from '../ui/checkbox';
 import { Label } from '../ui/label';
 import {
   Tooltip,
@@ -56,11 +61,11 @@ const CreateOrUpdateDeaths = ({
     loading,
     setLoading,
     hasErrors,
-    register,
     setHasErrors,
   } = useReactHookForm({ schema });
   const { query } = useRouter();
   const { ref, inView } = useInView();
+  const { search, handleSetSearch } = useInputState();
   const animalTypeId = String(query?.animalTypeId);
   const selectedAnimals = watch('animals', '');
   const countSelectedAnimals = selectedAnimals.length;
@@ -116,6 +121,7 @@ const CreateOrUpdateDeaths = ({
     hasNextPage,
     fetchNextPage,
   } = GetAnimalsAPI({
+    search,
     take: 10,
     sort: 'desc',
     status: 'ACTIVE',
@@ -198,16 +204,22 @@ const CreateOrUpdateDeaths = ({
 
                 <div className="flex items-center space-x-4 w-full">
                   {!death?.id ? (
-                    <div className="mb-4 w-full mt-2">
+                    <div className="mb-4 w-full">
                       <Label>
                         Sélectionez les animaux morts
                         <span className="text-red-600">*</span>
                       </Label>
                       <Select>
                         <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select death animals" />
+                          <SelectValue placeholder="Select animals" />
                         </SelectTrigger>
                         <SelectContent className="dark:border-gray-800">
+                          <div className="mr-auto items-center gap-2">
+                            <SearchInput
+                              placeholder="Search by code"
+                              onChange={handleSetSearch}
+                            />
+                          </div>
                           <SelectGroup>
                             {isLoadingAnimals ? (
                               <LoadingFile />
@@ -222,31 +234,43 @@ const CreateOrUpdateDeaths = ({
                             ) : (
                               dataAnimals?.pages
                                 .flatMap((page: any) => page?.data?.value)
-                                .map((item, index) => (
+                                .map((item) => (
                                   <>
-                                    <div key={index}>
-                                      <label
-                                        htmlFor={item?.id}
-                                        className="flex cursor-pointer items-start gap-4 rounded-lg border border-gray-200 p-4 transition hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-900"
-                                      >
-                                        <div className="flex items-center">
-                                          &#8203;
-                                          <input
-                                            type="checkbox"
-                                            className="size-4 rounded cursor-pointer border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:ring-offset-gray-900"
-                                            id={item?.id}
-                                            {...register('animals')}
-                                            value={item?.code}
-                                          />
-                                        </div>
-
-                                        <div>
-                                          <strong className="font-medium text-gray-900 dark:text-white">
-                                            {item?.code}
-                                          </strong>
-                                        </div>
-                                      </label>
-                                    </div>
+                                    <Controller
+                                      key={item?.code}
+                                      control={control}
+                                      name="animals"
+                                      render={({ field: { ...field } }) => (
+                                        <>
+                                          <div
+                                            className="flex flex-row items-start space-x-3 space-y-0 rounded-md p-4"
+                                            key={item?.code}
+                                          >
+                                            <Checkbox
+                                              checked={field?.value?.includes(
+                                                item?.code,
+                                              )}
+                                              onCheckedChange={(checked) => {
+                                                return checked
+                                                  ? field.onChange([
+                                                      ...(field.value || []),
+                                                      item?.code,
+                                                    ])
+                                                  : field?.onChange(
+                                                      field?.value?.filter(
+                                                        (value: any) =>
+                                                          value !== item?.code,
+                                                      ),
+                                                    );
+                                              }}
+                                            />
+                                            <div className="space-y-1 leading-none">
+                                              <Label>{item?.code}</Label>
+                                            </div>
+                                          </div>
+                                        </>
+                                      )}
+                                    />
                                   </>
                                 ))
                             )}
@@ -268,7 +292,7 @@ const CreateOrUpdateDeaths = ({
                 <div className="mb-4">
                   <TextAreaInput
                     control={control}
-                    label="Description"
+                    label="Cause et moyen de disposition des carcasses"
                     name="note"
                     placeholder="Note"
                     errors={errors}

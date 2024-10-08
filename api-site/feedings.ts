@@ -7,7 +7,7 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 
-export const CreateOrUpdateOneFeedingAPI = ({
+export const CreateOneFeedingAPI = ({
   onSuccess,
   onError,
 }: {
@@ -18,18 +18,53 @@ export const CreateOrUpdateOneFeedingAPI = ({
   const queryClient = useQueryClient();
   const result = useMutation({
     mutationKey: queryKey,
-    mutationFn: async (payload: FeedingsPostModel & { feedingId: string }) => {
+    mutationFn: async (payload: FeedingsPostModel) => {
+      await makeApiCall({
+        action: 'createOneFeeding',
+        body: { ...payload },
+      });
+    },
+    onError: async (error) => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onError) {
+        onError(error);
+      }
+    },
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+  });
+
+  return result;
+};
+
+export const UpdateOneFeedingAPI = ({
+  onSuccess,
+  onError,
+}: {
+  onSuccess?: () => void;
+  onError?: (error: any) => void;
+} = {}) => {
+  const queryKey = ['animals'];
+  const queryClient = useQueryClient();
+  const result = useMutation({
+    mutationKey: queryKey,
+    mutationFn: async (payload: any & { feedingId: string }) => {
       const { feedingId } = payload;
-      return feedingId
-        ? await makeApiCall({
-            action: 'updateOneFeeding',
-            body: payload,
-            urlParams: { feedingId },
-          })
-        : await makeApiCall({
-            action: 'createOneFeeding',
-            body: { ...payload },
-          });
+      return await makeApiCall({
+        action: 'updateOneFeeding',
+        body: { ...payload },
+        urlParams: { feedingId },
+      });
     },
     onError: async (error) => {
       await queryClient.invalidateQueries({ queryKey });

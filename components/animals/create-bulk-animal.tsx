@@ -43,6 +43,7 @@ const schema = yup.object({
   number: yup.number().required('number is a required field'),
   weight: yup.number().required('weight is a required field'),
   gender: yup.string().required('gender is a required field'),
+  productionPhase: yup.string().required('productionPhase is a required field'),
 });
 
 const CreateBulkAnimals = ({
@@ -80,6 +81,7 @@ const CreateBulkAnimals = ({
         'gender',
         'breedName',
         'locationCode',
+        'productionPhase',
       ];
       fields?.forEach((field: any) => setValue(field, animal[field]));
     }

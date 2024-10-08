@@ -71,10 +71,10 @@ const ViewTreatment = ({
                   <Label htmlFor="text">Method</Label>
                   <Input disabled type="text" value={getOneTreatment?.method} />
                 </div>
+                <Label htmlFor="text">Observation</Label>
                 <div className="mb-4 disabled">
                   <TextAreaInput
                     control={control}
-                    label="Note"
                     name="note"
                     placeholder={getOneTreatment?.note}
                     errors={errors}

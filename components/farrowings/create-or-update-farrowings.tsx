@@ -30,6 +30,7 @@ import { Label } from '../ui/label';
 const schema = yup.object({
   codeFemale: yup.string().optional(),
   litter: yup.number().required('litter is a required field'),
+  weight: yup.number().required('weight is a required field'),
   note: yup.string().required('note is a required field'),
 });
 
@@ -59,7 +60,7 @@ const CreateOrUpdateFarrowings = ({
 
   useEffect(() => {
     if (farrowing) {
-      const fields = ['codeFemale', 'litter', 'note'];
+      const fields = ['codeFemale', 'litter', 'note', 'weight'];
       fields?.forEach((field: any) => setValue(field, farrowing[field]));
     }
   }, [farrowing, setValue]);
@@ -233,7 +234,8 @@ const CreateOrUpdateFarrowings = ({
                 ) : null}
                 <div className="mb-2">
                   <Label>
-                    Portée: <span className="text-red-600">*</span>
+                    {t.formatMessage({ id: 'TABFARROWING.LITTER' })}
+                    <span className="text-red-600">*</span>
                   </Label>
                   <TextInput
                     control={control}
@@ -244,11 +246,23 @@ const CreateOrUpdateFarrowings = ({
                   />
                 </div>
                 <div className="mb-4">
+                  <Label>
+                    {t.formatMessage({ id: 'VIEW.WEIGHT' })}(g)
+                    <span className="text-red-600">*</span>
+                  </Label>
+                  <TextInput
+                    control={control}
+                    type="number"
+                    name="weight"
+                    placeholder="Unit weight"
+                    errors={errors}
+                  />
+                </div>
+                <div className="mb-4">
                   <TextAreaInput
                     control={control}
-                    label="Description"
                     name="note"
-                    placeholder="Note"
+                    placeholder="Observation"
                     errors={errors}
                   />
                 </div>

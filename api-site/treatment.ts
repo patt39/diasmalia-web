@@ -1,4 +1,4 @@
-import { TreatmentAvesModel, TreatmentsModel } from '@/types/treatments';
+import { TreatmentAvesModel, TreatmentsPostModel } from '@/types/treatments';
 import { makeApiCall, PaginationRequest } from '@/utils';
 import {
   useInfiniteQuery,
@@ -29,6 +29,88 @@ export const GetOneTreatmentAPI = (payload: { treatmentId: string }) => {
   };
 };
 
+export const CreateOneTreatmentAPI = ({
+  onSuccess,
+  onError,
+}: {
+  onSuccess?: () => void;
+  onError?: (error: any) => void;
+} = {}) => {
+  const queryKey = ['treatments'];
+  const queryClient = useQueryClient();
+  const result = useMutation({
+    mutationKey: queryKey,
+    mutationFn: async (payload: TreatmentsPostModel) => {
+      await makeApiCall({
+        action: 'createOneTreatment',
+        body: { ...payload },
+      });
+    },
+    onError: async (error) => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onError) {
+        onError(error);
+      }
+    },
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+  });
+
+  return result;
+};
+
+export const UpdateOneTreatmentAPI = ({
+  onSuccess,
+  onError,
+}: {
+  onSuccess?: () => void;
+  onError?: (error: any) => void;
+} = {}) => {
+  const queryKey = ['treatments'];
+  const queryClient = useQueryClient();
+  const result = useMutation({
+    mutationKey: queryKey,
+    mutationFn: async (payload: any & { treatmentId: string }) => {
+      const { treatmentId } = payload;
+      return await makeApiCall({
+        action: 'updateOneTreatment',
+        body: { ...payload },
+        urlParams: { treatmentId },
+      });
+    },
+    onError: async (error) => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onError) {
+        onError(error);
+      }
+    },
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+  });
+
+  return result;
+};
+
 export const CreateOrUpdateOneTreatmentAPI = ({
   onSuccess,
   onError,
@@ -40,7 +122,9 @@ export const CreateOrUpdateOneTreatmentAPI = ({
   const queryClient = useQueryClient();
   const result = useMutation({
     mutationKey: queryKey,
-    mutationFn: async (payload: TreatmentsModel & { treatmentId: string }) => {
+    mutationFn: async (
+      payload: TreatmentsPostModel & { treatmentId: string },
+    ) => {
       const { treatmentId } = payload;
       return treatmentId
         ? await makeApiCall({
@@ -83,7 +167,7 @@ export const CreateOrUpdateOneAvesTreatmentAPI = ({
   onSuccess?: () => void;
   onError?: (error: any) => void;
 } = {}) => {
-  const queryKey = ['aves-treatments'];
+  const queryKey = ['treatments'];
   const queryClient = useQueryClient();
   const result = useMutation({
     mutationKey: queryKey,
@@ -146,7 +230,7 @@ export const GetTreatmentsAPI = (
     organizationId,
   } = payload;
   return useInfiniteQuery({
-    queryKey: ['treatments', 'aves-treatments', 'infinite', { ...payload }],
+    queryKey: ['treatments', 'infinite', { ...payload }],
     getNextPageParam: (lastPage: any) => lastPage.data.next_page,
     queryFn: async ({ pageParam = 1 }) =>
       await makeApiCall({
@@ -163,7 +247,6 @@ export const GetTreatmentsAPI = (
           page: pageParam,
         },
       }),
-    staleTime: 60_000,
     initialPageParam: 1,
   });
 };

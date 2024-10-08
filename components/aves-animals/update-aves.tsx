@@ -49,6 +49,7 @@ const UpdateAvesAnimals = ({
 }) => {
   const {
     t,
+    watch,
     control,
     setValue,
     handleSubmit,
@@ -60,6 +61,8 @@ const UpdateAvesAnimals = ({
   } = useReactHookForm({ schema });
   const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
+  const watchCages = watch('addCages', '');
+  const watchProductionPhase = watch('productionPhase', '');
   const { data: animalType } = GetOneAnimalTypeAPI({
     animalTypeId: animalTypeId,
   });
@@ -70,8 +73,10 @@ const UpdateAvesAnimals = ({
     data: dataLocations,
   } = GetLocationsAPI({
     take: 10,
+    status: true,
     sort: 'desc',
     sortBy: 'createdAt',
+    addCages: 'YES',
     animalTypeId: animalTypeId,
   });
 
@@ -215,7 +220,7 @@ const UpdateAvesAnimals = ({
                           errors={errors}
                         />
                       </div>
-                      <div className="">
+                      <div>
                         <Label>
                           {t.formatMessage({ id: 'LAUNCHING.DATE' })}
                         </Label>
@@ -227,8 +232,8 @@ const UpdateAvesAnimals = ({
                         />
                       </div>
                     </div>
-                    {animalType.name === 'Pondeuses' ? (
-                      <div className="mb-2">
+                    {animalType?.name === 'Pondeuses' ? (
+                      <div className="mb-4">
                         <Label>
                           {t.formatMessage({
                             id: 'TABFEEDING.PRODUCTIONPHASE',
@@ -250,54 +255,85 @@ const UpdateAvesAnimals = ({
                     ) : (
                       ''
                     )}
-                    <div className="w-full">
-                      <Label>{t.formatMessage({ id: 'LOCATION.CODE' })}</Label>
-                      <Controller
-                        control={control}
-                        name="locationCode"
-                        render={({ field: { value, onChange } }) => (
-                          <Select
-                            onValueChange={onChange}
-                            name={'locationCode'}
-                            value={value}
-                          >
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Select a location code" />
-                            </SelectTrigger>
-                            <SelectContent className="dark:border-gray-800">
-                              <SelectGroup>
-                                <SelectLabel>Location codes</SelectLabel>
-                                {isLoadingLocations ? (
-                                  <LoadingFile />
-                                ) : isErrorLocations ? (
-                                  <ErrorFile
-                                    title="404"
-                                    description="Error finding data please try again..."
-                                  />
-                                ) : Number(
-                                    dataLocations?.pages[0]?.data?.total,
-                                  ) <= 0 ? (
-                                  <ErrorFile description="Don't have location codes" />
-                                ) : (
-                                  dataLocations?.pages
-                                    .flatMap((page: any) => page?.data?.value)
-                                    .map((item, index) => (
-                                      <>
-                                        <SelectItem
-                                          key={index}
-                                          value={item?.code}
-                                        >
-                                          {item?.code}
-                                        </SelectItem>
-                                      </>
-                                    ))
-                                )}
-                              </SelectGroup>
-                            </SelectContent>
-                          </Select>
-                        )}
-                      />
-                    </div>
+                    {animalType?.name === 'Pondeuses' &&
+                    watchProductionPhase === 'LAYING' ? (
+                      <div className="my-2">
+                        <Label>
+                          Mettre en cages?
+                          <span className="text-red-600">*</span>
+                        </Label>
+                        <SelectInput
+                          firstOptionName="Choose a production type"
+                          control={control}
+                          errors={errors}
+                          placeholder="Add in cages ?"
+                          valueType="text"
+                          name="addCages"
+                          dataItem={[
+                            { id: 1, name: 'YES' },
+                            { id: 2, name: 'NO' },
+                          ]}
+                        />
+                      </div>
+                    ) : (
+                      ''
+                    )}
+                    {animalType?.name === 'Pondeuses' &&
+                    watchProductionPhase === 'LAYING' &&
+                    watchCages === 'YES' ? (
+                      <div className="w-full">
+                        <Label>
+                          {t.formatMessage({ id: 'LOCATION.CODE' })}
+                        </Label>
+                        <Controller
+                          control={control}
+                          name="locationCode"
+                          render={({ field: { value, onChange } }) => (
+                            <Select
+                              onValueChange={onChange}
+                              name={'locationCode'}
+                              value={value}
+                            >
+                              <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Select a location code" />
+                              </SelectTrigger>
+                              <SelectContent className="dark:border-gray-800">
+                                <SelectGroup>
+                                  <SelectLabel>Location codes</SelectLabel>
+                                  {isLoadingLocations ? (
+                                    <LoadingFile />
+                                  ) : isErrorLocations ? (
+                                    <ErrorFile
+                                      title="404"
+                                      description="Error finding data please try again..."
+                                    />
+                                  ) : Number(
+                                      dataLocations?.pages[0]?.data?.total,
+                                    ) <= 0 ? (
+                                    <ErrorFile description="Don't have location codes" />
+                                  ) : (
+                                    dataLocations?.pages
+                                      .flatMap((page: any) => page?.data?.value)
+                                      .map((item, index) => (
+                                        <>
+                                          <SelectItem
+                                            key={index}
+                                            value={item?.code}
+                                          >
+                                            {item?.code}
+                                          </SelectItem>
+                                        </>
+                                      ))
+                                  )}
+                                </SelectGroup>
+                              </SelectContent>
+                            </Select>
+                          )}
+                        />
+                      </div>
+                    ) : (
+                      ''
+                    )}
                   </>
                 ) : (
                   <>
@@ -318,7 +354,7 @@ const UpdateAvesAnimals = ({
                         ]}
                       />
                     </div>
-                    <div className="my-2 flex items-center space-x-10">
+                    <div className="my-2 flex items-center space-x-16">
                       {animal?._count?.feedings !== 0 ? (
                         <>
                           <div>
@@ -400,54 +436,6 @@ const UpdateAvesAnimals = ({
                           </div>
                         </>
                       )}
-                    </div>
-                    <div className="w-full">
-                      <Label> {t.formatMessage({ id: 'LOCATION.CODE' })}</Label>
-                      <Controller
-                        control={control}
-                        name="locationCode"
-                        render={({ field: { value, onChange } }) => (
-                          <Select
-                            onValueChange={onChange}
-                            name={'locationCode'}
-                            value={value}
-                          >
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Select a location code" />
-                            </SelectTrigger>
-                            <SelectContent className="dark:border-gray-800">
-                              <SelectGroup>
-                                <SelectLabel>Location codes</SelectLabel>
-                                {isLoadingLocations ? (
-                                  <LoadingFile />
-                                ) : isErrorLocations ? (
-                                  <ErrorFile
-                                    title="404"
-                                    description="Error finding data please try again..."
-                                  />
-                                ) : Number(
-                                    dataLocations?.pages[0]?.data?.total,
-                                  ) <= 0 ? (
-                                  <ErrorFile description="Don't have location codes" />
-                                ) : (
-                                  dataLocations?.pages
-                                    .flatMap((page: any) => page?.data?.value)
-                                    .map((item, index) => (
-                                      <>
-                                        <SelectItem
-                                          key={index}
-                                          value={item?.code}
-                                        >
-                                          {item?.code}
-                                        </SelectItem>
-                                      </>
-                                    ))
-                                )}
-                              </SelectGroup>
-                            </SelectContent>
-                          </Select>
-                        )}
-                      />
                     </div>
                     {!['Poulet de chair', 'Pisciculture', 'Pondeuses'].includes(
                       animalType?.name,

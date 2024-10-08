@@ -21,7 +21,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { PaginationPage } from '@/utils';
-import { Bone, ListFilter } from 'lucide-react';
+import { ListFilter } from 'lucide-react';
 import { useState } from 'react';
 import {
   DropdownMenu,
@@ -131,16 +131,6 @@ const TabAvesDeaths = ({ animalTypeId }: { animalTypeId: string }) => {
                 </DropdownMenuCheckboxItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button
-              size="sm"
-              className="h-8 gap-1"
-              onClick={() => setIsOpen(true)}
-            >
-              <Bone className="h-3.5 w-3.5  hover:shadow-xxl" />
-              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                {t.formatMessage({ id: 'ANIMALTYPE.ANIMALS.DEATHS.CREATE' })}
-              </span>
-            </Button>
           </div>
         </div>
       </CardHeader>
@@ -156,6 +146,9 @@ const TabAvesDeaths = ({ animalTypeId }: { animalTypeId: string }) => {
                 <TableHead>Cause</TableHead>
                 <TableHead>
                   {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
+                </TableHead>
+                <TableHead>
+                  {t.formatMessage({ id: 'VIEW.LOCATION' })}
                 </TableHead>
                 <TableHead>Date</TableHead>
                 <TableHead>

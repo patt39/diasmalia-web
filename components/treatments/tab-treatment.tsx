@@ -11,7 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Eclipse, ListFilter } from 'lucide-react';
+import { ListFilter } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { LoadingFile } from '../ui-setting/ant';
@@ -25,11 +25,9 @@ import {
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 import { Tooltip, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
-import { CreateOrUpdatetreatments } from './create-or-update-treatments';
 import { ListTreatments } from './list-treatments';
 
 const TabTreatments = ({ animalTypeId }: { animalTypeId: string }) => {
-  const [isOpen, setIsOpen] = useState(false);
   const [periode, setPeriode] = useState('');
   const { ref, inView } = useInView();
   const { t, search, handleSetSearch } = useInputState();
@@ -97,7 +95,13 @@ const TabTreatments = ({ animalTypeId }: { animalTypeId: string }) => {
                 <Button variant="outline" size="sm" className="h-8 gap-1">
                   <ListFilter className="h-3.5 w-3.5" />
                   <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    Filter
+                    {periode == ''
+                      ? t.formatMessage({ id: 'ACTIVITY.FILTERALL' })
+                      : periode == '7'
+                        ? t.formatMessage({ id: 'ACTIVITY.LAST7DAYS' })
+                        : periode == '15'
+                          ? t.formatMessage({ id: 'ACTIVITY.LAST15DAYS' })
+                          : t.formatMessage({ id: 'ACTIVITY.LAST30DAYS' })}
                   </span>
                 </Button>
               </DropdownMenuTrigger>
@@ -131,18 +135,6 @@ const TabTreatments = ({ animalTypeId }: { animalTypeId: string }) => {
                 </DropdownMenuCheckboxItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button
-              size="sm"
-              className="h-8 gap-1"
-              onClick={() => setIsOpen(true)}
-            >
-              <Eclipse className="h-3.5 w-3.5  hover:shadow-xxl" />
-              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                {t.formatMessage({
-                  id: 'ANIMALTYPE.ANIMALS.TREATMENT.CREATE',
-                })}
-              </span>
-            </Button>
           </div>
         </div>
       </CardHeader>
@@ -194,11 +186,6 @@ const TabTreatments = ({ animalTypeId }: { animalTypeId: string }) => {
           )}
         </CardContent>
       </main>
-      <CreateOrUpdatetreatments
-        treatment={animalTypeId}
-        showModal={isOpen}
-        setShowModal={setIsOpen}
-      />
     </>
   );
 };

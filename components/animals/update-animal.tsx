@@ -60,7 +60,6 @@ const UpdateAnimals = ({
     setHasErrors,
   } = useReactHookForm({ schema });
   const { query } = useRouter();
-  const animalTypeId = String(query?.animalTypeId);
   const { ref, inView } = useInView();
 
   useEffect(() => {
@@ -81,7 +80,7 @@ const UpdateAnimals = ({
     }
   }, [animal, setValue]);
 
-  // Create or Update data
+  // Update data
   const { mutateAsync: saveMutation } = UpdateOneAnimalAPI({
     onSuccess: () => {
       setHasErrors(false);
@@ -127,7 +126,7 @@ const UpdateAnimals = ({
     sort: 'desc',
     status: true,
     sortBy: 'createdAt',
-    animalTypeId: animalTypeId,
+    animalTypeId: animal?.animalTypeId,
   });
 
   const {
@@ -138,7 +137,7 @@ const UpdateAnimals = ({
     take: 10,
     sort: 'desc',
     sortBy: 'createdAt',
-    animalTypeId: animalTypeId,
+    animalTypeId: animal?.animalTypeId,
   });
 
   const {
@@ -155,7 +154,7 @@ const UpdateAnimals = ({
     status: 'ACTIVE',
     sortBy: 'createdAt',
     productionPhase: 'REPRODUCTION',
-    animalTypeId: animalTypeId,
+    animalTypeId: animal?.animalTypeId,
   });
 
   const {
@@ -169,7 +168,7 @@ const UpdateAnimals = ({
     status: 'ACTIVE',
     sortBy: 'createdAt',
     productionPhase: 'REPRODUCTION',
-    animalTypeId: animalTypeId,
+    animalTypeId: animal?.animalTypeId,
   });
 
   useEffect(() => {
@@ -244,7 +243,9 @@ const UpdateAnimals = ({
                     />
                   </div>
                   <div>
-                    <Label>{t.formatMessage({ id: 'TABANIMAL.WEIGHT' })}</Label>
+                    <Label>
+                      {t.formatMessage({ id: 'TABANIMAL.WEIGHT' })}(g)
+                    </Label>
                     <TextInput
                       control={control}
                       type="number"
@@ -333,7 +334,7 @@ const UpdateAnimals = ({
                           value={value}
                         >
                           <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select a male code" />
+                            <SelectValue placeholder="Codefather" />
                           </SelectTrigger>
                           <SelectContent className="dark:border-gray-800">
                             <SelectGroup>
@@ -361,6 +362,15 @@ const UpdateAnimals = ({
                                       </SelectItem>
                                     </>
                                   ))
+                              )}
+                              {hasNextPage && (
+                                <div className="mx-auto mt-4 justify-center text-center">
+                                  <ButtonLoadMore
+                                    ref={ref}
+                                    isFetchingNextPage={isFetchingNextPage}
+                                    onClick={() => fetchNextPage()}
+                                  />
+                                </div>
                               )}
                             </SelectGroup>
                           </SelectContent>
@@ -398,7 +408,7 @@ const UpdateAnimals = ({
                         value={value}
                       >
                         <SelectTrigger>
-                          <SelectValue placeholder="Select a breed" />
+                          <SelectValue placeholder={animal?.breed?.name} />
                         </SelectTrigger>
                         <SelectContent className="dark:border-gray-800">
                           <SelectGroup>
@@ -418,8 +428,8 @@ const UpdateAnimals = ({
                                 .flatMap((page: any) => page?.data?.value)
                                 .map((item, index) => (
                                   <>
-                                    <SelectItem key={index} value={item.name}>
-                                      {item.name}
+                                    <SelectItem key={index} value={item?.name}>
+                                      {item?.name}
                                     </SelectItem>
                                   </>
                                 ))
@@ -450,7 +460,9 @@ const UpdateAnimals = ({
                           value={value}
                         >
                           <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select a location code" />
+                            <SelectValue
+                              placeholder={animal?.location?.code.toUpperCase()}
+                            />
                           </SelectTrigger>
                           <SelectContent className="dark:border-gray-800">
                             <SelectGroup>
@@ -515,6 +527,7 @@ const UpdateAnimals = ({
                     )}
                   </div>
                 </div>
+
                 <div className="mt-4 flex items-center space-x-4">
                   <ButtonInput
                     type="button"

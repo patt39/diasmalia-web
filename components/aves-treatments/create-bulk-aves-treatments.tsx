@@ -1,5 +1,6 @@
 import { GetAnimalsAPI } from '@/api-site/animals';
-import { CreateOrUpdateOneTreatmentAPI } from '@/api-site/treatment';
+import { GetHealthsAPI } from '@/api-site/health';
+import { CreateOneTreatmentAPI } from '@/api-site/treatment';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput, ButtonLoadMore } from '@/components/ui-setting';
 import {
@@ -7,7 +8,7 @@ import {
   TextAreaInput,
   TextInput,
 } from '@/components/ui-setting/shadcn';
-import { TreatmentsModel } from '@/types/treatments';
+import { TreatmentsPostModel } from '@/types/treatments';
 import {
   AlertDangerNotification,
   AlertSuccessNotification,
@@ -27,6 +28,7 @@ import {
   Select,
   SelectContent,
   SelectGroup,
+  SelectItem,
   SelectTrigger,
   SelectValue,
 } from '../ui/select';
@@ -39,61 +41,42 @@ import {
 
 const schema = yup.object({
   animals: yup.array().optional(),
-  diagnosis: yup.string().optional(),
+  note: yup.string().optional(),
   dose: yup.number().optional(),
+  diagnosis: yup.string().optional(),
+  healthId: yup.string().optional(),
   name: yup.string().required('name is required'),
-  note: yup.string().required('note is a required field'),
-  medication: yup.string().required('medication is required'),
   method: yup.string().required('method is required'),
 });
 
-const CreateOrUpdatetreatments = ({
+const CreateBulkAvestreatments = ({
   showModal,
   setShowModal,
   treatment,
-  location,
 }: {
   showModal: boolean;
   setShowModal: any;
   treatment?: any;
-  location?: any;
 }) => {
   const {
     t,
     watch,
     control,
-    setValue,
     handleSubmit,
     errors,
     loading,
     setLoading,
     hasErrors,
     setHasErrors,
-    register,
   } = useReactHookForm({ schema });
   const { query } = useRouter();
   const { ref, inView } = useInView();
   const animalTypeId = String(query?.animalTypeId);
-  const selectedAnimals = watch('animals', '');
-  const countSelectedAnimals = selectedAnimals.length;
+  const selectedAnimals = watch('animals', []);
+  const countSelectedAnimals = selectedAnimals?.length;
 
-  useEffect(() => {
-    if (treatment) {
-      const fields = [
-        'animals',
-        'note',
-        'diagnosis',
-        'dose',
-        'name',
-        'medication',
-        'method',
-      ];
-      fields?.forEach((field: any) => setValue(field, treatment[field]));
-    }
-  }, [treatment, setValue]);
-
-  // Create or Update data
-  const { mutateAsync: saveMutation } = CreateOrUpdateOneTreatmentAPI({
+  // Create
+  const { mutateAsync: saveMutation } = CreateOneTreatmentAPI({
     onSuccess: () => {
       setHasErrors(false);
       setLoading(false);
@@ -104,15 +87,14 @@ const CreateOrUpdatetreatments = ({
     },
   });
 
-  const onSubmit: SubmitHandler<TreatmentsModel> = async (
-    payload: TreatmentsModel,
+  const onSubmit: SubmitHandler<TreatmentsPostModel> = async (
+    payload: TreatmentsPostModel,
   ) => {
     setLoading(true);
     setHasErrors(undefined);
     try {
       await saveMutation({
         ...payload,
-        treatmentId: treatment?.id,
       });
       setHasErrors(false);
       setLoading(false);
@@ -138,11 +120,23 @@ const CreateOrUpdatetreatments = ({
     hasNextPage,
     fetchNextPage,
   } = GetAnimalsAPI({
-    take: 5,
+    take: 10,
     sort: 'desc',
     status: 'ACTIVE',
     sortBy: 'createdAt',
-    locationId: location?.id,
+    animalTypeId: animalTypeId,
+  });
+
+  const {
+    isLoading: isLoadingTreatments,
+    isError: isErrorTreatments,
+    data: dataTreatments,
+  } = GetHealthsAPI({
+    take: 10,
+    sort: 'desc',
+    status: true,
+    sortBy: 'createdAt',
+    category: 'MEDICATION',
     animalTypeId: animalTypeId,
   });
 
@@ -203,7 +197,7 @@ const CreateOrUpdatetreatments = ({
                 </button>
               </div>
             </div>
-            <form className="mt-2" onSubmit={handleSubmit(onSubmit)}>
+            <form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
               <div className="flex-auto justify-center p-2">
                 {hasErrors && (
                   <div className="bg-white py-6 dark:bg-[#121212]">
@@ -219,90 +213,86 @@ const CreateOrUpdatetreatments = ({
                   </div>
                 )}
 
-                {!treatment.id ? (
-                  <div className="flex items-center space-x-4 w-full">
-                    <div className="mb-4 w-full mt-2">
-                      <Label className="pt-3">
-                        Sélectionez les animaux à soigner:
-                        <span className="text-red-600">*</span>
-                      </Label>
-                      <Select>
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select animals" />
-                        </SelectTrigger>
-                        <SelectContent className="dark:border-gray-800">
-                          <SelectGroup>
-                            {isLoadingAnimals ? (
-                              <LoadingFile />
-                            ) : isErrorAnimals ? (
-                              <ErrorFile
-                                title="404"
-                                description="Error finding data please try again..."
-                              />
-                            ) : Number(dataAnimals?.pages[0]?.data?.total) <=
-                              0 ? (
-                              <ErrorFile description="Don't have active animals created yet please do" />
-                            ) : (
-                              dataAnimals?.pages
-                                .flatMap((page: any) => page?.data?.value)
-                                .map((item, index) => (
-                                  <>
-                                    <Controller
-                                      key={item?.code}
-                                      control={control}
-                                      name="animals"
-                                      render={({ field: { ...field } }) => (
-                                        <>
-                                          <div
-                                            className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow"
-                                            key={item?.code}
-                                          >
-                                            <Checkbox
-                                              checked={field?.value?.includes(
-                                                item?.code,
-                                              )}
-                                              onCheckedChange={(checked) => {
-                                                return checked
-                                                  ? field.onChange([
-                                                      ...(field.value || []),
-                                                      item?.code,
-                                                    ])
-                                                  : field?.onChange(
-                                                      field?.value?.filter(
-                                                        (value: any) =>
-                                                          value !== item?.code,
-                                                      ),
-                                                    );
-                                              }}
-                                            />
-                                            <div className="space-y-1 leading-none">
-                                              <Label>{item?.code}</Label>
-                                            </div>
-                                          </div>
-                                        </>
-                                      )}
-                                    />
-                                  </>
-                                ))
-                            )}
-                            {hasNextPage && (
-                              <div className="mx-auto mt-4 justify-center text-center">
-                                <ButtonLoadMore
-                                  ref={ref}
-                                  isFetchingNextPage={isFetchingNextPage}
-                                  onClick={() => fetchNextPage()}
+                <div className="mb-2">
+                  <Label>
+                    {t.formatMessage({ id: 'ANIMAL.CODE' })}
+                    <span className="text-red-600">*</span>
+                  </Label>
+                  <Select>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select animals" />
+                    </SelectTrigger>
+                    <SelectContent className="dark:border-gray-800">
+                      <SelectGroup>
+                        {isLoadingAnimals ? (
+                          <LoadingFile />
+                        ) : isErrorAnimals ? (
+                          <ErrorFile
+                            title="404"
+                            description="Error finding data please try again..."
+                          />
+                        ) : Number(dataAnimals?.pages[0]?.data?.total) <= 0 ? (
+                          <ErrorFile description="Don't have active animals created yet please do" />
+                        ) : (
+                          dataAnimals?.pages
+                            .flatMap((page: any) => page?.data?.value)
+                            .map((item) => (
+                              <>
+                                <Controller
+                                  key={item?.code}
+                                  control={control}
+                                  name="animals"
+                                  render={({ field: { ...field } }) => (
+                                    <>
+                                      <div
+                                        className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow"
+                                        key={item?.code}
+                                      >
+                                        <Checkbox
+                                          checked={field?.value?.includes(
+                                            item?.code,
+                                          )}
+                                          onCheckedChange={(checked) => {
+                                            return checked
+                                              ? field.onChange([
+                                                  ...(field.value || []),
+                                                  item?.code,
+                                                ])
+                                              : field?.onChange(
+                                                  field?.value?.filter(
+                                                    (value: any) =>
+                                                      value !== item?.code,
+                                                  ),
+                                                );
+                                          }}
+                                        />
+                                        <div className="space-y-1 leading-none">
+                                          <Label>{item?.code}</Label>
+                                        </div>
+                                      </div>
+                                    </>
+                                  )}
                                 />
-                              </div>
-                            )}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                ) : null}
-
-                <div className="mb-4 flex items-center space-x-1">
-                  <Label>Treatement:</Label>
+                              </>
+                            ))
+                        )}
+                        {hasNextPage && (
+                          <div className="mx-auto mt-4 justify-center text-center">
+                            <ButtonLoadMore
+                              ref={ref}
+                              isFetchingNextPage={isFetchingNextPage}
+                              onClick={() => fetchNextPage()}
+                            />
+                          </div>
+                        )}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="mb-2">
+                  <Label>
+                    Treatement<span className="text-red-600">*</span>
+                  </Label>
                   <TextInput
                     control={control}
                     type="text"
@@ -311,8 +301,10 @@ const CreateOrUpdatetreatments = ({
                     errors={errors}
                   />
                 </div>
-                <div className="mb-4 flex items-center space-x-1">
-                  <Label>Diagnostic:</Label>
+                <div className="mb-2">
+                  <Label>
+                    Diagnostic<span className="text-red-600">*</span>
+                  </Label>
                   <TextInput
                     control={control}
                     type="text"
@@ -321,35 +313,55 @@ const CreateOrUpdatetreatments = ({
                     errors={errors}
                   />
                 </div>
-                <div className="mb-4 flex items-center space-x-1">
-                  <Label>Medication:</Label>
-                  <SelectInput
-                    firstOptionName="Give a medication"
+                <div className="mb-4">
+                  <Label>
+                    Medication<span className="text-red-600">*</span>
+                  </Label>
+                  <Controller
                     control={control}
-                    errors={errors}
-                    placeholder="Select medication"
-                    valueType="text"
-                    name="medication"
-                    dataItem={[
-                      { id: 1, name: 'VACCINS' },
-                      { id: 2, name: 'ANTIVIRALS' },
-                      { id: 3, name: 'ANALGESICS' },
-                      { id: 4, name: 'PROBIOTICS' },
-                      { id: 5, name: 'ANTIBIOTICS' },
-                      { id: 6, name: 'ANTIFUNGALS' },
-                      { id: 7, name: 'ANTHALMITICS' },
-                      { id: 8, name: 'COCCIDIOSTATS' },
-                      { id: 9, name: 'BRONCODILATORS' },
-                      { id: 10, name: 'GROWTHPROMOTER' },
-                      { id: 11, name: 'ANTIPARASITICS' },
-                      { id: 12, name: 'MINERALVITAMINS' },
-                      { id: 13, name: 'CORTICOSTEROIDS' },
-                      { id: 14, name: 'TROPICALTREATMENTS' },
-                    ]}
+                    name="healthId"
+                    render={({ field: { value, onChange } }) => (
+                      <Select
+                        onValueChange={onChange}
+                        name={'healthId'}
+                        value={value}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select medication" />
+                        </SelectTrigger>
+                        <SelectContent className="dark:border-gray-800">
+                          <SelectGroup>
+                            {isLoadingTreatments ? (
+                              <LoadingFile />
+                            ) : isErrorTreatments ? (
+                              <ErrorFile
+                                title="404"
+                                description="Error finding data please try again..."
+                              />
+                            ) : Number(dataTreatments?.pages[0]?.data?.total) <=
+                              0 ? (
+                              <ErrorFile description="Don't have active animals yet" />
+                            ) : (
+                              dataTreatments?.pages
+                                .flatMap((page: any) => page?.data?.value)
+                                .map((item: any, index: any) => (
+                                  <>
+                                    <SelectItem key={index} value={item?.id}>
+                                      {item?.name}
+                                    </SelectItem>
+                                  </>
+                                ))
+                            )}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    )}
                   />
                 </div>
-                <div className="mb-4 flex items-center space-x-2">
-                  <Label>Dose:</Label>
+                <div className="mb-4 flex items-center space-x-1">
+                  <Label>
+                    Dose:<span className="text-red-600">*</span>
+                  </Label>
                   <TextInput
                     control={control}
                     type="number"
@@ -357,7 +369,9 @@ const CreateOrUpdatetreatments = ({
                     placeholder="Give a dose"
                     errors={errors}
                   />
-                  <Label>Voie:</Label>
+                  <Label>
+                    Voie:<span className="text-red-600">*</span>
+                  </Label>
                   <SelectInput
                     firstOptionName="Give a method"
                     control={control}
@@ -410,4 +424,4 @@ const CreateOrUpdatetreatments = ({
   );
 };
 
-export { CreateOrUpdatetreatments };
+export { CreateBulkAvestreatments };

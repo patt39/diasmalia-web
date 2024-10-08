@@ -417,7 +417,7 @@ export function Index() {
                       <TabsTrigger value="sales">
                         {t.formatMessage({ id: 'MENU.SALES' })}
                       </TabsTrigger>
-                      <TabsTrigger value="analytics">Resume</TabsTrigger>
+                      <TabsTrigger value="analytics">Carrière</TabsTrigger>
                     </TabsList>
                   ) : [
                       'Pondeuses',

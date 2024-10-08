@@ -31,3 +31,18 @@ export type TreatmentAvesModel = {
     name: string;
   };
 };
+
+export type TreatmentsPostModel = {
+  createdAt: string;
+  id: string;
+  note: string;
+  dose: number;
+  name: string;
+  method: string;
+  medication: string;
+  diagnosis: string;
+  animals: any;
+  animalType: {
+    name: string;
+  };
+};

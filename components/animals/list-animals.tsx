@@ -17,9 +17,9 @@ import {
 import {
   Anvil,
   Calendar,
+  ClipboardPlus,
   Eye,
   History,
-  Hospital,
   MoreHorizontal,
   PencilIcon,
   ScanQrCode,
@@ -27,7 +27,6 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
-import { ViewHealth } from '../aves-animals/view-health';
 import { ActionModalDialog } from '../ui-setting/shadcn';
 import { Badge } from '../ui/badge';
 import { UpdateAnimals } from './update-animal';
@@ -147,21 +146,21 @@ const ListAnimals = ({ item, index }: { item: any; index: number }) => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="dark:border-gray-800">
-                <DropdownMenuItem onClick={() => setIsEdit(true)}>
-                  <PencilIcon className="size-4 text-gray-600 hover:text-cyan-600" />
-                  <span className="ml-2 cursor-pointer hover:text-cyan-600">
-                    {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
-                  </span>
-                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setIsView(true)}>
                   <Eye className="size-4 text-gray-600 hover:text-indigo-600" />
                   <span className="ml-2 cursor-pointer hover:text-indigo-600">
                     {t.formatMessage({ id: 'TABANIMAL.VIEW' })}
                   </span>
                 </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setIsEdit(true)}>
+                  <PencilIcon className="size-4 text-gray-600 hover:text-cyan-600" />
+                  <span className="ml-2 cursor-pointer hover:text-cyan-600">
+                    {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
+                  </span>
+                </DropdownMenuItem>
                 <Link href={`/treatment/${item?.id}`}>
                   <DropdownMenuItem>
-                    <Hospital className="size-4 text-gray-600 hover:text-green-600" />
+                    <ClipboardPlus className="size-4 text-gray-600 hover:text-green-600" />
                     <span className="ml-2 cursor-pointer hover:text-green-600">
                       {t.formatMessage({ id: 'HEALTH' })}
                     </span>
@@ -216,11 +215,6 @@ const ListAnimals = ({ item, index }: { item: any; index: number }) => {
               animal={item}
               showModal={isView}
               setShowModal={setIsView}
-            />
-            <ViewHealth
-              animal={item}
-              showModal={isHealthView}
-              setShowModal={setIsHealth}
             />
           </div>
         </div>

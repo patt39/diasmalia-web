@@ -1,5 +1,4 @@
-import { GetAnimalsAPI } from '@/api-site/animals';
-import { CreateOrUpdateOneIncubationAPI } from '@/api-site/incubations';
+import { CreateOneIncubationAPI } from '@/api-site/incubations';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
 import { IncubationsModel } from '@/types/incubation';
@@ -8,22 +7,11 @@ import {
   AlertSuccessNotification,
 } from '@/utils/alert-notification';
 import { XIcon } from 'lucide-react';
-import { useRouter } from 'next/router';
-import { Controller, SubmitHandler } from 'react-hook-form';
+import { SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
-import { DateInput, LoadingFile } from '../ui-setting/ant';
-import { ErrorFile } from '../ui-setting/ant/error-file';
+import { DateInput } from '../ui-setting/ant';
 import { TextInput } from '../ui-setting/shadcn';
 import { Label } from '../ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '../ui/select';
 
 const schema = yup.object({
   code: yup.string().optional(),
@@ -51,11 +39,9 @@ const CreateIncubations = ({
     hasErrors,
     setHasErrors,
   } = useReactHookForm({ schema });
-  const { query } = useRouter();
-  const animalTypeId = String(query?.animalTypeId);
 
   // Create
-  const { mutateAsync: saveMutation } = CreateOrUpdateOneIncubationAPI({
+  const { mutateAsync: saveMutation } = CreateOneIncubationAPI({
     onSuccess: () => {
       setHasErrors(false);
       setLoading(false);
@@ -74,7 +60,6 @@ const CreateIncubations = ({
     try {
       await saveMutation({
         ...payload,
-        incubationId: incubation?.id,
       });
       setHasErrors(false);
       setLoading(false);
@@ -91,19 +76,6 @@ const CreateIncubations = ({
       });
     }
   };
-
-  const {
-    isLoading: isLoadingAnimals,
-    isError: isErrorAnimals,
-    data: dataAnimals,
-  } = GetAnimalsAPI({
-    take: 10,
-    sort: 'desc',
-    status: 'ACTIVE',
-    sortBy: 'createdAt',
-    productionPhase: 'LAYING',
-    animalTypeId: animalTypeId,
-  });
 
   return (
     <>
@@ -135,51 +107,15 @@ const CreateIncubations = ({
                   </div>
                 )}
 
-                <div>
-                  <Label>
-                    {t.formatMessage({ id: 'ANIMAL.CODE' })}
-                    <span className="text-red-600">*</span>
-                  </Label>
-                  <Controller
+                <div className="items-center">
+                  <Label>{t.formatMessage({ id: 'ANIMAL.CODE' })}</Label>
+                  <TextInput
                     control={control}
+                    type="text"
                     name="code"
-                    render={({ field: { value, onChange } }) => (
-                      <Select
-                        onValueChange={onChange}
-                        name={'code'}
-                        value={value}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a band code" />
-                        </SelectTrigger>
-                        <SelectContent className="dark:border-gray-800">
-                          <SelectGroup>
-                            <SelectLabel>Codes</SelectLabel>
-                            {isLoadingAnimals ? (
-                              <LoadingFile />
-                            ) : isErrorAnimals ? (
-                              <ErrorFile
-                                title="404"
-                                description="Error finding data please try again..."
-                              />
-                            ) : Number(dataAnimals?.pages[0]?.data?.total) <=
-                              0 ? (
-                              <ErrorFile description="Don't have active animals in LAYING phase yet" />
-                            ) : (
-                              dataAnimals?.pages
-                                .flatMap((page: any) => page?.data?.value)
-                                .map((item, index) => (
-                                  <>
-                                    <SelectItem key={index} value={item?.code}>
-                                      {item?.code}
-                                    </SelectItem>
-                                  </>
-                                ))
-                            )}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    )}
+                    defaultValue={`${incubation?.animal?.code}`}
+                    placeholder="Give a code"
+                    errors={errors}
                   />
                 </div>
                 <div className="flex items-center my-2 space-x-10">
@@ -192,6 +128,7 @@ const CreateIncubations = ({
                       control={control}
                       type="number"
                       name="quantityStart"
+                      defaultValue={`${incubation?.quantity}`}
                       placeholder="Number eggs incubated"
                       errors={errors}
                     />

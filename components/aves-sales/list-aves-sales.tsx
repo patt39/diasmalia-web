@@ -33,7 +33,6 @@ const ListAvesSales = ({ item, index }: { item: any; index: number }) => {
   const [isEdit, setIsEdit] = useState(false);
   const [isView, setIsView] = useState(false);
   const { data: user } = GetOneUserMeAPI();
-  console.log('item ==>', item);
 
   const handleDownloadPdf = async () => {
     try {
@@ -135,8 +134,8 @@ const ListAvesSales = ({ item, index }: { item: any; index: number }) => {
                 </span>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => handleDownloadPdf()}>
-                <Download className="size-4 text-gray-600 hover:text-red-600" />
-                <span className="ml-2 cursor-pointer hover:text-red-600">
+                <Download className="size-4 text-gray-600 hover:text-stone-600" />
+                <span className="ml-2 cursor-pointer hover:text-stone-600">
                   {t.formatMessage({ id: 'TABANIMAL.DOWNLOAD' })}
                 </span>
               </DropdownMenuItem>

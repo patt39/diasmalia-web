@@ -205,10 +205,10 @@ const AvesStatistics = () => {
           >
             <CardHeader className="pb-2">
               <CardDescription>
-                {t.formatMessage({ id: 'ANIMAL.FEED' })}
+                {t.formatMessage({ id: 'ANIMAL.SUM.DEATH' })}
               </CardDescription>
               <CardTitle className="text-4xl">
-                {animalStatistics?.sumFeedings ?? 0}kg
+                {animalStatistics?.sumDeaths ?? 0}
               </CardTitle>
             </CardHeader>
           </Card>
@@ -218,10 +218,10 @@ const AvesStatistics = () => {
           >
             <CardHeader className="pb-2">
               <CardDescription>
-                {t.formatMessage({ id: 'ANIMAL.SUM.DEATH' })}
+                {t.formatMessage({ id: 'ANIMAL.FEED' })}
               </CardDescription>
               <CardTitle className="text-4xl">
-                {animalStatistics?.sumDeaths ?? 0}
+                {formatWeight(animalStatistics?.sumFeedings ?? 0)}
               </CardTitle>
             </CardHeader>
           </Card>
@@ -290,7 +290,7 @@ const AvesStatistics = () => {
                 {t.formatMessage({ id: 'ANIMAL.FEED' })}
               </CardDescription>
               <CardTitle className="text-4xl">
-                {animalStatistics?.sumFeedings ?? 0}kg
+                {formatWeight(animalStatistics?.sumFeedings ?? 0)}
               </CardTitle>
             </CardHeader>
           </Card>

@@ -13,6 +13,7 @@ import {
   AlertDangerNotification,
   AlertSuccessNotification,
   formatDateDDMMYY,
+  formatWeight,
 } from '@/utils';
 import { MoreHorizontal, PencilIcon, TrashIcon } from 'lucide-react';
 import { useState } from 'react';
@@ -57,7 +58,7 @@ const ListAvesFeedings = ({ item, index }: { item: any; index: number }) => {
             <p className="font-medium text-orange-600">
               {t.formatMessage({ id: 'FEED.PRESTARTER' })}
             </p>
-          ) : item?.feedStock?.feedCategory === 'FEED.CONCENTRATES' ? (
+          ) : item?.feedStock?.feedCategory === 'CONCENTRATES' ? (
             <p className="font-medium text-blue-600">
               {t.formatMessage({ id: 'FEED.CONCENTRATES' })}
             </p>
@@ -111,9 +112,11 @@ const ListAvesFeedings = ({ item, index }: { item: any; index: number }) => {
             </p>
           )}
         </TableCell>
-        <TableCell className="font-medium">{item?.quantity}</TableCell>
+        <TableCell className="font-medium">
+          {formatWeight(item?.quantity)}
+        </TableCell>
         <TableCell>
-          {item?.productionPhase === 'GROWTH' ? (
+          {item?.animal?.productionPhase === 'GROWTH' ? (
             <p className="font-medium">
               {t.formatMessage({ id: 'PRODUCTIONPHASE.GROWTH' })}
             </p>

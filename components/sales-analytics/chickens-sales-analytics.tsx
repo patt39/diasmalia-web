@@ -200,8 +200,10 @@ const ChickenSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                   content={<ChartTooltipContent indicator="line" />}
                 />
                 <Area
-                  dataKey="sum"
+                  dataKey={`sum`}
+                  connectNulls={true}
                   type="natural"
+                  isAnimationActive={true}
                   fill="var(--color-mobile)"
                   fillOpacity={0.4}
                   stroke="var(--color-mobile)"

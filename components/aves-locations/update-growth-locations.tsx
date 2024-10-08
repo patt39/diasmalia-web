@@ -57,6 +57,7 @@ const UpdateGrowthLocations = ({
       const fields = [
         'code',
         'nest',
+        'type',
         'productionPhase',
         'squareMeter',
         'manger',

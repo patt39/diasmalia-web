@@ -14,7 +14,19 @@ const TabBestSaleChannel = ({ saleChannel }: { saleChannel: any }) => {
           <CardDescription>
             {t.formatMessage({ id: 'BEST.SALE.CHANNEL' })}
           </CardDescription>
-          <CardTitle className="text-3xl">{bestSaleChannel}</CardTitle>
+          <CardTitle className="text-xl">
+            {bestSaleChannel == 'Farm'
+              ? t.formatMessage({ id: 'FARM' })
+              : bestSaleChannel == 'Market'
+                ? t.formatMessage({ id: 'MARKET' })
+                : bestSaleChannel == 'SocialMedia'
+                  ? t.formatMessage({ id: 'SOCIALMEDIA' })
+                  : bestSaleChannel == 'Auction'
+                    ? t.formatMessage({ id: 'AUCTION' })
+                    : bestSaleChannel == 'Contract'
+                      ? t.formatMessage({ id: 'CONTRACT' })
+                      : t.formatMessage({ id: 'OTHER' })}
+          </CardTitle>
         </CardHeader>
       </Card>
     </>

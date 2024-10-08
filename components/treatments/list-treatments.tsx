@@ -18,7 +18,7 @@ import {
 import { Eye, MoreHorizontal, PencilIcon, TrashIcon } from 'lucide-react';
 import { useState } from 'react';
 import { ActionModalDialog } from '../ui-setting/shadcn';
-import { CreateOrUpdatetreatments } from './create-or-update-treatments';
+import { UpdateTreatments } from './update-treatments';
 import { ViewTreatment } from './view-treatment';
 
 const ListTreatments = ({ item, index }: { item: any; index: number }) => {
@@ -52,7 +52,7 @@ const ListTreatments = ({ item, index }: { item: any; index: number }) => {
   return (
     <>
       <TableRow key={index} className="dark:border-gray-800">
-        <TableCell className="font-medium">{item.animal.code}</TableCell>
+        <TableCell className="font-medium">{item?.animal?.code}</TableCell>
         <TableCell className="font-medium">
           <div className="font-medium">{item?.name}</div>
           <div className="hidden text-sm text-muted-foreground md:inline">
@@ -61,9 +61,9 @@ const ListTreatments = ({ item, index }: { item: any; index: number }) => {
               : item?.diagnosis || 'N/A'}
           </div>
         </TableCell>
-        <TableCell className="font-medium">{item.medication}</TableCell>
+        <TableCell className="font-medium">{item?.health?.name}</TableCell>
         <TableCell className="font-medium">{item.dose || 'N/A'}</TableCell>
-        <TableCell className="hidden md:table-cell">{item.method}</TableCell>
+        <TableCell className="hidden md:table-cell">{item?.method}</TableCell>
         <TableCell className="hidden md:table-cell">
           {formatDateDDMMYY(item?.createdAt as Date)}
         </TableCell>
@@ -109,7 +109,7 @@ const ListTreatments = ({ item, index }: { item: any; index: number }) => {
           </DropdownMenu>
         </TableCell>
       </TableRow>
-      <CreateOrUpdatetreatments
+      <UpdateTreatments
         treatment={item}
         showModal={isEdit}
         setShowModal={setIsEdit}

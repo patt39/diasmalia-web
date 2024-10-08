@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import { GetEggHarvestingsAnalyticAPI } from '@/api-site/eggharvesting';
-import { dateTimeNowUtc, formatMMDate, getMonthNow } from '@/utils';
-import { Calendar, ListFilter } from 'lucide-react';
+import { dateTimeNowUtc, formatMMDate } from '@/utils';
+import { Calendar } from 'lucide-react';
 import { Fragment, useState } from 'react';
 import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts';
 import { useInputState } from '../hooks';
@@ -17,8 +17,6 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 
@@ -30,7 +28,7 @@ const EggHarvestingsAnalytics = ({
   const { t, locale } = useInputState();
   const [periode, setPeriode] = useState('');
   const [year, setYear] = useState<String>(`${dateTimeNowUtc().getFullYear()}`);
-  const [months, setMonths] = useState<String>(`${getMonthNow(new Date())}`);
+  const [months, setMonths] = useState<String>('');
 
   const { data: dataEggHarvestingAnalyticsDay } = GetEggHarvestingsAnalyticAPI({
     year: String(year),
@@ -104,11 +102,18 @@ const EggHarvestingsAnalytics = ({
                     <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                       {Number(months)
                         ? formatMMDate(Number(months), locale)
-                        : months}
+                        : 'Select month'}
                     </span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="dark:border-gray-800 w-auto">
+                  <DropdownMenuCheckboxItem
+                    className="cursor-pointer"
+                    onClick={() => setMonths('')}
+                    checked
+                  >
+                    {t.formatMessage({ id: 'ACTIVITY.FILTERALL' })}
+                  </DropdownMenuCheckboxItem>
                   {dataEggHarvestingAnalyticsMonth?.data?.map(
                     (item: any, index: number) => (
                       <Fragment key={index}>
@@ -121,51 +126,6 @@ const EggHarvestingsAnalytics = ({
                       </Fragment>
                     ),
                   )}
-                </DropdownMenuContent>
-              </DropdownMenu>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="h-8 gap-1">
-                    <ListFilter className="h-3.5 w-3.5" />
-                    <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                      {periode == ''
-                        ? t.formatMessage({ id: 'ACTIVITY.FILTERALL' })
-                        : periode == '7'
-                          ? t.formatMessage({ id: 'ACTIVITY.LAST7DAYS' })
-                          : periode == '15'
-                            ? t.formatMessage({ id: 'ACTIVITY.LAST15DAYS' })
-                            : t.formatMessage({ id: 'ACTIVITY.LAST30DAYS' })}
-                    </span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="dark:border-gray-800 w-auto">
-                  <DropdownMenuLabel>Filter by</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuCheckboxItem
-                    className="cursor-pointer"
-                    onClick={() => setPeriode('')}
-                    checked
-                  >
-                    {t.formatMessage({ id: 'ACTIVITY.FILTERALL' })}
-                  </DropdownMenuCheckboxItem>
-                  <DropdownMenuCheckboxItem
-                    className="cursor-pointer"
-                    onClick={() => setPeriode('7')}
-                  >
-                    {t.formatMessage({ id: 'ACTIVITY.LAST7DAYS' })}
-                  </DropdownMenuCheckboxItem>
-                  <DropdownMenuCheckboxItem
-                    className="cursor-pointer"
-                    onClick={() => setPeriode('15')}
-                  >
-                    {t.formatMessage({ id: 'ACTIVITY.LAST15DAYS' })}
-                  </DropdownMenuCheckboxItem>
-                  <DropdownMenuCheckboxItem
-                    className="cursor-pointer"
-                    onClick={() => setPeriode('30')}
-                  >
-                    {t.formatMessage({ id: 'ACTIVITY.LAST30DAYS' })}
-                  </DropdownMenuCheckboxItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>

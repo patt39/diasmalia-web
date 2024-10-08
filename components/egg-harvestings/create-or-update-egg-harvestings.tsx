@@ -1,27 +1,14 @@
-import { GetAnimalsAPI } from '@/api-site/animals';
 import { CreateOrUpdateOneEggHarvestingAPI } from '@/api-site/eggharvesting';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
-import { LoadingFile } from '@/components/ui-setting/ant';
-import { ErrorFile } from '@/components/ui-setting/ant/error-file';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { EggHarvestingsModel } from '@/types/egg-harvesting';
 import {
   AlertDangerNotification,
   AlertSuccessNotification,
 } from '@/utils/alert-notification';
 import { XIcon } from 'lucide-react';
-import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import { Controller, SubmitHandler } from 'react-hook-form';
+import { SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
 import { SelectInput, TextInput } from '../ui-setting/shadcn';
 import { Label } from '../ui/label';
@@ -36,10 +23,12 @@ const CreateOrUpdateEggHarvestings = ({
   showModal,
   setShowModal,
   eggHarvesting,
+  animal,
 }: {
   showModal: boolean;
   setShowModal: any;
   eggHarvesting?: any;
+  animal?: any;
 }) => {
   const {
     t,
@@ -52,15 +41,20 @@ const CreateOrUpdateEggHarvestings = ({
     hasErrors,
     setHasErrors,
   } = useReactHookForm({ schema });
-  const { query } = useRouter();
-  const animalTypeId = String(query?.animalTypeId);
 
   useEffect(() => {
     if (eggHarvesting) {
-      const fields = ['code', 'size', 'quantity'];
+      const fields = ['size', 'quantity'];
       fields?.forEach((field: any) => setValue(field, eggHarvesting[field]));
     }
   }, [eggHarvesting, setValue]);
+
+  useEffect(() => {
+    if (animal) {
+      const fields = ['code'];
+      fields?.forEach((field: any) => setValue(field, animal[field]));
+    }
+  }, [animal, setValue]);
 
   // Create or Update data
   const { mutateAsync: saveMutation } = CreateOrUpdateOneEggHarvestingAPI({
@@ -100,19 +94,6 @@ const CreateOrUpdateEggHarvestings = ({
     }
   };
 
-  const {
-    isLoading: isLoadingAnimals,
-    isError: isErrorAnimals,
-    data: dataAnimals,
-  } = GetAnimalsAPI({
-    take: 10,
-    sort: 'desc',
-    status: 'ACTIVE',
-    sortBy: 'createdAt',
-    productionPhase: 'LAYING',
-    animalTypeId: animalTypeId,
-  });
-
   return (
     <>
       {showModal ? (
@@ -143,51 +124,15 @@ const CreateOrUpdateEggHarvestings = ({
                   </div>
                 )}
 
-                <div className="mb-2">
-                  <Label>
-                    {t.formatMessage({ id: 'ANIMAL.CODE' })}
-                    <span className="text-red-600">*</span>
-                  </Label>
-                  <Controller
+                <div className="items-center my-2">
+                  <Label>{t.formatMessage({ id: 'ANIMAL.CODE' })}</Label>
+                  <TextInput
                     control={control}
+                    type="text"
                     name="code"
-                    render={({ field: { value, onChange } }) => (
-                      <Select
-                        onValueChange={onChange}
-                        name={'code'}
-                        value={value}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select a band code" />
-                        </SelectTrigger>
-                        <SelectContent className="dark:border-gray-800">
-                          <SelectGroup>
-                            <SelectLabel>Codes</SelectLabel>
-                            {isLoadingAnimals ? (
-                              <LoadingFile />
-                            ) : isErrorAnimals ? (
-                              <ErrorFile
-                                title="404"
-                                description="Error finding data please try again..."
-                              />
-                            ) : Number(dataAnimals?.pages[0]?.data?.total) <=
-                              0 ? (
-                              <ErrorFile description="Don't have active animals yet" />
-                            ) : (
-                              dataAnimals?.pages
-                                .flatMap((page: any) => page?.data?.value)
-                                .map((item, index) => (
-                                  <>
-                                    <SelectItem key={index} value={item.code}>
-                                      {item?.code}
-                                    </SelectItem>
-                                  </>
-                                ))
-                            )}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    )}
+                    defaultValue={`${eggHarvesting?.animal?.code}`}
+                    placeholder="Give a code"
+                    errors={errors}
                   />
                 </div>
                 <div className="mb-2">

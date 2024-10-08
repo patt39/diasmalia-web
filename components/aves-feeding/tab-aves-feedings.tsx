@@ -30,7 +30,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '../ui/tooltip';
-import { CreateOrUpdateAvesFeedings } from './create-or-update-aves-feedings';
+import { CreateBulkAvesFeedings } from './create-bulk-aves-feedings';
 import { ListAvesFeedings } from './list-aves-feedings';
 
 const TabAvesFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
@@ -139,7 +139,7 @@ const TabAvesFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
             >
               <Salad className="h-3.5 w-3.5  hover:shadow-xxl" />
               <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                {t.formatMessage({ id: 'ANIMALTYPE.ANIMALS.FEEDINGS.CREATE' })}
+                {t.formatMessage({ id: 'BULK.FEEDING' })}
               </span>
             </Button>
           </div>
@@ -155,7 +155,7 @@ const TabAvesFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
                   {t.formatMessage({ id: 'TABFEEDING.FEEDTYPE' })}
                 </TableHead>
                 <TableHead>
-                  {t.formatMessage({ id: 'TABFEEDING.QUANTITY' })} (kg)
+                  {t.formatMessage({ id: 'TABFEEDING.QUANTITY' })}
                 </TableHead>
                 <TableHead>
                   {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
@@ -193,7 +193,7 @@ const TabAvesFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
           />
         </CardContent>
       </main>
-      <CreateOrUpdateAvesFeedings
+      <CreateBulkAvesFeedings
         feeding={animalTypeId}
         showModal={isOpen}
         setShowModal={setIsOpen}

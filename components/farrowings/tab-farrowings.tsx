@@ -146,6 +146,7 @@ const TabFarrowings = ({ animalTypeId }: { animalTypeId: string }) => {
                 <TableHead>
                   {t.formatMessage({ id: 'TABFARROWING.LITTER' })}
                 </TableHead>
+                <TableHead>{t.formatMessage({ id: 'VIEW.WEIGHT' })}</TableHead>
                 <TableHead>Note</TableHead>
                 <TableHead>Date</TableHead>
                 <TableHead>

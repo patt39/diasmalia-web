@@ -89,6 +89,11 @@ export const apiEndpoints: ClientApiMethods = {
   getAnimalTypes: GET(`${baseUrl}/animal-type`),
   getOneAnimalType: GET(`${baseUrl}/animal-type/view/:animalTypeId`),
 
+  /****************** Health route */
+  getHealths: GET(`${baseUrl}/health`),
+  createOneHealth: POST(`${baseUrl}/health/create`),
+  changeNameStatus: PUT(`${baseUrl}/health/:healthId/change-status`),
+
   /****************** Feed stock route */
   getFeedStocks: GET(`${baseUrl}/feed-stock`),
   createOneFeedStock: POST(`${baseUrl}/feed-stock/create`),
@@ -154,6 +159,7 @@ export const apiEndpoints: ClientApiMethods = {
   createOneAnimal: POST(`${baseUrl}/animals/create`),
   getOneAnimal: GET(`${baseUrl}/animals/:animalId/view`),
   createBulkAnimal: POST(`${baseUrl}/animals/create/bulk`),
+  createBulkAves: POST(`${baseUrl}/animals/create/:animalTypeId/bulk/aves`),
   updateOneAnimal: PUT(`${baseUrl}/animals/:animalId/edit`),
   updateOneAves: PUT(`${baseUrl}/animals/:animalId/edit`),
   createOneAvesAnimal: POST(`${baseUrl}/animals/:animalTypeId/create`),

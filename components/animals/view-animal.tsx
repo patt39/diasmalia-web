@@ -77,7 +77,7 @@ const ViewAnimal = ({
                           {t.formatMessage({ id: 'VIEW.FEEDINGS' })}
                         </CardDescription>
                         <CardTitle className="text-4xl">
-                          {getOneAnimal?.feedingsCount}kg
+                          {formatWeight(getOneAnimal?.feedingsCount ?? 0)}
                         </CardTitle>
                       </CardHeader>
                     </Card>
@@ -107,7 +107,7 @@ const ViewAnimal = ({
                           {t.formatMessage({ id: 'VIEW.FEEDINGS' })}
                         </CardDescription>
                         <CardTitle className="text-4xl">
-                          {getOneAnimal?.feedingsCount || 0}kg
+                          {formatWeight(getOneAnimal?.feedingsCount ?? 0)}
                         </CardTitle>
                       </CardHeader>
                     </Card>
@@ -125,7 +125,7 @@ const ViewAnimal = ({
                           {t.formatMessage({ id: 'VIEW.FEEDINGS' })}
                         </CardDescription>
                         <CardTitle className="text-4xl">
-                          {getOneAnimal?.feedingsCount || 0}kg
+                          {formatWeight(getOneAnimal?.feedingsCount ?? 0)}
                         </CardTitle>
                       </CardHeader>
                     </Card>

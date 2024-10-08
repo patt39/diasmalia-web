@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+import { GetOneAnimalTypeAPI } from '@/api-site/animal-type';
 import { GetLocationsAPI } from '@/api-site/locations';
 import { useInputState } from '@/components/hooks';
 import { Button } from '@/components/ui/button';
@@ -15,13 +16,19 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '../ui/tooltip';
+import { CreateBulkAvesLocations } from './bulk-create-aves-locations';
 import { CreateAvesLocations } from './create-aves-locations';
 import { ListAvesLocations } from './list-aves-locations';
 
 const TabAvesLocations = ({ animalTypeId }: { animalTypeId: string }) => {
   const { ref, inView } = useInView();
   const [isOpen, setIsOpen] = useState(false);
+  const [isBulkOpen, setIsBulkOpen] = useState<boolean>(false);
   const { t, search, handleSetSearch } = useInputState();
+
+  const { data: animalType } = GetOneAnimalTypeAPI({
+    animalTypeId: animalTypeId,
+  });
 
   const {
     isLoading: isLoadingLocations,
@@ -71,6 +78,22 @@ const TabAvesLocations = ({ animalTypeId }: { animalTypeId: string }) => {
             />
           </div>
           <div className="ml-auto flex items-center gap-2">
+            {animalType?.name === 'Pondeuses' ? (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="outline">
+                      {t.formatMessage({ id: 'WHAT.TODO' })}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent className="dark:border-gray-800">
+                    <p>{t.formatMessage({ id: 'WHATTODO.LAYERS' })}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            ) : (
+              ''
+            )}
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -143,6 +166,11 @@ const TabAvesLocations = ({ animalTypeId }: { animalTypeId: string }) => {
         location={animalTypeId}
         showModal={isOpen}
         setShowModal={setIsOpen}
+      />
+      <CreateBulkAvesLocations
+        location={animalTypeId}
+        showModal={isBulkOpen}
+        setShowModal={setIsBulkOpen}
       />
     </>
   );

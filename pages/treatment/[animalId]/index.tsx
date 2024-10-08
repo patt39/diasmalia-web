@@ -100,7 +100,7 @@ export function AnimalTreatments() {
                 </h4>
               ) : (
                 <h4 className="mx-auto  text-2xl font-bold text-zinc-600">
-                  {t.formatMessage({ id: 'AVES.TREATMENT.PAGE' })}
+                  {t.formatMessage({ id: 'AVES.TREATMENT.PAGE' })}{' '}
                   {getOneAnimal?.code}
                 </h4>
               )}
@@ -132,7 +132,7 @@ export function AnimalTreatments() {
                         <AccordionContent>
                           <div>Date: {formatDateDDMMYY(item?.createdAt)} </div>
                           <div>
-                            Medication: {item?.medication.toLowerCase()}{' '}
+                            Medication: {item?.health?.name?.toLowerCase()}{' '}
                           </div>
                           <div> Dose: {item?.dose} </div>
                           <div>

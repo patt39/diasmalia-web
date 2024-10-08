@@ -15,20 +15,10 @@ import {
 } from '@/utils/alert-notification';
 import { XIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
-import { Controller, SubmitHandler } from 'react-hook-form';
+import { useEffect } from 'react';
+import { SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
-import { LoadingFile } from '../ui-setting/ant';
-import { ErrorFile } from '../ui-setting/ant/error-file';
 import { Label } from '../ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '../ui/select';
 
 const schema = yup.object({
   code: yup.string().optional(),
@@ -49,10 +39,12 @@ const CreateAvesSales = ({
   showModal,
   setShowModal,
   sale,
+  animal,
 }: {
   showModal: boolean;
   setShowModal: any;
   sale?: any;
+  animal?: any;
 }) => {
   const {
     t,
@@ -61,6 +53,7 @@ const CreateAvesSales = ({
     handleSubmit,
     errors,
     loading,
+    setValue,
     setLoading,
     hasErrors,
     setHasErrors,
@@ -85,6 +78,13 @@ const CreateAvesSales = ({
       setHasErrors(error.response.data.message);
     },
   });
+
+  useEffect(() => {
+    if (animal) {
+      const fields = ['code'];
+      fields?.forEach((field: any) => setValue(field, animal[field]));
+    }
+  }, [animal, setValue]);
 
   const onSubmit: SubmitHandler<SalesModel> = async (payload: SalesModel) => {
     setLoading(true);
@@ -152,54 +152,14 @@ const CreateAvesSales = ({
                   </div>
                 )}
                 {!sale?.id ? (
-                  <div className="mb-2 items-center">
-                    <Label>
-                      {t.formatMessage({ id: 'ANIMAL.CODE' })}
-                      <span className="text-red-600">*</span>
-                    </Label>
-                    <Controller
+                  <div className="items-center">
+                    <Label>{t.formatMessage({ id: 'ANIMAL.CODE' })}</Label>
+                    <TextInput
                       control={control}
+                      type="text"
                       name="code"
-                      render={({ field: { value, onChange } }) => (
-                        <Select
-                          onValueChange={onChange}
-                          name={'code'}
-                          value={value}
-                        >
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select a band code" />
-                          </SelectTrigger>
-                          <SelectContent className="dark:border-gray-800">
-                            <SelectGroup>
-                              <SelectLabel>Codes</SelectLabel>
-                              {isLoadingAnimals ? (
-                                <LoadingFile />
-                              ) : isErrorAnimals ? (
-                                <ErrorFile
-                                  title="404"
-                                  description="Error finding data please try again..."
-                                />
-                              ) : Number(dataAnimals?.pages[0]?.data?.total) <=
-                                0 ? (
-                                <ErrorFile description="Don't have active animals yet" />
-                              ) : (
-                                dataAnimals?.pages
-                                  .flatMap((page: any) => page?.data?.value)
-                                  .map((item, index) => (
-                                    <>
-                                      <SelectItem
-                                        key={index}
-                                        value={item?.code}
-                                      >
-                                        {item?.code}
-                                      </SelectItem>
-                                    </>
-                                  ))
-                              )}
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      )}
+                      placeholder="Give a code"
+                      errors={errors}
                     />
                   </div>
                 ) : (
@@ -207,7 +167,7 @@ const CreateAvesSales = ({
                 )}
                 {['Pisciculture'].includes(animalType?.name) ? (
                   ''
-                ) : animalType.name === 'Pondeuses' ? (
+                ) : animalType?.name === 'Pondeuses' ? (
                   <div className="my-2">
                     <Label>
                       Choisissez un détail de vente
@@ -223,7 +183,7 @@ const CreateAvesSales = ({
                       name="detail"
                       dataItem={[
                         { id: 1, name: 'EGGS' },
-                        { id: 3, name: 'CHICKENS' },
+                        { id: 2, name: 'CHICKENS' },
                       ]}
                     />
                   </div>
@@ -273,34 +233,69 @@ const CreateAvesSales = ({
                     />
                   </div>
                 ) : (
-                  <div className="my-2 flex items-center">
-                    {watchDetail === 'EGGS' ? (
-                      <div className="my-2 flex items-center space-x-4">
-                        <Label>
-                          Nombre:<span className="text-red-600">*</span>
-                        </Label>
-                        <TextInput
-                          control={control}
-                          type="number"
-                          name="number"
-                          placeholder="Give a number"
-                          errors={errors}
-                        />
-                        <Label>
-                          {t.formatMessage({ id: 'SALE.PRICE' })}:
-                          <span className="text-red-600">*</span>
-                        </Label>
-                        <TextInput
-                          control={control}
-                          type="number"
-                          name="price"
-                          placeholder="Give a price"
-                          errors={errors}
-                        />
+                  <div className="flex justify-center">
+                    {['EGGS', 'CHICKS', 'CHICKENS'].includes(watchDetail) &&
+                    ['Pondeuses', 'Poulet de chair'].includes(
+                      animalType?.name,
+                    ) ? (
+                      <div className="flex space-x-8">
+                        <div>
+                          <Label>
+                            Nombre<span className="text-red-600">*</span>
+                          </Label>
+                          <TextInput
+                            control={control}
+                            type="number"
+                            name="number"
+                            placeholder="Give a number"
+                            errors={errors}
+                          />
+                        </div>
+                        <div>
+                          <Label>
+                            {t.formatMessage({ id: 'SALE.PRICE' })}
+                            <span className="text-red-600">*</span>
+                          </Label>
+                          <TextInput
+                            control={control}
+                            type="number"
+                            name="price"
+                            placeholder="Give a price"
+                            errors={errors}
+                          />
+                        </div>
+                      </div>
+                    ) : ['EGGS', 'CHICKS'].includes(watchDetail) ? (
+                      <div className="flex space-x-8">
+                        <div>
+                          <Label>
+                            Nombre<span className="text-red-600">*</span>
+                          </Label>
+                          <TextInput
+                            control={control}
+                            type="number"
+                            name="number"
+                            placeholder="Give a number"
+                            errors={errors}
+                          />
+                        </div>
+                        <div>
+                          <Label>
+                            {t.formatMessage({ id: 'SALE.PRICE' })}
+                            <span className="text-red-600">*</span>
+                          </Label>
+                          <TextInput
+                            control={control}
+                            type="number"
+                            name="price"
+                            placeholder="Give a price"
+                            errors={errors}
+                          />
+                        </div>
                       </div>
                     ) : (
-                      <>
-                        <div className="pr-10">
+                      <div className="flex items-center space-x-16">
+                        <div>
                           <Label>
                             {t.formatMessage({ id: 'ANIMAL.MALE' })}
                             <span className="text-red-600">*</span>
@@ -314,7 +309,7 @@ const CreateAvesSales = ({
                             errors={errors}
                           />
                         </div>
-                        <div className="ml-4">
+                        <div>
                           <Label>
                             {t.formatMessage({ id: 'ANIMAL.FEMALE' })}
                             <span className="text-red-600">*</span>
@@ -328,7 +323,7 @@ const CreateAvesSales = ({
                             errors={errors}
                           />
                         </div>
-                        <div className="pl-10">
+                        <div>
                           <Label>
                             {t.formatMessage({ id: 'SALE.PRICE' })}
                             <span className="text-red-600">*</span>
@@ -341,7 +336,7 @@ const CreateAvesSales = ({
                             errors={errors}
                           />
                         </div>
-                      </>
+                      </div>
                     )}
                   </div>
                 )}

@@ -1,20 +1,8 @@
 import { GetOneAnimalTypeAPI } from '@/api-site/animal-type';
-import { GetAnimalsAPI } from '@/api-site/animals';
 import { CreateOrUpdateOneAvesIsolationAPI } from '@/api-site/isolations';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
-import { LoadingFile } from '@/components/ui-setting/ant';
-import { ErrorFile } from '@/components/ui-setting/ant/error-file';
 import { TextAreaInput, TextInput } from '@/components/ui-setting/shadcn';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { IsolationsModel } from '@/types/isolations';
 import {
   AlertDangerNotification,
@@ -23,7 +11,7 @@ import {
 import { XIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import { Controller, SubmitHandler } from 'react-hook-form';
+import { SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
 import { Label } from '../ui/label';
 
@@ -39,10 +27,12 @@ const CreateOrUpdateAvesIsolations = ({
   showModal,
   setShowModal,
   isolation,
+  animal,
 }: {
   showModal: boolean;
   setShowModal: any;
   isolation?: any;
+  animal?: any;
 }) => {
   const {
     t,
@@ -68,6 +58,13 @@ const CreateOrUpdateAvesIsolations = ({
       fields?.forEach((field: any) => setValue(field, isolation[field]));
     }
   }, [isolation, setValue]);
+
+  useEffect(() => {
+    if (animal) {
+      const fields = ['code'];
+      fields?.forEach((field: any) => setValue(field, animal[field]));
+    }
+  }, [animal, setValue]);
 
   // Create or Update data
   const { mutateAsync: saveMutation } = CreateOrUpdateOneAvesIsolationAPI({
@@ -107,18 +104,6 @@ const CreateOrUpdateAvesIsolations = ({
     }
   };
 
-  const {
-    isLoading: isLoadingAnimals,
-    isError: isErrorAnimals,
-    data: dataAnimals,
-  } = GetAnimalsAPI({
-    take: 10,
-    sort: 'desc',
-    status: 'ACTIVE',
-    sortBy: 'createdAt',
-    animalTypeId: animalTypeId,
-  });
-
   return (
     <>
       {showModal ? (
@@ -148,64 +133,21 @@ const CreateOrUpdateAvesIsolations = ({
                     </div>
                   </div>
                 )}
-
                 <div className="mb-4">
                   {!isolation?.id ? (
-                    <>
-                      <Label>
-                        {t.formatMessage({ id: 'ANIMAL.CODE' })}
-                        <span className="text-red-600">*</span>
-                      </Label>
-                      <Controller
+                    <div className="items-center">
+                      <Label>{t.formatMessage({ id: 'ANIMAL.CODE' })}</Label>
+                      <TextInput
                         control={control}
+                        type="text"
                         name="code"
-                        render={({ field: { value, onChange } }) => (
-                          <Select
-                            onValueChange={onChange}
-                            name={'code'}
-                            value={value}
-                          >
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Select band code" />
-                            </SelectTrigger>
-                            <SelectContent className="dark:border-gray-800">
-                              <SelectGroup>
-                                <SelectLabel>Codes</SelectLabel>
-                                {isLoadingAnimals ? (
-                                  <LoadingFile />
-                                ) : isErrorAnimals ? (
-                                  <ErrorFile
-                                    title="404"
-                                    description="Error finding data please try again..."
-                                  />
-                                ) : Number(
-                                    dataAnimals?.pages[0]?.data?.total,
-                                  ) <= 0 ? (
-                                  <ErrorFile description="Don't have active animals yet" />
-                                ) : (
-                                  dataAnimals?.pages
-                                    .flatMap((page: any) => page?.data?.value)
-                                    .map((item, index) => (
-                                      <>
-                                        <SelectItem
-                                          key={index}
-                                          value={item?.code}
-                                        >
-                                          {item?.code}
-                                        </SelectItem>
-                                      </>
-                                    ))
-                                )}
-                              </SelectGroup>
-                            </SelectContent>
-                          </Select>
-                        )}
+                        placeholder="Give a code"
+                        errors={errors}
                       />
-                    </>
+                    </div>
                   ) : (
                     ''
                   )}
-
                   {['Poulet de chair', 'Pisciculture', 'Pondeuses'].includes(
                     animalType?.name,
                   ) ? (

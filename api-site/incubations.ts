@@ -29,7 +29,7 @@ export const GetOneIncubationAPI = (payload: { animalId: string }) => {
   };
 };
 
-export const CreateOrUpdateOneIncubationAPI = ({
+export const CreateOneIncubationAPI = ({
   onSuccess,
   onError,
 }: {
@@ -40,20 +40,53 @@ export const CreateOrUpdateOneIncubationAPI = ({
   const queryClient = useQueryClient();
   const result = useMutation({
     mutationKey: queryKey,
-    mutationFn: async (
-      payload: IncubationsModel & { incubationId: string },
-    ) => {
+    mutationFn: async (payload: IncubationsModel) => {
+      await makeApiCall({
+        action: 'createOneIncubation',
+        body: { ...payload },
+      });
+    },
+    onError: async (error) => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onError) {
+        onError(error);
+      }
+    },
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+  });
+
+  return result;
+};
+
+export const UpdateOneIncubationAPI = ({
+  onSuccess,
+  onError,
+}: {
+  onSuccess?: () => void;
+  onError?: (error: any) => void;
+} = {}) => {
+  const queryKey = ['incubations'];
+  const queryClient = useQueryClient();
+  const result = useMutation({
+    mutationKey: queryKey,
+    mutationFn: async (payload: any & { incubationId: string }) => {
       const { incubationId } = payload;
-      return incubationId
-        ? await makeApiCall({
-            action: 'updateOneIncubation',
-            body: payload,
-            urlParams: { incubationId },
-          })
-        : await makeApiCall({
-            action: 'createOneIncubation',
-            body: { ...payload },
-          });
+      return await makeApiCall({
+        action: 'updateOneIncubation',
+        body: { ...payload },
+        urlParams: { incubationId },
+      });
     },
     onError: async (error) => {
       await queryClient.invalidateQueries({ queryKey });

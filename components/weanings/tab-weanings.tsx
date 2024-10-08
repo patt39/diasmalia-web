@@ -145,6 +145,7 @@ const TabWeanings = ({ animalTypeId }: { animalTypeId: string }) => {
                 <TableHead>
                   {t.formatMessage({ id: 'TABWEANING.WEANING' })}
                 </TableHead>
+                <TableHead>{t.formatMessage({ id: 'VIEW.WEIGHT' })}</TableHead>
                 <TableHead>
                   {t.formatMessage({ id: 'TABWEANING.STATUS' })}
                 </TableHead>

@@ -15,7 +15,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { PaginationPage } from '@/utils';
-import { File, HeartHandshakeIcon, ListFilter } from 'lucide-react';
+import { File, ListFilter } from 'lucide-react';
 import { useState } from 'react';
 import { LoadingFile } from '../ui-setting/ant';
 import { ErrorFile } from '../ui-setting/ant/error-file';
@@ -89,7 +89,7 @@ const TabAvesSales = ({ animalTypeId }: { animalTypeId: string }) => {
             />
           </div>
           <div className="ml-auto flex items-center gap-2">
-            {!['Pisciculture'].includes(animalType?.name) ? (
+            {!['Pisciculture', 'Pondeuses'].includes(animalType?.name) ? (
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -249,18 +249,6 @@ const TabAvesSales = ({ animalTypeId }: { animalTypeId: string }) => {
                 </DropdownMenuCheckboxItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button
-              size="sm"
-              className="h-8 gap-1"
-              onClick={() => setIsOpen(true)}
-            >
-              <HeartHandshakeIcon className="h-3.5 w-3.5  hover:shadow-xxl" />
-              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                {t.formatMessage({
-                  id: 'ANIMALTYPE.ANIMALS.SALES.CREATE',
-                })}
-              </span>
-            </Button>
           </div>
         </div>
       </CardHeader>

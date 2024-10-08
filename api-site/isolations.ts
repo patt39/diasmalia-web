@@ -144,7 +144,7 @@ export const GetIsolationsAPI = (
     organizationId,
   } = payload;
   return useInfiniteQuery({
-    queryKey: ['isolations', 'infinite', { ...payload }],
+    queryKey: ['isolations', 'deaths', 'infinite', { ...payload }],
     getNextPageParam: (lastPage: any) => lastPage.data.next_page,
     queryFn: async ({ pageParam = 1 }) =>
       await makeApiCall({

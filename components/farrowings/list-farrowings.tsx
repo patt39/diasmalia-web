@@ -16,6 +16,7 @@ import {
 } from '@/utils';
 import { Eye, MoreHorizontal, PencilIcon, TrashIcon } from 'lucide-react';
 import { useState } from 'react';
+import { formatWeight } from '../../utils/formate-date';
 import { ActionModalDialog } from '../ui-setting/shadcn';
 import { TableCell, TableRow } from '../ui/table';
 import { CreateOrUpdateFarrowings } from './create-or-update-farrowings';
@@ -55,6 +56,7 @@ const ListFarrowings = ({ item, index }: { item: any; index: number }) => {
       <TableRow key={index} className="dark:border-gray-800">
         <TableCell>{item?.animal?.code}</TableCell>
         <TableCell>{item?.litter}</TableCell>
+        <TableCell>{formatWeight(item?.weight)}</TableCell>
         <TableCell>
           {item?.note?.length > 60
             ? item?.note?.substring(0, 60) + '...'
@@ -85,16 +87,12 @@ const ListFarrowings = ({ item, index }: { item: any; index: number }) => {
                   {t.formatMessage({ id: 'TABANIMAL.VIEW' })}
                 </span>
               </DropdownMenuItem>
-              {item?.animal.status !== 'ACTIVE' ? (
-                <DropdownMenuItem onClick={() => setIsOpen(true)}>
-                  <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
-                  <span className="ml-2 cursor-pointer hover:text-red-600">
-                    {t.formatMessage({ id: 'TABANIMAL.DELETE' })}
-                  </span>
-                </DropdownMenuItem>
-              ) : (
-                ''
-              )}
+              <DropdownMenuItem onClick={() => setIsOpen(true)}>
+                <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
+                <span className="ml-2 cursor-pointer hover:text-red-600">
+                  {t.formatMessage({ id: 'TABANIMAL.DELETE' })}
+                </span>
+              </DropdownMenuItem>
             </DropdownMenuContent>
             <ActionModalDialog
               loading={loading}

@@ -61,7 +61,7 @@ const ListAvesTreatments = ({ item, index }: { item: any; index: number }) => {
               : item?.diagnosis || 'N/A'}
           </div>
         </TableCell>
-        <TableCell className="font-medium">{item?.medication}</TableCell>
+        <TableCell className="font-medium">{item?.health?.name}</TableCell>
         <TableCell className="font-medium">{item?.dose || 'N/A'}</TableCell>
         <TableCell className="hidden md:table-cell">
           {formatDateDDMMYY(item?.createdAt as Date)}
@@ -88,16 +88,12 @@ const ListAvesTreatments = ({ item, index }: { item: any; index: number }) => {
                   {t.formatMessage({ id: 'TABANIMAL.VIEW' })}
                 </span>
               </DropdownMenuItem>
-              {item?.animal.status !== 'ACTIVE' ? (
-                <DropdownMenuItem onClick={() => setIsOpen(true)}>
-                  <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
-                  <span className="ml-2 cursor-pointer hover:text-red-600">
-                    {t.formatMessage({ id: 'TABANIMAL.DELETE' })}
-                  </span>
-                </DropdownMenuItem>
-              ) : (
-                ''
-              )}
+              <DropdownMenuItem onClick={() => setIsOpen(true)}>
+                <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
+                <span className="ml-2 cursor-pointer hover:text-red-600">
+                  {t.formatMessage({ id: 'TABANIMAL.DELETE' })}
+                </span>
+              </DropdownMenuItem>
             </DropdownMenuContent>
             <ActionModalDialog
               loading={loading}

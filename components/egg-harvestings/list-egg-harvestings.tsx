@@ -14,8 +14,9 @@ import {
   AlertSuccessNotification,
   formatDateDDMMYY,
 } from '@/utils';
-import { MoreHorizontal, PencilIcon, TrashIcon } from 'lucide-react';
+import { Egg, MoreHorizontal, PencilIcon, TrashIcon } from 'lucide-react';
 import { useState } from 'react';
+import { CreateIncubations } from '../incubations/create-incubations';
 import { ActionModalDialog } from '../ui-setting/shadcn';
 import { Badge } from '../ui/badge';
 import { TableCell, TableRow } from '../ui/table';
@@ -24,6 +25,7 @@ import { CreateOrUpdateEggHarvestings } from './create-or-update-egg-harvestings
 const ListEggHarvestings = ({ item, index }: { item: any; index: number }) => {
   const { t, isOpen, loading, setIsOpen, setLoading } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
+  const [isIncubation, setIsIncubation] = useState(false);
 
   const { mutateAsync: deleteMutation } = DeleteOneEggHarvestingAPI({
     onSuccess: () => {},
@@ -90,6 +92,18 @@ const ListEggHarvestings = ({ item, index }: { item: any; index: number }) => {
                   {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
                 </span>
               </DropdownMenuItem>
+              {item?.animal?.quantity !== 0 ? (
+                <DropdownMenuItem onClick={() => setIsIncubation(true)}>
+                  <Egg className="size-4 text-gray-600 hover:text-violet-600" />
+                  <span className="ml-2 cursor-pointer hover:text-violet-600">
+                    {t.formatMessage({
+                      id: 'ANIMALTYPE.ANIMALS.INCUBATION.CREATE',
+                    })}
+                  </span>
+                </DropdownMenuItem>
+              ) : (
+                ''
+              )}
               {item?.animal?.quantity === 0 ? (
                 <DropdownMenuItem onClick={() => setIsOpen(true)}>
                   <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
@@ -114,6 +128,11 @@ const ListEggHarvestings = ({ item, index }: { item: any; index: number }) => {
         eggHarvesting={item}
         showModal={isEdit}
         setShowModal={setIsEdit}
+      />
+      <CreateIncubations
+        incubation={item}
+        showModal={isIncubation}
+        setShowModal={setIsIncubation}
       />
     </>
   );

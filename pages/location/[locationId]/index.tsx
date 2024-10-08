@@ -85,7 +85,7 @@ export function ViewLocation() {
               </span>
             </ButtonInput>
             <h4 className="text-xl text-zinc-950 ml-96 font-bold items-center">
-              {getOneLocation?.code}
+              {getOneLocation?.code.toUpperCase()}
             </h4>
             <div className="ml-auto flex items-center gap-2">
               <SearchInput

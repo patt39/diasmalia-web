@@ -43,6 +43,7 @@ const schema = yup.object({
   locationCode: yup.string().optional(),
   weight: yup.number().required('weight is a required field'),
   gender: yup.string().required('gender is a required field'),
+  productionPhase: yup.string().required('productionPhase is a required field'),
 });
 
 const CreateAnimals = ({
@@ -69,23 +70,7 @@ const CreateAnimals = ({
   const animalTypeId = String(query?.animalTypeId);
   const { ref, inView } = useInView();
 
-  useEffect(() => {
-    if (animal) {
-      const fields = [
-        'code',
-        'codeMother',
-        'codeFather',
-        'weight',
-        'birthday',
-        'gender',
-        'breedName',
-        'locationCode',
-      ];
-      fields?.forEach((field: any) => setValue(field, animal[field]));
-    }
-  }, [animal, setValue]);
-
-  // Create or Update data
+  // Create
   const { mutateAsync: saveMutation } = CreateOneAnimalAPI({
     onSuccess: () => {
       setHasErrors(false);
@@ -248,7 +233,7 @@ const CreateAnimals = ({
                   </div>
                   <div className="px-4">
                     <Label>
-                      Date de naissance:
+                      Date de naissance
                       <span className="text-red-600">*</span>
                     </Label>
                     <DateInput

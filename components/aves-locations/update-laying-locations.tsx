@@ -22,6 +22,8 @@ const schema = yup.object({
   manger: yup.number().optional(),
   through: yup.number().optional(),
   nest: yup.number().optional(),
+  cages: yup.number().optional(),
+  addCages: yup.string().optional(),
 });
 
 const UpdateLayingLocations = ({
@@ -47,6 +49,7 @@ const UpdateLayingLocations = ({
   } = useReactHookForm({ schema });
   const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
+  const watchCages = watch('addCages');
   const watchProductionPhase = watch('productionPhase');
   const { data: animalType } = GetOneAnimalTypeAPI({
     animalTypeId: animalTypeId,
@@ -199,8 +202,71 @@ const UpdateLayingLocations = ({
                         />
                       </div>
                     </div>
+                    {watchProductionPhase === 'LAYING' ? (
+                      <div>
+                        <Label>{t.formatMessage({ id: 'NUMBER.NESTS' })}</Label>
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="nest"
+                          defaultValue=""
+                          placeholder="Number of nests"
+                          errors={errors}
+                        />
+                      </div>
+                    ) : (
+                      ''
+                    )}
+                    {animalType?.name === 'Pondeuses' &&
+                    animalType?.name !== 'Pisciculture' &&
+                    location?.addCages === 'NO' &&
+                    location?.status === true &&
+                    location?._count?.animals === 0 ? (
+                      <div className="my-2">
+                        <Label>Ajouter des cages?</Label>
+                        <SelectInput
+                          firstOptionName="Choose a production type"
+                          control={control}
+                          errors={errors}
+                          placeholder="Put in cages ?"
+                          valueType="text"
+                          name="addCages"
+                          dataItem={[
+                            { id: 1, name: 'YES' },
+                            { id: 2, name: 'NO' },
+                          ]}
+                        />
+                      </div>
+                    ) : location?.status === true &&
+                      location?._count?.animals === 0 &&
+                      location?.addCages === 'NO' &&
+                      animalType?.name === 'Pondeuses' &&
+                      animalType?.name !== 'Pisciculture' ? (
+                      <div className="my-2">
+                        <Label>
+                          Enlever les cages?
+                          <span className="text-red-600">*</span>
+                        </Label>
+                        <SelectInput
+                          firstOptionName="Choose a production type"
+                          control={control}
+                          errors={errors}
+                          placeholder="Remove cages ?"
+                          valueType="text"
+                          name="addCages"
+                          dataItem={[
+                            { id: 1, name: 'YES' },
+                            { id: 2, name: 'NO' },
+                          ]}
+                        />
+                      </div>
+                    ) : (
+                      ''
+                    )}
                     {watchProductionPhase === 'LAYING' &&
-                    animalType?.name !== 'Pisciculture' ? (
+                    animalType?.name !== 'Pisciculture' &&
+                    location?.addCages === 'YES' &&
+                    watchCages === 'YES' ? (
                       <div>
                         <Label>{t.formatMessage({ id: 'NUMBER.NESTS' })}</Label>
                         <TextInput
@@ -208,6 +274,20 @@ const UpdateLayingLocations = ({
                           type="number"
                           name="nest"
                           placeholder="Number of nests"
+                          errors={errors}
+                        />
+                      </div>
+                    ) : watchProductionPhase === 'LAYING' &&
+                      location?.addCages === 'NO' &&
+                      animalType?.name !== 'Pisciculture' &&
+                      watchCages === 'YES' ? (
+                      <div>
+                        <Label>Nombre de cages</Label>
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="cages"
+                          placeholder="Number of cages"
                           errors={errors}
                         />
                       </div>

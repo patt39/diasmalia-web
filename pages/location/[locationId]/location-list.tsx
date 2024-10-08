@@ -2,7 +2,6 @@
 import { DeleteOneAnimalAPI } from '@/api-site/animals';
 import { UpdateAnimals } from '@/components/animals/update-animal';
 import { ViewAnimal } from '@/components/animals/view-animal';
-import { ViewHealth } from '@/components/aves-animals/view-health';
 import { useInputState } from '@/components/hooks';
 import { ActionModalDialog } from '@/components/ui-setting/shadcn';
 import { Badge } from '@/components/ui/badge';
@@ -146,19 +145,18 @@ const LocationList = ({ item, index }: { item: any; index: number }) => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="dark:border-gray-800">
-                <DropdownMenuItem onClick={() => setIsEdit(true)}>
-                  <PencilIcon className="size-4 text-gray-600 hover:text-cyan-600" />
-                  <span className="ml-2 cursor-pointer hover:text-cyan-600">
-                    {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
-                  </span>
-                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setIsView(true)}>
                   <Eye className="size-4 text-gray-600 hover:text-indigo-600" />
                   <span className="ml-2 cursor-pointer hover:text-indigo-600">
                     {t.formatMessage({ id: 'TABANIMAL.VIEW' })}
                   </span>
                 </DropdownMenuItem>
-
+                <DropdownMenuItem onClick={() => setIsEdit(true)}>
+                  <PencilIcon className="size-4 text-gray-600 hover:text-cyan-600" />
+                  <span className="ml-2 cursor-pointer hover:text-cyan-600">
+                    {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
+                  </span>
+                </DropdownMenuItem>
                 <Link href={`/treatment/${item?.id}`}>
                   <DropdownMenuItem>
                     <Hospital className="size-4 text-gray-600 hover:text-green-600" />
@@ -216,11 +214,6 @@ const LocationList = ({ item, index }: { item: any; index: number }) => {
               animal={item}
               showModal={isView}
               setShowModal={setIsView}
-            />
-            <ViewHealth
-              animal={item}
-              showModal={isHealthView}
-              setShowModal={setIsHealth}
             />
           </div>
         </div>

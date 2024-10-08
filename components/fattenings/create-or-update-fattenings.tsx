@@ -62,7 +62,6 @@ const CreateOrUpdateFattenings = ({
     setLoading,
     hasErrors,
     setHasErrors,
-    register,
   } = useReactHookForm({ schema });
   const { query } = useRouter();
   const { ref, inView } = useInView();
@@ -249,7 +248,7 @@ const CreateOrUpdateFattenings = ({
                                       render={({ field: { ...field } }) => (
                                         <>
                                           <div
-                                            className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow"
+                                            className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow dark:border-gray-800"
                                             key={item?.code}
                                           >
                                             <Checkbox

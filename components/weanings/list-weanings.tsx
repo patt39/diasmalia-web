@@ -13,6 +13,7 @@ import {
   AlertDangerNotification,
   AlertSuccessNotification,
   formatDateDDMMYY,
+  formatWeight,
 } from '@/utils';
 import { MoreHorizontal, PencilIcon, TrashIcon } from 'lucide-react';
 import { useState } from 'react';
@@ -36,7 +37,7 @@ const ListWeanings = ({ item, index }: { item: any; index: number }) => {
     try {
       await deleteMutation({ weaningId: item.id });
       AlertSuccessNotification({
-        text: 'weaning deleted successfully',
+        text: 'Weaning deleted successfully',
       });
       setLoading(false);
       setIsOpen(false);
@@ -55,6 +56,7 @@ const ListWeanings = ({ item, index }: { item: any; index: number }) => {
         <TableCell className="font-medium">{item?.animal?.code}</TableCell>
         <TableCell>{item?.farrowing?.litter}</TableCell>
         <TableCell>{item?.litter}</TableCell>
+        <TableCell>{formatWeight(item?.weight)}</TableCell>
         <TableCell>
           {item?.litter === item?.farrowing?.litter ? (
             <Badge className="text-xs" variant="default">
@@ -85,16 +87,12 @@ const ListWeanings = ({ item, index }: { item: any; index: number }) => {
                   {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
                 </span>
               </DropdownMenuItem>
-              {item?.animal.status !== 'ACTIVE' ? (
-                <DropdownMenuItem onClick={() => setIsOpen(true)}>
-                  <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
-                  <span className="ml-2 cursor-pointer hover:text-red-600">
-                    {t.formatMessage({ id: 'TABANIMAL.DELETE' })}
-                  </span>
-                </DropdownMenuItem>
-              ) : (
-                ''
-              )}
+              <DropdownMenuItem onClick={() => setIsOpen(true)}>
+                <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
+                <span className="ml-2 cursor-pointer hover:text-red-600">
+                  {t.formatMessage({ id: 'TABANIMAL.DELETE' })}
+                </span>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
           <ActionModalDialog

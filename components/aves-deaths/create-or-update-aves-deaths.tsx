@@ -1,20 +1,8 @@
 import { GetOneAnimalTypeAPI } from '@/api-site/animal-type';
-import { GetAnimalsAPI } from '@/api-site/animals';
 import { CreateOrUpdateOneAvesDeathAPI } from '@/api-site/deaths';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
-import { LoadingFile } from '@/components/ui-setting/ant';
-import { ErrorFile } from '@/components/ui-setting/ant/error-file';
 import { TextAreaInput, TextInput } from '@/components/ui-setting/shadcn';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { DeathsModel } from '@/types/deaths';
 import {
   AlertDangerNotification,
@@ -23,7 +11,7 @@ import {
 import { XIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import { Controller, SubmitHandler } from 'react-hook-form';
+import { SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
 import { Label } from '../ui/label';
 
@@ -39,10 +27,12 @@ const CreateOrUpdateAvesDeaths = ({
   showModal,
   setShowModal,
   death,
+  animal,
 }: {
   showModal: boolean;
   setShowModal: any;
   death?: any;
+  animal?: any;
 }) => {
   const {
     t,
@@ -61,6 +51,7 @@ const CreateOrUpdateAvesDeaths = ({
   const { data: animalType } = GetOneAnimalTypeAPI({
     animalTypeId: animalTypeId,
   });
+  console.log('animal ==>', animal);
 
   useEffect(() => {
     if (death) {
@@ -68,6 +59,13 @@ const CreateOrUpdateAvesDeaths = ({
       fields?.forEach((field: any) => setValue(field, death[field]));
     }
   }, [death, setValue]);
+
+  useEffect(() => {
+    if (animal) {
+      const fields = ['code'];
+      fields?.forEach((field: any) => setValue(field, animal[field]));
+    }
+  }, [animal, setValue]);
 
   // Create or Update data
   const { mutateAsync: saveMutation } = CreateOrUpdateOneAvesDeathAPI({
@@ -105,18 +103,6 @@ const CreateOrUpdateAvesDeaths = ({
     }
   };
 
-  const {
-    isLoading: isLoadingAnimals,
-    isError: isErrorAnimals,
-    data: dataAnimals,
-  } = GetAnimalsAPI({
-    take: 10,
-    sort: 'desc',
-    status: 'ACTIVE',
-    sortBy: 'createdAt',
-    animalTypeId: animalTypeId,
-  });
-
   return (
     <>
       {showModal ? (
@@ -149,108 +135,73 @@ const CreateOrUpdateAvesDeaths = ({
 
                 {!death?.id ? (
                   <div className="mb-4">
-                    <Label>
-                      {t.formatMessage({ id: 'ANIMAL.CODE' })}
-                      <span className="text-red-600">*</span>
-                    </Label>
-                    <Controller
-                      control={control}
-                      name="code"
-                      render={({ field: { value, onChange } }) => (
-                        <Select
-                          onValueChange={onChange}
-                          name={'code'}
-                          value={value}
-                        >
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select band code" />
-                          </SelectTrigger>
-                          <SelectContent className="dark:border-gray-800">
-                            <SelectGroup>
-                              <SelectLabel>Codes</SelectLabel>
-                              {isLoadingAnimals ? (
-                                <LoadingFile />
-                              ) : isErrorAnimals ? (
-                                <ErrorFile
-                                  title="404"
-                                  description="Error finding data please try again..."
-                                />
-                              ) : Number(dataAnimals?.pages[0]?.data?.total) <=
-                                0 ? (
-                                <ErrorFile description="Don't have active animals yet" />
-                              ) : (
-                                dataAnimals?.pages
-                                  .flatMap((page: any) => page?.data?.value)
-                                  .map((item, index) => (
-                                    <>
-                                      <SelectItem
-                                        key={index}
-                                        value={item?.code}
-                                      >
-                                        {item?.code}
-                                      </SelectItem>
-                                    </>
-                                  ))
-                              )}
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
+                    <div className="items-center">
+                      <Label>{t.formatMessage({ id: 'ANIMAL.CODE' })}</Label>
+                      <TextInput
+                        control={control}
+                        type="text"
+                        name="code"
+                        defaultValue={`${animal?.animal?.code}`}
+                        placeholder="Give a code"
+                        errors={errors}
+                      />
+                    </div>
+                    {['Poulet de chair', 'Pisciculture', 'Pondeuses'].includes(
+                      animalType?.name,
+                    ) ? (
+                      <div className="mt-4">
+                        <Label>
+                          {t.formatMessage({ id: 'NUMBER.ANIMALS' })}
+                          <span className="text-red-600">*</span>
+                        </Label>
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="number"
+                          placeholder="Give a number"
+                          errors={errors}
+                        />
+                      </div>
+                    ) : (
+                      <div className="my-4 flex items-center space-x-1">
+                        <Label>
+                          {t.formatMessage({ id: 'ANIMAL.MALES' })}:
+                          <span className="text-red-600">*</span>
+                        </Label>
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="male"
+                          defaultValue="0"
+                          placeholder="Number of males"
+                          errors={errors}
+                        />
+                        <Label>
+                          {t.formatMessage({ id: 'ANIMAL.FEMALES' })}:
+                          <span className="text-red-600">*</span>
+                        </Label>
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="female"
+                          defaultValue="0"
+                          placeholder="Number of females"
+                          errors={errors}
+                        />
+                      </div>
+                    )}
                   </div>
                 ) : null}
-                {['Poulet de chair', 'Pisciculture', 'Pondeuses'].includes(
-                  animalType?.name,
-                ) ? (
-                  <div className="mt-4">
-                    <Label>
-                      {t.formatMessage({ id: 'NUMBER.ANIMALS' })}
-                      <span className="text-red-600">*</span>
-                    </Label>
-                    <TextInput
-                      control={control}
-                      type="number"
-                      name="number"
-                      placeholder="Give a number"
-                      errors={errors}
-                    />
-                  </div>
-                ) : (
-                  <div className="my-4 flex items-center space-x-1">
-                    <Label>
-                      {t.formatMessage({ id: 'ANIMAL.MALES' })}:
-                      <span className="text-red-600">*</span>
-                    </Label>
-                    <TextInput
-                      control={control}
-                      type="number"
-                      name="male"
-                      defaultValue="0"
-                      placeholder="Number of males"
-                      errors={errors}
-                    />
-                    <Label>
-                      {t.formatMessage({ id: 'ANIMAL.FEMALES' })}:
-                      <span className="text-red-600">*</span>
-                    </Label>
-                    <TextInput
-                      control={control}
-                      type="number"
-                      name="female"
-                      defaultValue="0"
-                      placeholder="Number of females"
-                      errors={errors}
-                    />
-                  </div>
-                )}
+
                 <div className="mb-4">
                   <Label>
-                    Cause<span className="text-red-600">*</span>
+                    Cause et moyen de disposition des carcasses
+                    <span className="text-red-600">*</span>
                   </Label>
                   <TextAreaInput
                     control={control}
                     name="note"
-                    placeholder="Note"
+                    placeholder="Cause and disposal method"
                     errors={errors}
                   />
                 </div>

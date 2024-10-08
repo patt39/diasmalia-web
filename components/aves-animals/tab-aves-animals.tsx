@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+import { GetOneAnimalTypeAPI } from '@/api-site/animal-type';
 import { GetAnimalsAPI } from '@/api-site/animals';
 import { useInputState } from '@/components/hooks';
 import { ButtonLoadMore, SearchInput } from '@/components/ui-setting';
@@ -27,7 +28,12 @@ import { ListAvesAnimals } from './list-aves';
 const TabAvesAnimals = ({ animalTypeId }: { animalTypeId: string }) => {
   const { ref, inView } = useInView();
   const [productionPhase, setProductionPhase] = useState('');
+  const [isBulkOpen, setIsBulkOpen] = useState<boolean>(false);
   const { t, search, handleSetSearch, isOpen, setIsOpen } = useInputState();
+
+  const { data: animalType } = GetOneAnimalTypeAPI({
+    animalTypeId: animalTypeId,
+  });
 
   const {
     isLoading: isLoadingAnimals,
@@ -78,6 +84,22 @@ const TabAvesAnimals = ({ animalTypeId }: { animalTypeId: string }) => {
             />
           </div>
           <div className="ml-auto flex items-center gap-2">
+            {animalType?.name === 'Poulet de chair' ? (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="outline">
+                      {t.formatMessage({ id: 'WHAT.TODO' })}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent className="dark:border-gray-800">
+                    <p>{t.formatMessage({ id: 'WHATTODO.BROILERS' })}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            ) : (
+              ''
+            )}
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -90,8 +112,8 @@ const TabAvesAnimals = ({ animalTypeId }: { animalTypeId: string }) => {
                     {t.formatMessage({ id: 'ANIMALTYPE.TOOLTIP' })}{' '}
                     {dataAnimals?.pages[0]?.data?.total}{' '}
                     {dataAnimals?.pages[0]?.data?.total > 1
-                      ? `${t.formatMessage({ id: 'ANIMALTYPE.TOOLTIP.ANIMALS' })}`
-                      : `${t.formatMessage({ id: 'ANIMALTYPE.TOOLTIP.ANIMAL' })}`}
+                      ? `bandes`
+                      : `bande`}
                   </p>
                 </TooltipContent>
               </Tooltip>
