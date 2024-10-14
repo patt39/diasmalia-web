@@ -1,10 +1,6 @@
 import { GetOneFarrowingAPI } from '@/api-site/farrowings';
-import { TextAreaInput } from '@/components/ui-setting/shadcn';
 import { XIcon } from 'lucide-react';
-import * as yup from 'yup';
-import { useReactHookForm } from '../hooks';
-
-const schema = yup.object({});
+import { Textarea } from '../ui/textarea';
 
 const ViewFarrowing = ({
   showModal,
@@ -15,8 +11,6 @@ const ViewFarrowing = ({
   setShowModal: any;
   farrowing?: any;
 }) => {
-  const { control, errors } = useReactHookForm({ schema });
-
   const { data: GetOneFarrowing } = GetOneFarrowingAPI({
     farrowingId: farrowing.id,
   });
@@ -38,14 +32,7 @@ const ViewFarrowing = ({
             <form className="mt-4">
               <div className="flex-auto justify-center p-2">
                 <div className="mb-4 disabled">
-                  <TextAreaInput
-                    control={control}
-                    label="Note"
-                    name="note"
-                    defaultValue={GetOneFarrowing?.note}
-                    errors={errors}
-                    disabled
-                  />
+                  <Textarea defaultValue={GetOneFarrowing?.note} disabled />
                 </div>
               </div>
             </form>

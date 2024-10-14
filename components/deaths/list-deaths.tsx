@@ -23,27 +23,22 @@ import { CreateOrUpdateDeaths } from './create-or-update-deaths';
 import { ViewDeath } from './view-death';
 
 const ListDeaths = ({ item, index }: { item: any; index: number }) => {
-  const { t, isOpen, loading, setIsOpen, setLoading } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
   const [isView, setIsView] = useState(false);
+  const { t, isOpen, setIsOpen } = useInputState();
 
-  const { mutateAsync: deleteMutation } = DeleteOneDeathAPI({
-    onSuccess: () => {},
-    onError: (error?: any) => {},
-  });
+  const { isPending: loading, mutateAsync: deleteMutation } =
+    DeleteOneDeathAPI();
 
   const deleteItem = async (item: any) => {
-    setLoading(true);
     setIsOpen(true);
     try {
       await deleteMutation({ deathId: item.id });
       AlertSuccessNotification({
         text: 'Death deleted successfully',
       });
-      setLoading(false);
       setIsOpen(false);
     } catch (error: any) {
-      setLoading(false);
       setIsOpen(true);
       AlertDangerNotification({
         text: `${error.response.data.message}`,

@@ -1,33 +1,20 @@
-import { GetAnimalsAPI } from '@/api-site/animals';
 import { CreateOrUpdateOneFarrowingAPI } from '@/api-site/farrowings';
 import { useReactHookForm } from '@/components/hooks';
-import { ButtonInput, ButtonLoadMore } from '@/components/ui-setting';
-import { LoadingFile } from '@/components/ui-setting/ant';
-import { ErrorFile } from '@/components/ui-setting/ant/error-file';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { ButtonInput } from '@/components/ui-setting';
 import { FarrowingsModel } from '@/types/farrowing';
 import {
   AlertDangerNotification,
   AlertSuccessNotification,
 } from '@/utils/alert-notification';
 import { XIcon } from 'lucide-react';
-import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import { Controller, SubmitHandler } from 'react-hook-form';
-import { useInView } from 'react-intersection-observer';
+import { SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
 import { TextAreaInput, TextInput } from '../ui-setting/shadcn';
 import { Label } from '../ui/label';
 
 const schema = yup.object({
+  dead: yup.number().optional(),
   codeFemale: yup.string().optional(),
   litter: yup.number().required('litter is a required field'),
   weight: yup.number().required('weight is a required field'),
@@ -38,10 +25,12 @@ const CreateOrUpdateFarrowings = ({
   showModal,
   setShowModal,
   farrowing,
+  animal,
 }: {
   showModal: boolean;
   setShowModal: any;
   farrowing?: any;
+  animal?: any;
 }) => {
   const {
     t,
@@ -49,38 +38,31 @@ const CreateOrUpdateFarrowings = ({
     setValue,
     handleSubmit,
     errors,
-    loading,
-    setLoading,
     hasErrors,
     setHasErrors,
   } = useReactHookForm({ schema });
-  const { query } = useRouter();
-  const { ref, inView } = useInView();
-  const animalTypeId = String(query?.animalTypeId);
 
   useEffect(() => {
     if (farrowing) {
-      const fields = ['codeFemale', 'litter', 'note', 'weight'];
+      const fields = ['dead', 'litter', 'note', 'weight'];
       fields?.forEach((field: any) => setValue(field, farrowing[field]));
     }
   }, [farrowing, setValue]);
 
+  useEffect(() => {
+    if (animal) {
+      const fields = ['code'];
+      fields?.forEach((field: any) => setValue(field, animal[field]));
+    }
+  }, [animal, setValue]);
+
   // Create or Update data
-  const { mutateAsync: saveMutation } = CreateOrUpdateOneFarrowingAPI({
-    onSuccess: () => {
-      setHasErrors(false);
-      setLoading(false);
-    },
-    onError: (error?: any) => {
-      setHasErrors(true);
-      setHasErrors(error.response.data.message);
-    },
-  });
+  const { isPending: loading, mutateAsync: saveMutation } =
+    CreateOrUpdateOneFarrowingAPI();
 
   const onSubmit: SubmitHandler<FarrowingsModel> = async (
     payload: FarrowingsModel,
   ) => {
-    setLoading(true);
     setHasErrors(undefined);
     try {
       await saveMutation({
@@ -88,58 +70,18 @@ const CreateOrUpdateFarrowings = ({
         farrowingId: farrowing?.id,
       });
       setHasErrors(false);
-      setLoading(false);
       AlertSuccessNotification({
         text: 'Farrowing saved successfully',
       });
       setShowModal(false);
     } catch (error: any) {
       setHasErrors(true);
-      setLoading(false);
       setHasErrors(error.response.data.message);
       AlertDangerNotification({
         text: `${error.response.data.message}`,
       });
     }
   };
-
-  const {
-    isLoading: isLoadingAnimals,
-    isError: isErrorAnimals,
-    data: dataAnimals,
-    isFetchingNextPage,
-    hasNextPage,
-    fetchNextPage,
-  } = GetAnimalsAPI({
-    take: 10,
-    sort: 'desc',
-    status: 'ACTIVE',
-    sortBy: 'createdAt',
-    productionPhase: 'GESTATION',
-    animalTypeId: animalTypeId,
-  });
-
-  useEffect(() => {
-    let fetching = false;
-    if (inView) {
-      fetchNextPage();
-    }
-    const onScroll = async (event: any) => {
-      const { scrollHeight, scrollTop, clientHeight } =
-        event.target.scrollingElement;
-
-      if (!fetching && scrollHeight - scrollTop <= clientHeight * 1.5) {
-        fetching = true;
-        if (hasNextPage) await fetchNextPage();
-        fetching = false;
-      }
-    };
-
-    document.addEventListener('scroll', onScroll);
-    return () => {
-      document.removeEventListener('scroll', onScroll);
-    };
-  }, [fetchNextPage, hasNextPage, inView]);
 
   return (
     <>
@@ -172,97 +114,64 @@ const CreateOrUpdateFarrowings = ({
                 )}
 
                 {!farrowing?.id ? (
-                  <div className="mb-2">
-                    <Label>
-                      Sélectionnez une femèle gestante:
-                      <span className="text-red-600">*</span>
-                    </Label>
-                    <Controller
+                  <div className="mb-2 items-center">
+                    <Label>Animal code</Label>
+                    <TextInput
                       control={control}
+                      type="text"
                       name="codeFemale"
-                      render={({ field: { value, onChange } }) => (
-                        <Select
-                          onValueChange={onChange}
-                          name={'codeFemale'}
-                          value={value}
-                        >
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select a female in gestation" />
-                          </SelectTrigger>
-                          <SelectContent className="dark:border-gray-800">
-                            <SelectGroup>
-                              <SelectLabel>Codes</SelectLabel>
-                              {isLoadingAnimals ? (
-                                <LoadingFile />
-                              ) : isErrorAnimals ? (
-                                <ErrorFile
-                                  title="404"
-                                  description="Error finding data please try again..."
-                                />
-                              ) : Number(dataAnimals?.pages[0]?.data?.total) <=
-                                0 ? (
-                                <ErrorFile description="Don't have animals in gestation phase yet" />
-                              ) : (
-                                dataAnimals?.pages
-                                  .flatMap((page: any) => page?.data?.value)
-                                  .map((item, index) => (
-                                    <>
-                                      <SelectItem
-                                        key={index}
-                                        value={item?.code}
-                                      >
-                                        {item?.code}
-                                      </SelectItem>
-                                    </>
-                                  ))
-                              )}
-                              {hasNextPage && (
-                                <div className="mx-auto mt-4 justify-center text-center">
-                                  <ButtonLoadMore
-                                    ref={ref}
-                                    isFetchingNextPage={isFetchingNextPage}
-                                    onClick={() => fetchNextPage()}
-                                  />
-                                </div>
-                              )}
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      )}
+                      defaultValue={`${animal?.animal?.code}`}
+                      errors={errors}
                     />
                   </div>
                 ) : null}
-                <div className="mb-2">
-                  <Label>
-                    {t.formatMessage({ id: 'TABFARROWING.LITTER' })}
-                    <span className="text-red-600">*</span>
-                  </Label>
-                  <TextInput
-                    control={control}
-                    type="number"
-                    name="litter"
-                    placeholder="Litter"
-                    errors={errors}
-                  />
+                <div className="mb-2 flex items-center space-x-10">
+                  <div>
+                    <Label>
+                      {t.formatMessage({ id: 'TABFARROWING.LITTER' })}
+                      <span className="text-red-600">*</span>
+                    </Label>
+                    <TextInput
+                      control={control}
+                      type="number"
+                      name="litter"
+                      placeholder="Litter"
+                      errors={errors}
+                    />
+                  </div>
+                  <div>
+                    <Label>
+                      {t.formatMessage({ id: 'ANIMALTYPE.DEATHS' })}
+                    </Label>
+                    <TextInput
+                      control={control}
+                      type="number"
+                      name="dead"
+                      defaultValue="0"
+                      placeholder="number of deads"
+                      errors={errors}
+                    />
+                  </div>
+                  <div>
+                    <Label>
+                      {t.formatMessage({ id: 'VIEW.WEIGHT' })}(g)
+                      <span className="text-red-600">*</span>
+                    </Label>
+                    <TextInput
+                      control={control}
+                      type="number"
+                      name="weight"
+                      placeholder="Unit weight"
+                      errors={errors}
+                    />
+                  </div>
                 </div>
-                <div className="mb-4">
-                  <Label>
-                    {t.formatMessage({ id: 'VIEW.WEIGHT' })}(g)
-                    <span className="text-red-600">*</span>
-                  </Label>
-                  <TextInput
-                    control={control}
-                    type="number"
-                    name="weight"
-                    placeholder="Unit weight"
-                    errors={errors}
-                  />
-                </div>
+                <Label>Observation </Label>
                 <div className="mb-4">
                   <TextAreaInput
                     control={control}
                     name="note"
-                    placeholder="Observation"
+                    placeholder="Give details about farrowing"
                     errors={errors}
                   />
                 </div>

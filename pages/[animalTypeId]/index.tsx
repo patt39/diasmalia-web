@@ -45,6 +45,8 @@ import { FarrowingsWeaningsAnalytics } from '@/components/weanings/birth-analyti
 import { TabWeanings } from '@/components/weanings/tab-weanings';
 import { useRouter } from 'next/router';
 import { useIntl } from 'react-intl';
+import { TabAnimalDeathStatistics } from './animals-deaths-statistics';
+import { TabAnimalSoldStatistics } from './animals-sold-statistics';
 import { AnimalStatistics } from './animals-statistics';
 import { AvesStatistics } from './aves-statistics';
 
@@ -417,7 +419,7 @@ export function Index() {
                       <TabsTrigger value="sales">
                         {t.formatMessage({ id: 'MENU.SALES' })}
                       </TabsTrigger>
-                      <TabsTrigger value="analytics">Carrière</TabsTrigger>
+                      <TabsTrigger value="analytics">Statistiques</TabsTrigger>
                     </TabsList>
                   ) : [
                       'Pondeuses',
@@ -787,6 +789,22 @@ export function Index() {
                     className="dark:border-gray-800"
                   >
                     <TabAnalytics animalTypeId={animalTypeId} />
+                  </Card>
+                </TabsContent>
+                <TabsContent value="analytics">
+                  <Card
+                    x-chunk="dashboard-06-chunk-0"
+                    className="dark:border-gray-800"
+                  >
+                    <TabAnimalSoldStatistics animalTypeId={animalTypeId} />
+                  </Card>
+                </TabsContent>
+                <TabsContent value="analytics">
+                  <Card
+                    x-chunk="dashboard-06-chunk-0"
+                    className="dark:border-gray-800"
+                  >
+                    <TabAnimalDeathStatistics animalTypeId={animalTypeId} />
                   </Card>
                 </TabsContent>
                 <TabsContent value="sales-analytics">

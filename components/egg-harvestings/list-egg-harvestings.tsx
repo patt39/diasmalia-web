@@ -23,27 +23,22 @@ import { TableCell, TableRow } from '../ui/table';
 import { CreateOrUpdateEggHarvestings } from './create-or-update-egg-harvestings';
 
 const ListEggHarvestings = ({ item, index }: { item: any; index: number }) => {
-  const { t, isOpen, loading, setIsOpen, setLoading } = useInputState();
+  const { t, isOpen, setIsOpen } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
   const [isIncubation, setIsIncubation] = useState(false);
 
-  const { mutateAsync: deleteMutation } = DeleteOneEggHarvestingAPI({
-    onSuccess: () => {},
-    onError: (error?: any) => {},
-  });
+  const { isPending: loading, mutateAsync: deleteMutation } =
+    DeleteOneEggHarvestingAPI();
 
   const deleteItem = async (item: any) => {
-    setLoading(true);
     setIsOpen(true);
     try {
       await deleteMutation({ eggHarvestingId: item.id });
       AlertSuccessNotification({
         text: 'EggHarvesting deleted successfully',
       });
-      setLoading(false);
       setIsOpen(false);
     } catch (error: any) {
-      setLoading(false);
       setIsOpen(true);
       AlertDangerNotification({
         text: `${error.response.data.message}`,

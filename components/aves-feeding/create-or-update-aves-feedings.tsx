@@ -47,8 +47,6 @@ const CreateOrUpdateAvesFeedings = ({
     setValue,
     handleSubmit,
     errors,
-    loading,
-    setLoading,
     hasErrors,
     setHasErrors,
   } = useReactHookForm({ schema });
@@ -70,21 +68,12 @@ const CreateOrUpdateAvesFeedings = ({
   }, [animal, setValue]);
 
   // Create or Update data
-  const { mutateAsync: saveMutation } = CreateOrUpdateOneAvesFeedingAPI({
-    onSuccess: () => {
-      setHasErrors(false);
-      setLoading(false);
-    },
-    onError: (error?: any) => {
-      setHasErrors(true);
-      setHasErrors(error.response.data.message);
-    },
-  });
+  const { isPending: loading, mutateAsync: saveMutation } =
+    CreateOrUpdateOneAvesFeedingAPI();
 
   const onSubmit: SubmitHandler<FeedingAvesModel> = async (
     payload: FeedingAvesModel,
   ) => {
-    setLoading(true);
     setHasErrors(undefined);
     try {
       await saveMutation({
@@ -92,14 +81,12 @@ const CreateOrUpdateAvesFeedings = ({
         feedingId: feeding?.id,
       });
       setHasErrors(false);
-      setLoading(false);
       AlertSuccessNotification({
         text: 'Feeding saved successfully',
       });
       setShowModal(false);
     } catch (error: any) {
       setHasErrors(true);
-      setLoading(false);
       setHasErrors(error.response.data.message);
       AlertDangerNotification({
         text: `${error.response.data.message}`,

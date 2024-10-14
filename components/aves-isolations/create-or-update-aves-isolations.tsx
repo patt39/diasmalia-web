@@ -40,7 +40,6 @@ const CreateOrUpdateAvesIsolations = ({
     setValue,
     handleSubmit,
     errors,
-    loading,
     setLoading,
     hasErrors,
     setHasErrors,
@@ -67,21 +66,12 @@ const CreateOrUpdateAvesIsolations = ({
   }, [animal, setValue]);
 
   // Create or Update data
-  const { mutateAsync: saveMutation } = CreateOrUpdateOneAvesIsolationAPI({
-    onSuccess: () => {
-      setHasErrors(false);
-      setLoading(false);
-    },
-    onError: (error?: any) => {
-      setHasErrors(true);
-      setHasErrors(error.response.data.message);
-    },
-  });
+  const { isPending: loading, mutateAsync: saveMutation } =
+    CreateOrUpdateOneAvesIsolationAPI();
 
   const onSubmit: SubmitHandler<IsolationsModel> = async (
     payload: IsolationsModel,
   ) => {
-    setLoading(true);
     setHasErrors(undefined);
     try {
       await saveMutation({
@@ -89,14 +79,12 @@ const CreateOrUpdateAvesIsolations = ({
         isolationId: isolation?.id,
       });
       setHasErrors(false);
-      setLoading(false);
       AlertSuccessNotification({
         text: 'Isolation saved successfully',
       });
       setShowModal(false);
     } catch (error: any) {
       setHasErrors(true);
-      setLoading(false);
       setHasErrors(error.response.data.message);
       AlertDangerNotification({
         text: `${error.response.data.message}`,

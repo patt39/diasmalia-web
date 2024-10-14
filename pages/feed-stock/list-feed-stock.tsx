@@ -19,38 +19,34 @@ import { AlertDangerNotification, AlertSuccessNotification } from '@/utils';
 import {
   Anvil,
   Backpack,
+  Calendar,
   ListChecks,
   MoreHorizontal,
   PencilIcon,
   TrashIcon,
 } from 'lucide-react';
 import { useState } from 'react';
+import { formatDateDDMMYY, formatWeight } from '../../utils/formate-date';
 import { CreateOrUpdateFeedComposition } from './create-or-update-feed-composition';
 import { CreateOrUpdateFeedStock } from './create-or-update-feed-stock';
 
 const ListFeedStock = ({ item, index }: { item: any; index: number }) => {
-  const { t, isOpen, loading, setIsOpen, setLoading } = useInputState();
+  const { t, isOpen, setIsOpen } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
   const [isComposition, setIsComposition] = useState(false);
 
-  const { mutateAsync: deleteMutation } = DeleteOneFeedStockAPI({
-    onSuccess: () => {},
-    onError: (error?: any) => {},
-  });
+  const { isPending: loading, mutateAsync: deleteMutation } =
+    DeleteOneFeedStockAPI();
 
   const deleteItem = async (item: any) => {
-    setLoading(true);
     setIsOpen(true);
     try {
-      console.log(item);
       await deleteMutation({ feedStockId: item?.id });
       AlertSuccessNotification({
         text: 'Stock deleted successfully',
       });
-      setLoading(false);
       setIsOpen(false);
     } catch (error: any) {
-      setLoading(false);
       setIsOpen(true);
       AlertDangerNotification({
         text: `${error.response.data.message}`,
@@ -146,16 +142,20 @@ const ListFeedStock = ({ item, index }: { item: any; index: number }) => {
               )}
             </div>
           </div>
-          <div className="flex items-center justify-center space-x-6 mt-4">
+          <div className="flex items-center justify-center space-x-6 mt-2">
             <div>
-              <h2 className="mb-3 items-center flex text-base font-bold text-gray-500 h-4">
+              <h2 className="mb-2 items-center flex text-base font-bold text-gray-500 h-4">
                 <Backpack className="h-3.5 w-3.5 hover:shadow-xxl" />{' '}
                 {t.formatMessage({ id: 'BAGS' })}: {item?.number}
               </h2>
-              <h2 className="flex mt-2 items-center text-base font-bold text-gray-500 h-4 space-x-2">
+              <h2 className="mb-2 flex items-center text-base font-bold text-gray-500 h-4 space-x-2">
                 <Anvil className="h-3.5 w-3.5  hover:shadow-xxl" />
-                {t.formatMessage({ id: 'TABANIMAL.WEIGHT' })}: {item?.weight}
-                kg
+                {t.formatMessage({ id: 'TABANIMAL.WEIGHT' })}:{' '}
+                {formatWeight(item?.weight)}
+              </h2>
+              <h2 className="flex items-center text-base font-normal text-gray-500 h-4 space-x-2">
+                <Calendar className="h-3.5 w-3.5  hover:shadow-xxl" />
+                Date: {formatDateDDMMYY(item?.updatedAt as Date)}
               </h2>
             </div>
           </div>

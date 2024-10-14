@@ -16,6 +16,7 @@ import {
 import { PaginationPage } from '@/utils';
 import { ListFilter } from 'lucide-react';
 import { useState } from 'react';
+import { formatWeight } from '../../utils/formate-date';
 import { SearchInput } from '../ui-setting';
 import {
   DropdownMenu,
@@ -36,7 +37,6 @@ const TabFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [periode, setPeriode] = useState('');
   const [pageItem, setPageItem] = useState(1);
-  const [productionPhase, setProductionPhase] = useState('');
   const { t, search, handleSetSearch, userStorage } = useInputState();
 
   const { data: animalStatistics } = GetAnimalStatisticsAPI({
@@ -56,7 +56,6 @@ const TabFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
     take: 10,
     sort: 'desc',
     sortBy: 'createdAt',
-    productionPhase,
     animalTypeId: animalTypeId,
     organizationId: userStorage?.organizationId,
   });
@@ -82,7 +81,7 @@ const TabFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
                 <TooltipContent className="dark:border-gray-800">
                   <p>
                     {t.formatMessage({ id: 'ANIMALTYPE.TOOLTIP' })}{' '}
-                    {animalStatistics?.sumFeedings ?? 0}kg
+                    {formatWeight(animalStatistics?.sumFeedings) ?? 0}
                     {''} {t.formatMessage({ id: 'ANIMALTYPE.FEEDING' })}
                   </p>
                 </TooltipContent>
@@ -93,9 +92,13 @@ const TabFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
                 <Button variant="outline" size="sm" className="h-8 gap-1">
                   <ListFilter className="h-3.5 w-3.5" />
                   <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    {productionPhase === ''
+                    {periode == ''
                       ? t.formatMessage({ id: 'ACTIVITY.FILTERALL' })
-                      : productionPhase}
+                      : periode == '7'
+                        ? t.formatMessage({ id: 'ACTIVITY.LAST7DAYS' })
+                        : periode == '15'
+                          ? t.formatMessage({ id: 'ACTIVITY.LAST15DAYS' })
+                          : t.formatMessage({ id: 'ACTIVITY.LAST30DAYS' })}
                   </span>
                 </Button>
               </DropdownMenuTrigger>

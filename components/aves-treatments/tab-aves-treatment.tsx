@@ -158,7 +158,7 @@ const TabAvesTreatments = ({ animalTypeId }: { animalTypeId: string }) => {
               <Stethoscope className="h-3.5 w-3.5  hover:shadow-xxl" />
               <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                 {t.formatMessage({
-                  id: 'ANIMALTYPE.ANIMALS.TREATMENT.CREATE',
+                  id: 'ANIMALTYPE.ANIMALS.TREATMENT.AVES.CREATE',
                 })}
               </span>
             </Button>

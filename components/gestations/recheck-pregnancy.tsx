@@ -10,6 +10,7 @@ import {
 import { XIcon } from 'lucide-react';
 import { SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
+import { Label } from '../ui/label';
 
 const schema = yup.object({
   method: yup.string().required('method is required'),
@@ -30,28 +31,17 @@ const ReCheckPregnancy = ({
     control,
     handleSubmit,
     errors,
-    loading,
     setLoading,
     hasErrors,
     setHasErrors,
   } = useReactHookForm({ schema });
 
   //Update data
-  const { mutateAsync: saveMutation } = UpdateOneCheckAPI({
-    onSuccess: () => {
-      setHasErrors(false);
-      setLoading(false);
-    },
-    onError: (error?: any) => {
-      setHasErrors(true);
-      setHasErrors(error.response.data.message);
-    },
-  });
+  const { isPending: loading, mutateAsync: saveMutation } = UpdateOneCheckAPI();
 
   const onSubmit: SubmitHandler<CheckPregnancysModel> = async (
     payload: CheckPregnancysModel,
   ) => {
-    setLoading(true);
     setHasErrors(undefined);
     try {
       await saveMutation({
@@ -59,14 +49,12 @@ const ReCheckPregnancy = ({
         checkPregnancyId: gestation?.checkPregnancyId,
       });
       setHasErrors(false);
-      setLoading(false);
       AlertSuccessNotification({
         text: 'Breeding rechecked successfully',
       });
       setShowModal(false);
     } catch (error: any) {
       setHasErrors(true);
-      setLoading(false);
       setHasErrors(error.response.data.message);
       AlertDangerNotification({
         text: `${error.response.data.message}`,
@@ -103,7 +91,11 @@ const ReCheckPregnancy = ({
                     </div>
                   </div>
                 )}
-                <div className="mb-4 flex items-center space-x-4 cursor-pointer">
+                <div className="mb-2">
+                  <Label>
+                    Methode
+                    <span className="text-red-600">*</span>
+                  </Label>
                   <SelectInput
                     firstOptionName="Choose a size"
                     control={control}
@@ -112,28 +104,28 @@ const ReCheckPregnancy = ({
                     valueType="text"
                     name="method"
                     dataItem={[
-                      {
-                        id: 1,
-                        name: t.formatMessage({ id: 'ANALYSE.SANGUINE' }),
-                      },
-                      {
-                        id: 2,
-                        name: t.formatMessage({ id: 'PALPATION.RECTAL' }),
-                      },
-                      { id: 3, name: t.formatMessage({ id: 'OBSERVATION' }) },
-                      { id: 4, name: t.formatMessage({ id: 'ECHOGRAPHY' }) },
+                      { id: 1, name: 'BLOOD_TEST' },
+                      { id: 2, name: 'RECTAL_PALPATION' },
+                      { id: 3, name: 'OBSERVATION' },
+                      { id: 4, name: 'ULTRASOUND' },
                     ]}
                   />
+                </div>
+                <div className="mb-2">
+                  <Label>
+                    Résultat
+                    <span className="text-red-600">*</span>
+                  </Label>
                   <SelectInput
-                    firstOptionName="Choose a status"
+                    firstOptionName="Choose a size"
                     control={control}
                     errors={errors}
                     placeholder="Select result"
                     valueType="text"
                     name="result"
                     dataItem={[
-                      { id: 1, name: t.formatMessage({ id: 'OPEN' }) },
-                      { id: 2, name: t.formatMessage({ id: 'PREGNANT' }) },
+                      { id: 1, name: 'OPEN' },
+                      { id: 2, name: 'PREGNANT' },
                     ]}
                   />
                 </div>

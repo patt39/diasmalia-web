@@ -30,10 +30,12 @@ import {
 const schema = yup.object({
   code: yup.string().optional(),
   male: yup.number().optional(),
+  weight: yup.number().optional(),
   female: yup.number().optional(),
+  strain: yup.string().optional(),
+  supplier: yup.string().optional(),
   birthday: yup.string().optional(),
   quantity: yup.number().optional(),
-  weight: yup.number().optional(),
   locationCode: yup.string().optional(),
   productionPhase: yup.string().optional(),
 });
@@ -54,8 +56,6 @@ const UpdateAvesAnimals = ({
     setValue,
     handleSubmit,
     errors,
-    loading,
-    setLoading,
     hasErrors,
     setHasErrors,
   } = useReactHookForm({ schema });
@@ -87,8 +87,10 @@ const UpdateAvesAnimals = ({
         'male',
         'female',
         'weight',
+        'strain',
         'quantity',
         'birthday',
+        'supplier',
         'locationCode',
         'productionPhase',
       ];
@@ -96,20 +98,11 @@ const UpdateAvesAnimals = ({
     }
   }, [animal, setValue]);
 
-  // Create or Update data
-  const { mutateAsync: saveMutation } = UpdateOneAvesAnimalAPI({
-    onSuccess: () => {
-      setHasErrors(false);
-      setLoading(false);
-    },
-    onError: (error?: any) => {
-      setHasErrors(true);
-      setHasErrors(error.response.data.message);
-    },
-  });
+  // Update data
+  const { isPending: loading, mutateAsync: saveMutation } =
+    UpdateOneAvesAnimalAPI();
 
   const onSubmit: SubmitHandler<AnimalModel> = async (payload: AnimalModel) => {
-    setLoading(true);
     setHasErrors(undefined);
     try {
       await saveMutation({
@@ -117,14 +110,12 @@ const UpdateAvesAnimals = ({
         animalId: animal?.id,
       });
       setHasErrors(false);
-      setLoading(false);
       AlertSuccessNotification({
         text: 'Animal saved successfully',
       });
       setShowModal(false);
     } catch (error: any) {
       setHasErrors(true);
-      setLoading(false);
       setHasErrors(error.response.data.message);
       AlertDangerNotification({
         text: `${error.response.data.message}`,
@@ -175,6 +166,26 @@ const UpdateAvesAnimals = ({
                   animalType?.name,
                 ) ? (
                   <>
+                    <div className="my-2 flex space-x-4">
+                      <div className="w-96">
+                        <Label>Fournisseur</Label>
+                        <TextInput
+                          control={control}
+                          type="text"
+                          name="supplier"
+                          errors={errors}
+                        />
+                      </div>
+                      <div className="w-60">
+                        <Label>Souche</Label>
+                        <TextInput
+                          control={control}
+                          type="text"
+                          name="strain"
+                          errors={errors}
+                        />
+                      </div>
+                    </div>
                     <div className="flex items-center space-x-4">
                       {animal?._count?.feedings !== 0 ? (
                         <div className="my-2">
@@ -258,10 +269,7 @@ const UpdateAvesAnimals = ({
                     {animalType?.name === 'Pondeuses' &&
                     watchProductionPhase === 'LAYING' ? (
                       <div className="my-2">
-                        <Label>
-                          Mettre en cages?
-                          <span className="text-red-600">*</span>
-                        </Label>
+                        <Label>Mettre en cages?</Label>
                         <SelectInput
                           firstOptionName="Choose a production type"
                           control={control}

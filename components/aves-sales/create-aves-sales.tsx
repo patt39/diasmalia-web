@@ -1,5 +1,4 @@
 import { GetOneAnimalTypeAPI } from '@/api-site/animal-type';
-import { GetAnimalsAPI } from '@/api-site/animals';
 import { CreateOrUpdateAvesSaleAPI } from '@/api-site/sales';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
@@ -52,9 +51,7 @@ const CreateAvesSales = ({
     control,
     handleSubmit,
     errors,
-    loading,
     setValue,
-    setLoading,
     hasErrors,
     setHasErrors,
   } = useReactHookForm({ schema });
@@ -68,16 +65,8 @@ const CreateAvesSales = ({
   });
 
   // Create
-  const { mutateAsync: saveMutation } = CreateOrUpdateAvesSaleAPI({
-    onSuccess: () => {
-      setHasErrors(false);
-      setLoading(false);
-    },
-    onError: (error?: any) => {
-      setHasErrors(true);
-      setHasErrors(error.response.data.message);
-    },
-  });
+  const { isPending: loading, mutateAsync: saveMutation } =
+    CreateOrUpdateAvesSaleAPI();
 
   useEffect(() => {
     if (animal) {
@@ -87,7 +76,6 @@ const CreateAvesSales = ({
   }, [animal, setValue]);
 
   const onSubmit: SubmitHandler<SalesModel> = async (payload: SalesModel) => {
-    setLoading(true);
     setHasErrors(undefined);
     try {
       await saveMutation({
@@ -95,32 +83,18 @@ const CreateAvesSales = ({
         saleId: sale?.id,
       });
       setHasErrors(false);
-      setLoading(false);
       AlertSuccessNotification({
         text: 'Sale saved successfully',
       });
       setShowModal(false);
     } catch (error: any) {
       setHasErrors(true);
-      setLoading(false);
       setHasErrors(error.response.data.message);
       AlertDangerNotification({
         text: `${error.response.data.message}`,
       });
     }
   };
-
-  const {
-    isLoading: isLoadingAnimals,
-    isError: isErrorAnimals,
-    data: dataAnimals,
-  } = GetAnimalsAPI({
-    take: 10,
-    sort: 'desc',
-    sortBy: 'createdAt',
-    status: 'ACTIVE',
-    animalTypeId: animalTypeId,
-  });
 
   return (
     <>

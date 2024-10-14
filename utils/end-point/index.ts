@@ -139,6 +139,7 @@ export const apiEndpoints: ClientApiMethods = {
 
   /****************** Finances route */
   getFinances: GET(`${baseUrl}/finances`),
+  getFinanceAnalytics: GET(`${baseUrl}/analytics/revenue`),
   createOneFinance: POST(`${baseUrl}/finances/create`),
   getOneFinance: GET(`${baseUrl}/finances/:financeId/view`),
   updateOneFinance: PUT(`${baseUrl}/finances/:financeId/edit`),
@@ -155,7 +156,6 @@ export const apiEndpoints: ClientApiMethods = {
 
   /****************** Animals route */
   getAnimals: GET(`${baseUrl}/animals`),
-  getArchives: GET(`${baseUrl}/animals/archives`),
   createOneAnimal: POST(`${baseUrl}/animals/create`),
   getOneAnimal: GET(`${baseUrl}/animals/:animalId/view`),
   createBulkAnimal: POST(`${baseUrl}/animals/create/bulk`),
@@ -163,11 +163,13 @@ export const apiEndpoints: ClientApiMethods = {
   updateOneAnimal: PUT(`${baseUrl}/animals/:animalId/edit`),
   updateOneAves: PUT(`${baseUrl}/animals/:animalId/edit`),
   createOneAvesAnimal: POST(`${baseUrl}/animals/:animalTypeId/create`),
-  getArchivedStatistics: GET(`${baseUrl}/animals/:animalId/view/archived`),
   getAnimalByAnimalType: GET(`${baseUrl}/animals/:animalTypeId/view/animal`),
   getAnimalStatistics: GET(`${baseUrl}/animals/:animalTypeId/statistics`),
+  getAnimalDeadSoldStatistics: GET(
+    `${baseUrl}/animals/:animalTypeId/statistics/all`,
+  ),
   deleteOneAnimal: DELETE(`${baseUrl}/animals/:animalId/delete`),
-  archiveOneAnimal: DELETE(`${baseUrl}/animals/:animalId/archive/aves`),
+  archiveOneAnimal: PUT(`${baseUrl}/animals/:animalId/archive/aves`),
 
   /****************** Feedings route */
   getFeedings: GET(`${baseUrl}/feedings`),
@@ -203,6 +205,7 @@ export const apiEndpoints: ClientApiMethods = {
   updateOneBreeding: PUT(`${baseUrl}/breedings/:breedingId/edit`),
   deleteOneBreeding: DELETE(`${baseUrl}/breedings/:breedingId/delete`),
   createOneCheck: POST(`${baseUrl}/check-pregnancies/:breedingId/check`),
+  getOneMaleBreeding: GET(`${baseUrl}/breedings/:animalMaleId/view/breeding`),
   updateOneCheck: PUT(`${baseUrl}/check-pregnancies/:checkPregnancyId/recheck`),
 
   /****************** Egg-harvestings route */
@@ -220,7 +223,7 @@ export const apiEndpoints: ClientApiMethods = {
   getFarrowings: GET(`${baseUrl}/farrowings`),
   createOneFarrowing: POST(`${baseUrl}/farrowings/create/`),
   getOneFarrowing: GET(`${baseUrl}/farrowings/:farrowingId/view`),
-  getOneFarrowingByAnimalId: GET(`${baseUrl}/farrowings/view/:animalId`),
+  getOneFarrowingByAnimalId: GET(`${baseUrl}/farrowings/:animalId/view/animal`),
   updateOneFarrowing: PUT(`${baseUrl}/farrowings/:farrowingId/edit`),
   deleteOneFarrowing: DELETE(`${baseUrl}/farrowings/:farrowingId/delete`),
 
@@ -252,6 +255,8 @@ export const apiEndpoints: ClientApiMethods = {
   getWeanings: GET(`${baseUrl}/weanings`),
   createOneWeaning: POST(`${baseUrl}/weanings/create`),
   getBirthAnalytics: GET(`${baseUrl}/analytics/weanings`),
+  getOneWeaning: GET(`${baseUrl}/weanings/:farrowingId/view`),
+  getOneAnimalWeaned: GET(`${baseUrl}/weanings/:animalId/view/weaning`),
   updateOneWeaning: PUT(`${baseUrl}/weanings/:weaningId/edit`),
   deleteOneWeaning: DELETE(`${baseUrl}/weanings/:weaningId/delete`),
 
@@ -265,6 +270,7 @@ export const apiEndpoints: ClientApiMethods = {
   getTreatments: GET(`${baseUrl}/treatments`),
   createOneTreatment: POST(`${baseUrl}/treatments/bulk/create`),
   getOneTreatment: GET(`${baseUrl}/treatments/:treatmentId/view`),
+  getOneAnimalTreatment: GET(`${baseUrl}/treatments/:animalId/view/treatment`),
   updateOneTreatment: PUT(`${baseUrl}/treatments/:treatmentId/edit`),
   createOneAvesTreatment: POST(`${baseUrl}/treatments/create/aves`),
   updateOneAvesTreatment: PUT(`${baseUrl}/treatments/:treatmentId/edit`),

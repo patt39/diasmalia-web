@@ -29,9 +29,7 @@ const Login = () => {
   const { query, push } = useRouter();
   const { redirect } = query;
   const {
-    watch,
     control,
-    setValue,
     handleSubmit,
     errors,
     loading,

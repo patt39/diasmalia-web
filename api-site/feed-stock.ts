@@ -1,4 +1,4 @@
-import { FeedStockModel } from '@/types/feeding';
+import { FeedStockPostModel } from '@/types/feeding';
 import { makeApiCall, PaginationRequest } from '@/utils';
 import {
   useInfiniteQuery,
@@ -17,7 +17,9 @@ export const CreateOrUpdateOneFeedStockAPI = ({
   const queryClient = useQueryClient();
   const result = useMutation({
     mutationKey: queryKey,
-    mutationFn: async (payload: FeedStockModel & { feedStockId: string }) => {
+    mutationFn: async (
+      payload: FeedStockPostModel & { feedStockId: string },
+    ) => {
       const { feedStockId } = payload;
       return feedStockId
         ? await makeApiCall({

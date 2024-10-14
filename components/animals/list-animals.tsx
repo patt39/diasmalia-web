@@ -33,15 +33,12 @@ import { UpdateAnimals } from './update-animal';
 import { ViewAnimal } from './view-animal';
 
 const ListAnimals = ({ item, index }: { item: any; index: number }) => {
-  const { t, isOpen, loading, setIsOpen, setLoading } = useInputState();
+  const { t, isOpen, setIsOpen, setLoading } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
   const [isView, setIsView] = useState(false);
-  const [isHealthView, setIsHealth] = useState(false);
 
-  const { mutateAsync: deleteMutation } = DeleteOneAnimalAPI({
-    onSuccess: () => {},
-    onError: (error?: any) => {},
-  });
+  const { isPending: loading, mutateAsync: deleteMutation } =
+    DeleteOneAnimalAPI();
 
   const deleteItem = async (item: any) => {
     setLoading(true);
@@ -71,7 +68,7 @@ const ListAnimals = ({ item, index }: { item: any; index: number }) => {
       >
         <div className="p-6 lg:px-10 lg:py-8">
           <div className="ml-auto mb-2">
-            {item?.status === 'ACTIVE' ? (
+            {item?.status === 'ACTIVE' && item?.gender === 'MALE' ? (
               <Badge variant="default">
                 {t.formatMessage({ id: 'STATUS.ACTIVE' })}
               </Badge>
@@ -79,10 +76,12 @@ const ListAnimals = ({ item, index }: { item: any; index: number }) => {
               <Badge variant="secondary">
                 {t.formatMessage({ id: 'STATUS.SOLD' })}
               </Badge>
-            ) : (
+            ) : item?.status === 'DEAD' ? (
               <Badge variant="destructive">
                 {t.formatMessage({ id: 'STATUS.DEATH' })}
               </Badge>
+            ) : (
+              <Badge variant="default">{item?.status}</Badge>
             )}
           </div>
           <div className="flex items-center justify-start space-x-4">
@@ -126,7 +125,9 @@ const ListAnimals = ({ item, index }: { item: any; index: number }) => {
                 )}
               </p>
               <p className="text-sm font-medium text-gray-500">
-                {item?.gender}
+                {item?.gender === 'FEMALE'
+                  ? t.formatMessage({ id: 'ANIMAL.GENDER' })
+                  : item?.gender}
               </p>
             </div>
           </div>

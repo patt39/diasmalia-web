@@ -29,47 +29,28 @@ const CreateIncubations = ({
   setShowModal: any;
   incubation?: any;
 }) => {
-  const {
-    t,
-    control,
-    errors,
-    handleSubmit,
-    loading,
-    setLoading,
-    hasErrors,
-    setHasErrors,
-  } = useReactHookForm({ schema });
+  const { t, control, errors, handleSubmit, hasErrors, setHasErrors } =
+    useReactHookForm({ schema });
 
   // Create
-  const { mutateAsync: saveMutation } = CreateOneIncubationAPI({
-    onSuccess: () => {
-      setHasErrors(false);
-      setLoading(false);
-    },
-    onError: (error?: any) => {
-      setHasErrors(true);
-      setHasErrors(error.response.data.message);
-    },
-  });
+  const { isPending: loading, mutateAsync: saveMutation } =
+    CreateOneIncubationAPI();
 
   const onSubmit: SubmitHandler<IncubationsModel> = async (
     payload: IncubationsModel,
   ) => {
-    setLoading(true);
     setHasErrors(undefined);
     try {
       await saveMutation({
         ...payload,
       });
       setHasErrors(false);
-      setLoading(false);
       AlertSuccessNotification({
         text: 'Incubation saved successfully',
       });
       setShowModal(false);
     } catch (error: any) {
       setHasErrors(true);
-      setLoading(false);
       setHasErrors(error.response.data.message);
       AlertDangerNotification({
         text: `${error.response.data.message}`,
@@ -114,7 +95,6 @@ const CreateIncubations = ({
                     type="text"
                     name="code"
                     defaultValue={`${incubation?.animal?.code}`}
-                    placeholder="Give a code"
                     errors={errors}
                   />
                 </div>

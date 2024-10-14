@@ -72,7 +72,6 @@ const ViewMedication = ({
     category: 'MEDICATION',
     animalTypeId: watchAnimalTypeId,
   });
-  console.log('dataHealthCount ==>', dataHealthCount);
 
   useEffect(() => {
     let fetching = false;
@@ -103,7 +102,7 @@ const ViewMedication = ({
           <div className="absolute inset-0 z-0 bg-black opacity-80"></div>
           <div className="relative m-auto max-h-screen w-full max-w-2xl overflow-y-scroll rounded-xl bg-white  p-5 shadow-lg dark:bg-[#121212]">
             <div className="flex mb-0">
-              <div className="mr-auto flex items-center space-x-1">
+              <div className="mr-auto flex items-center space-x-4">
                 <Controller
                   control={control}
                   name="animalTypeId"

@@ -9,7 +9,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { formatDateDDMMYY } from '@/utils';
-import { capitalizeFirstLetter } from '@/utils/utils';
 import { MoreHorizontal, PencilIcon } from 'lucide-react';
 import { useState } from 'react';
 import { formatWeight } from '../../utils/formate-date';
@@ -29,17 +28,9 @@ const ListFeedings = ({ item, index }: { item: any; index: number }) => {
             <p className="font-medium text-orange-600">
               {t.formatMessage({ id: 'FEED.PRESTARTER' })}
             </p>
-          ) : item?.feedStock?.feedCategory === 'CONCENTRATES' ? (
-            <p className="font-medium text-blue-600">
-              {t.formatMessage({ id: 'FEED.CONCENTRATES' })}
-            </p>
           ) : item?.feedStock?.feedCategory === 'BYPRODUCTS' ? (
             <p className="font-medium text-cyan-600">
               {t.formatMessage({ id: 'BYPRODUCTS' })}
-            </p>
-          ) : item?.feedStock?.feedCategory === 'COMPLETEFEED' ? (
-            <p className="font-medium text-sky-600">
-              {t.formatMessage({ id: 'FEED.COMPLETEFEED' })}
             </p>
           ) : item?.feedStock?.feedCategory === 'FORAGES' ? (
             <p className="font-medium text-emerald-600 ">
@@ -73,10 +64,6 @@ const ListFeedings = ({ item, index }: { item: any; index: number }) => {
             <p className="font-medium text-green-600">
               {t.formatMessage({ id: 'FEED.FINISHER' })}
             </p>
-          ) : item?.feedCategory === 'LAYERS_FEED' ? (
-            <div className="justify-items-start text-purple-600 text-sm font-bold mb-2">
-              {t.formatMessage({ id: 'FEED.LAYERSFEED' })}
-            </div>
           ) : (
             <p className="font-medium text-purple-600">
               {item?.feedStock?.feedCategory}
@@ -87,10 +74,24 @@ const ListFeedings = ({ item, index }: { item: any; index: number }) => {
           {formatWeight(item?.quantity)}
         </TableCell>
         <TableCell>
-          {capitalizeFirstLetter(item?.animal?.productionPhase)}
+          {item?.animal?.productionPhase === 'GROWTH' ? (
+            <p className="font-medium">
+              {t.formatMessage({ id: 'PRODUCTIONTYPE.GROWTH' })}
+            </p>
+          ) : item?.animal?.productionPhase === 'FATTENING' ? (
+            <p className="font-medium">
+              {t.formatMessage({ id: 'ANIMALTYPE.FATTENING' })}
+            </p>
+          ) : item?.animal?.productionPhase === 'REPRODUCTION' ? (
+            <p className="font-medium">Reproduction</p>
+          ) : item?.animal?.productionPhase === 'GESTATION' ? (
+            <p className="font-medium">Gestation</p>
+          ) : (
+            <p className="font-medium">Lactation</p>
+          )}
         </TableCell>
         <TableCell className="font-medium">
-          {item?.animal?.location?.code}
+          {item?.animal?.location?.code.toUpperCase()}
         </TableCell>
         <TableCell>{formatDateDDMMYY(item?.createdAt as Date)}</TableCell>
         <TableCell>

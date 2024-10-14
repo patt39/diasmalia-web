@@ -27,10 +27,10 @@ import {
 } from '../ui/select';
 
 const schema = yup.object({
-  locationCode: yup.string().optional(),
   farrowingDate: yup.date().optional(),
   method: yup.string().required('method is required'),
   result: yup.string().required('result is required'),
+  locationCode: yup.string().required('Location code is required'),
 });
 
 const CheckPregnancy = ({
@@ -49,8 +49,6 @@ const CheckPregnancy = ({
     setValue,
     handleSubmit,
     errors,
-    loading,
-    setLoading,
     hasErrors,
     setHasErrors,
   } = useReactHookForm({ schema });
@@ -67,21 +65,11 @@ const CheckPregnancy = ({
   }, [breeding, setValue]);
 
   // Create data
-  const { mutateAsync: saveMutation } = CreateOneCheckAPI({
-    onSuccess: () => {
-      setHasErrors(false);
-      setLoading(false);
-    },
-    onError: (error?: any) => {
-      setHasErrors(true);
-      setHasErrors(error.response.data.message);
-    },
-  });
+  const { isPending: loading, mutateAsync: saveMutation } = CreateOneCheckAPI();
 
   const onSubmit: SubmitHandler<CheckPregnancysModel> = async (
     payload: CheckPregnancysModel,
   ) => {
-    setLoading(true);
     setHasErrors(undefined);
     try {
       await saveMutation({
@@ -89,14 +77,12 @@ const CheckPregnancy = ({
         breedingId: breeding?.id,
       });
       setHasErrors(false);
-      setLoading(false);
       AlertSuccessNotification({
         text: 'Breeding checked successfully',
       });
       setShowModal(false);
     } catch (error: any) {
       setHasErrors(true);
-      setLoading(false);
       setHasErrors(error.response.data.message);
       AlertDangerNotification({
         text: `${error.response.data.message}`,
@@ -145,9 +131,9 @@ const CheckPregnancy = ({
                     </div>
                   </div>
                 )}
-                <div className="mb-4 flex items-center space-x-2">
+                <div className="mb-2">
                   <Label>
-                    Methode:
+                    Methode
                     <span className="text-red-600">*</span>
                   </Label>
                   <SelectInput
@@ -159,13 +145,15 @@ const CheckPregnancy = ({
                     name="method"
                     dataItem={[
                       { id: 1, name: 'BLOOD_TEST' },
-                      { id: 2, name: ' RECTAL_PALPATION' },
+                      { id: 2, name: 'RECTAL_PALPATION' },
                       { id: 3, name: 'OBSERVATION' },
-                      { id: 4, name: 'ULTRA_SOUND' },
+                      { id: 4, name: 'ULTRASOUND' },
                     ]}
                   />
+                </div>
+                <div className="mb-2">
                   <Label>
-                    Résultat:
+                    Résultat
                     <span className="text-red-600">*</span>
                   </Label>
                   <SelectInput

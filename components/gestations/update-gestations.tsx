@@ -35,8 +35,6 @@ const UpdateGestations = ({
     errors,
     setValue,
     handleSubmit,
-    loading,
-    setLoading,
     hasErrors,
     setHasErrors,
   } = useReactHookForm({ schema });
@@ -48,22 +46,13 @@ const UpdateGestations = ({
     }
   }, [gestation, setValue]);
 
-  // Create or Update data
-  const { mutateAsync: saveMutation } = UpdateOneGestationAPI({
-    onSuccess: () => {
-      setHasErrors(false);
-      setLoading(false);
-    },
-    onError: (error?: any) => {
-      setHasErrors(true);
-      setHasErrors(error.response.data.message);
-    },
-  });
+  //Update data
+  const { isPending: loading, mutateAsync: saveMutation } =
+    UpdateOneGestationAPI();
 
   const onSubmit: SubmitHandler<GestationsModel> = async (
     payload: GestationsModel,
   ) => {
-    setLoading(true);
     setHasErrors(undefined);
     try {
       await saveMutation({
@@ -71,14 +60,12 @@ const UpdateGestations = ({
         gestationId: gestation?.id,
       });
       setHasErrors(false);
-      setLoading(false);
       AlertSuccessNotification({
         text: 'Gestation updated successfully',
       });
       setShowModal(false);
     } catch (error: any) {
       setHasErrors(true);
-      setLoading(false);
       setHasErrors(error.response.data.message);
       AlertDangerNotification({
         text: `${error.response.data.message}`,
@@ -116,22 +103,28 @@ const UpdateGestations = ({
                   </div>
                 )}
 
-                <div className="flex items-center space-x-4">
-                  <SelectInput
-                    firstOptionName="Choose a size"
-                    control={control}
-                    errors={errors}
-                    placeholder="Select a check method"
-                    valueType="text"
-                    name="method"
-                    dataItem={[
-                      { id: 1, name: 'BLOOD_TEST' },
-                      { id: 1, name: 'RECTAL_PALPATION' },
-                      { id: 1, name: 'OBSERVATION' },
-                      { id: 1, name: 'ULTRASOUND' },
-                    ]}
-                  />
-                  <div className="mb-4">
+                <div className="mb-4 flex items-center space-x-4">
+                  <div className="w-80">
+                    <Label>
+                      Methode
+                      <span className="text-red-600">*</span>
+                    </Label>
+                    <SelectInput
+                      firstOptionName="Choose a size"
+                      control={control}
+                      errors={errors}
+                      placeholder="Select method"
+                      valueType="text"
+                      name="method"
+                      dataItem={[
+                        { id: 1, name: 'BLOOD_TEST' },
+                        { id: 2, name: 'RECTAL_PALPATION' },
+                        { id: 3, name: 'OBSERVATION' },
+                        { id: 4, name: 'ULTRASOUND' },
+                      ]}
+                    />
+                  </div>
+                  <div className="w-80">
                     <Label>Date de mise bas</Label>
                     <DateInput
                       control={control}
@@ -142,9 +135,9 @@ const UpdateGestations = ({
                   </div>
                 </div>
                 <div className="mb-4">
+                  <Label>Observation</Label>
                   <TextAreaInput
                     control={control}
-                    label="Description"
                     name="note"
                     placeholder="Note about animal state"
                     errors={errors}

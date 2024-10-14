@@ -32,29 +32,22 @@ import {
 import Link from 'next/link';
 import { useState } from 'react';
 const LocationList = ({ item, index }: { item: any; index: number }) => {
-  const { t, isOpen, loading, setIsOpen, setLoading } = useInputState();
+  const { t, isOpen, setIsOpen } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
   const [isView, setIsView] = useState(false);
-  const [isHealthView, setIsHealth] = useState(false);
 
-  const { mutateAsync: deleteMutation } = DeleteOneAnimalAPI({
-    onSuccess: () => {},
-    onError: (error?: any) => {},
-  });
+  const { isPending: loading, mutateAsync: deleteMutation } =
+    DeleteOneAnimalAPI();
 
   const deleteItem = async (item: any) => {
-    setLoading(true);
     setIsOpen(true);
     try {
-      console.log(item);
       await deleteMutation({ animalId: item?.id });
       AlertSuccessNotification({
         text: 'Animal deleted successfully',
       });
-      setLoading(false);
       setIsOpen(false);
     } catch (error: any) {
-      setLoading(false);
       setIsOpen(true);
       AlertDangerNotification({
         text: `${error.response.data.message}`,

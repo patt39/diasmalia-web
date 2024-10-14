@@ -1,10 +1,10 @@
 import { GetOneTreatmentAPI } from '@/api-site/treatment';
 import { useReactHookForm } from '@/components/hooks';
-import { TextAreaInput } from '@/components/ui-setting/shadcn';
 import { XIcon } from 'lucide-react';
 import * as yup from 'yup';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
+import { Textarea } from '../ui/textarea';
 
 const schema = yup.object({});
 
@@ -17,7 +17,7 @@ const ViewAvesTreatment = ({
   setShowModal: any;
   treatment?: any;
 }) => {
-  const { control, errors } = useReactHookForm({ schema });
+  const { t } = useReactHookForm({ schema });
 
   const { data: getOneTreatment } = GetOneTreatmentAPI({
     treatmentId: treatment?.id,
@@ -40,44 +40,26 @@ const ViewAvesTreatment = ({
             <form className="mt-2">
               <div className="flex-auto justify-center p-2">
                 <div className="mb-2">
-                  <Label htmlFor="text">Animal Code</Label>
-                  <Input
-                    disabled
-                    type="text"
-                    value={getOneTreatment.animal.code}
-                  />
+                  <Label>Code</Label>
+                  <Input disabled value={getOneTreatment.animal.code} />
                 </div>
                 <div className="mb-2">
-                  <Label htmlFor="text">Treatment name</Label>
+                  <Label>{t.formatMessage({ id: 'TREATMENT.NAME' })}</Label>
                   <Input disabled type="text" value={getOneTreatment?.name} />
                 </div>
                 <div className="mb-2">
-                  <Label htmlFor="text">Diagnostic</Label>
-                  <Input
-                    disabled
-                    type="text"
-                    value={getOneTreatment?.diagnosis}
-                  />
+                  <Label>Diagnostic</Label>
+                  <Input disabled value={getOneTreatment?.diagnosis} />
                 </div>
                 <div className="mb-2 flex items-center space-x-4">
-                  <Label htmlFor="text">Treatement:</Label>
-                  <Input
-                    disabled
-                    type="text"
-                    value={getOneTreatment?.medication}
-                  />
-                  <Label htmlFor="text">Doses:</Label>
-                  <Input disabled type="number" value={getOneTreatment?.dose} />
+                  <Label>Medication:</Label>
+                  <Input disabled value={getOneTreatment?.medication} />
+                  <Label>Doses:</Label>
+                  <Input disabled value={getOneTreatment?.dose} />
                 </div>
                 <div className="mb-2 disabled">
-                  <Label htmlFor="text">Note</Label>
-                  <TextAreaInput
-                    control={control}
-                    name="note"
-                    defaultValue={getOneTreatment?.note}
-                    errors={errors}
-                    disabled
-                  />
+                  <Label htmlFor="text">Observation</Label>
+                  <Textarea defaultValue={getOneTreatment?.note} disabled />
                 </div>
               </div>
             </form>

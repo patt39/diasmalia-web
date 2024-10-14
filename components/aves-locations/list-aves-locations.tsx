@@ -18,6 +18,7 @@ import {
   Droplets,
   Egg,
   Grid2X2,
+  Grid3x3,
   MoreHorizontal,
   PencilIcon,
   Salad,
@@ -37,35 +38,23 @@ import { UpdateGrowthLocations } from './update-growth-locations';
 import { UpdateLayingLocations } from './update-laying-locations';
 
 const ListAvesLocations = ({ item, index }: { item: any; index: number }) => {
-  const {
-    t,
-    isOpen,
-    loading,
-    setIsOpen,
-    setLoading,
-    isConfirmOpen,
-    setIsConfirmOpen,
-  } = useInputState();
+  const { t, isOpen, setIsOpen, isConfirmOpen, setIsConfirmOpen } =
+    useInputState();
   const [isEdit, setIsEdit] = useState(false);
   const [isGrowthEdit, setIsGrowthEdit] = useState(false);
 
-  const { mutateAsync: deleteMutation } = DeleteOneLocationAPI({
-    onSuccess: () => {},
-    onError: (error?: any) => {},
-  });
+  const { isPending: loading, mutateAsync: deleteMutation } =
+    DeleteOneLocationAPI();
 
   const deleteItem = async (item: any) => {
-    setLoading(true);
     setIsOpen(true);
     try {
       await deleteMutation({ locationId: item.id });
       AlertSuccessNotification({
         text: 'Location deleted successfully',
       });
-      setLoading(false);
       setIsOpen(false);
     } catch (error: any) {
-      setLoading(false);
       setIsOpen(true);
       AlertDangerNotification({
         text: `${error.response.data.message}`,
@@ -73,23 +62,18 @@ const ListAvesLocations = ({ item, index }: { item: any; index: number }) => {
     }
   };
 
-  const { mutateAsync: saveMutation } = ChangeLocationStatusAPI({
-    onSuccess: () => {},
-    onError: (error?: any) => {},
-  });
+  const { isPending: loadingConfirme, mutateAsync: saveMutation } =
+    ChangeLocationStatusAPI();
 
   const changeItem = async (item: any) => {
-    setLoading(true);
     setIsConfirmOpen(true);
     try {
       await saveMutation({ locationId: item?.id });
       AlertSuccessNotification({
         text: 'Status changed successfully',
       });
-      setLoading(false);
       setIsConfirmOpen(false);
     } catch (error: any) {
-      setLoading(false);
       setIsConfirmOpen(true);
       AlertDangerNotification({
         text: `${error.response.data.message}`,
@@ -191,8 +175,8 @@ const ListAvesLocations = ({ item, index }: { item: any; index: number }) => {
             <div>
               <h2 className="text-sm font-medium text-gray-500 h-4">
                 {['Pisciculture'].includes(item?.animalType?.name) ? (
-                  <h2 className="mt-2 text-sm font-medium text-gray-500 h-4">
-                    <Grid2X2 className="h-3.5 w-3.5  hover:shadow-xxl" />
+                  <h2 className="mt-2 flex text-sm items-center font-medium text-gray-500 h-4">
+                    <Grid3x3 className="h-3.5 w-3.5  hover:shadow-xxl" />
                     Volume: {item?.squareMeter}m<sup>3</sup>
                   </h2>
                 ) : item?.addCages === 'YES' ? (
@@ -244,15 +228,6 @@ const ListAvesLocations = ({ item, index }: { item: any; index: number }) => {
               <h3 className="text-sm font-bold text-gray-900 h-8 sm:text-base lg:text-lg">
                 {(item?.code).toUpperCase()}
               </h3>
-              {/* {item?.productionPhase === 'LAYING' &&
-              item?.animalType?.name === 'Pondeuses' &&
-              item?.type === 'CAGES' ? (
-                <p className="text-sm font-medium text-gray-500">
-                  {(item?.type).toUpperCase()}
-                </p>
-              ) : (
-                ''
-              )} */}
               {item?.productionPhase === 'GROWTH' ? (
                 <p className=" text-sm font-medium text-gray-500">
                   {t.formatMessage({ id: 'PRODUCTIONPHASE.GROWTH' })}
@@ -297,12 +272,16 @@ const ListAvesLocations = ({ item, index }: { item: any; index: number }) => {
                 ) : (
                   ''
                 )}
-                <DropdownMenuItem onClick={() => setIsConfirmOpen(true)}>
-                  <BadgeCheck className="size-4 text-gray-600 hover:text-violet-600 cursor-pointer" />
-                  <span className="ml-2 cursor-pointer hover:text-violet-600">
-                    {t.formatMessage({ id: 'CHANGE.STATUS' })}
-                  </span>
-                </DropdownMenuItem>
+                {item?._count?.animals === 0 ? (
+                  <DropdownMenuItem onClick={() => setIsConfirmOpen(true)}>
+                    <BadgeCheck className="size-4 text-gray-600 hover:text-yellow-600 cursor-pointer" />
+                    <span className="ml-2 cursor-pointer hover:text-yellow-400">
+                      {t.formatMessage({ id: 'CHANGE.STATUS' })}
+                    </span>
+                  </DropdownMenuItem>
+                ) : (
+                  ''
+                )}
                 {item?._count?.animals === 0 ? (
                   <DropdownMenuItem onClick={() => setIsOpen(true)}>
                     <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
@@ -325,7 +304,7 @@ const ListAvesLocations = ({ item, index }: { item: any; index: number }) => {
         onClick={() => deleteItem(item)}
       />
       <ActionModalConfirmeDialog
-        loading={loading}
+        loading={loadingConfirme}
         isConfirmOpen={isConfirmOpen}
         setIsConfirmOpen={setIsConfirmOpen}
         onClick={() => changeItem(item)}

@@ -32,13 +32,11 @@ const CreateOrUpdateEggHarvestings = ({
 }) => {
   const {
     t,
+    errors,
     control,
     setValue,
-    handleSubmit,
-    errors,
-    loading,
-    setLoading,
     hasErrors,
+    handleSubmit,
     setHasErrors,
   } = useReactHookForm({ schema });
 
@@ -57,21 +55,12 @@ const CreateOrUpdateEggHarvestings = ({
   }, [animal, setValue]);
 
   // Create or Update data
-  const { mutateAsync: saveMutation } = CreateOrUpdateOneEggHarvestingAPI({
-    onSuccess: () => {
-      setHasErrors(false);
-      setLoading(false);
-    },
-    onError: (error?: any) => {
-      setHasErrors(true);
-      setHasErrors(error.response.data.message);
-    },
-  });
+  const { isPending: loading, mutateAsync: saveMutation } =
+    CreateOrUpdateOneEggHarvestingAPI();
 
   const onSubmit: SubmitHandler<EggHarvestingsModel> = async (
     payload: EggHarvestingsModel,
   ) => {
-    setLoading(true);
     setHasErrors(undefined);
     try {
       await saveMutation({
@@ -79,14 +68,12 @@ const CreateOrUpdateEggHarvestings = ({
         eggHarvestingId: eggHarvesting?.id,
       });
       setHasErrors(false);
-      setLoading(false);
       AlertSuccessNotification({
         text: 'EggHarvesting saved successfully',
       });
       setShowModal(false);
     } catch (error: any) {
       setHasErrors(true);
-      setLoading(false);
       setHasErrors(error.response.data.message);
       AlertDangerNotification({
         text: `${error.response.data.message}`,

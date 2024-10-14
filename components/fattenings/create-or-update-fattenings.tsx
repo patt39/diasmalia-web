@@ -58,8 +58,6 @@ const CreateOrUpdateFattenings = ({
     errors,
     setValue,
     handleSubmit,
-    loading,
-    setLoading,
     hasErrors,
     setHasErrors,
   } = useReactHookForm({ schema });
@@ -77,21 +75,12 @@ const CreateOrUpdateFattenings = ({
   }, [fattening, setValue]);
 
   // Create or Update data
-  const { mutateAsync: saveMutation } = CreateOrUpdateOneFatteningAPI({
-    onSuccess: () => {
-      setHasErrors(false);
-      setLoading(false);
-    },
-    onError: (error?: any) => {
-      setHasErrors(true);
-      setHasErrors(error.response.data.message);
-    },
-  });
+  const { isPending: loading, mutateAsync: saveMutation } =
+    CreateOrUpdateOneFatteningAPI();
 
   const onSubmit: SubmitHandler<FatteningsModel> = async (
     payload: FatteningsModel,
   ) => {
-    setLoading(true);
     setHasErrors(undefined);
     try {
       await saveMutation({
@@ -99,14 +88,12 @@ const CreateOrUpdateFattenings = ({
         fatteningId: fattening?.id,
       });
       setHasErrors(false);
-      setLoading(false);
       AlertSuccessNotification({
         text: 'Fattening saved successfully',
       });
       setShowModal(false);
     } catch (error: any) {
       setHasErrors(true);
-      setLoading(false);
       setHasErrors(error.response.data.message);
       AlertDangerNotification({
         text: `${error.response.data.message}`,

@@ -1,10 +1,11 @@
-import { GetAnimalsAPI } from '@/api-site/animals';
-import { GetFeedStockAPI } from '@/api-site/feed-stock';
-import { UpdateOneFeedingAPI } from '@/api-site/feedings';
-import { useInputState, useReactHookForm } from '@/components/hooks';
+import { CreateBulkAnimalsAPI } from '@/api-site/animals';
+import { GetBreedsAPI } from '@/api-site/breed';
+import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
 import { LoadingFile } from '@/components/ui-setting/ant';
 import { ErrorFile } from '@/components/ui-setting/ant/error-file';
+import { SelectInput } from '@/components/ui-setting/shadcn';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -14,75 +15,79 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { FeedingsModel } from '@/types/feeding';
+import { AnimalModel } from '@/types/animal';
 import {
   AlertDangerNotification,
   AlertSuccessNotification,
 } from '@/utils/alert-notification';
 import { XIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
 import { Controller, SubmitHandler } from 'react-hook-form';
+import { useInView } from 'react-intersection-observer';
 import * as yup from 'yup';
-import { TextInput } from '../ui-setting/shadcn';
-import { Label } from '../ui/label';
 
 const schema = yup.object({
-  animals: yup.array().optional(),
-  quantity: yup.number().required('quantity is required'),
-  feedStockId: yup.string().required('feed type is required'),
+  codeMother: yup.string().optional(),
+  codeFather: yup.string().optional(),
+  birthday: yup.string().optional(),
+  breedName: yup.string().optional(),
+  locationCode: yup.string().optional(),
+  number: yup.number().required('number is a required field'),
+  weight: yup.number().required('weight is a required field'),
+  gender: yup.string().required('gender is a required field'),
+  productionPhase: yup.string().required('productionPhase is a required field'),
 });
 
-const UpdateFeedings = ({
+const AddContributor = ({
   showModal,
   setShowModal,
-  feeding,
 }: {
   showModal: boolean;
   setShowModal: any;
-  feeding?: any;
+  animal?: any;
 }) => {
   const {
     t,
     control,
-    errors,
-    setValue,
-    hasErrors,
     handleSubmit,
+    errors,
+    loading,
+    setLoading,
+    hasErrors,
     setHasErrors,
   } = useReactHookForm({ schema });
   const { query } = useRouter();
-  const { userStorage } = useInputState();
   const animalTypeId = String(query?.animalTypeId);
+  const { ref, inView } = useInView();
 
-  useEffect(() => {
-    if (feeding) {
-      const fields = ['animals', 'quantity', 'feedStockId'];
-      fields?.forEach((field: any) => setValue(field, feeding[field]));
-    }
-  }, [feeding, setValue]);
+  // Create
+  const { mutateAsync: saveMutation } = CreateBulkAnimalsAPI({
+    onSuccess: () => {
+      setHasErrors(false);
+      setLoading(false);
+    },
+    onError: (error?: any) => {
+      setHasErrors(true);
+      setHasErrors(error.response.data.message);
+    },
+  });
 
-  //Update data
-  const { isPending: loading, mutateAsync: saveMutation } =
-    UpdateOneFeedingAPI();
-
-  const onSubmit: SubmitHandler<FeedingsModel> = async (
-    payload: FeedingsModel,
-  ) => {
+  const onSubmit: SubmitHandler<AnimalModel> = async (payload: AnimalModel) => {
+    setLoading(true);
     setHasErrors(undefined);
     try {
       await saveMutation({
         ...payload,
-        feedingId: feeding?.id,
       });
-
       setHasErrors(false);
+      setLoading(false);
       AlertSuccessNotification({
-        text: 'Feeding saved successfully',
+        text: 'Animals created successfully',
       });
       setShowModal(false);
     } catch (error: any) {
       setHasErrors(true);
+      setLoading(false);
       setHasErrors(error.response.data.message);
       AlertDangerNotification({
         text: `${error.response.data.message}`,
@@ -91,23 +96,10 @@ const UpdateFeedings = ({
   };
 
   const {
-    isLoading: isLoadingAnimals,
-    isError: isErrorAnimals,
-    data: dataAnimals,
-  } = GetAnimalsAPI({
-    take: 10,
-    sort: 'desc',
-    status: 'ACTIVE',
-    sortBy: 'createdAt',
-    animalTypeId: animalTypeId,
-    organizationId: userStorage?.organizationId,
-  });
-
-  const {
-    isLoading: isLoadingFeedStock,
-    isError: isErrorFeedStock,
-    data: dataFeedStock,
-  } = GetFeedStockAPI({
+    isLoading: isLoadingBreeds,
+    isError: isErrorBreeds,
+    data: dataBreeds,
+  } = GetBreedsAPI({
     take: 10,
     sort: 'desc',
     sortBy: 'createdAt',
@@ -128,7 +120,7 @@ const UpdateFeedings = ({
                 <XIcon />
               </span>
             </button>
-            <form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
+            <form className="mt-2" onSubmit={handleSubmit(onSubmit)}>
               <div className="flex-auto justify-center p-2">
                 {hasErrors && (
                   <div className="bg-white py-6 dark:bg-[#121212]">
@@ -144,92 +136,61 @@ const UpdateFeedings = ({
                   </div>
                 )}
 
-                <div className="mb-4 flex items-center space-x-4">
-                  <Controller
+                <div>
+                  <Label>
+                    Email<span className="text-red-600">*</span>
+                  </Label>
+                  <SelectInput
+                    firstOptionName="Choose a production type"
                     control={control}
-                    name="code"
-                    render={({ field: { value, onChange } }) => (
-                      <Select
-                        onValueChange={onChange}
-                        name={'code'}
-                        value={value}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a code" />
-                        </SelectTrigger>
-                        <SelectContent className="dark:border-gray-800">
-                          <SelectGroup>
-                            <SelectLabel>Codes</SelectLabel>
-                            {isLoadingAnimals ? (
-                              <LoadingFile />
-                            ) : isErrorAnimals ? (
-                              <ErrorFile
-                                title="404"
-                                description="Error finding data please try again..."
-                              />
-                            ) : Number(dataAnimals?.pages[0]?.data?.total) <=
-                              0 ? (
-                              <ErrorFile description="Don't have active animals yet" />
-                            ) : (
-                              dataAnimals?.pages
-                                .flatMap((page: any) => page?.data?.value)
-                                .map((item, index) => (
-                                  <>
-                                    <SelectItem key={index} value={item?.code}>
-                                      {item?.code}
-                                    </SelectItem>
-                                  </>
-                                ))
-                            )}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    )}
-                  />
-                  <TextInput
-                    control={control}
-                    type="number"
-                    name="quantity"
-                    placeholder="Give a number"
                     errors={errors}
+                    placeholder="Select gender"
+                    valueType="text"
+                    name="gender"
+                    dataItem={[
+                      { id: 1, name: 'MALE' },
+                      { id: 2, name: 'FEMALE' },
+                    ]}
                   />
                 </div>
-                <div className="mb-2">
+
+                <div className="my-2">
                   <Label>
-                    {t.formatMessage({ id: 'TABFEEDING.FEEDTYPE' })}
+                    {t.formatMessage({ id: 'SELECT.BREED' })}
                     <span className="text-red-600">*</span>
                   </Label>
                   <Controller
                     control={control}
-                    name="feedStockId"
+                    name="breedName"
                     render={({ field: { value, onChange } }) => (
                       <Select
                         onValueChange={onChange}
-                        name={'feedStockId'}
+                        name="breedName"
                         value={value}
                       >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select a feed type" />
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a breed" />
                         </SelectTrigger>
                         <SelectContent className="dark:border-gray-800">
                           <SelectGroup>
-                            {isLoadingFeedStock ? (
+                            <SelectLabel>Breeds</SelectLabel>
+                            {isLoadingBreeds ? (
                               <LoadingFile />
-                            ) : isErrorFeedStock ? (
+                            ) : isErrorBreeds ? (
                               <ErrorFile
                                 title="404"
                                 description="Error finding data please try again..."
                               />
-                            ) : Number(dataFeedStock?.pages[0]?.data?.total) <=
+                            ) : Number(dataBreeds?.pages[0]?.data?.total) <=
                               0 ? (
-                              <ErrorFile description="Don't have active animals yet" />
+                              <ErrorFile description="Don't have breeds" />
                             ) : (
-                              dataFeedStock?.pages
+                              dataBreeds?.pages
                                 .flatMap((page: any) => page?.data?.value)
                                 .map((item, index) => (
                                   <>
-                                    <SelectItem key={index} value={item?.id}>
-                                      {item?.feedCategory}
+                                    <SelectItem key={index} value={item?.name}>
+                                      {item?.name}
                                     </SelectItem>
                                   </>
                                 ))
@@ -247,7 +208,7 @@ const UpdateFeedings = ({
                     variant="outline"
                     onClick={() => setShowModal(false)}
                   >
-                    Cancel
+                    {t.formatMessage({ id: 'ALERT.CANCEL' })}
                   </ButtonInput>
                   <ButtonInput
                     type="submit"
@@ -256,7 +217,7 @@ const UpdateFeedings = ({
                     disabled={loading}
                     loading={loading}
                   >
-                    Save
+                    {t.formatMessage({ id: 'ALERT.CONTINUE' })}
                   </ButtonInput>
                 </div>
               </div>
@@ -268,4 +229,4 @@ const UpdateFeedings = ({
   );
 };
 
-export { UpdateFeedings };
+export { AddContributor };

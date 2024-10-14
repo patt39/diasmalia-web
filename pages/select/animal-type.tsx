@@ -19,12 +19,10 @@ import * as yup from 'yup';
 const schema = yup.object({});
 
 const SelectAnimalType = () => {
-  const { ref, inView } = useInView();
+  const { ref } = useInView();
   const { query, push } = useRouter();
   const { redirect } = query;
   const {
-    watch,
-    control,
     handleSubmit,
     errors,
     loading,

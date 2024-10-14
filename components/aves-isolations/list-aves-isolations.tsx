@@ -23,28 +23,23 @@ import { CreateOrUpdateAvesIsolations } from './create-or-update-aves-isolations
 import { ViewAvesIsolation } from './view-isolation';
 
 const ListAvesIsolations = ({ item, index }: { item: any; index: number }) => {
-  const { t, isOpen, loading, setIsOpen, setLoading } = useInputState();
+  const { t, isOpen, setIsOpen } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
   const [isView, setIsView] = useState(false);
   const [isDeath, setIsDeath] = useState(false);
 
-  const { mutateAsync: deleteMutation } = DeleteOneIsolationAPI({
-    onSuccess: () => {},
-    onError: (error?: any) => {},
-  });
+  const { isPending: loading, mutateAsync: deleteMutation } =
+    DeleteOneIsolationAPI();
 
   const deleteItem = async (item: any) => {
-    setLoading(true);
     setIsOpen(true);
     try {
       await deleteMutation({ isolationId: item?.id });
       AlertSuccessNotification({
         text: 'Isolation deleted successfully',
       });
-      setLoading(false);
       setIsOpen(false);
     } catch (error: any) {
-      setLoading(false);
       setIsOpen(true);
       AlertDangerNotification({
         text: `${error.response.data.message}`,

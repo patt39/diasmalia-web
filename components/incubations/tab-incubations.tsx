@@ -11,7 +11,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { PaginationPage } from '@/utils';
-import { Egg, ListFilter } from 'lucide-react';
+import { ListFilter } from 'lucide-react';
 import { useState } from 'react';
 import { LoadingFile } from '../ui-setting/ant';
 import { ErrorFile } from '../ui-setting/ant/error-file';
@@ -28,11 +28,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '../ui/tooltip';
-import { CreateIncubations } from './create-incubations';
 import { ListIncubations } from './list-incubations';
 
 const TabIncubations = ({ animalTypeId }: { animalTypeId: string }) => {
-  const [isOpen, setIsOpen] = useState(false);
   const { t } = useInputState();
   const [pageItem, setPageItem] = useState(1);
   const [periode, setPeriode] = useState('');
@@ -118,18 +116,6 @@ const TabIncubations = ({ animalTypeId }: { animalTypeId: string }) => {
                 </DropdownMenuCheckboxItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button
-              size="sm"
-              className="h-8 gap-1"
-              onClick={() => setIsOpen(true)}
-            >
-              <Egg className="h-3.5 w-3.5  hover:shadow-xxl" />
-              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                {t.formatMessage({
-                  id: 'ANIMALTYPE.ANIMALS.INCUBATION.CREATE',
-                })}
-              </span>
-            </Button>
           </div>
         </div>
       </CardHeader>
@@ -180,11 +166,6 @@ const TabIncubations = ({ animalTypeId }: { animalTypeId: string }) => {
           />
         </CardContent>
       </main>
-      <CreateIncubations
-        incubation={animalTypeId}
-        showModal={isOpen}
-        setShowModal={setIsOpen}
-      />
     </>
   );
 };

@@ -1,10 +1,6 @@
 import { GetOneDeathAPI } from '@/api-site/deaths';
-import { useReactHookForm } from '@/components/hooks';
-import { TextAreaInput } from '@/components/ui-setting/shadcn';
 import { XIcon } from 'lucide-react';
-import * as yup from 'yup';
-
-const schema = yup.object({});
+import { Textarea } from '../ui/textarea';
 
 const ViewDeath = ({
   showModal,
@@ -15,8 +11,6 @@ const ViewDeath = ({
   setShowModal: any;
   death?: any;
 }) => {
-  const { control, errors } = useReactHookForm({ schema });
-
   const { data: GetOneDeath } = GetOneDeathAPI({
     deathId: death?.id,
   });
@@ -38,14 +32,7 @@ const ViewDeath = ({
             <form className="mt-4">
               <div className="flex-auto justify-center p-2">
                 <div className="mb-4">
-                  <TextAreaInput
-                    control={control}
-                    label="Note"
-                    name="note"
-                    defaultValue={GetOneDeath?.note}
-                    errors={errors}
-                    disabled
-                  />
+                  <Textarea defaultValue={GetOneDeath?.note} disabled />
                 </div>
               </div>
             </form>

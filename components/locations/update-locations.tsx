@@ -34,13 +34,10 @@ const UpdateLocations = ({
 }) => {
   const {
     t,
-    watch,
     control,
     errors,
     setValue,
     handleSubmit,
-    loading,
-    setLoading,
     hasErrors,
     setHasErrors,
   } = useReactHookForm({ schema });
@@ -64,21 +61,12 @@ const UpdateLocations = ({
   }, [location, setValue]);
 
   // Update data
-  const { mutateAsync: saveMutation } = UpdateOneLoctionAPI({
-    onSuccess: () => {
-      setHasErrors(false);
-      setLoading(false);
-    },
-    onError: (error?: any) => {
-      setHasErrors(true);
-      setHasErrors(error.response.data.message);
-    },
-  });
+  const { isPending: loading, mutateAsync: saveMutation } =
+    UpdateOneLoctionAPI();
 
   const onSubmit: SubmitHandler<LocationModel> = async (
     payload: LocationModel,
   ) => {
-    setLoading(true);
     setHasErrors(undefined);
     try {
       await saveMutation({
@@ -86,14 +74,12 @@ const UpdateLocations = ({
         locationId: location.id,
       });
       setHasErrors(false);
-      setLoading(false);
       AlertSuccessNotification({
         text: 'Location updated successfully',
       });
       setShowModal(false);
     } catch (error: any) {
       setHasErrors(true);
-      setLoading(false);
       setHasErrors(error.response.data.message);
       AlertDangerNotification({
         text: `${error.response.data.message}`,

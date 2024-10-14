@@ -19,7 +19,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { PaginationPage } from '@/utils';
-import { ListFilter, Origami } from 'lucide-react';
+import { ListFilter } from 'lucide-react';
 import { useState } from 'react';
 import { SearchInput } from '../ui-setting';
 import {
@@ -122,18 +122,6 @@ const TabFarrowings = ({ animalTypeId }: { animalTypeId: string }) => {
                 </DropdownMenuCheckboxItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button
-              size="sm"
-              className="h-8 gap-1"
-              onClick={() => setIsOpen(true)}
-            >
-              <Origami className="h-3.5 w-3.5  hover:shadow-xxl" />
-              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                {t.formatMessage({
-                  id: 'ANIMALTYPE.ANIMALS.FARROWING.CREATE',
-                })}
-              </span>
-            </Button>
           </div>
         </div>
       </CardHeader>
@@ -145,6 +133,9 @@ const TabFarrowings = ({ animalTypeId }: { animalTypeId: string }) => {
                 <TableHead>Code</TableHead>
                 <TableHead>
                   {t.formatMessage({ id: 'TABFARROWING.LITTER' })}
+                </TableHead>
+                <TableHead>
+                  {t.formatMessage({ id: 'ANIMALTYPE.DEATHS' })}
                 </TableHead>
                 <TableHead>{t.formatMessage({ id: 'VIEW.WEIGHT' })}</TableHead>
                 <TableHead>Note</TableHead>

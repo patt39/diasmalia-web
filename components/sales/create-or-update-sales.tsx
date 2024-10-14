@@ -69,7 +69,6 @@ const CreateOrUpdateSales = ({
     handleSubmit,
     errors,
     loading,
-    setLoading,
     hasErrors,
     setHasErrors,
   } = useReactHookForm({ schema });
@@ -97,19 +96,9 @@ const CreateOrUpdateSales = ({
   }, [sale, setValue]);
 
   // Create or Update data
-  const { mutateAsync: saveMutation } = CreateOrUpdateOneSaleAPI({
-    onSuccess: () => {
-      setHasErrors(false);
-      setLoading(false);
-    },
-    onError: (error?: any) => {
-      setHasErrors(true);
-      setHasErrors(error.response.data.message);
-    },
-  });
+  const { mutateAsync: saveMutation } = CreateOrUpdateOneSaleAPI();
 
   const onSubmit: SubmitHandler<SalesModel> = async (payload: SalesModel) => {
-    setLoading(true);
     setHasErrors(undefined);
     try {
       await saveMutation({
@@ -117,14 +106,12 @@ const CreateOrUpdateSales = ({
         saleId: sale?.id,
       });
       setHasErrors(false);
-      setLoading(false);
       AlertSuccessNotification({
         text: 'Sale saved successfully',
       });
       setShowModal(false);
     } catch (error: any) {
       setHasErrors(true);
-      setLoading(false);
       setHasErrors(error.response.data.message);
       AlertDangerNotification({
         text: `${error.response.data.message}`,

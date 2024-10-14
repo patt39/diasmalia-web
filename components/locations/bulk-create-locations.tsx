@@ -35,35 +35,18 @@ const CreateBulkLocations = ({
   setShowModal: any;
   location?: any;
 }) => {
-  const {
-    t,
-    control,
-    errors,
-    handleSubmit,
-    loading,
-    setLoading,
-    hasErrors,
-    setHasErrors,
-  } = useReactHookForm({ schema });
+  const { t, control, errors, handleSubmit, hasErrors, setHasErrors } =
+    useReactHookForm({ schema });
   const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
 
   // Create data
-  const { mutateAsync: saveMutation } = CreateBulkLocationsAPI({
-    onSuccess: () => {
-      setHasErrors(false);
-      setLoading(false);
-    },
-    onError: (error?: any) => {
-      setHasErrors(true);
-      setHasErrors(error.response.data.message);
-    },
-  });
+  const { isPending: loading, mutateAsync: saveMutation } =
+    CreateBulkLocationsAPI();
 
   const onSubmit: SubmitHandler<LocationModel> = async (
     payload: LocationModel,
   ) => {
-    setLoading(true);
     setHasErrors(undefined);
     try {
       await saveMutation({
@@ -71,14 +54,12 @@ const CreateBulkLocations = ({
         animalTypeId: animalTypeId,
       });
       setHasErrors(false);
-      setLoading(false);
       AlertSuccessNotification({
         text: 'Locations created successfully',
       });
       setShowModal(false);
     } catch (error: any) {
       setHasErrors(true);
-      setLoading(false);
       setHasErrors(error.response.data.message);
       AlertDangerNotification({
         text: `${error.response.data.message}`,

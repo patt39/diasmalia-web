@@ -39,17 +39,8 @@ const CreateAvesLocations = ({
   setShowModal: any;
   location?: any;
 }) => {
-  const {
-    t,
-    watch,
-    control,
-    errors,
-    handleSubmit,
-    loading,
-    setLoading,
-    hasErrors,
-    setHasErrors,
-  } = useReactHookForm({ schema });
+  const { t, watch, control, errors, handleSubmit, hasErrors, setHasErrors } =
+    useReactHookForm({ schema });
   const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
   const watchProductionPhase = watch('productionPhase');
@@ -59,21 +50,12 @@ const CreateAvesLocations = ({
   });
 
   // Create data
-  const { mutateAsync: saveMutation } = CreateOneLocationAPI({
-    onSuccess: () => {
-      setHasErrors(false);
-      setLoading(false);
-    },
-    onError: (error?: any) => {
-      setHasErrors(true);
-      setHasErrors(error.response.data.message);
-    },
-  });
+  const { isPending: loading, mutateAsync: saveMutation } =
+    CreateOneLocationAPI();
 
   const onSubmit: SubmitHandler<LocationModel> = async (
     payload: LocationModel,
   ) => {
-    setLoading(true);
     setHasErrors(undefined);
     try {
       await saveMutation({
@@ -81,14 +63,12 @@ const CreateAvesLocations = ({
         animalTypeId: animalTypeId,
       });
       setHasErrors(false);
-      setLoading(false);
       AlertSuccessNotification({
         text: 'Location created successfully',
       });
       setShowModal(false);
     } catch (error: any) {
       setHasErrors(true);
-      setLoading(false);
       setHasErrors(error.response.data.message);
       AlertDangerNotification({
         text: `${error.response.data.message}`,
@@ -204,7 +184,7 @@ const CreateAvesLocations = ({
                   ) : (
                     <>
                       <div className="items-center flex space-x-9 my-2">
-                        <div>
+                        <div className="w-60">
                           {watchCages === 'YES' ? (
                             <Label>
                               Dimensions

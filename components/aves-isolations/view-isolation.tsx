@@ -1,9 +1,10 @@
 import { GetOneIsolationAPI } from '@/api-site/isolations';
 import { useReactHookForm } from '@/components/hooks';
-import { TextAreaInput, TextInput } from '@/components/ui-setting/shadcn';
 import { XIcon } from 'lucide-react';
 import * as yup from 'yup';
+import { Input } from '../ui/input';
 import { Label } from '../ui/label';
+import { Textarea } from '../ui/textarea';
 
 const schema = yup.object({});
 
@@ -16,7 +17,7 @@ const ViewAvesIsolation = ({
   setShowModal: any;
   isolation?: any;
 }) => {
-  const { t, control, errors } = useReactHookForm({ schema });
+  const { t } = useReactHookForm({ schema });
 
   const { data: getOneIsolation } = GetOneIsolationAPI({
     isolationId: isolation?.id,
@@ -46,15 +47,7 @@ const ViewAvesIsolation = ({
                       {t.formatMessage({ id: 'NUMBER.ANIMALS' })}
                       <span className="text-red-600">*</span>
                     </Label>
-                    <TextInput
-                      control={control}
-                      type="number"
-                      name="number"
-                      defaultValue={getOneIsolation?.number}
-                      placeholder="Give a number"
-                      errors={errors}
-                      disabled
-                    />
+                    <Input defaultValue={getOneIsolation?.number} disabled />
                   </div>
                 ) : getOneIsolation?.male !== 0 ? (
                   <div className="my-4">
@@ -62,14 +55,7 @@ const ViewAvesIsolation = ({
                       {t.formatMessage({ id: 'ANIMAL.MALES' })}:
                       <span className="text-red-600">*</span>
                     </Label>
-                    <TextInput
-                      control={control}
-                      type="number"
-                      name="number"
-                      defaultValue={getOneIsolation?.male}
-                      errors={errors}
-                      disabled
-                    />
+                    <Input defaultValue={getOneIsolation?.male} disabled />
                   </div>
                 ) : getOneIsolation?.female !== 0 ? (
                   <div className="my-4">
@@ -77,14 +63,7 @@ const ViewAvesIsolation = ({
                       {t.formatMessage({ id: 'ANIMAL.FEMALES' })}:
                       <span className="text-red-600">*</span>
                     </Label>
-                    <TextInput
-                      control={control}
-                      type="number"
-                      name="female"
-                      defaultValue={getOneIsolation?.female}
-                      errors={errors}
-                      disabled
-                    />
+                    <Input defaultValue={getOneIsolation?.female} disabled />
                   </div>
                 ) : (
                   <div className="my-4 flex items-center space-x-1">
@@ -92,37 +71,16 @@ const ViewAvesIsolation = ({
                       {t.formatMessage({ id: 'ANIMAL.MALES' })}:
                       <span className="text-red-600">*</span>
                     </Label>
-                    <TextInput
-                      control={control}
-                      type="number"
-                      name="male"
-                      defaultValue={getOneIsolation?.male}
-                      errors={errors}
-                      disabled
-                    />
+                    <Input defaultValue={getOneIsolation?.male} disabled />
                     <Label>
                       {t.formatMessage({ id: 'ANIMAL.FEMALES' })}:
                       <span className="text-red-600">*</span>
                     </Label>
-                    <TextInput
-                      control={control}
-                      type="number"
-                      name="female"
-                      defaultValue={getOneIsolation?.female}
-                      errors={errors}
-                      disabled
-                    />
+                    <Input defaultValue={getOneIsolation?.female} disabled />
                   </div>
                 )}
                 <div className="mb-4">
-                  <TextAreaInput
-                    control={control}
-                    label="Note"
-                    name="note"
-                    placeholder={getOneIsolation?.note}
-                    errors={errors}
-                    disabled
-                  />
+                  <Textarea placeholder={getOneIsolation?.note} disabled />
                 </div>
               </div>
             </form>

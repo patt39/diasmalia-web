@@ -36,8 +36,6 @@ const UpdateIncubations = ({
     errors,
     setValue,
     handleSubmit,
-    loading,
-    setLoading,
     hasErrors,
     setHasErrors,
   } = useReactHookForm({ schema });
@@ -50,33 +48,22 @@ const UpdateIncubations = ({
   }, [incubation, setValue]);
 
   // Update
-  const { mutateAsync: saveMutation } = UpdateOneIncubationAPI({
-    onSuccess: () => {
-      setHasErrors(false);
-      setLoading(false);
-    },
-    onError: (error?: any) => {
-      setHasErrors(true);
-      setHasErrors(error.response.data.message);
-    },
-  });
+  const { isPending: loading, mutateAsync: saveMutation } =
+    UpdateOneIncubationAPI();
 
   const onSubmit: SubmitHandler<IncubationsModel> = async () => {
-    setLoading(true);
     setHasErrors(undefined);
     try {
       await saveMutation({
         incubationId: incubation?.id,
       });
       setHasErrors(false);
-      setLoading(false);
       AlertSuccessNotification({
         text: 'Incubation updated successfully',
       });
       setShowModal(false);
     } catch (error: any) {
       setHasErrors(true);
-      setLoading(false);
       setHasErrors(error.response.data.message);
       AlertDangerNotification({
         text: `${error.response.data.message}`,

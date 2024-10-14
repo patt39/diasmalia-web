@@ -28,7 +28,6 @@ import { ListAvesAnimals } from './list-aves';
 const TabAvesAnimals = ({ animalTypeId }: { animalTypeId: string }) => {
   const { ref, inView } = useInView();
   const [productionPhase, setProductionPhase] = useState('');
-  const [isBulkOpen, setIsBulkOpen] = useState<boolean>(false);
   const { t, search, handleSetSearch, isOpen, setIsOpen } = useInputState();
 
   const { data: animalType } = GetOneAnimalTypeAPI({
@@ -158,7 +157,7 @@ const TabAvesAnimals = ({ animalTypeId }: { animalTypeId: string }) => {
             >
               <Bird className="h-3.5 w-3.5  hover:shadow-xxl" />
               <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                {t.formatMessage({ id: 'ANIMALTYPE.ANIMALS.CREATE' })}
+                {t.formatMessage({ id: 'ANIMALTYPE.ANIMALS.AVES.CREATE' })}
               </span>
             </Button>
           </div>

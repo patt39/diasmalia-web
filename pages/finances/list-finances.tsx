@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+import { GetOneUserMeAPI } from '@/api-site/user';
 import { useInputState } from '@/components/hooks';
 import { Button } from '@/components/ui/button';
 import {
@@ -19,6 +20,7 @@ const ListFinances = ({ item, index }: { item: any; index: number }) => {
   const { t } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
   const [isView, setIsView] = useState(false);
+  const { data: user } = GetOneUserMeAPI();
 
   return (
     <>
@@ -38,11 +40,11 @@ const ListFinances = ({ item, index }: { item: any; index: number }) => {
         </TableCell>
         {item?.type === 'INCOME' ? (
           <TableCell className="font-bold text-green-600">
-            + {item?.amount}
+            +{item?.amount} {user?.profile?.currency?.symbol}
           </TableCell>
         ) : item.type === 'EXPENSE' ? (
           <TableCell className="font-bold text-red-600">
-            - {item?.amount}
+            {item?.amount} {user?.profile?.currency?.symbol}
           </TableCell>
         ) : (
           ''

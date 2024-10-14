@@ -1,7 +1,11 @@
-import { GetArchivesAPI } from '@/api-site/animals';
+import { GetAnimalsAPI } from '@/api-site/animals';
 import { useInputState } from '@/components/hooks';
 import { LayoutDashboard } from '@/components/layouts/dashboard';
-import { ButtonInput, SearchInput } from '@/components/ui-setting';
+import {
+  ButtonInput,
+  ButtonLoadMore,
+  SearchInput,
+} from '@/components/ui-setting';
 import { LoadingFile } from '@/components/ui-setting/ant';
 import { ErrorFile } from '@/components/ui-setting/ant/error-file';
 import { CardHeader } from '@/components/ui/card';
@@ -26,10 +30,11 @@ export function Archives() {
     isFetchingNextPage,
     hasNextPage,
     fetchNextPage,
-  } = GetArchivesAPI({
+  } = GetAnimalsAPI({
     search,
     take: 10,
     sort: 'desc',
+    status: 'ARCHIVED',
     sortBy: 'createdAt',
   });
 
@@ -104,6 +109,15 @@ export function Archives() {
                       <ListArchives index={index} item={item} key={index} />
                     </>
                   ))
+              )}
+              {hasNextPage && (
+                <div className="mx-auto mt-4 justify-center text-center">
+                  <ButtonLoadMore
+                    ref={ref}
+                    isFetchingNextPage={isFetchingNextPage}
+                    onClick={() => fetchNextPage()}
+                  />
+                </div>
               )}
             </div>
           </div>

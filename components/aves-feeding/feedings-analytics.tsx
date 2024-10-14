@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { FeedingsAnalyticAPI } from '@/api-site/feedings';
-import { dateTimeNowUtc, formatMMDate, getMonthNow } from '@/utils';
+import { dateTimeNowUtc, formatMMDate } from '@/utils';
 import { Calendar } from 'lucide-react';
 import { Fragment, useState } from 'react';
 import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts';
@@ -22,14 +22,12 @@ import {
 
 const FeedingsAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
   const { t, locale } = useInputState();
-  const [periode, setPeriode] = useState('');
   const [year, setYear] = useState<String>(`${dateTimeNowUtc().getFullYear()}`);
-  const [months, setMonths] = useState<String>(`${getMonthNow(new Date())}`);
+  const [months, setMonths] = useState<String>('');
 
   const { data: dataFeedingAnalyticsDay } = FeedingsAnalyticAPI({
     year: String(year),
     months: String(months),
-    periode: String(periode),
     animalTypeId: animalTypeId,
   });
 
@@ -43,6 +41,9 @@ const FeedingsAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
   });
 
   const chartConfig = {
+    sum: {
+      label: `${t.formatMessage({ id: 'FEED.QUANTITY' })}`,
+    },
     desktop: {
       label: 'Desktop',
       color: 'hsl(var(--chart-1))',
@@ -97,11 +98,18 @@ const FeedingsAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                     <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                       {Number(months)
                         ? formatMMDate(Number(months), locale)
-                        : months}
+                        : 'select month'}
                     </span>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="dark:border-gray-800 w-auto">
+                  <DropdownMenuCheckboxItem
+                    className="cursor-pointer"
+                    onClick={() => setMonths('')}
+                    checked
+                  >
+                    {t.formatMessage({ id: 'ACTIVITY.FILTERALL' })}
+                  </DropdownMenuCheckboxItem>
                   {dataFeedingAnalyticsMonth?.data?.map(
                     (item: any, index: number) => (
                       <Fragment key={index}>
@@ -140,6 +148,7 @@ const FeedingsAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
               />
               <ChartTooltip
                 cursor={false}
+                labelClassName="w-20"
                 content={<ChartTooltipContent indicator="line" />}
               />
               <Area

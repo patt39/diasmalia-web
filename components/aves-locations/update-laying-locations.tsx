@@ -42,8 +42,6 @@ const UpdateLayingLocations = ({
     errors,
     setValue,
     handleSubmit,
-    loading,
-    setLoading,
     hasErrors,
     setHasErrors,
   } = useReactHookForm({ schema });
@@ -70,21 +68,12 @@ const UpdateLayingLocations = ({
   }, [location, setValue]);
 
   // Update data
-  const { mutateAsync: saveMutation } = UpdateOneLoctionAPI({
-    onSuccess: () => {
-      setHasErrors(false);
-      setLoading(false);
-    },
-    onError: (error?: any) => {
-      setHasErrors(true);
-      setHasErrors(error.response.data.message);
-    },
-  });
+  const { isPending: loading, mutateAsync: saveMutation } =
+    UpdateOneLoctionAPI();
 
   const onSubmit: SubmitHandler<LocationModel> = async (
     payload: LocationModel,
   ) => {
-    setLoading(true);
     setHasErrors(undefined);
     try {
       await saveMutation({
@@ -92,14 +81,12 @@ const UpdateLayingLocations = ({
         locationId: location.id,
       });
       setHasErrors(false);
-      setLoading(false);
       AlertSuccessNotification({
         text: 'Location updated successfully',
       });
       setShowModal(false);
     } catch (error: any) {
       setHasErrors(true);
-      setLoading(false);
       setHasErrors(error.response.data.message);
       AlertDangerNotification({
         text: `${error.response.data.message}`,
@@ -167,7 +154,7 @@ const UpdateLayingLocations = ({
                 <div className="my-2 items-center space-x-1">
                   <>
                     <div className="items-center flex space-x-9 my-2">
-                      <div>
+                      <div className="w-60">
                         <Label>{t.formatMessage({ id: 'SURFACE.AREA' })}</Label>
                         <TextInput
                           control={control}
@@ -202,7 +189,8 @@ const UpdateLayingLocations = ({
                         />
                       </div>
                     </div>
-                    {watchProductionPhase === 'LAYING' ? (
+                    {watchProductionPhase === 'LAYING' &&
+                    location?.addCages === 'NO' ? (
                       <div>
                         <Label>{t.formatMessage({ id: 'NUMBER.NESTS' })}</Label>
                         <TextInput
@@ -265,7 +253,7 @@ const UpdateLayingLocations = ({
                     )}
                     {watchProductionPhase === 'LAYING' &&
                     animalType?.name !== 'Pisciculture' &&
-                    location?.addCages === 'YES' &&
+                    location?.addCages === 'NO' &&
                     watchCages === 'YES' ? (
                       <div>
                         <Label>{t.formatMessage({ id: 'NUMBER.NESTS' })}</Label>

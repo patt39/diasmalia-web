@@ -54,13 +54,11 @@ const CreateOrUpdateDeaths = ({
   const {
     t,
     watch,
+    errors,
     control,
     setValue,
-    handleSubmit,
-    errors,
-    loading,
-    setLoading,
     hasErrors,
+    handleSubmit,
     setHasErrors,
   } = useReactHookForm({ schema });
   const { query } = useRouter();
@@ -78,19 +76,10 @@ const CreateOrUpdateDeaths = ({
   }, [death, setValue]);
 
   // Create or Update data
-  const { mutateAsync: saveMutation } = CreateOrUpdateOneDeathAPI({
-    onSuccess: () => {
-      setHasErrors(false);
-      setLoading(false);
-    },
-    onError: (error?: any) => {
-      setHasErrors(true);
-      setHasErrors(error.response.data.message);
-    },
-  });
+  const { isPending: loading, mutateAsync: saveMutation } =
+    CreateOrUpdateOneDeathAPI();
 
   const onSubmit: SubmitHandler<DeathsModel> = async (payload: DeathsModel) => {
-    setLoading(true);
     setHasErrors(undefined);
     try {
       await saveMutation({
@@ -98,14 +87,12 @@ const CreateOrUpdateDeaths = ({
         deathId: death?.id,
       });
       setHasErrors(false);
-      setLoading(false);
       AlertSuccessNotification({
         text: 'Death saved successfully',
       });
       setShowModal(false);
     } catch (error: any) {
       setHasErrors(true);
-      setLoading(false);
       setHasErrors(error.response.data.message);
       AlertDangerNotification({
         text: `${error.response.data.message}`,
@@ -201,12 +188,11 @@ const CreateOrUpdateDeaths = ({
                     </div>
                   </div>
                 )}
-
                 <div className="flex items-center space-x-4 w-full">
                   {!death?.id ? (
                     <div className="mb-4 w-full">
                       <Label>
-                        Sélectionez les animaux morts
+                        Sélectionner les animaux morts
                         <span className="text-red-600">*</span>
                       </Label>
                       <Select>

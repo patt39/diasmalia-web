@@ -1,5 +1,4 @@
 /* eslint-disable @next/next/no-img-element */
-import { DeleteOneBreedingAPI } from '@/api-site/breedings';
 import { useInputState } from '@/components/hooks';
 import { Button } from '@/components/ui/button';
 import {
@@ -9,13 +8,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-  AlertDangerNotification,
-  AlertSuccessNotification,
-  formatDateDDMMYY,
-} from '@/utils';
+import { formatDateDDMMYY } from '@/utils';
 import { Check, Eye, MoreHorizontal, PencilIcon } from 'lucide-react';
 import { useState } from 'react';
+import { firstLetterToUpperCase } from '../../utils/utils';
 import { Badge } from '../ui/badge';
 import { TableCell, TableRow } from '../ui/table';
 import { CheckPregnancy } from './check-pregnancy';
@@ -23,41 +19,17 @@ import { UpdateBreedings } from './update-breedings';
 import { ViewBreeding } from './view-breeding';
 
 const ListBreedings = ({ item, index }: { item: any; index: number }) => {
-  const { t, loading, isOpen, setIsOpen, setLoading } = useInputState();
+  const { t } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
   const [isCheck, setIsCheck] = useState(false);
   const [isView, setIsView] = useState(false);
-
-  const { mutateAsync: deleteMutation } = DeleteOneBreedingAPI({
-    onSuccess: () => {},
-    onError: (error?: any) => {},
-  });
-
-  const deleteItem = async (item: any) => {
-    setLoading(true);
-    setIsOpen(true);
-    try {
-      await deleteMutation({ breedingId: item?.id });
-      AlertSuccessNotification({
-        text: 'Breeding deleted successfully',
-      });
-      setLoading(false);
-      setIsOpen(false);
-    } catch (error: any) {
-      setLoading(false);
-      setIsOpen(true);
-      AlertDangerNotification({
-        text: `${error.response.data.message}`,
-      });
-    }
-  };
 
   return (
     <>
       <TableRow key={index} className="dark:border-gray-800">
         <TableCell className="font-medium">{item?.maleCode}</TableCell>
         <TableCell className="font-medium">{item?.femaleCode}</TableCell>
-        <TableCell>{item?.method.toLowerCase()}</TableCell>
+        <TableCell>{firstLetterToUpperCase(item?.method)}</TableCell>
         <TableCell>
           {item?.checkStatus === true && item?.result === 'PREGNANT' ? (
             <Badge className="text-xs" variant="secondary">

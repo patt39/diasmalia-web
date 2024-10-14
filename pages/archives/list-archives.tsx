@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { DeleteOneAnimalAPI } from '@/api-site/animals';
+import { ViewAvesAnimal } from '@/components/aves-animals/view-aves-animal';
 import { useInputState } from '@/components/hooks';
 import { ActionModalDialog } from '@/components/ui-setting/shadcn';
 import { Badge } from '@/components/ui/badge';
@@ -24,7 +25,6 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
-import { ViewArchiveStatistics } from './view-archived-statistics';
 
 const ListArchives = ({ item, index }: { item: any; index: number }) => {
   const { t, isOpen, loading, setIsOpen, setLoading } = useInputState();
@@ -41,7 +41,7 @@ const ListArchives = ({ item, index }: { item: any; index: number }) => {
     try {
       await deleteMutation({ animalId: item?.id });
       AlertSuccessNotification({
-        text: 'Animal deleted successfully',
+        text: 'Bande deleted successfully',
       });
       setLoading(false);
       setIsOpen(false);
@@ -134,7 +134,7 @@ const ListArchives = ({ item, index }: { item: any; index: number }) => {
                 onClick={() => deleteItem(item)}
               />
             </DropdownMenu>
-            <ViewArchiveStatistics
+            <ViewAvesAnimal
               animal={item}
               showModal={isView}
               setShowModal={setIsView}

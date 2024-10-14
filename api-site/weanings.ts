@@ -7,6 +7,50 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 
+export const GetOneWeaningAPI = (payload: { farrowingId: string }) => {
+  const { farrowingId } = payload;
+  const { data, isError, isLoading, status, isPending, refetch } = useQuery({
+    queryKey: ['weaning', farrowingId],
+    queryFn: async () =>
+      await makeApiCall({
+        action: 'getOneWeaning',
+        urlParams: { farrowingId },
+      }),
+    refetchOnWindowFocus: false,
+  });
+
+  return {
+    data: data?.data as any,
+    isError,
+    isLoading,
+    status,
+    isPending,
+    refetch,
+  };
+};
+
+export const GetOneAnimalWeanedAPI = (payload: { animalId: string }) => {
+  const { animalId } = payload;
+  const { data, isError, isLoading, status, isPending, refetch } = useQuery({
+    queryKey: ['weaning', animalId],
+    queryFn: async () =>
+      await makeApiCall({
+        action: 'getOneAnimalWeaned',
+        urlParams: { animalId },
+      }),
+    refetchOnWindowFocus: false,
+  });
+
+  return {
+    data: data?.data as any,
+    isError,
+    isLoading,
+    status,
+    isPending,
+    refetch,
+  };
+};
+
 export const CreateOrUpdateOneWeaningAPI = ({
   onSuccess,
   onError,

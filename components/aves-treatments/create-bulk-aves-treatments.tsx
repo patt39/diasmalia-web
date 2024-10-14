@@ -52,23 +52,13 @@ const schema = yup.object({
 const CreateBulkAvestreatments = ({
   showModal,
   setShowModal,
-  treatment,
 }: {
   showModal: boolean;
   setShowModal: any;
   treatment?: any;
 }) => {
-  const {
-    t,
-    watch,
-    control,
-    handleSubmit,
-    errors,
-    loading,
-    setLoading,
-    hasErrors,
-    setHasErrors,
-  } = useReactHookForm({ schema });
+  const { t, watch, control, handleSubmit, errors, hasErrors, setHasErrors } =
+    useReactHookForm({ schema });
   const { query } = useRouter();
   const { ref, inView } = useInView();
   const animalTypeId = String(query?.animalTypeId);
@@ -76,35 +66,24 @@ const CreateBulkAvestreatments = ({
   const countSelectedAnimals = selectedAnimals?.length;
 
   // Create
-  const { mutateAsync: saveMutation } = CreateOneTreatmentAPI({
-    onSuccess: () => {
-      setHasErrors(false);
-      setLoading(false);
-    },
-    onError: (error?: any) => {
-      setHasErrors(true);
-      setHasErrors(error.response.data.message);
-    },
-  });
+  const { isPending: loading, mutateAsync: saveMutation } =
+    CreateOneTreatmentAPI();
 
   const onSubmit: SubmitHandler<TreatmentsPostModel> = async (
     payload: TreatmentsPostModel,
   ) => {
-    setLoading(true);
     setHasErrors(undefined);
     try {
       await saveMutation({
         ...payload,
       });
       setHasErrors(false);
-      setLoading(false);
       AlertSuccessNotification({
         text: 'Treatment saved successfully',
       });
       setShowModal(false);
     } catch (error: any) {
       setHasErrors(true);
-      setLoading(false);
       setHasErrors(error.response.data.message);
       AlertDangerNotification({
         text: `${error.response.data.message}`,

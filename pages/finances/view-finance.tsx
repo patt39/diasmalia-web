@@ -1,6 +1,7 @@
 import { GetOneFinanceAPI } from '@/api-site/finances';
 import { useReactHookForm } from '@/components/hooks';
-import { TextAreaInput, TextInput } from '@/components/ui-setting/shadcn';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { XIcon } from 'lucide-react';
 import * as yup from 'yup';
 
@@ -38,35 +39,14 @@ const ViewFinance = ({
             <form className="mt-4">
               <div className="flex-auto justify-center p-2">
                 <div className="mb-4">
-                  <TextInput
-                    disabled
-                    control={control}
-                    type="number"
-                    name="amount"
-                    defaultValue={getOneFinance.amount}
-                    errors={errors}
-                  />
+                  <Input disabled defaultValue={getOneFinance.amount} />
                 </div>
                 <div className="mb-4">
-                  <TextInput
-                    control={control}
-                    type="text"
-                    name="type"
-                    defaultValue={getOneFinance.type}
-                    errors={errors}
-                    disabled
-                  />
+                  <Input defaultValue={getOneFinance.type} disabled />
                 </div>
               </div>
               <div className="mb-4">
-                <TextAreaInput
-                  control={control}
-                  label="Detail"
-                  name="detail"
-                  defaultValue={getOneFinance.detail}
-                  errors={errors}
-                  disabled
-                />
+                <Textarea defaultValue={getOneFinance.detail} disabled />
               </div>
             </form>
           </div>

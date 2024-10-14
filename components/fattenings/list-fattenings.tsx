@@ -22,26 +22,21 @@ import { TableCell, TableRow } from '../ui/table';
 import { CreateOrUpdateFattenings } from './create-or-update-fattenings';
 
 const ListFattenings = ({ item, index }: { item: any; index: number }) => {
-  const { t, isOpen, loading, setIsOpen, setLoading } = useInputState();
+  const { t, isOpen, setIsOpen, setLoading } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
 
-  const { mutateAsync: deleteMutation } = DeleteOneFatteningAPI({
-    onSuccess: () => {},
-    onError: (error?: any) => {},
-  });
+  const { isPending: loading, mutateAsync: deleteMutation } =
+    DeleteOneFatteningAPI();
 
   const deleteItem = async (item: any) => {
-    setLoading(true);
     setIsOpen(true);
     try {
       await deleteMutation({ fatteningId: item.id });
       AlertSuccessNotification({
         text: 'Fattening deleted successfully',
       });
-      setLoading(false);
       setIsOpen(false);
     } catch (error: any) {
-      setLoading(false);
       setIsOpen(true);
       AlertDangerNotification({
         text: `${error.response.data.message}`,

@@ -104,7 +104,7 @@ const AnimalStatistics = () => {
             {t.formatMessage({ id: 'PROLIFICITY' })}
           </CardDescription>
           <CardTitle className="text-4xl flex">
-            {Math.floor(animalStatistics?.prolificity * 100) / 100 || 0}
+            {animalStatistics?.prolificity?.toFixed(1) ?? 0}
             <CardDescription>
               <div className="pt-5 text-xs">
                 / {t.formatMessage({ id: 'LITTER.PER.FEMALE' })}

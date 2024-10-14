@@ -24,6 +24,7 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { Controller, SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
+import { Label } from '../ui/label';
 
 const schema = yup.object({
   codeMale: yup.string().optional(),
@@ -43,16 +44,15 @@ const UpdateBreedings = ({
 }) => {
   const {
     t,
-    control,
-    setValue,
-    handleSubmit,
     errors,
     loading,
-    setLoading,
+    control,
+    setValue,
     hasErrors,
+    handleSubmit,
     setHasErrors,
   } = useReactHookForm({ schema });
-  const { query, push } = useRouter();
+  const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
 
   useEffect(() => {
@@ -63,21 +63,11 @@ const UpdateBreedings = ({
   }, [breeding, setValue]);
 
   // Create or Update data
-  const { mutateAsync: saveMutation } = CreateOrUpdateOneBreedingAPI({
-    onSuccess: () => {
-      setHasErrors(false);
-      setLoading(false);
-    },
-    onError: (error?: any) => {
-      setHasErrors(true);
-      setHasErrors(error.response.data.message);
-    },
-  });
+  const { mutateAsync: saveMutation } = CreateOrUpdateOneBreedingAPI();
 
   const onSubmit: SubmitHandler<BreedingsModel> = async (
     payload: BreedingsModel,
   ) => {
-    setLoading(true);
     setHasErrors(undefined);
     try {
       await saveMutation({
@@ -85,14 +75,12 @@ const UpdateBreedings = ({
         breedingId: breeding?.id,
       });
       setHasErrors(false);
-      setLoading(false);
       AlertSuccessNotification({
         text: 'Breeding saved successfully',
       });
       setShowModal(false);
     } catch (error: any) {
       setHasErrors(true);
-      setLoading(false);
       setHasErrors(error.response.data.message);
       AlertDangerNotification({
         text: `${error.response.data.message}`,
@@ -253,9 +241,9 @@ const UpdateBreedings = ({
                   </div>
                 ) : null}
                 <div className="mb-4">
+                  <Label>Method</Label>
                   <SelectInput
                     firstOptionName="Choose a method"
-                    label="Method"
                     control={control}
                     errors={errors}
                     placeholder="Select method"
@@ -268,9 +256,9 @@ const UpdateBreedings = ({
                   />
                 </div>
                 <div className="mb-4">
+                  <Label>Note</Label>
                   <TextAreaInput
                     control={control}
-                    label="Description"
                     name="note"
                     placeholder="Note"
                     errors={errors}

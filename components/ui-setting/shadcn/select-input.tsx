@@ -21,6 +21,7 @@ interface Props {
   firstOptionName: string;
   valueType: 'key' | 'text';
   allowClear?: boolean;
+  defaultValue?: string;
 }
 
 const SelectInput = ({
@@ -32,6 +33,7 @@ const SelectInput = ({
   className,
   placeholder = '',
   valueType,
+  defaultValue,
 }: Props) => {
   return (
     <>
@@ -47,6 +49,7 @@ const SelectInput = ({
       <Controller
         name={name}
         control={control}
+        defaultValue={defaultValue}
         render={({ field: { value, onChange } }) => (
           <>
             <Select onValueChange={onChange} name={name} value={value}>

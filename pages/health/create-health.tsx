@@ -32,55 +32,33 @@ const schema = yup.object({
 const CreateHealth = ({
   showModal,
   setShowModal,
-  health,
 }: {
   showModal: boolean;
   setShowModal: any;
   health?: any;
 }) => {
-  const {
-    t,
-    watch,
-    control,
-    handleSubmit,
-    errors,
-    loading,
-    setLoading,
-    hasErrors,
-    setHasErrors,
-  } = useReactHookForm({ schema });
+  const { t, watch, control, handleSubmit, errors, hasErrors, setHasErrors } =
+    useReactHookForm({ schema });
   const watchHealthType = watch('category', '');
 
   // Create
-  const { mutateAsync: saveMutation } = CreateHealthAPI({
-    onSuccess: () => {
-      setHasErrors(false);
-      setLoading(false);
-    },
-    onError: (error?: any) => {
-      setHasErrors(true);
-      setHasErrors(error.response.data.message);
-    },
-  });
+  const { isPending: loading, mutateAsync: saveMutation } = CreateHealthAPI();
 
   const onSubmit: SubmitHandler<HealthsModel> = async (
     payload: HealthsModel,
   ) => {
-    setLoading(true);
     setHasErrors(undefined);
     try {
       await saveMutation({
         ...payload,
       });
       setHasErrors(false);
-      setLoading(false);
       AlertSuccessNotification({
         text: 'Health saved successfully',
       });
       setShowModal(false);
     } catch (error: any) {
       setHasErrors(true);
-      setLoading(false);
       setHasErrors(error.response.data.message);
       AlertDangerNotification({
         text: `${error.response.data.message}`,

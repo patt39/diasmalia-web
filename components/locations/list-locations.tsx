@@ -26,7 +26,7 @@ import {
 import Link from 'next/link';
 import { useState } from 'react';
 import { CreateFeedings } from '../feedings/create-feedings';
-import { CreateTreatments } from '../treatments/create-treatments';
+import { BulkCreateTreatments } from '../treatments/bulk-create-treatments';
 import { ActionModalDialog } from '../ui-setting/shadcn';
 import { ActionModalConfirmeDialog } from '../ui-setting/shadcn/action-modal-confirme-dialog';
 import { Badge } from '../ui/badge';
@@ -37,40 +37,27 @@ import {
   TooltipTrigger,
 } from '../ui/tooltip';
 import { UpdateLocations } from './update-locations';
-import { ViewLocation } from './view-location';
 
 const ListLocations = ({ item, index }: { item: any; index: number }) => {
-  const {
-    t,
-    isOpen,
-    loading,
-    setIsOpen,
-    setLoading,
-    isConfirmOpen,
-    setIsConfirmOpen,
-  } = useInputState();
+  const { t, isOpen, setIsOpen, isConfirmOpen, setIsConfirmOpen } =
+    useInputState();
   const [isEdit, setIsEdit] = useState(false);
   const [isView, setIsView] = useState(false);
   const [isFeeding, setIsFeeding] = useState(false);
   const [isTreatment, setIsTreatment] = useState(false);
 
-  const { mutateAsync: deleteMutation } = DeleteOneLocationAPI({
-    onSuccess: () => {},
-    onError: (error?: any) => {},
-  });
+  const { isPending: loading, mutateAsync: deleteMutation } =
+    DeleteOneLocationAPI();
 
   const deleteItem = async (item: any) => {
-    setLoading(true);
     setIsOpen(true);
     try {
       await deleteMutation({ locationId: item.id });
       AlertSuccessNotification({
         text: 'Location deleted successfully',
       });
-      setLoading(false);
       setIsOpen(false);
     } catch (error: any) {
-      setLoading(false);
       setIsOpen(true);
       AlertDangerNotification({
         text: `${error.response.data.message}`,
@@ -78,23 +65,18 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
     }
   };
 
-  const { mutateAsync: saveMutation } = ChangeLocationStatusAPI({
-    onSuccess: () => {},
-    onError: (error?: any) => {},
-  });
+  const { isPending: loadingConfirme, mutateAsync: saveMutation } =
+    ChangeLocationStatusAPI();
 
   const changeItem = async (item: any) => {
-    setLoading(true);
     setIsConfirmOpen(true);
     try {
       await saveMutation({ locationId: item?.id });
       AlertSuccessNotification({
         text: 'Status changed successfully',
       });
-      setLoading(false);
       setIsConfirmOpen(false);
     } catch (error: any) {
-      setLoading(false);
       setIsConfirmOpen(true);
       AlertDangerNotification({
         text: `${error.response.data.message}`,
@@ -354,12 +336,16 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
                 ) : (
                   ''
                 )}
-                <DropdownMenuItem onClick={() => setIsConfirmOpen(true)}>
-                  <BadgeCheck className="size-4 text-gray-600 hover:text-yellow-600 cursor-pointer" />
-                  <span className="ml-2 cursor-pointer hover:text-yellow-400">
-                    {t.formatMessage({ id: 'CHANGE.STATUS' })}
-                  </span>
-                </DropdownMenuItem>
+                {item?._count?.animals === 0 ? (
+                  <DropdownMenuItem onClick={() => setIsConfirmOpen(true)}>
+                    <BadgeCheck className="size-4 text-gray-600 hover:text-yellow-600 cursor-pointer" />
+                    <span className="ml-2 cursor-pointer hover:text-yellow-400">
+                      {t.formatMessage({ id: 'CHANGE.STATUS' })}
+                    </span>
+                  </DropdownMenuItem>
+                ) : (
+                  ''
+                )}
                 <DropdownMenuItem onClick={() => setIsEdit(true)}>
                   <PencilIcon className="size-4 text-gray-600 hover:text-orange-600" />
                   <span className="ml-2 cursor-pointer hover:text-orange-600">
@@ -388,7 +374,7 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
         onClick={() => deleteItem(item)}
       />
       <ActionModalConfirmeDialog
-        loading={loading}
+        loading={loadingConfirme}
         isConfirmOpen={isConfirmOpen}
         setIsConfirmOpen={setIsConfirmOpen}
         onClick={() => changeItem(item)}
@@ -398,20 +384,15 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
         showModal={isEdit}
         setShowModal={setIsEdit}
       />
-      <ViewLocation
-        location={item}
-        showModal={isView}
-        setShowModal={setIsView}
-      />
+
       <CreateFeedings
         location={item}
         feeding={item}
         showModal={isFeeding}
         setShowModal={setIsFeeding}
       />
-      <CreateTreatments
+      <BulkCreateTreatments
         location={item}
-        treatment={item}
         showModal={isTreatment}
         setShowModal={setIsTreatment}
       />

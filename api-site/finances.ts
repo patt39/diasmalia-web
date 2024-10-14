@@ -27,6 +27,29 @@ export const GetFinanceStatisticsAPI = () => {
   };
 };
 
+export const GetFinancesAnalyticAPI = (payload: {
+  periode?: string;
+  days?: string;
+  months?: string;
+  year?: string;
+  organizationId?: string;
+}) => {
+  const { year, months, days, organizationId } = payload;
+  return useQuery({
+    queryKey: ['finance-analytics', { ...payload }],
+    queryFn: async () =>
+      await makeApiCall({
+        action: 'getFinanceAnalytics',
+        queryParams: {
+          year,
+          months,
+          days,
+          organizationId,
+        },
+      }),
+  });
+};
+
 export const CreateOrUpdateOneFinanceAPI = ({
   onSuccess,
   onError,

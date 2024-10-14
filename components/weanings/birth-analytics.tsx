@@ -2,7 +2,7 @@
 import { GetAnimalStatisticsAPI } from '@/api-site/animals';
 import { GetBirthAnalyticAPI } from '@/api-site/weanings';
 import { dateTimeNowUtc, formatMMDate } from '@/utils';
-import { Calendar, ListFilter } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 import { Fragment, useState } from 'react';
 import { CartesianGrid, Line, LineChart, XAxis } from 'recharts';
 import { useInputState } from '../hooks';
@@ -18,7 +18,6 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 
@@ -52,6 +51,12 @@ const FarrowingsWeaningsAnalytics = ({
   });
 
   const chartConfig = {
+    litter: {
+      label: `${t.formatMessage({ id: 'WEAN' })}`,
+    },
+    farrowingLitter: {
+      label: `${t.formatMessage({ id: 'FARROWING' })}`,
+    },
     desktop: {
       label: 'Desktop',
       color: 'hsl(var(--chart-1))',
@@ -106,11 +111,18 @@ const FarrowingsWeaningsAnalytics = ({
                       <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                         {Number(months)
                           ? formatMMDate(Number(months), locale)
-                          : months}
+                          : 'Select month'}
                       </span>
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="dark:border-gray-800 w-auto">
+                    <DropdownMenuCheckboxItem
+                      className="cursor-pointer"
+                      onClick={() => setMonths('')}
+                      checked
+                    >
+                      {t.formatMessage({ id: 'ACTIVITY.FILTERALL' })}
+                    </DropdownMenuCheckboxItem>
                     {dataBirthsAnalyticsMonth?.data?.map(
                       (item: any, index: number) => (
                         <Fragment key={index}>
@@ -123,54 +135,6 @@ const FarrowingsWeaningsAnalytics = ({
                         </Fragment>
                       ),
                     )}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="outline" size="sm" className="h-8 gap-1">
-                      <ListFilter className="h-3.5 w-3.5" />
-                      <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                        {periode == ''
-                          ? t.formatMessage({ id: 'ACTIVITY.FILTERALL' })
-                          : periode == '7'
-                            ? t.formatMessage({ id: 'ACTIVITY.LAST7DAYS' })
-                            : periode == '15'
-                              ? t.formatMessage({ id: 'ACTIVITY.LAST15DAYS' })
-                              : t.formatMessage({ id: 'ACTIVITY.LAST30DAYS' })}
-                      </span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className="dark:border-gray-800 w-auto">
-                    <DropdownMenuSeparator />
-                    <DropdownMenuCheckboxItem
-                      className="cursor-pointer"
-                      onClick={() => setPeriode('')}
-                      checked
-                    >
-                      {t.formatMessage({ id: 'ACTIVITY.FILTERALL' })}
-                    </DropdownMenuCheckboxItem>
-                    <DropdownMenuCheckboxItem
-                      className="cursor-pointer"
-                      onClick={() => setPeriode('7')}
-                    >
-                      {t.formatMessage({ id: 'ACTIVITY.LAST7DAYS' })}
-                    </DropdownMenuCheckboxItem>
-                    <DropdownMenuCheckboxItem
-                      className="cursor-pointer"
-                      onClick={() =>
-                        setPeriode(
-                          `${t.formatMessage({ id: 'ACTIVITY.LAST15DAYS' })}`,
-                        )
-                      }
-                    >
-                      {t.formatMessage({ id: 'ACTIVITY.LAST15DAYS' })}
-                    </DropdownMenuCheckboxItem>
-                    <DropdownMenuCheckboxItem
-                      className="cursor-pointer"
-                      onClick={() => setPeriode('30')}
-                    >
-                      {t.formatMessage({ id: 'ACTIVITY.LAST30DAYS' })}
-                    </DropdownMenuCheckboxItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
@@ -192,7 +156,6 @@ const FarrowingsWeaningsAnalytics = ({
                   tickLine={false}
                   axisLine={false}
                   tickMargin={12}
-                  //tickFormatter={(value) => value.slice(0, 3)}
                 />
                 <ChartTooltip
                   cursor={false}

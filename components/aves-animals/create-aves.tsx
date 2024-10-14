@@ -36,8 +36,10 @@ const schema = yup.object({
   code: yup.string().optional(),
   male: yup.number().optional(),
   female: yup.number().optional(),
-  quantity: yup.number().optional(),
   addCages: yup.string().optional(),
+  strain: yup.string().optional(),
+  supplier: yup.string().optional(),
+  quantity: yup.number().optional(),
   productionPhase: yup.string().required('productionPhase is required'),
   birthday: yup.string().required('birthday is a required field'),
   weight: yup.number().required('weight is a required field'),
@@ -52,17 +54,8 @@ const CreateAvesAnimals = ({
   setShowModal: any;
   animal?: any;
 }) => {
-  const {
-    t,
-    watch,
-    control,
-    handleSubmit,
-    errors,
-    loading,
-    setLoading,
-    hasErrors,
-    setHasErrors,
-  } = useReactHookForm({ schema });
+  const { t, watch, control, handleSubmit, errors, hasErrors, setHasErrors } =
+    useReactHookForm({ schema });
   const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
   const watchCages = watch('addCages', '');
@@ -73,19 +66,10 @@ const CreateAvesAnimals = ({
   });
 
   // Create
-  const { mutateAsync: saveMutation } = CreateOneAvesAnimalAPI({
-    onSuccess: () => {
-      setHasErrors(false);
-      setLoading(false);
-    },
-    onError: (error?: any) => {
-      setHasErrors(true);
-      setHasErrors(error.response.data.message);
-    },
-  });
+  const { isPending: loading, mutateAsync: saveMutation } =
+    CreateOneAvesAnimalAPI();
 
   const onSubmit: SubmitHandler<AnimalModel> = async (payload: AnimalModel) => {
-    setLoading(true);
     setHasErrors(undefined);
     try {
       await saveMutation({
@@ -93,14 +77,12 @@ const CreateAvesAnimals = ({
         animalTypeId: animalTypeId,
       });
       setHasErrors(false);
-      setLoading(false);
       AlertSuccessNotification({
         text: 'Animal saved successfully',
       });
       setShowModal(false);
     } catch (error: any) {
       setHasErrors(true);
-      setLoading(false);
       setHasErrors(error.response.data.message);
       AlertDangerNotification({
         text: `${error.response.data.message}`,
@@ -146,6 +128,20 @@ const CreateAvesAnimals = ({
     addCages: 'NO',
     sortBy: 'createdAt',
     productionPhase: 'GROWTH',
+    animalTypeId: animalTypeId,
+  });
+
+  const {
+    isLoading: isLoadingLocationsLaying,
+    isError: isErrorLocationsLaying,
+    data: dataLocationsLaying,
+  } = GetLocationsAPI({
+    take: 10,
+    sort: 'desc',
+    status: true,
+    addCages: 'NO',
+    sortBy: 'createdAt',
+    productionPhase: 'LAYING',
     animalTypeId: animalTypeId,
   });
 
@@ -220,6 +216,28 @@ const CreateAvesAnimals = ({
                         ]}
                       />
                     </div>
+                    <div className="my-2 flex space-x-4">
+                      <div className="w-96">
+                        <Label>Fournisseur</Label>
+                        <TextInput
+                          control={control}
+                          type="text"
+                          name="supplier"
+                          placeholder="Supplier"
+                          errors={errors}
+                        />
+                      </div>
+                      <div className="w-60">
+                        <Label>Souche</Label>
+                        <TextInput
+                          control={control}
+                          type="text"
+                          name="strain"
+                          placeholder="Strain"
+                          errors={errors}
+                        />
+                      </div>
+                    </div>
                     {watchProductionPhase === 'GROWTH' ? (
                       <>
                         <div className="flex items-center space-x-4">
@@ -265,8 +283,34 @@ const CreateAvesAnimals = ({
                       </>
                     ) : (
                       <>
-                        <div className="my-2 flex items-center space-x-10">
-                          <div>
+                        {animalType?.name === 'Poulets de chair' ? (
+                          <div className="my-2 flex space-x-4">
+                            <div className="w-96">
+                              <Label>Fournisseur</Label>
+                              <TextInput
+                                control={control}
+                                type="text"
+                                name="quantity"
+                                placeholder="Supplier"
+                                errors={errors}
+                              />
+                            </div>
+                            <div className="w-60">
+                              <Label>Souche</Label>
+                              <TextInput
+                                control={control}
+                                type="text"
+                                name="quantity"
+                                placeholder="Strain"
+                                errors={errors}
+                              />
+                            </div>
+                          </div>
+                        ) : (
+                          ''
+                        )}
+                        <div className="my-2 flex items-center space-x-4">
+                          <div className="w-60">
                             <Label>
                               {t.formatMessage({ id: 'ANIMAL.MALES' })}
                               <span className="text-red-600">*</span>
@@ -279,7 +323,7 @@ const CreateAvesAnimals = ({
                               errors={errors}
                             />
                           </div>
-                          <div>
+                          <div className="w-60">
                             <Label>
                               {t.formatMessage({ id: 'ANIMAL.FEMALES' })}
                               <span className="text-red-600">*</span>
@@ -323,6 +367,34 @@ const CreateAvesAnimals = ({
                   </>
                 ) : (
                   <>
+                    {['Pondeuses', 'Poulets de chair'].includes(
+                      animalType?.name,
+                    ) ? (
+                      <div className="my-2 flex space-x-4">
+                        <div className="w-96">
+                          <Label>Fournisseur</Label>
+                          <TextInput
+                            control={control}
+                            type="text"
+                            name="supplier"
+                            placeholder="Supplier"
+                            errors={errors}
+                          />
+                        </div>
+                        <div className="w-60">
+                          <Label>Souche</Label>
+                          <TextInput
+                            control={control}
+                            type="text"
+                            name="strain"
+                            placeholder="Strain"
+                            errors={errors}
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      ''
+                    )}
                     <div className="my-2">
                       <Label>
                         {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
@@ -557,7 +629,7 @@ const CreateAvesAnimals = ({
                       )}
                     />
                   </div>
-                ) : (
+                ) : watchProductionPhase === 'GROWTH' && watchCages === 'NO' ? (
                   <div className="w-full">
                     <Label>
                       {t.formatMessage({ id: 'LOCATION.CODE' })}
@@ -586,7 +658,7 @@ const CreateAvesAnimals = ({
                                   description="Error finding data please try again..."
                                 />
                               ) : Number(
-                                  dataLocations?.pages[0]?.data?.total,
+                                  dataLocationsGrowth?.pages[0]?.data?.total,
                                 ) <= 0 ? (
                                 <ErrorFile description="Don't have location codes" />
                               ) : (
@@ -609,8 +681,9 @@ const CreateAvesAnimals = ({
                       )}
                     />
                   </div>
+                ) : (
+                  ''
                 )}
-
                 {!['Poulet de chair', 'Pisciculture', 'Pondeuses'].includes(
                   animalType?.name,
                 ) ? (
@@ -624,6 +697,116 @@ const CreateAvesAnimals = ({
                       errors={errors}
                       placeholder="Starting date"
                       name="birthday"
+                    />
+                  </div>
+                ) : (
+                  ''
+                )}
+                {watchProductionPhase === 'GROWTH' &&
+                animalType?.name !== 'Pondeuses' ? (
+                  <div className="w-full">
+                    <Label>
+                      {t.formatMessage({ id: 'LOCATION.CODE' })}
+                      <span className="text-red-600">*</span>
+                    </Label>
+                    <Controller
+                      control={control}
+                      name="locationCode"
+                      render={({ field: { value, onChange } }) => (
+                        <Select
+                          onValueChange={onChange}
+                          name={'locationCode'}
+                          value={value}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select a location code" />
+                          </SelectTrigger>
+                          <SelectContent className="dark:border-gray-800">
+                            <SelectGroup>
+                              <SelectLabel>Location codes</SelectLabel>
+                              {isLoadingLocationsGrowth ? (
+                                <LoadingFile />
+                              ) : isErrorLocationsGrowth ? (
+                                <ErrorFile
+                                  title="404"
+                                  description="Error finding data please try again..."
+                                />
+                              ) : Number(
+                                  dataLocationsGrowth?.pages[0]?.data?.total <=
+                                    0,
+                                ) ? (
+                                <ErrorFile description="Don't have location codes" />
+                              ) : (
+                                dataLocationsGrowth?.pages
+                                  .flatMap((page: any) => page?.data?.value)
+                                  .map((item, index) => (
+                                    <>
+                                      <SelectItem
+                                        key={index}
+                                        value={item?.code}
+                                      >
+                                        {item?.code}
+                                      </SelectItem>
+                                    </>
+                                  ))
+                              )}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                      )}
+                    />
+                  </div>
+                ) : watchProductionPhase === 'LAYING' &&
+                  animalType?.name !== 'Pondeuses' ? (
+                  <div className="w-full">
+                    <Label>
+                      {t.formatMessage({ id: 'LOCATION.CODE' })}
+                      <span className="text-red-600">*</span>
+                    </Label>
+                    <Controller
+                      control={control}
+                      name="locationCode"
+                      render={({ field: { value, onChange } }) => (
+                        <Select
+                          onValueChange={onChange}
+                          name={'locationCode'}
+                          value={value}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="Select a location code" />
+                          </SelectTrigger>
+                          <SelectContent className="dark:border-gray-800">
+                            <SelectGroup>
+                              <SelectLabel>Location codes</SelectLabel>
+                              {isLoadingLocationsLaying ? (
+                                <LoadingFile />
+                              ) : isErrorLocationsLaying ? (
+                                <ErrorFile
+                                  title="404"
+                                  description="Error finding data please try again..."
+                                />
+                              ) : Number(
+                                  dataLocationsLaying?.pages[0]?.data?.total,
+                                ) <= 0 ? (
+                                <ErrorFile description="Don't have location codes" />
+                              ) : (
+                                dataLocationsLaying?.pages
+                                  .flatMap((page: any) => page?.data?.value)
+                                  .map((item, index) => (
+                                    <>
+                                      <SelectItem
+                                        key={index}
+                                        value={item?.code}
+                                      >
+                                        {item?.code}
+                                      </SelectItem>
+                                    </>
+                                  ))
+                              )}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                      )}
                     />
                   </div>
                 ) : (

@@ -49,72 +49,37 @@ const schema = yup.object({
 const CreateBulkAnimals = ({
   showModal,
   setShowModal,
-  animal,
+  weaning,
+  farrowing,
 }: {
   showModal: boolean;
   setShowModal: any;
   animal?: any;
+  weaning?: any;
+  farrowing?: any;
 }) => {
-  const {
-    t,
-    control,
-    setValue,
-    handleSubmit,
-    errors,
-    loading,
-    setLoading,
-    hasErrors,
-    setHasErrors,
-  } = useReactHookForm({ schema });
+  const { t, control, handleSubmit, errors, hasErrors, setHasErrors } =
+    useReactHookForm({ schema });
   const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
   const { ref, inView } = useInView();
 
-  useEffect(() => {
-    if (animal) {
-      const fields = [
-        'number',
-        'codeMother',
-        'codeFather',
-        'weight',
-        'birthday',
-        'gender',
-        'breedName',
-        'locationCode',
-        'productionPhase',
-      ];
-      fields?.forEach((field: any) => setValue(field, animal[field]));
-    }
-  }, [animal, setValue]);
-
-  // Create or Update data
-  const { mutateAsync: saveMutation } = CreateBulkAnimalsAPI({
-    onSuccess: () => {
-      setHasErrors(false);
-      setLoading(false);
-    },
-    onError: (error?: any) => {
-      setHasErrors(true);
-      setHasErrors(error.response.data.message);
-    },
-  });
+  // Create
+  const { isPending: loading, mutateAsync: saveMutation } =
+    CreateBulkAnimalsAPI();
 
   const onSubmit: SubmitHandler<AnimalModel> = async (payload: AnimalModel) => {
-    setLoading(true);
-    setHasErrors(undefined);
     try {
       await saveMutation({
         ...payload,
       });
       setHasErrors(false);
-      setLoading(false);
       AlertSuccessNotification({
         text: 'Animals created successfully',
       });
       setShowModal(false);
     } catch (error: any) {
       setHasErrors(true);
-      setLoading(false);
       setHasErrors(error.response.data.message);
       AlertDangerNotification({
         text: `${error.response.data.message}`,
@@ -175,6 +140,18 @@ const CreateBulkAnimals = ({
     animalTypeId: animalTypeId,
   });
 
+  const {
+    isLoading: isLoadingGrowthLocations,
+    isError: isErrorGrowthLocations,
+    data: dataGrowthLocations,
+  } = GetLocationsAPI({
+    take: 10,
+    sort: 'desc',
+    sortBy: 'createdAt',
+    productionPhase: 'GROWTH',
+    animalTypeId: animalTypeId,
+  });
+
   useEffect(() => {
     let fetching = false;
     if (inView) {
@@ -196,6 +173,8 @@ const CreateBulkAnimals = ({
       document.removeEventListener('scroll', onScroll);
     };
   }, [fetchNextPage, hasNextPage, inView]);
+
+  const offspringsAlive = Number(farrowing?.litter - farrowing?.dead);
 
   return (
     <>
@@ -227,12 +206,13 @@ const CreateBulkAnimals = ({
                   </div>
                 )}
                 <div className="my-2 flex items-center">
-                  <div className="flex items-center mt-6">
+                  <div className="flex items-center mt-4">
                     <TextInput
                       control={control}
                       type="number"
                       name="number"
                       placeholder="Give a number"
+                      defaultValue={`${offspringsAlive}`}
                       errors={errors}
                     />
                     <TooltipProvider>
@@ -250,7 +230,7 @@ const CreateBulkAnimals = ({
                   </div>
                   <div className="px-4">
                     <Label>
-                      Date de naissance
+                      <Label>{t.formatMessage({ id: 'VIEW.BIRTHDATE' })}</Label>
                       <span className="text-red-600">*</span>
                     </Label>
                     <DateInput
@@ -262,13 +242,15 @@ const CreateBulkAnimals = ({
                   </div>
                   <div>
                     <Label>
-                      Poids<span className="text-red-600">*</span>
+                      <Label>{t.formatMessage({ id: 'VIEW.WEIGHT' })}</Label>
+                      <span className="text-red-600">*</span>
                     </Label>
                     <TextInput
                       control={control}
                       type="number"
                       name="weight"
                       placeholder="Weight"
+                      defaultValue={`${farrowing?.weight}`}
                       errors={errors}
                     />
                   </div>
@@ -290,87 +272,36 @@ const CreateBulkAnimals = ({
                     ]}
                   />
                 </div>
-                <div className="my-2">
-                  <Label>Code de la mère</Label>
-                  <Controller
-                    control={control}
-                    name="codeMother"
-                    render={({ field: { value, onChange } }) => (
-                      <Select
-                        onValueChange={onChange}
-                        name={'codeMother'}
-                        value={value}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select a female code" />
-                        </SelectTrigger>
-                        <SelectContent className="dark:border-gray-800">
-                          <SelectGroup>
-                            <SelectLabel>Codes</SelectLabel>
-                            {isLoadingFemales ? (
-                              <LoadingFile />
-                            ) : isErrorFemales ? (
-                              <ErrorFile
-                                title="404"
-                                description="Error finding data please try again..."
-                              />
-                            ) : Number(dataFemales?.pages[0]?.data?.total) <=
-                              0 ? (
-                              <ErrorFile description="Don't have active female animals yet" />
-                            ) : (
-                              dataFemales?.pages
-                                .flatMap((page: any) => page?.data?.value)
-                                .map((item, index) => (
-                                  <>
-                                    <SelectItem key={index} value={item?.code}>
-                                      {item?.code}
-                                    </SelectItem>
-                                  </>
-                                ))
-                            )}
-                            {hasNextPage && (
-                              <div className="mx-auto mt-4 justify-center text-center">
-                                <ButtonLoadMore
-                                  ref={ref}
-                                  isFetchingNextPage={isFetchingNextPage}
-                                  onClick={() => fetchNextPage()}
-                                />
-                              </div>
-                            )}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    )}
-                  />
+                {!farrowing?.id ? (
                   <div className="my-2">
-                    <Label>Code du père</Label>
+                    <Label>{t.formatMessage({ id: 'VIEW.MOTHER' })}</Label>
                     <Controller
                       control={control}
-                      name="codeFather"
+                      name="codeMother"
                       render={({ field: { value, onChange } }) => (
                         <Select
                           onValueChange={onChange}
-                          name={'codeFather'}
-                          value={value}
+                          name={'codeMother'}
+                          value={value ? value : farrowing?.animal?.code}
                         >
                           <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select a male code" />
+                            <SelectValue placeholder="Select a female code" />
                           </SelectTrigger>
                           <SelectContent className="dark:border-gray-800">
                             <SelectGroup>
                               <SelectLabel>Codes</SelectLabel>
-                              {isLoadingMales ? (
+                              {isLoadingFemales ? (
                                 <LoadingFile />
-                              ) : isErrorMales ? (
+                              ) : isErrorFemales ? (
                                 <ErrorFile
                                   title="404"
                                   description="Error finding data please try again..."
                                 />
-                              ) : Number(dataMales?.pages[0]?.data?.total) <=
+                              ) : Number(dataFemales?.pages[0]?.data?.total) <=
                                 0 ? (
-                                <ErrorFile description="Don't have active male animals yet" />
+                                <ErrorFile description="Don't have active female animals yet" />
                               ) : (
-                                dataMales?.pages
+                                dataFemales?.pages
                                   .flatMap((page: any) => page?.data?.value)
                                   .map((item, index) => (
                                     <>
@@ -383,35 +314,137 @@ const CreateBulkAnimals = ({
                                     </>
                                   ))
                               )}
+                              {hasNextPage && (
+                                <div className="mx-auto mt-4 justify-center text-center">
+                                  <ButtonLoadMore
+                                    ref={ref}
+                                    isFetchingNextPage={isFetchingNextPage}
+                                    onClick={() => fetchNextPage()}
+                                  />
+                                </div>
+                              )}
                             </SelectGroup>
                           </SelectContent>
                         </Select>
                       )}
                     />
                   </div>
-                </div>
-                <div className="mb-2">
-                  <Label>
-                    Phase de production<span className="text-red-600">*</span>
-                  </Label>
-                  <SelectInput
-                    firstOptionName="Choose a production type"
+                ) : (
+                  <div className="my-2 items-center">
+                    <Label>{t.formatMessage({ id: 'VIEW.MOTHER' })}</Label>
+                    <TextInput
+                      control={control}
+                      type="text"
+                      name="codeMother"
+                      defaultValue={`${farrowing?.animal?.code}`}
+                      errors={errors}
+                    />
+                  </div>
+                )}
+                <div className="my-2">
+                  <Label>{t.formatMessage({ id: 'VIEW.FATHER' })}</Label>
+                  <Controller
                     control={control}
-                    errors={errors}
-                    placeholder="Select a production phase"
-                    valueType="text"
-                    name="productionPhase"
-                    dataItem={[
-                      { id: 1, name: 'GROWTH' },
-                      { id: 2, name: 'FATTENING' },
-                      { id: 3, name: 'REPRODUCTION' },
-                      { id: 4, name: 'GESTATION' },
-                    ]}
+                    name="codeFather"
+                    render={({ field: { value, onChange } }) => (
+                      <Select
+                        onValueChange={onChange}
+                        name={'codeFather'}
+                        value={value}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select a male code" />
+                        </SelectTrigger>
+                        <SelectContent className="dark:border-gray-800">
+                          <SelectGroup>
+                            <SelectLabel>Codes</SelectLabel>
+                            {isLoadingMales ? (
+                              <LoadingFile />
+                            ) : isErrorMales ? (
+                              <ErrorFile
+                                title="404"
+                                description="Error finding data please try again..."
+                              />
+                            ) : Number(dataMales?.pages[0]?.data?.total) <=
+                              0 ? (
+                              <ErrorFile description="Don't have active male animals yet" />
+                            ) : (
+                              dataMales?.pages
+                                .flatMap((page: any) => page?.data?.value)
+                                .map((item, index) => (
+                                  <>
+                                    <SelectItem key={index} value={item?.code}>
+                                      {item?.code}
+                                    </SelectItem>
+                                  </>
+                                ))
+                            )}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    )}
                   />
                 </div>
+                {!farrowing?.id ? (
+                  <div className="mb-2">
+                    <Label>
+                      {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
+                      <span className="text-red-600">*</span>
+                    </Label>
+                    <SelectInput
+                      firstOptionName="Choose a production type"
+                      control={control}
+                      errors={errors}
+                      placeholder="Select a production phase"
+                      valueType="text"
+                      name="productionPhase"
+                      defaultValue="GROWTH"
+                      dataItem={[
+                        { id: 1, name: 'GROWTH' },
+                        { id: 2, name: 'FATTENING' },
+                        { id: 3, name: 'REPRODUCTION' },
+                        { id: 4, name: 'GESTATION' },
+                      ]}
+                    />
+                  </div>
+                ) : !weaning?.id ? (
+                  <div className="mb-2">
+                    <Label>
+                      {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
+                      <span className="text-red-600">*</span>
+                    </Label>
+                    <SelectInput
+                      firstOptionName="Choose a production type"
+                      control={control}
+                      errors={errors}
+                      placeholder="Select a production phase"
+                      valueType="text"
+                      name="productionPhase"
+                      defaultValue="GROWTH"
+                      dataItem={[{ id: 1, name: 'GROWTH' }]}
+                    />
+                  </div>
+                ) : (
+                  <div className="mb-2">
+                    <Label>
+                      {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
+                      <span className="text-red-600">*</span>
+                    </Label>
+                    <SelectInput
+                      firstOptionName="Choose a production type"
+                      control={control}
+                      errors={errors}
+                      placeholder="Select a production phase"
+                      valueType="text"
+                      name="productionPhase"
+                      defaultValue="GROWTH"
+                      dataItem={[{ id: 1, name: 'GROWTH' }]}
+                    />
+                  </div>
+                )}
                 <div className="my-2">
                   <Label>
-                    Sélectionnez la race
+                    {t.formatMessage({ id: 'SELECT.BREED' })}
                     <span className="text-red-600">*</span>
                   </Label>
                   <Controller
@@ -464,66 +497,140 @@ const CreateBulkAnimals = ({
                       </Select>
                     )}
                   />
-                  <div className="mt-2">
-                    <Label>
-                      Sélectionnez un emplacement
-                      <span className="text-red-600">*</span>
-                    </Label>
-                    <Controller
-                      control={control}
-                      name="locationCode"
-                      render={({ field: { value, onChange } }) => (
-                        <Select
-                          onValueChange={onChange}
-                          name={'locationCode'}
-                          value={value}
-                        >
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select a location code" />
-                          </SelectTrigger>
-                          <SelectContent className="dark:border-gray-800">
-                            <SelectGroup>
-                              <SelectLabel>Location codes</SelectLabel>
-                              {isLoadingLocations ? (
-                                <LoadingFile />
-                              ) : isErrorLocations ? (
-                                <ErrorFile
-                                  title="404"
-                                  description="Error finding data please try again..."
-                                />
-                              ) : Number(
-                                  dataLocations?.pages[0]?.data?.total,
-                                ) <= 0 ? (
-                                <ErrorFile description="Don't have location codes" />
-                              ) : (
-                                dataLocations?.pages
-                                  .flatMap((page: any) => page?.data?.value)
-                                  .map((item, index) => (
-                                    <>
-                                      <SelectItem
-                                        key={index}
-                                        value={item?.code}
-                                      >
-                                        {item?.code}
-                                      </SelectItem>
-                                    </>
-                                  ))
-                              )}
-                              {hasNextPage && (
-                                <div className="mx-auto mt-4 justify-center text-center">
-                                  <ButtonLoadMore
-                                    ref={ref}
-                                    isFetchingNextPage={isFetchingNextPage}
-                                    onClick={() => fetchNextPage()}
+                  {!farrowing?.id ? (
+                    <div className="mt-2">
+                      <Label>
+                        {t.formatMessage({ id: 'VIEW.LOCATION' })}
+                        <span className="text-red-600">*</span>
+                      </Label>
+                      <Controller
+                        control={control}
+                        name="locationCode"
+                        render={({ field: { value, onChange } }) => (
+                          <Select
+                            onValueChange={onChange}
+                            name={'locationCode'}
+                            value={value}
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select a location code" />
+                            </SelectTrigger>
+                            <SelectContent className="dark:border-gray-800">
+                              <SelectGroup>
+                                <SelectLabel>Location codes</SelectLabel>
+                                {isLoadingLocations ? (
+                                  <LoadingFile />
+                                ) : isErrorLocations ? (
+                                  <ErrorFile
+                                    title="404"
+                                    description="Error finding data please try again..."
                                   />
-                                </div>
-                              )}
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
-                  </div>
+                                ) : Number(
+                                    dataLocations?.pages[0]?.data?.total,
+                                  ) <= 0 ? (
+                                  <ErrorFile description="Don't have location codes" />
+                                ) : (
+                                  dataLocations?.pages
+                                    .flatMap((page: any) => page?.data?.value)
+                                    .map((item, index) => (
+                                      <>
+                                        <SelectItem
+                                          key={index}
+                                          value={item?.code}
+                                        >
+                                          {item?.code}
+                                        </SelectItem>
+                                      </>
+                                    ))
+                                )}
+                                {hasNextPage && (
+                                  <div className="mx-auto mt-4 justify-center text-center">
+                                    <ButtonLoadMore
+                                      ref={ref}
+                                      isFetchingNextPage={isFetchingNextPage}
+                                      onClick={() => fetchNextPage()}
+                                    />
+                                  </div>
+                                )}
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        )}
+                      />
+                    </div>
+                  ) : !weaning?.id ? (
+                    <div className="mt-2">
+                      <Label>
+                        {t.formatMessage({ id: 'VIEW.LOCATION' })}
+                        <span className="text-red-600">*</span>
+                      </Label>
+                      <Controller
+                        control={control}
+                        name="locationCode"
+                        render={({ field: { value, onChange } }) => (
+                          <Select
+                            onValueChange={onChange}
+                            name={'locationCode'}
+                            value={value}
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select a location code" />
+                            </SelectTrigger>
+                            <SelectContent className="dark:border-gray-800">
+                              <SelectGroup>
+                                <SelectLabel>Location codes</SelectLabel>
+                                {isLoadingGrowthLocations ? (
+                                  <LoadingFile />
+                                ) : isErrorGrowthLocations ? (
+                                  <ErrorFile
+                                    title="404"
+                                    description="Error finding data please try again..."
+                                  />
+                                ) : Number(
+                                    dataGrowthLocations?.pages[0]?.data?.total,
+                                  ) <= 0 ? (
+                                  <ErrorFile description="Don't have location codes" />
+                                ) : (
+                                  dataGrowthLocations?.pages
+                                    .flatMap((page: any) => page?.data?.value)
+                                    .map((item, index) => (
+                                      <>
+                                        <SelectItem
+                                          key={index}
+                                          value={item?.code}
+                                        >
+                                          {item?.code}
+                                        </SelectItem>
+                                      </>
+                                    ))
+                                )}
+                                {hasNextPage && (
+                                  <div className="mx-auto mt-4 justify-center text-center">
+                                    <ButtonLoadMore
+                                      ref={ref}
+                                      isFetchingNextPage={isFetchingNextPage}
+                                      onClick={() => fetchNextPage()}
+                                    />
+                                  </div>
+                                )}
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        )}
+                      />
+                    </div>
+                  ) : (
+                    <div className="my-2 items-center">
+                      {t.formatMessage({ id: 'VIEW.LOCATION' })}
+                      <TextInput
+                        control={control}
+                        type="text"
+                        name="locationCode"
+                        defaultValue={`${farrowing?.animal?.location?.code}`}
+                        errors={errors}
+                      />
+                    </div>
+                  )}
                 </div>
                 <div className="mt-4 flex items-center space-x-4">
                   <ButtonInput

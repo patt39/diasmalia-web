@@ -1,8 +1,8 @@
 import { GetOneIsolationAPI } from '@/api-site/isolations';
 import { useReactHookForm } from '@/components/hooks';
-import { TextAreaInput } from '@/components/ui-setting/shadcn';
 import { XIcon } from 'lucide-react';
 import * as yup from 'yup';
+import { Textarea } from '../ui/textarea';
 
 const schema = yup.object({});
 
@@ -38,13 +38,7 @@ const ViewIsolation = ({
             <form className="mt-4">
               <div className="flex-auto justify-center p-2">
                 <div className="mb-4">
-                  <TextAreaInput
-                    control={control}
-                    label="Note"
-                    name="note"
-                    placeholder={getOneIsolation?.note}
-                    errors={errors}
-                  />
+                  <Textarea placeholder={getOneIsolation?.note} />
                 </div>
               </div>
             </form>

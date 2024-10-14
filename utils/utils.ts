@@ -1,4 +1,5 @@
 import { UploadFile } from 'antd';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface KeyAsString {
   [key: string]: string;
@@ -8,13 +9,17 @@ export interface KeyAsStringNumber {
   [key: string]: number;
 }
 
+export const generateUUID = () => {
+  return uuidv4();
+};
+
 export const capitalizeName = (s: string) => {
   if (typeof s !== 'string') return '';
   const v = s.toLowerCase();
   return v.charAt(0).toUpperCase() + v.slice(1);
 };
 
-export const firstLetterToLowerCase = (value: string): string => {
+export const firstLetterToUpperCase = (value: string): string => {
   const valueLower = String(value).toLowerCase();
   return valueLower.charAt(0).toUpperCase() + valueLower.slice(1);
 };

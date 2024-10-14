@@ -20,8 +20,6 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 import { Tooltip, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
@@ -106,8 +104,6 @@ const TabTreatments = ({ animalTypeId }: { animalTypeId: string }) => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="dark:border-gray-800">
-                <DropdownMenuLabel>Filter by</DropdownMenuLabel>
-                <DropdownMenuSeparator />
                 <DropdownMenuCheckboxItem
                   className="cursor-pointer"
                   onClick={() => setPeriode('')}

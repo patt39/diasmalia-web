@@ -16,14 +16,12 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '../ui/tooltip';
-import { CreateBulkAvesLocations } from './bulk-create-aves-locations';
 import { CreateAvesLocations } from './create-aves-locations';
 import { ListAvesLocations } from './list-aves-locations';
 
 const TabAvesLocations = ({ animalTypeId }: { animalTypeId: string }) => {
   const { ref, inView } = useInView();
   const [isOpen, setIsOpen] = useState(false);
-  const [isBulkOpen, setIsBulkOpen] = useState<boolean>(false);
   const { t, search, handleSetSearch } = useInputState();
 
   const { data: animalType } = GetOneAnimalTypeAPI({
@@ -119,7 +117,7 @@ const TabAvesLocations = ({ animalTypeId }: { animalTypeId: string }) => {
             >
               <Fence className="h-3.5 w-3.5  hover:shadow-xxl" />
               <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                {t.formatMessage({ id: 'ANIMALTYPE.LOCATION.CREATE' })}
+                {t.formatMessage({ id: 'ANIMALTYPE.LOCATION.AVES.CREATE' })}
               </span>
             </Button>
           </div>
@@ -166,11 +164,6 @@ const TabAvesLocations = ({ animalTypeId }: { animalTypeId: string }) => {
         location={animalTypeId}
         showModal={isOpen}
         setShowModal={setIsOpen}
-      />
-      <CreateBulkAvesLocations
-        location={animalTypeId}
-        showModal={isBulkOpen}
-        setShowModal={setIsBulkOpen}
       />
     </>
   );

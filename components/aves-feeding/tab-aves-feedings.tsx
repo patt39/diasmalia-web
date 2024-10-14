@@ -17,6 +17,7 @@ import {
 import { PaginationPage } from '@/utils';
 import { ListFilter, Salad } from 'lucide-react';
 import { useState } from 'react';
+import { formatWeight } from '../../utils/formate-date';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -76,13 +77,13 @@ const TabAvesFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button variant="outline">
-                    {animalStatistics?.sumFeedings ?? 0}
+                    {formatWeight(animalStatistics?.sumFeedings) ?? 0}
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent className="dark:border-gray-800">
                   <p>
                     {t.formatMessage({ id: 'ANIMALTYPE.TOOLTIP' })}{' '}
-                    {animalStatistics?.sumFeedings}kg
+                    {formatWeight(animalStatistics?.sumFeedings)}
                     {''} {t.formatMessage({ id: 'ANIMALTYPE.FEEDING' })}
                   </p>
                 </TooltipContent>

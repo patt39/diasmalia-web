@@ -1,6 +1,6 @@
 import { GetAnimalsAPI } from '@/api-site/animals';
 import { GetHealthsAPI } from '@/api-site/health';
-import { UpdateOneTreatmentAPI } from '@/api-site/treatment';
+import { CreateOneTreatmentAPI } from '@/api-site/treatment';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput, ButtonLoadMore } from '@/components/ui-setting';
 import {
@@ -40,8 +40,8 @@ import {
 } from '../ui/tooltip';
 
 const schema = yup.object({
-  animals: yup.array().optional(),
   dose: yup.number().optional(),
+  animals: yup.array().optional(),
   name: yup.string().required('name is required'),
   note: yup.string().required('note is a required field'),
   healthId: yup.string().required('medication is required'),
@@ -49,16 +49,18 @@ const schema = yup.object({
   method: yup.string().required('method is required'),
 });
 
-const UpdateTreatments = ({
+const BulkCreateTreatments = ({
   showModal,
   setShowModal,
-  treatment,
   location,
+  farrowing,
+  animal,
 }: {
   showModal: boolean;
   setShowModal: any;
-  treatment?: any;
   location?: any;
+  farrowing?: any;
+  animal?: any;
 }) => {
   const {
     t,
@@ -73,27 +75,19 @@ const UpdateTreatments = ({
   const { query } = useRouter();
   const { ref, inView } = useInView();
   const animalTypeId = String(query?.animalTypeId);
-  const selectedAnimals = watch('animals', '');
+  const selectedAnimals = watch('animals', []);
   const countSelectedAnimals = selectedAnimals.length;
 
-  useEffect(() => {
-    if (treatment) {
-      const fields = [
-        'animals',
-        'note',
-        'diagnosis',
-        'dose',
-        'name',
-        'healthId',
-        'method',
-      ];
-      fields?.forEach((field: any) => setValue(field, treatment[field]));
-    }
-  }, [treatment, setValue]);
-
-  // Update data
+  // Create
   const { isPending: loading, mutateAsync: saveMutation } =
-    UpdateOneTreatmentAPI();
+    CreateOneTreatmentAPI();
+
+  useEffect(() => {
+    if (animal) {
+      const fields = ['code'];
+      fields?.forEach((field: any) => setValue(field, animal[field]));
+    }
+  }, [animal, setValue]);
 
   const onSubmit: SubmitHandler<TreatmentsPostModel> = async (
     payload: TreatmentsPostModel,
@@ -102,7 +96,6 @@ const UpdateTreatments = ({
     try {
       await saveMutation({
         ...payload,
-        treatmentId: treatment?.id,
       });
       setHasErrors(false);
       AlertSuccessNotification({
@@ -144,6 +137,20 @@ const UpdateTreatments = ({
     status: 'ACTIVE',
     sortBy: 'createdAt',
     locationId: location?.id,
+    animalTypeId: animalTypeId,
+  });
+
+  const {
+    isLoading: isLoadingGrowthAnimals,
+    isError: isErrorGrowthAnimals,
+    data: dataGrowthAnimals,
+  } = GetAnimalsAPI({
+    take: 30,
+    sort: 'desc',
+    status: 'ACTIVE',
+    sortBy: 'createdAt',
+    productionPhase: 'GROWTH',
+    locationId: farrowing?.animal?.location?.id,
     animalTypeId: animalTypeId,
   });
 
@@ -219,85 +226,179 @@ const UpdateTreatments = ({
                     </div>
                   </div>
                 )}
-                <div className="flex items-center space-x-4 w-full">
-                  <div className="mb-2 w-full mt-2">
-                    <Label>
-                      Sélectionner les animaux à soigner
-                      <span className="text-red-600">*</span>
-                    </Label>
-                    <Select>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select animals" />
-                      </SelectTrigger>
-                      <SelectContent className="dark:border-gray-800">
-                        <SelectGroup>
-                          {isLoadingAnimals ? (
-                            <LoadingFile />
-                          ) : isErrorAnimals ? (
-                            <ErrorFile
-                              title="404"
-                              description="Error finding data please try again..."
-                            />
-                          ) : Number(dataAnimals?.pages[0]?.data?.total) <=
-                            0 ? (
-                            <ErrorFile description="Don't have active animals created yet please do" />
-                          ) : (
-                            dataAnimals?.pages
-                              .flatMap((page: any) => page?.data?.value)
-                              .map((item) => (
-                                <>
-                                  <Controller
-                                    key={item?.code}
-                                    control={control}
-                                    name="animals"
-                                    render={({ field: { ...field } }) => (
-                                      <>
-                                        <div
-                                          className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow"
-                                          key={item?.code}
-                                        >
-                                          <Checkbox
-                                            checked={field?.value?.includes(
-                                              item?.code,
-                                            )}
-                                            onCheckedChange={(checked) => {
-                                              return checked
-                                                ? field.onChange([
-                                                    ...(field.value || []),
-                                                    item?.code,
-                                                  ])
-                                                : field?.onChange(
-                                                    field?.value?.filter(
-                                                      (value: any) =>
-                                                        value !== item?.code,
-                                                    ),
-                                                  );
-                                            }}
-                                          />
-                                          <div className="space-y-1 leading-none">
-                                            <Label>{item?.code}</Label>
-                                          </div>
-                                        </div>
-                                      </>
-                                    )}
-                                  />
-                                </>
-                              ))
-                          )}
-                          {hasNextPage && (
-                            <div className="mx-auto mt-4 justify-center text-center">
-                              <ButtonLoadMore
-                                ref={ref}
-                                isFetchingNextPage={isFetchingNextPage}
-                                onClick={() => fetchNextPage()}
+                {!farrowing?.id ? (
+                  <div className="flex items-center space-x-4 w-full">
+                    <div className="mb-2 w-full mt-2">
+                      <Label>
+                        Sélectionner les animaux à soigner
+                        <span className="text-red-600">*</span>
+                      </Label>
+                      <Select>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select animals" />
+                        </SelectTrigger>
+                        <SelectContent className="dark:border-gray-800">
+                          <SelectGroup>
+                            {isLoadingAnimals ? (
+                              <LoadingFile />
+                            ) : isErrorAnimals ? (
+                              <ErrorFile
+                                title="404"
+                                description="Error finding data please try again..."
                               />
-                            </div>
-                          )}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
+                            ) : Number(dataAnimals?.pages[0]?.data?.total) <=
+                              0 ? (
+                              <ErrorFile description="Don't have active animals created yet please do" />
+                            ) : (
+                              dataAnimals?.pages
+                                .flatMap((page: any) => page?.data?.value)
+                                .map((item) => (
+                                  <>
+                                    <Controller
+                                      key={item?.code}
+                                      control={control}
+                                      name="animals"
+                                      render={({ field: { ...field } }) => (
+                                        <>
+                                          <div
+                                            className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow"
+                                            key={item?.code}
+                                          >
+                                            <Checkbox
+                                              checked={field?.value?.includes(
+                                                item?.code,
+                                              )}
+                                              onCheckedChange={(checked) => {
+                                                return checked
+                                                  ? field.onChange([
+                                                      ...(field.value || []),
+                                                      item?.code,
+                                                    ])
+                                                  : field?.onChange(
+                                                      field?.value?.filter(
+                                                        (value: any) =>
+                                                          value !== item?.code,
+                                                      ),
+                                                    );
+                                              }}
+                                            />
+                                            <div className="space-y-1 leading-none">
+                                              <Label>{item?.code}</Label>
+                                            </div>
+                                          </div>
+                                        </>
+                                      )}
+                                    />
+                                  </>
+                                ))
+                            )}
+                            {hasNextPage && (
+                              <div className="mx-auto mt-4 justify-center text-center">
+                                <ButtonLoadMore
+                                  ref={ref}
+                                  isFetchingNextPage={isFetchingNextPage}
+                                  onClick={() => fetchNextPage()}
+                                />
+                              </div>
+                            )}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
-                </div>
+                ) : farrowing?.id &&
+                  farrowing?.animal?.productionPhase !== 'GROWTH' ? (
+                  <div className="flex items-center space-x-4 w-full">
+                    <div className="mb-2 w-full mt-2">
+                      <Label>
+                        Sélectionner les animaux à soigner
+                        <span className="text-red-600">*</span>
+                      </Label>
+                      <Select>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select animals" />
+                        </SelectTrigger>
+                        <SelectContent className="dark:border-gray-800">
+                          <SelectGroup>
+                            {isLoadingGrowthAnimals ? (
+                              <LoadingFile />
+                            ) : isErrorGrowthAnimals ? (
+                              <ErrorFile
+                                title="404"
+                                description="Error finding data please try again..."
+                              />
+                            ) : Number(
+                                dataGrowthAnimals?.pages[0]?.data?.total,
+                              ) <= 0 ? (
+                              <ErrorFile description="Don't have active animals created yet please do" />
+                            ) : (
+                              dataGrowthAnimals?.pages
+                                .flatMap((page: any) => page?.data?.value)
+                                .map((item) => (
+                                  <>
+                                    <Controller
+                                      key={item?.code}
+                                      control={control}
+                                      name="animals"
+                                      render={({ field: { ...field } }) => (
+                                        <>
+                                          <div
+                                            className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow"
+                                            key={item?.code}
+                                          >
+                                            <Checkbox
+                                              checked={field?.value?.includes(
+                                                item?.code,
+                                              )}
+                                              onCheckedChange={(checked) => {
+                                                return checked
+                                                  ? field.onChange([
+                                                      ...(field.value || []),
+                                                      item?.code,
+                                                    ])
+                                                  : field?.onChange(
+                                                      field?.value?.filter(
+                                                        (value: any) =>
+                                                          value !== item?.code,
+                                                      ),
+                                                    );
+                                              }}
+                                            />
+                                            <div className="space-y-1 leading-none">
+                                              <Label>{item?.code}</Label>
+                                            </div>
+                                          </div>
+                                        </>
+                                      )}
+                                    />
+                                  </>
+                                ))
+                            )}
+                            {hasNextPage && (
+                              <div className="mx-auto mt-4 justify-center text-center">
+                                <ButtonLoadMore
+                                  ref={ref}
+                                  isFetchingNextPage={isFetchingNextPage}
+                                  onClick={() => fetchNextPage()}
+                                />
+                              </div>
+                            )}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="my-2 items-center">
+                    <Label>{t.formatMessage({ id: 'VIEW.MOTHER' })}</Label>
+                    <TextInput
+                      control={control}
+                      type="text"
+                      name="code"
+                      errors={errors}
+                    />
+                  </div>
+                )}
                 <div className="mb-2 items-center space-x-1">
                   <Label>
                     Treatement<span className="text-red-600">*</span>
@@ -431,4 +532,4 @@ const UpdateTreatments = ({
   );
 };
 
-export { UpdateTreatments };
+export { BulkCreateTreatments };

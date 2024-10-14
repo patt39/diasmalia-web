@@ -41,6 +41,9 @@ const AvesDeathsAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
   });
 
   const chartConfig = {
+    sum: {
+      label: `${t.formatMessage({ id: 'ANIMALTYPE.DEATHS' })}`,
+    },
     desktop: {
       label: 'Desktop',
       color: 'hsl(var(--chart-1))',

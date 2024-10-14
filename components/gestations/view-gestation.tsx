@@ -1,10 +1,6 @@
 import { GetOneGestationAPI } from '@/api-site/gestation';
-import { useReactHookForm } from '@/components/hooks';
-import { TextAreaInput } from '@/components/ui-setting/shadcn';
 import { XIcon } from 'lucide-react';
-import * as yup from 'yup';
-
-const schema = yup.object({});
+import { Textarea } from '../ui/textarea';
 
 const ViewGestation = ({
   showModal,
@@ -15,8 +11,6 @@ const ViewGestation = ({
   setShowModal: any;
   gestation?: any;
 }) => {
-  const { control, errors } = useReactHookForm({ schema });
-
   const { data: getOneGestation } = GetOneGestationAPI({
     gestationId: gestation?.id,
   });
@@ -38,14 +32,7 @@ const ViewGestation = ({
             <form className="mt-4">
               <div className="flex-auto justify-center p-2">
                 <div className="mb-4 disabled">
-                  <TextAreaInput
-                    control={control}
-                    label="Note"
-                    name="note"
-                    defaultValue={getOneGestation?.note}
-                    errors={errors}
-                    disabled
-                  />
+                  <Textarea defaultValue={getOneGestation?.note} disabled />
                 </div>
               </div>
             </form>

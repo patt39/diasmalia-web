@@ -33,7 +33,6 @@ import {
 import { ListEggHarvestings } from './list-egg-harvestings';
 
 const TabEggHarvestings = ({ animalTypeId }: { animalTypeId: string }) => {
-  const [isOpen, setIsOpen] = useState(false);
   const [periode, setPeriode] = useState('');
   const [pageItem, setPageItem] = useState(1);
   const { t, search, handleSetSearch } = useInputState();

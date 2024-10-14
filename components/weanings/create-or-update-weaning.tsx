@@ -1,4 +1,3 @@
-import { GetAnimalsAPI } from '@/api-site/animals';
 import { CreateOrUpdateOneWeaningAPI } from '@/api-site/weanings';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
@@ -8,22 +7,11 @@ import {
   AlertSuccessNotification,
 } from '@/utils/alert-notification';
 import { XIcon } from 'lucide-react';
-import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import { Controller, SubmitHandler } from 'react-hook-form';
+import { SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
-import { LoadingFile } from '../ui-setting/ant';
-import { ErrorFile } from '../ui-setting/ant/error-file';
 import { TextInput } from '../ui-setting/shadcn';
 import { Label } from '../ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../ui/select';
 
 const schema = yup.object({
   code: yup.string().optional(),
@@ -35,48 +23,44 @@ const CreateOrUpdateWeanings = ({
   showModal,
   setShowModal,
   weaning,
+  animal,
 }: {
   showModal: boolean;
   setShowModal: any;
   weaning?: any;
+  animal?: any;
 }) => {
   const {
+    t,
     control,
     errors,
     setValue,
     handleSubmit,
-    loading,
-    setLoading,
     hasErrors,
     setHasErrors,
-    t,
   } = useReactHookForm({ schema });
-  const { query } = useRouter();
-  const animalTypeId = String(query?.animalTypeId);
 
   useEffect(() => {
     if (weaning) {
-      const fields = ['code', 'litter', 'weight'];
+      const fields = ['litter', 'weight'];
       fields?.forEach((field: any) => setValue(field, weaning[field]));
     }
   }, [weaning, setValue]);
 
+  useEffect(() => {
+    if (animal) {
+      const fields = ['code'];
+      fields?.forEach((field: any) => setValue(field, animal[field]));
+    }
+  }, [animal, setValue]);
+
   // Create or Update data
-  const { mutateAsync: saveMutation } = CreateOrUpdateOneWeaningAPI({
-    onSuccess: () => {
-      setHasErrors(false);
-      setLoading(false);
-    },
-    onError: (error?: any) => {
-      setHasErrors(true);
-      setHasErrors(error.response.data.message);
-    },
-  });
+  const { isPending: loading, mutateAsync: saveMutation } =
+    CreateOrUpdateOneWeaningAPI();
 
   const onSubmit: SubmitHandler<WeaningsModel> = async (
     payload: WeaningsModel,
   ) => {
-    setLoading(true);
     setHasErrors(undefined);
     try {
       await saveMutation({
@@ -84,33 +68,18 @@ const CreateOrUpdateWeanings = ({
         weaningId: weaning?.id,
       });
       setHasErrors(false);
-      setLoading(false);
       AlertSuccessNotification({
         text: 'Weaning saved successfully',
       });
       setShowModal(false);
     } catch (error: any) {
       setHasErrors(true);
-      setLoading(false);
       setHasErrors(error.response.data.message);
       AlertDangerNotification({
         text: `${error.response.data.message}`,
       });
     }
   };
-
-  const {
-    isLoading: isLoadingAnimals,
-    isError: isErrorAnimals,
-    data: dataAnimals,
-  } = GetAnimalsAPI({
-    take: 10,
-    sort: 'desc',
-    status: 'ACTIVE',
-    sortBy: 'createdAt',
-    productionPhase: 'LACTATION',
-    animalTypeId: animalTypeId,
-  });
 
   return (
     <>
@@ -143,59 +112,20 @@ const CreateOrUpdateWeanings = ({
                 )}
 
                 {!weaning?.id ? (
-                  <div className="mb-2">
-                    <Label>
-                      Sélectionnez une femèle allaitante
-                      <span className="text-red-600">*</span>
-                    </Label>
-                    <Controller
+                  <div className="mb-2 items-center">
+                    <Label>Animal code</Label>
+                    <TextInput
                       control={control}
+                      type="text"
                       name="code"
-                      render={({ field: { value, onChange } }) => (
-                        <Select
-                          onValueChange={onChange}
-                          name={'code'}
-                          value={value}
-                        >
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select a lactating female" />
-                          </SelectTrigger>
-                          <SelectContent className="dark:border-gray-800">
-                            <SelectGroup>
-                              {isLoadingAnimals ? (
-                                <LoadingFile />
-                              ) : isErrorAnimals ? (
-                                <ErrorFile
-                                  title="404"
-                                  description="Error finding data please try again..."
-                                />
-                              ) : Number(dataAnimals?.pages[0]?.data?.total) <=
-                                0 ? (
-                                <ErrorFile description="Don't have animals in lactation phase yet" />
-                              ) : (
-                                dataAnimals?.pages
-                                  .flatMap((page: any) => page?.data?.value)
-                                  .map((item, index) => (
-                                    <>
-                                      <SelectItem
-                                        key={index}
-                                        value={item?.code}
-                                      >
-                                        {item?.code}
-                                      </SelectItem>
-                                    </>
-                                  ))
-                              )}
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      )}
+                      defaultValue={`${animal?.animal?.code}`}
+                      errors={errors}
                     />
                   </div>
                 ) : null}
                 <div className="mb-2">
                   <Label>
-                    {t.formatMessage({ id: 'TABFARROWING.LITTER' })}
+                    {t.formatMessage({ id: 'TABEGGHAVESTING.NUMBER' })}
                     <span className="text-red-600">*</span>
                   </Label>
                   <TextInput

@@ -13,10 +13,16 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuPortal,
   DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { firstLetterToLowerCase } from '@/utils/utils';
+import { firstLetterToUpperCase } from '@/utils/utils';
 
 export type NavbarProps = {
   title: string;
@@ -89,7 +95,7 @@ const HorizontalNavDashboard = ({ user, showDrawer }: Props) => {
               </div>
             </div>
 
-            <div className="ml-auto flex items-center justify-end">
+            <div className="ml-auto flex items-center justify-end mr-4">
               <ThemeToggle />
               <LangToggle />
               <div className="items-end">
@@ -100,7 +106,7 @@ const HorizontalNavDashboard = ({ user, showDrawer }: Props) => {
                       <DropdownMenuTrigger asChild>
                         <button
                           type="button"
-                          className="flex max-w-xs items-center rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2"
+                          className=" mx-auto flex max-w-xs items-center rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2"
                         >
                           <AvatarComponent
                             className="size-9"
@@ -108,8 +114,8 @@ const HorizontalNavDashboard = ({ user, showDrawer }: Props) => {
                           />
                           <div className="ml-2 hidden min-w-0 flex-1 lg:block">
                             <p className="ml-1 w-auto text-sm font-bold text-gray-900 dark:text-white">
-                              {firstLetterToLowerCase(user?.profile?.firstName)}{' '}
-                              {firstLetterToLowerCase(user?.profile?.lastName)}
+                              {firstLetterToUpperCase(user?.profile?.firstName)}{' '}
+                              {firstLetterToUpperCase(user?.profile?.lastName)}
                             </p>
                             <p className="mt-1 text-sm font-medium text-gray-600 sm:table-cell">
                               <span>{user?.profile?.email}</span>
@@ -117,7 +123,7 @@ const HorizontalNavDashboard = ({ user, showDrawer }: Props) => {
                           </div>
                         </button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent className="w-40 dark:border-gray-800 dark:bg-[#1c1b22]">
+                      {/* <DropdownMenuContent className="w-40 dark:border-gray-800 dark:bg-[#1c1b22]">
                         <DropdownMenuGroup>
                           <DropdownMenuItem onClick={() => push(`/dashboard`)}>
                             <span className="cursor-pointer">
@@ -138,6 +144,56 @@ const HorizontalNavDashboard = ({ user, showDrawer }: Props) => {
                           <span className="cursor-pointer">
                             {t.formatMessage({ id: 'MENU.LOGOUT' })}
                           </span>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent> */}
+                      <DropdownMenuContent className="w-40 dark:border-gray-800 dark:bg-[#1c1b22]">
+                        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuGroup>
+                          <DropdownMenuItem>
+                            Profile
+                            <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            Billing
+                            <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            Settings
+                            <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+                          </DropdownMenuItem>
+                        </DropdownMenuGroup>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuGroup>
+                          <DropdownMenuItem
+                            onClick={() => push(`/contributors`)}
+                          >
+                            <span className="cursor-pointer">
+                              {t.formatMessage({ id: 'MENU.CONTRIBUTOR' })}
+                            </span>
+                          </DropdownMenuItem>
+                          <DropdownMenuSub>
+                            <DropdownMenuSubTrigger>
+                              Invite users
+                            </DropdownMenuSubTrigger>
+                            <DropdownMenuPortal>
+                              <DropdownMenuSubContent>
+                                <DropdownMenuItem>Email</DropdownMenuItem>
+                                <DropdownMenuItem>Message</DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem>More...</DropdownMenuItem>
+                              </DropdownMenuSubContent>
+                            </DropdownMenuPortal>
+                          </DropdownMenuSub>
+                          <DropdownMenuItem>
+                            New Team
+                            <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
+                          </DropdownMenuItem>
+                        </DropdownMenuGroup>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem>
+                          Log out
+                          <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>

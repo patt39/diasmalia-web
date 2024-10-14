@@ -29,6 +29,28 @@ export const GetOneTreatmentAPI = (payload: { treatmentId: string }) => {
   };
 };
 
+export const GetOneTreatmentByAnimalIdAPI = (payload: { animalId: string }) => {
+  const { animalId } = payload;
+  const { data, isError, isLoading, status, isPending, refetch } = useQuery({
+    queryKey: ['treatment', animalId],
+    queryFn: async () =>
+      await makeApiCall({
+        action: 'getOneAnimalTreatment',
+        urlParams: { animalId },
+      }),
+    refetchOnWindowFocus: false,
+  });
+
+  return {
+    data: data?.data as any,
+    isError,
+    isLoading,
+    status,
+    isPending,
+    refetch,
+  };
+};
+
 export const CreateOneTreatmentAPI = ({
   onSuccess,
   onError,
@@ -43,6 +65,46 @@ export const CreateOneTreatmentAPI = ({
     mutationFn: async (payload: TreatmentsPostModel) => {
       await makeApiCall({
         action: 'createOneTreatment',
+        body: { ...payload },
+      });
+    },
+    onError: async (error) => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onError) {
+        onError(error);
+      }
+    },
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+  });
+
+  return result;
+};
+
+export const CreateOneFemaleTreatmentAPI = ({
+  onSuccess,
+  onError,
+}: {
+  onSuccess?: () => void;
+  onError?: (error: any) => void;
+} = {}) => {
+  const queryKey = ['treatments'];
+  const queryClient = useQueryClient();
+  const result = useMutation({
+    mutationKey: queryKey,
+    mutationFn: async (payload: TreatmentAvesModel) => {
+      await makeApiCall({
+        action: 'createOneAvesTreatment',
         body: { ...payload },
       });
     },

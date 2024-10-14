@@ -49,55 +49,34 @@ const schema = yup.object({
 const CreateAnimals = ({
   showModal,
   setShowModal,
-  animal,
 }: {
   showModal: boolean;
   setShowModal: any;
   animal?: any;
 }) => {
-  const {
-    t,
-    control,
-    setValue,
-    handleSubmit,
-    errors,
-    loading,
-    setLoading,
-    hasErrors,
-    setHasErrors,
-  } = useReactHookForm({ schema });
+  const { t, control, handleSubmit, errors, hasErrors, setHasErrors } =
+    useReactHookForm({ schema });
   const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
   const { ref, inView } = useInView();
 
   // Create
-  const { mutateAsync: saveMutation } = CreateOneAnimalAPI({
-    onSuccess: () => {
-      setHasErrors(false);
-      setLoading(false);
-    },
-    onError: (error?: any) => {
-      setHasErrors(true);
-      setHasErrors(error.response.data.message);
-    },
-  });
+  const { isPending: loading, mutateAsync: saveMutation } =
+    CreateOneAnimalAPI();
 
   const onSubmit: SubmitHandler<AnimalModel> = async (payload: AnimalModel) => {
-    setLoading(true);
     setHasErrors(undefined);
     try {
       await saveMutation({
         ...payload,
       });
       setHasErrors(false);
-      setLoading(false);
       AlertSuccessNotification({
         text: 'Animal saved successfully',
       });
       setShowModal(false);
     } catch (error: any) {
       setHasErrors(true);
-      setLoading(false);
       setHasErrors(error.response.data.message);
       AlertDangerNotification({
         text: `${error.response.data.message}`,
@@ -233,7 +212,7 @@ const CreateAnimals = ({
                   </div>
                   <div className="px-4">
                     <Label>
-                      Date de naissance
+                      <Label>{t.formatMessage({ id: 'VIEW.BIRTHDATE' })}</Label>
                       <span className="text-red-600">*</span>
                     </Label>
                     <DateInput
@@ -244,9 +223,8 @@ const CreateAnimals = ({
                     />
                   </div>
                   <div>
-                    <Label>
-                      Poids<span className="text-red-600">*</span>
-                    </Label>
+                    <Label>{t.formatMessage({ id: 'VIEW.WEIGHT' })}</Label>
+                    <span className="text-red-600">*</span>
                     <TextInput
                       control={control}
                       type="number"
@@ -274,7 +252,7 @@ const CreateAnimals = ({
                   />
                 </div>
                 <div className="my-2">
-                  <Label>Code de la mère</Label>
+                  <Label>{t.formatMessage({ id: 'VIEW.MOTHER' })}</Label>
                   <Controller
                     control={control}
                     name="codeMother"
@@ -326,7 +304,7 @@ const CreateAnimals = ({
                     )}
                   />
                   <div className="my-2">
-                    <Label>Code du père</Label>
+                    <Label>{t.formatMessage({ id: 'VIEW.FATHER' })}</Label>
                     <Controller
                       control={control}
                       name="codeFather"
@@ -392,7 +370,7 @@ const CreateAnimals = ({
                 </div>
                 <div className="my-2">
                   <Label>
-                    Sélectionnez la race
+                    Sélectionner la race
                     <span className="text-red-600">*</span>
                   </Label>
                   <Controller
@@ -447,7 +425,7 @@ const CreateAnimals = ({
                   />
                   <div className="mt-2">
                     <Label>
-                      Sélectionnez un emplacement
+                      Sélectionner un emplacement
                       <span className="text-red-600">*</span>
                     </Label>
                     <Controller

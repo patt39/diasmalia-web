@@ -33,14 +33,16 @@ export const GetAnimalStatisticsAPI = (payload: {
   };
 };
 
-export const GetOneAnimalAPI = (payload: { animalId: string }) => {
-  const { animalId } = payload;
+export const GetAnimalDeadSoldStatisticsAPI = (payload: {
+  animalTypeId?: string;
+}) => {
+  const { animalTypeId } = payload;
   const { data, isError, isLoading, status, isPending, refetch } = useQuery({
-    queryKey: ['animal', animalId],
+    queryKey: ['animal-dead-sale-statistics', { ...payload }],
     queryFn: async () =>
       await makeApiCall({
-        action: 'getOneAnimal',
-        urlParams: { animalId },
+        action: 'getAnimalDeadSoldStatistics',
+        urlParams: { animalTypeId },
       }),
     refetchOnWindowFocus: false,
   });
@@ -55,13 +57,13 @@ export const GetOneAnimalAPI = (payload: { animalId: string }) => {
   };
 };
 
-export const GetArchiveStatisticsAPI = (payload: { animalId: string }) => {
+export const GetOneAnimalAPI = (payload: { animalId: string }) => {
   const { animalId } = payload;
   const { data, isError, isLoading, status, isPending, refetch } = useQuery({
     queryKey: ['animal', animalId],
     queryFn: async () =>
       await makeApiCall({
-        action: 'getArchivedStatistics',
+        action: 'getOneAnimal',
         urlParams: { animalId },
       }),
     refetchOnWindowFocus: false,
@@ -406,36 +408,6 @@ export const GetAnimalsAPI = (
         },
       }),
     staleTime: 6000,
-    initialPageParam: 1,
-  });
-};
-
-export const GetArchivesAPI = (
-  payload: {
-    search?: string;
-    take?: number;
-    status?: string;
-    organizationId?: string;
-  } & PaginationRequest,
-) => {
-  const { take, sort, search, status, sortBy, organizationId } = payload;
-  return useInfiniteQuery({
-    queryKey: ['animals', { ...payload }],
-    getNextPageParam: (lastPage: any) => lastPage.data.next_page,
-    queryFn: async ({ pageParam = 1 }) =>
-      await makeApiCall({
-        action: 'getArchives',
-        queryParams: {
-          take,
-          sort,
-          search,
-          status,
-          sortBy,
-          page: pageParam,
-          organizationId,
-        },
-      }),
-    staleTime: 60_000,
     initialPageParam: 1,
   });
 };

@@ -11,6 +11,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { useState } from 'react';
+import { formatWeight } from '../../utils/formate-date';
 import { TabFeedStock } from './tab-feed-stock';
 
 export function FeedStock() {
@@ -70,8 +71,7 @@ export function FeedStock() {
                     {t.formatMessage({ id: 'TOTAL.WEIGHT' })}
                   </CardDescription>
                   <CardTitle className="text-4xl">
-                    {animalStatistics?.sumStocks?.weight ?? 0}
-                    kg
+                    {formatWeight(animalStatistics?.sumStocks?.weight) ?? 0}
                   </CardTitle>
                 </CardHeader>
               </Card>

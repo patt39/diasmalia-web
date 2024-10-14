@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { FeedStockModel } from '@/types/feeding';
+import { FeedStockPostModel } from '@/types/feeding';
 import {
   AlertDangerNotification,
   AlertSuccessNotification,
@@ -40,16 +40,8 @@ const CreateOrUpdateFeedStock = ({
   setShowModal: any;
   feedStock?: any;
 }) => {
-  const {
-    control,
-    setValue,
-    handleSubmit,
-    errors,
-    loading,
-    setLoading,
-    hasErrors,
-    setHasErrors,
-  } = useReactHookForm({ schema });
+  const { control, setValue, handleSubmit, errors, hasErrors, setHasErrors } =
+    useReactHookForm({ schema });
   const { t } = useInputState();
 
   useEffect(() => {
@@ -60,21 +52,12 @@ const CreateOrUpdateFeedStock = ({
   }, [feedStock, setValue]);
 
   // Create or Update data
-  const { mutateAsync: saveMutation } = CreateOrUpdateOneFeedStockAPI({
-    onSuccess: () => {
-      setHasErrors(false);
-      setLoading(false);
-    },
-    onError: (error?: any) => {
-      setHasErrors(true);
-      setHasErrors(error.response.data.message);
-    },
-  });
+  const { isPending: loading, mutateAsync: saveMutation } =
+    CreateOrUpdateOneFeedStockAPI();
 
-  const onSubmit: SubmitHandler<FeedStockModel> = async (
-    payload: FeedStockModel,
+  const onSubmit: SubmitHandler<FeedStockPostModel> = async (
+    payload: FeedStockPostModel,
   ) => {
-    setLoading(true);
     setHasErrors(undefined);
     try {
       await saveMutation({
@@ -82,14 +65,12 @@ const CreateOrUpdateFeedStock = ({
         feedStockId: feedStock?.id,
       });
       setHasErrors(false);
-      setLoading(false);
       AlertSuccessNotification({
         text: 'Feed stock saved successfully',
       });
       setShowModal(false);
     } catch (error: any) {
       setHasErrors(true);
-      setLoading(false);
       setHasErrors(error.response.data.message);
       AlertDangerNotification({
         text: `${error.response.data.message}`,
@@ -215,7 +196,7 @@ const CreateOrUpdateFeedStock = ({
                       { id: 8, name: 'BYPRODUCTS' },
                       { id: 9, name: 'COMPLETEFEED' },
                       { id: 10, name: 'CONCENTRATES' },
-                      { id: 11, name: 'LAYER_FEED' },
+                      { id: 11, name: 'LAYERS_FEED' },
                       { id: 12, name: 'LACTATING_FEMALES' },
                       { id: 13, name: 'GESTATION_FEMALES' },
                       { id: 14, name: 'OTHER' },
@@ -237,7 +218,7 @@ const CreateOrUpdateFeedStock = ({
                 </div>
                 <Label>
                   {t.formatMessage({ id: 'UNIT.WEIGHT' })}
-                  <span className="text-red-600">*</span>(kg)
+                  <span className="text-red-600">*</span>(gram)
                 </Label>
                 <div className="mb-2">
                   <TextInput

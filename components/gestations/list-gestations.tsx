@@ -9,8 +9,9 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { formatDateDDMMYY } from '@/utils';
-import { Check, Eye, MoreHorizontal, PencilIcon } from 'lucide-react';
+import { Check, Eye, MoreHorizontal, Origami, PencilIcon } from 'lucide-react';
 import { useState } from 'react';
+import { CreateOrUpdateFarrowings } from '../farrowings/create-or-update-farrowings';
 import { TableCell, TableRow } from '../ui/table';
 import { ReCheckPregnancy } from './recheck-pregnancy';
 import { UpdateGestations } from './update-gestations';
@@ -21,6 +22,7 @@ const ListGestations = ({ item, index }: { item: any; index: number }) => {
   const [isEdit, setIsEdit] = useState(false);
   const [isCheck, setIsCheck] = useState(false);
   const [isView, setIsView] = useState(false);
+  const [isFarrowing, setIsFarrowing] = useState(false);
 
   const currentDate: Date = new Date();
   const createdAt: Date = new Date(item?.createdAt);
@@ -35,7 +37,25 @@ const ListGestations = ({ item, index }: { item: any; index: number }) => {
     <>
       <TableRow key={index} className="dark:border-gray-800">
         <TableCell className="font-medium">{item.animal?.code}</TableCell>
-        <TableCell>{item?.method.toLowerCase()}</TableCell>
+        <TableCell>
+          {item?.method === 'RECTAL_PALPATION' ? (
+            <p className="font-normal">
+              {t.formatMessage({ id: 'PALPATION.RECTAL' })}
+            </p>
+          ) : item?.method === 'ULTRASOUND' ? (
+            <p className="font-normal">
+              {t.formatMessage({ id: 'ECHOGRAPHY' })}
+            </p>
+          ) : item?.method === 'BLOOD_TEST' ? (
+            <p className="font-normal">
+              {t.formatMessage({ id: 'ANALYSE.SANGUINE' })}
+            </p>
+          ) : (
+            <p className="font-normal">
+              {t.formatMessage({ id: 'OBSERVATION' })}
+            </p>
+          )}
+        </TableCell>
         <TableCell>{formatDateDDMMYY(item?.farrowingDate) || 'RAS'}</TableCell>
         <TableCell>
           {item?.note?.length > 20
@@ -75,6 +95,12 @@ const ListGestations = ({ item, index }: { item: any; index: number }) => {
                   {t.formatMessage({ id: 'TABANIMAL.VIEW' })}
                 </span>
               </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setIsFarrowing(true)}>
+                <Origami className="size-4 text-gray-600 hover:text-violet-600" />
+                <span className="ml-2 cursor-pointer hover:text-violet-600">
+                  {t.formatMessage({ id: 'TABWEANING.FARROWING' })}
+                </span>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </TableCell>
@@ -93,6 +119,12 @@ const ListGestations = ({ item, index }: { item: any; index: number }) => {
         gestation={item}
         showModal={isView}
         setShowModal={setIsView}
+      />
+      <CreateOrUpdateFarrowings
+        animal={item}
+        farrowing={item?.animalTypeId}
+        showModal={isFarrowing}
+        setShowModal={setIsFarrowing}
       />
     </>
   );

@@ -26,14 +26,12 @@ const EggHarvestingsAnalytics = ({
   animalTypeId: string;
 }) => {
   const { t, locale } = useInputState();
-  const [periode, setPeriode] = useState('');
   const [year, setYear] = useState<String>(`${dateTimeNowUtc().getFullYear()}`);
   const [months, setMonths] = useState<String>('');
 
   const { data: dataEggHarvestingAnalyticsDay } = GetEggHarvestingsAnalyticAPI({
     year: String(year),
     months: String(months),
-    periode: String(periode),
     animalTypeId: animalTypeId,
   });
 
@@ -48,6 +46,9 @@ const EggHarvestingsAnalytics = ({
   );
 
   const chartConfig = {
+    sum: {
+      label: `${t.formatMessage({ id: 'ANIMAL.EGGHAVESTED' })}`,
+    },
     edge: {
       label: 'Edge',
       color: 'hsl(var(--chart-4))',
@@ -151,6 +152,7 @@ const EggHarvestingsAnalytics = ({
               />
               <ChartTooltip
                 cursor={false}
+                labelClassName="w-40"
                 content={<ChartTooltipContent indicator="line" />}
               />
               <Area

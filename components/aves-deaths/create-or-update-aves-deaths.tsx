@@ -40,8 +40,6 @@ const CreateOrUpdateAvesDeaths = ({
     setValue,
     handleSubmit,
     errors,
-    loading,
-    setLoading,
     hasErrors,
     setHasErrors,
   } = useReactHookForm({ schema });
@@ -51,7 +49,6 @@ const CreateOrUpdateAvesDeaths = ({
   const { data: animalType } = GetOneAnimalTypeAPI({
     animalTypeId: animalTypeId,
   });
-  console.log('animal ==>', animal);
 
   useEffect(() => {
     if (death) {
@@ -66,21 +63,13 @@ const CreateOrUpdateAvesDeaths = ({
       fields?.forEach((field: any) => setValue(field, animal[field]));
     }
   }, [animal, setValue]);
+  console.log('animal ==>', animal);
 
   // Create or Update data
-  const { mutateAsync: saveMutation } = CreateOrUpdateOneAvesDeathAPI({
-    onSuccess: () => {
-      setHasErrors(false);
-      setLoading(false);
-    },
-    onError: (error?: any) => {
-      setHasErrors(true);
-      setHasErrors(error.response.data.message);
-    },
-  });
+  const { isPending: loading, mutateAsync: saveMutation } =
+    CreateOrUpdateOneAvesDeathAPI();
 
   const onSubmit: SubmitHandler<DeathsModel> = async (payload: DeathsModel) => {
-    setLoading(true);
     setHasErrors(undefined);
     try {
       await saveMutation({
@@ -88,14 +77,12 @@ const CreateOrUpdateAvesDeaths = ({
         deathId: death?.id,
       });
       setHasErrors(false);
-      setLoading(false);
       AlertSuccessNotification({
         text: 'Death saved successfully',
       });
       setShowModal(false);
     } catch (error: any) {
       setHasErrors(true);
-      setLoading(false);
       setHasErrors(error.response.data.message);
       AlertDangerNotification({
         text: `${error.response.data.message}`,
@@ -146,10 +133,25 @@ const CreateOrUpdateAvesDeaths = ({
                         errors={errors}
                       />
                     </div>
-                    {['Poulet de chair', 'Pisciculture', 'Pondeuses'].includes(
+                    {['Pisciculture', 'Pondeuses'].includes(
                       animalType?.name,
                     ) ? (
-                      <div className="mt-4">
+                      <div className="mt-2">
+                        <Label>
+                          {t.formatMessage({ id: 'NUMBER.ANIMALS' })}
+                          <span className="text-red-600">*</span>
+                        </Label>
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="number"
+                          placeholder="Give a number"
+                          errors={errors}
+                        />
+                      </div>
+                    ) : animalType?.name === 'Poulet de chair' &&
+                      animal?.productionPhase === 'GROWTH' ? (
+                      <div className="mt-2">
                         <Label>
                           {t.formatMessage({ id: 'NUMBER.ANIMALS' })}
                           <span className="text-red-600">*</span>
@@ -163,37 +165,40 @@ const CreateOrUpdateAvesDeaths = ({
                         />
                       </div>
                     ) : (
-                      <div className="my-4 flex items-center space-x-1">
-                        <Label>
-                          {t.formatMessage({ id: 'ANIMAL.MALES' })}:
-                          <span className="text-red-600">*</span>
-                        </Label>
-                        <TextInput
-                          control={control}
-                          type="number"
-                          name="male"
-                          defaultValue="0"
-                          placeholder="Number of males"
-                          errors={errors}
-                        />
-                        <Label>
-                          {t.formatMessage({ id: 'ANIMAL.FEMALES' })}:
-                          <span className="text-red-600">*</span>
-                        </Label>
-                        <TextInput
-                          control={control}
-                          type="number"
-                          name="female"
-                          defaultValue="0"
-                          placeholder="Number of females"
-                          errors={errors}
-                        />
+                      <div className="mt-2 flex items-center space-x-10">
+                        <div className="w-96">
+                          <Label>
+                            {t.formatMessage({ id: 'ANIMAL.MALES' })}
+                            <span className="text-red-600">*</span>
+                          </Label>
+                          <TextInput
+                            control={control}
+                            type="number"
+                            name="male"
+                            defaultValue="0"
+                            placeholder="Number of males"
+                            errors={errors}
+                          />
+                        </div>
+                        <div className="w-96">
+                          <Label>
+                            {t.formatMessage({ id: 'ANIMAL.FEMALES' })}
+                            <span className="text-red-600">*</span>
+                          </Label>
+                          <TextInput
+                            control={control}
+                            type="number"
+                            name="female"
+                            defaultValue="0"
+                            placeholder="Number of females"
+                            errors={errors}
+                          />
+                        </div>
                       </div>
                     )}
                   </div>
                 ) : null}
-
-                <div className="mb-4">
+                <div className="mb-2">
                   <Label>
                     Cause et moyen de disposition des carcasses
                     <span className="text-red-600">*</span>

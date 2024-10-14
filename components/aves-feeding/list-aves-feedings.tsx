@@ -22,26 +22,21 @@ import { TableCell, TableRow } from '../ui/table';
 import { CreateOrUpdateAvesFeedings } from './create-or-update-aves-feedings';
 
 const ListAvesFeedings = ({ item, index }: { item: any; index: number }) => {
-  const { t, setLoading, setIsOpen, isOpen, loading } = useInputState();
+  const { t, setIsOpen, isOpen } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
 
-  const { mutateAsync: deleteMutation } = DeleteOneFeedingAPI({
-    onSuccess: () => {},
-    onError: (error?: any) => {},
-  });
+  const { isPending: loading, mutateAsync: deleteMutation } =
+    DeleteOneFeedingAPI();
 
   const deleteItem = async (item: any) => {
-    setLoading(true);
     setIsOpen(true);
     try {
       await deleteMutation({ feedingId: item?.id });
       AlertSuccessNotification({
         text: 'Death deleted successfully',
       });
-      setLoading(false);
       setIsOpen(false);
     } catch (error: any) {
-      setLoading(false);
       setIsOpen(true);
       AlertDangerNotification({
         text: `${error.response.data.message}`,
@@ -69,22 +64,6 @@ const ListAvesFeedings = ({ item, index }: { item: any; index: number }) => {
           ) : item?.feedStock?.feedCategory === 'COMPLETEFEED' ? (
             <p className="font-medium text-sky-600">
               {t.formatMessage({ id: 'FEED.COMPLETEFEED' })}
-            </p>
-          ) : item?.feedStock?.feedCategory === 'FORAGES' ? (
-            <p className="font-medium text-emerald-600 ">
-              {t.formatMessage({ id: 'FEED.FORAGES' })}
-            </p>
-          ) : item?.feedStock?.feedCategory === 'SILAGES' ? (
-            <p className="font-medium text-teal-600">
-              {t.formatMessage({ id: 'FORAGES.SILAGES' })}
-            </p>
-          ) : item?.feedStock?.feedCategory === 'LACTATING_FEMALES' ? (
-            <p className="font-medium text-indigo-600">
-              {t.formatMessage({ id: 'FEED.LACTATINGFEMALES' })}
-            </p>
-          ) : item?.feedStock?.feedCategory === 'GESTATION_FEMALES' ? (
-            <p className="font-medium text-violet-600">
-              {t.formatMessage({ id: 'FEED.FEMALEGESTATION' })}
             </p>
           ) : item?.feedStock?.feedCategory === 'STARTER' ? (
             <p className="font-medium text-amber-600">

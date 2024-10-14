@@ -1,10 +1,10 @@
 import { GetOneSaleAPI } from '@/api-site/sales';
 import { useReactHookForm } from '@/components/hooks';
-import { TextAreaInput, TextInput } from '@/components/ui-setting/shadcn';
 import { XIcon } from 'lucide-react';
 import * as yup from 'yup';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
+import { Textarea } from '../ui/textarea';
 
 const schema = yup.object({});
 
@@ -17,7 +17,7 @@ const ViewAvesSale = ({
   setShowModal: any;
   sale?: any;
 }) => {
-  const { t, control, errors } = useReactHookForm({ schema });
+  const { t } = useReactHookForm({ schema });
 
   const { data: getOneSale } = GetOneSaleAPI({
     saleId: sale?.id,
@@ -41,58 +41,26 @@ const ViewAvesSale = ({
               <div className="flex-auto justify-center p-2">
                 <div className="mb-2 items-center space-x-1">
                   <Label htmlFor="text">Code de la bande</Label>
-                  <TextInput
-                    control={control}
-                    type="text"
-                    name="code"
+                  <Input
                     defaultValue={getOneSale?.animal?.code || 'N/A'}
-                    errors={errors}
                     disabled
                   />
                 </div>
                 <div className="mb-2 items-center space-x-1">
                   <Label htmlFor="text">Client</Label>
-                  <TextInput
-                    control={control}
-                    type="text"
-                    name="soldTo"
-                    defaultValue={getOneSale?.soldTo || 'N/A'}
-                    errors={errors}
-                    disabled
-                  />
+                  <Input defaultValue={getOneSale?.soldTo || 'N/A'} disabled />
                 </div>
                 <div className="mb-2 items-center  space-x-1">
                   <Label htmlFor="text">Email</Label>
-                  <TextInput
-                    control={control}
-                    type="text"
-                    name="email"
-                    defaultValue={getOneSale?.email || 'N/A'}
-                    errors={errors}
-                    disabled
-                  />
+                  <Input defaultValue={getOneSale?.email || 'N/A'} disabled />
                 </div>
                 <div className="mb-2 items-center  space-x-1">
                   <Label htmlFor="text">Phone</Label>
-                  <TextInput
-                    control={control}
-                    type="number"
-                    name="phone"
-                    defaultValue={getOneSale?.phone || 'N/A'}
-                    errors={errors}
-                    disabled
-                  />
+                  <Input defaultValue={getOneSale?.phone || 'N/A'} disabled />
                 </div>
                 <div className="mb-2 items-center  space-x-1">
                   <Label htmlFor="text">Address</Label>
-                  <TextInput
-                    control={control}
-                    type="text"
-                    name="address"
-                    defaultValue={getOneSale?.address || 'N/A'}
-                    errors={errors}
-                    disabled
-                  />
+                  <Input defaultValue={getOneSale?.address || 'N/A'} disabled />
                 </div>
                 <Label>{t.formatMessage({ id: 'SALE.CHANNEL' })}</Label>
                 <div className="mb-2 flex items-center space-x-4">
@@ -102,13 +70,7 @@ const ViewAvesSale = ({
                   <>
                     <Label>{t.formatMessage({ id: 'SALE.DETAIL' })}</Label>
                     <div className="mb-2">
-                      <TextAreaInput
-                        control={control}
-                        name="note"
-                        defaultValue={getOneSale?.note}
-                        errors={errors}
-                        disabled
-                      />
+                      <Textarea defaultValue={getOneSale?.note} disabled />
                     </div>
                   </>
                 ) : (

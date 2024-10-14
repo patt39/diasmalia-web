@@ -55,8 +55,7 @@ const ViewAvesAnimal = ({
                   </Label>
                   <Input
                     disabled
-                    type="text"
-                    value={getOneAnimal?.location?.code || 'N/A'}
+                    value={getOneAnimal?.location?.code.toUpperCase() || 'N/A'}
                   />
                 </div>
                 <div className="items-center">
@@ -69,6 +68,20 @@ const ViewAvesAnimal = ({
                   />
                 </div>
               </div>
+              {['Poulet de chair', 'Pondeuses'].includes(
+                getOneAnimal?.animalType?.name,
+              ) ? (
+                <div className="mb-4 flex space-x-4">
+                  <div className="w-96">
+                    <Input disabled value={getOneAnimal?.supplier || 'N/A'} />
+                  </div>
+                  <div className="w-60">
+                    <Input disabled value={getOneAnimal?.strain || 'N/A'} />
+                  </div>
+                </div>
+              ) : (
+                ''
+              )}
               <>
                 <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
                   {[
@@ -184,11 +197,11 @@ const ViewAvesAnimal = ({
                           <CardTitle className="text-4xl">
                             {feedConversionIndex < 2 ? (
                               <div className="text-4xl my-2 font-bold text-green-600">
-                                {Math.floor(feedConversionIndex * 100) / 100}
+                                {feedConversionIndex.toFixed(1)}
                               </div>
                             ) : (
                               <div className="text-2xl my-2 font-bold text-red-600">
-                                {feedConversionIndex}
+                                {feedConversionIndex.toFixed(1)}
                               </div>
                             )}
                           </CardTitle>
@@ -399,17 +412,11 @@ const ViewAvesAnimal = ({
                                 <CardTitle className="text-4xl">
                                   {layingPercentageLayers > 80 ? (
                                     <div className="text-4xl my-2 font-bold text-green-600">
-                                      {Math.floor(
-                                        layingPercentageLayers * 100,
-                                      ) / 100}
-                                      %
+                                      {layingPercentageLayers.toFixed(1)}%
                                     </div>
                                   ) : (
                                     <div className="text-4xl my-2 font-bold text-red-600">
-                                      {Math.floor(
-                                        layingPercentageLayers * 100,
-                                      ) / 100}
-                                      %
+                                      {layingPercentageLayers.toFixed(1)}%
                                     </div>
                                   )}
                                 </CardTitle>
@@ -427,13 +434,11 @@ const ViewAvesAnimal = ({
                                 <CardTitle className="text-4xl">
                                   {layingPercentage > 80 ? (
                                     <div className="text-4xl my-2 font-bold text-green-600">
-                                      {Math.floor(layingPercentage * 100) / 100}
-                                      %
+                                      {layingPercentage.toFixed(1)}%
                                     </div>
                                   ) : (
                                     <div className="text-4xl my-2 font-bold text-red-600">
-                                      {Math.floor(layingPercentage * 100) / 100}
-                                      %
+                                      {layingPercentage.toFixed(1)}%
                                     </div>
                                   )}
                                 </CardTitle>
@@ -540,12 +545,11 @@ const ViewAvesAnimal = ({
                                   <CardTitle className="text-4xl">
                                     {feedConversionIndex < 2 ? (
                                       <div className="text-4xl my-2 font-bold text-green-600">
-                                        {Math.floor(feedConversionIndex * 100) /
-                                          100}
+                                        {feedConversionIndex.toFixed(1)}
                                       </div>
                                     ) : (
                                       <div className="text-2xl my-2 font-bold text-red-600">
-                                        {feedConversionIndex}
+                                        {feedConversionIndex.toFixed(1)}
                                       </div>
                                     )}
                                   </CardTitle>

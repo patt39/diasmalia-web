@@ -33,10 +33,9 @@ import { CreateBreedings } from './create-breedings';
 import { ListBreedings } from './list-breedings';
 
 const TabBreedings = ({ animalTypeId }: { animalTypeId: string }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [periode, setPeriode] = useState('');
-  const [pageItem, setPageItem] = useState(1);
   const { ref, inView } = useInView();
+  const [periode, setPeriode] = useState('');
+  const [isOpen, setIsOpen] = useState(false);
   const { t, search, handleSetSearch, userStorage } = useInputState();
 
   const {

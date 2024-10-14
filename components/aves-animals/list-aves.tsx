@@ -50,7 +50,7 @@ import { UpdateAvesAnimals } from './update-aves';
 import { ViewAvesAnimal } from './view-aves-animal';
 
 const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
-  const { t, isOpen, loading, setIsOpen, setLoading } = useInputState();
+  const { t, isOpen, setIsOpen, setLoading } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
   const [isView, setIsView] = useState(false);
   const [isFeeding, setIsFeeding] = useState(false);
@@ -60,10 +60,8 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
   const [isSold, setIsSold] = useState(false);
   const [isIsolation, setIsIsolation] = useState(false);
 
-  const { mutateAsync: deleteMutation } = DeleteOneAnimalAPI({
-    onSuccess: () => {},
-    onError: (error?: any) => {},
-  });
+  const { isPending: loading, mutateAsync: deleteMutation } =
+    DeleteOneAnimalAPI();
 
   const { mutateAsync: archiveMutation } = ArchiveOneAnimalAPI({
     onSuccess: () => {},
@@ -305,16 +303,12 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
                 ) : (
                   ''
                 )}
-                {item?.quantity === 0 ? (
-                  <DropdownMenuItem onClick={() => setIsOpen(true)}>
-                    <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
-                    <span className="ml-2 cursor-pointer hover:text-red-600">
-                      {t.formatMessage({ id: 'TABANIMAL.DELETE' })}
-                    </span>
-                  </DropdownMenuItem>
-                ) : (
-                  ''
-                )}
+                <DropdownMenuItem onClick={() => setIsOpen(true)}>
+                  <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
+                  <span className="ml-2 cursor-pointer hover:text-red-600">
+                    {t.formatMessage({ id: 'TABANIMAL.DELETE' })}
+                  </span>
+                </DropdownMenuItem>
               </DropdownMenuContent>
               <ActionModalDialog
                 loading={loading}

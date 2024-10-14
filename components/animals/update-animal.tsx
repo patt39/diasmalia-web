@@ -10,7 +10,6 @@ import {
   AlertSuccessNotification,
 } from '@/utils/alert-notification';
 import { XIcon } from 'lucide-react';
-import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { Controller, SubmitHandler } from 'react-hook-form';
 import { useInView } from 'react-intersection-observer';
@@ -30,12 +29,13 @@ import {
 
 const schema = yup.object({
   code: yup.string().optional(),
+  weight: yup.number().optional(),
+  gender: yup.string().optional(),
   birthday: yup.string().optional(),
   breedName: yup.string().optional(),
   locationCode: yup.string().optional(),
   isCastrated: yup.string().optional(),
-  weight: yup.number().optional(),
-  gender: yup.string().optional(),
+
   productionPhase: yup.string().optional(),
 });
 
@@ -54,12 +54,9 @@ const UpdateAnimals = ({
     setValue,
     handleSubmit,
     errors,
-    loading,
-    setLoading,
     hasErrors,
     setHasErrors,
   } = useReactHookForm({ schema });
-  const { query } = useRouter();
   const { ref, inView } = useInView();
 
   useEffect(() => {
@@ -81,20 +78,10 @@ const UpdateAnimals = ({
   }, [animal, setValue]);
 
   // Update data
-  const { mutateAsync: saveMutation } = UpdateOneAnimalAPI({
-    onSuccess: () => {
-      setHasErrors(false);
-      setLoading(false);
-      console.log(animal);
-    },
-    onError: (error?: any) => {
-      setHasErrors(true);
-      setHasErrors(error.response.data.message);
-    },
-  });
+  const { isPending: loading, mutateAsync: saveMutation } =
+    UpdateOneAnimalAPI();
 
   const onSubmit: SubmitHandler<AnimalModel> = async (payload: AnimalModel) => {
-    setLoading(true);
     setHasErrors(undefined);
     try {
       await saveMutation({
@@ -102,14 +89,12 @@ const UpdateAnimals = ({
         animalId: animal?.id,
       });
       setHasErrors(false);
-      setLoading(false);
       AlertSuccessNotification({
         text: 'Animal updated successfully',
       });
       setShowModal(false);
     } catch (error: any) {
       setHasErrors(true);
-      setLoading(false);
       setHasErrors(error.response.data.message);
       AlertDangerNotification({
         text: `${error.response.data.message}`,
@@ -282,7 +267,9 @@ const UpdateAnimals = ({
                         value={value}
                       >
                         <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select a female code" />
+                          <SelectValue
+                            placeholder={animal?.codeMother?.toUpperCase()}
+                          />
                         </SelectTrigger>
                         <SelectContent className="dark:border-gray-800">
                           <SelectGroup>
@@ -334,7 +321,9 @@ const UpdateAnimals = ({
                           value={value}
                         >
                           <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Codefather" />
+                            <SelectValue
+                              placeholder={animal?.codeFather?.toUpperCase()}
+                            />
                           </SelectTrigger>
                           <SelectContent className="dark:border-gray-800">
                             <SelectGroup>

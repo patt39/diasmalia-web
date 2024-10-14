@@ -12,7 +12,7 @@ export type FeedingsModel = {
 };
 
 export type FeedingAvesModel = {
-  createdAt: string;
+  createdAt: Date;
   updatedAt: string;
   id: string;
   quantity: number;
@@ -26,15 +26,33 @@ export type FeedingAvesModel = {
 };
 
 export type FeedStockModel = {
-  createdAt: string;
+  createdAt: Date;
   id: string;
   weight: number;
   quantity: number;
   feedCategory: string;
   animalTypeName: string;
+  compostion: [
+    {
+      id: string;
+      type: string;
+      percentage: number;
+      createdAt: Date;
+    },
+  ];
   animalType: {
     name: string;
   };
+};
+
+export type FeedStockPostModel = {
+  weight?: number;
+  quantity?: number;
+  feedCategory?: string;
+  animalTypeName?: string;
+  composition?: any;
+  type?: string;
+  percentage?: number;
 };
 
 export type FeedingsPostModel = {

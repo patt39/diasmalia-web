@@ -49,17 +49,8 @@ const CreateBulkAvesFeedings = ({
   setShowModal: any;
   feeding?: any;
 }) => {
-  const {
-    t,
-    watch,
-    control,
-    handleSubmit,
-    errors,
-    loading,
-    setLoading,
-    hasErrors,
-    setHasErrors,
-  } = useReactHookForm({ schema });
+  const { t, watch, control, handleSubmit, errors, hasErrors, setHasErrors } =
+    useReactHookForm({ schema });
   const { ref, inView } = useInView();
   const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
@@ -67,35 +58,24 @@ const CreateBulkAvesFeedings = ({
   const countSelectedAnimals = selectedAnimals?.length;
 
   // Create
-  const { mutateAsync: saveMutation } = CreateOneFeedingAPI({
-    onSuccess: () => {
-      setHasErrors(false);
-      setLoading(false);
-    },
-    onError: (error?: any) => {
-      setHasErrors(true);
-      setHasErrors(error.response.data.message);
-    },
-  });
+  const { isPending: loading, mutateAsync: saveMutation } =
+    CreateOneFeedingAPI();
 
   const onSubmit: SubmitHandler<FeedingsPostModel> = async (
     payload: FeedingsPostModel,
   ) => {
-    setLoading(true);
     setHasErrors(undefined);
     try {
       await saveMutation({
         ...payload,
       });
       setHasErrors(false);
-      setLoading(false);
       AlertSuccessNotification({
         text: 'Feeding saved successfully',
       });
       setShowModal(false);
     } catch (error: any) {
       setHasErrors(true);
-      setLoading(false);
       setHasErrors(error.response.data.message);
       AlertDangerNotification({
         text: `${error.response.data.message}`,

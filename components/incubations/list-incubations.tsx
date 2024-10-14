@@ -21,26 +21,21 @@ import { TableCell, TableRow } from '../ui/table';
 import { UpdateIncubations } from './update-incubations';
 
 const ListIncubations = ({ item, index }: { item: any; index: number }) => {
-  const { t, setLoading, setIsOpen, isOpen, loading } = useInputState();
+  const { t, setIsOpen, isOpen } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
 
-  const { mutateAsync: deleteMutation } = DeleteOneIncubationAPI({
-    onSuccess: () => {},
-    onError: (error?: any) => {},
-  });
+  const { isPending: loading, mutateAsync: deleteMutation } =
+    DeleteOneIncubationAPI();
 
   const deleteItem = async (item: any) => {
-    setLoading(true);
     setIsOpen(true);
     try {
       await deleteMutation({ incubationId: item?.id });
       AlertSuccessNotification({
         text: 'Incubation deleted successfully',
       });
-      setLoading(false);
       setIsOpen(false);
     } catch (error: any) {
-      setLoading(false);
       setIsOpen(true);
       AlertDangerNotification({
         text: `${error.response.data.message}`,

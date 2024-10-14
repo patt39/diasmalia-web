@@ -29,7 +29,7 @@ import { CreateOrUpdateSales } from './create-or-update-sales';
 import { ViewSale } from './view-sale';
 
 const ListSales = ({ item, index }: { item: any; index: number }) => {
-  const { t, loading, isOpen, setIsOpen, setLoading } = useInputState();
+  const { t, loading, isOpen, setIsOpen } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
   const [isView, setIsView] = useState(false);
   const { data: user } = GetOneUserMeAPI();
@@ -48,23 +48,17 @@ const ListSales = ({ item, index }: { item: any; index: number }) => {
     }
   };
 
-  const { mutateAsync: saveMutation } = DeleteOneSaleAPI({
-    onSuccess: () => {},
-    onError: (error?: any) => {},
-  });
+  const { mutateAsync: saveMutation } = DeleteOneSaleAPI();
 
   const deleteItem = async (item: any) => {
-    setLoading(true);
     setIsOpen(true);
     try {
       await saveMutation({ saleId: item?.id });
       AlertSuccessNotification({
         text: 'Sale deleted successfully',
       });
-      setLoading(false);
       setIsOpen(false);
     } catch (error: any) {
-      setLoading(false);
       setIsOpen(true);
       AlertDangerNotification({
         text: `${error.response.data.message}`,

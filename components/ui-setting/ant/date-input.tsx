@@ -8,6 +8,7 @@ interface Props {
   name: string;
   errors: { [key: string]: any };
   placeholder?: string;
+  defaultValue?: string;
 }
 
 const DateInput: React.FC<Props> = ({
@@ -16,6 +17,7 @@ const DateInput: React.FC<Props> = ({
   name,
   errors,
   placeholder = '',
+  defaultValue,
 }) => {
   return (
     <>
@@ -27,6 +29,7 @@ const DateInput: React.FC<Props> = ({
       <Controller
         name={name}
         control={control}
+        defaultValue={defaultValue}
         render={({ field: { ref, ...field } }) => (
           <DatePicker
             picker="date"
