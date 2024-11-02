@@ -1,9 +1,6 @@
 import { GetOneBreedingAPI } from '@/api-site/breedings';
 import { XIcon } from 'lucide-react';
-import * as yup from 'yup';
 import { Textarea } from '../ui/textarea';
-
-const schema = yup.object({});
 
 const ViewBreeding = ({
   showModal,

@@ -2,6 +2,7 @@ import { GetOneAnimalTypeAPI } from '@/api-site/animal-type';
 import { CreateOneLocationAPI } from '@/api-site/locations';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
+import { avesProductionPhases } from '@/i18n/default-exports';
 import { LocationModel } from '@/types/location';
 import {
   AlertDangerNotification,
@@ -39,8 +40,16 @@ const CreateAvesLocations = ({
   setShowModal: any;
   location?: any;
 }) => {
-  const { t, watch, control, errors, handleSubmit, hasErrors, setHasErrors } =
-    useReactHookForm({ schema });
+  const {
+    t,
+    locale,
+    watch,
+    control,
+    errors,
+    handleSubmit,
+    hasErrors,
+    setHasErrors,
+  } = useReactHookForm({ schema });
   const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
   const watchProductionPhase = watch('productionPhase');
@@ -136,16 +145,14 @@ const CreateAvesLocations = ({
                     control={control}
                     errors={errors}
                     placeholder="Select a production phase"
-                    valueType="text"
+                    valueType="key"
                     name="productionPhase"
-                    dataItem={[
-                      { id: 1, name: 'GROWTH' },
-                      { id: 2, name: 'LAYING' },
-                    ]}
+                    dataItem={avesProductionPhases.filter(
+                      (i) => i?.lang === locale,
+                    )}
                   />
                 </div>
-                {animalType?.name === 'Pondeuses' &&
-                watchProductionPhase === 'LAYING' ? (
+                {!['Canard'].includes(animalType?.name) ? (
                   <div className="my-2">
                     <Label>
                       Ajouter des cages?
@@ -232,6 +239,24 @@ const CreateAvesLocations = ({
                         </div>
                       </div>
                       {watchProductionPhase === 'LAYING' &&
+                      animalType?.name == 'Canard' ? (
+                        <div>
+                          <Label>
+                            {t.formatMessage({ id: 'NUMBER.NESTS' })}
+                            <span className="text-red-600">*</span>
+                          </Label>
+                          <TextInput
+                            control={control}
+                            type="number"
+                            name="nest"
+                            placeholder="Number of nests"
+                            errors={errors}
+                          />
+                        </div>
+                      ) : (
+                        ''
+                      )}
+                      {watchProductionPhase === 'LAYING' &&
                       animalType?.name !== 'Pisciculture' &&
                       watchCages === 'NO' ? (
                         <div>
@@ -250,7 +275,6 @@ const CreateAvesLocations = ({
                       ) : watchCages === 'YES' ? (
                         <div>
                           <Label>
-                            {/* {t.formatMessage({ id: 'NUMBER.NESTS' })} */}
                             Nombre de cages
                             <span className="text-red-600">*</span>
                           </Label>

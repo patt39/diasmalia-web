@@ -19,3 +19,39 @@ export type UserModel = {
   profile: ProfileModel;
   url: string;
 };
+
+export type ContributorModel = {
+  createdAt: Date;
+  id: string;
+  role: string;
+  userId: string;
+  user: {
+    id: string;
+    email: string;
+    profile: {
+      firstName: string;
+      lastName: string;
+      occupation: string;
+      address: string;
+      phone: number;
+      photo: string;
+      description: string;
+      currency: {
+        symbol: string;
+      };
+    };
+  };
+  organizationId: string;
+  organization: {
+    logo: string;
+    name: string;
+    description: string;
+  };
+  userCreatedId: string;
+};
+
+export type ContributorStatusModel = {
+  createdAt: Date;
+  id: string;
+  role: string;
+};

@@ -75,7 +75,7 @@ const TabFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button variant="outline">
-                    {animalStatistics?.sumFeedings ?? 0}
+                    {formatWeight(animalStatistics?.sumFeedings) ?? 0}
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent className="dark:border-gray-800">

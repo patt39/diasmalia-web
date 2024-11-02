@@ -11,6 +11,13 @@ import { LoadingFile } from '@/components/ui-setting/ant';
 import { ErrorFile } from '@/components/ui-setting/ant/error-file';
 import { CardHeader } from '@/components/ui/card';
 
+import { Button } from '@/components/ui/button';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { PrivateComponent } from '@/components/util/private-component';
 import { MoveLeftIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
@@ -88,6 +95,38 @@ export function ViewLocation() {
               {getOneLocation?.code.toUpperCase()}
             </h4>
             <div className="ml-auto flex items-center gap-2">
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="outline">
+                      {getOneLocation?.sumMales}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>
+                      {t.formatMessage({ id: 'ANIMALTYPE.TOOLTIP' })}{' '}
+                      {getOneLocation?.sumMales}{' '}
+                      {t.formatMessage({ id: 'ANIMAL.MALES' })}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="outline">
+                      {getOneLocation?.sumFemales}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>
+                      {t.formatMessage({ id: 'ANIMALTYPE.TOOLTIP' })}{' '}
+                      {getOneLocation?.sumFemales}{' '}
+                      {t.formatMessage({ id: 'ANIMAL.FEMALES' })}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
               <SearchInput
                 placeholder="Search by code"
                 onChange={handleSetSearch}

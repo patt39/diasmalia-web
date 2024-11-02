@@ -102,7 +102,7 @@ export const CreateOneFemaleTreatmentAPI = ({
   const queryClient = useQueryClient();
   const result = useMutation({
     mutationKey: queryKey,
-    mutationFn: async (payload: TreatmentAvesModel) => {
+    mutationFn: async (payload: TreatmentsPostModel) => {
       await makeApiCall({
         action: 'createOneAvesTreatment',
         body: { ...payload },

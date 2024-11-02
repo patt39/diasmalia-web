@@ -12,13 +12,7 @@ const nextConfig = {
     'rc-tree',
     'rc-table',
   ],
-  // images: {
-  //   domains: [
-  //     'images.unsplash.com',
-  //     'cdn.rareblocks.xyz',
-  //     'https://diasmalia-buck.s3.eu-central-1.amazonaws.com',
-  //   ], // Add the domain(s) you want to allow
-  // },
+
   images: {
     remotePatterns: [
       {
@@ -28,7 +22,7 @@ const nextConfig = {
       },
       {
         protocol: 'http',
-        hostname: 'localhost',
+        hostname: 'cdn.rareblocks.xyz',
         pathname: '**',
       },
     ],

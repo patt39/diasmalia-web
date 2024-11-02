@@ -1,8 +1,3 @@
-export type ImageProfileModel = {
-  key: 'aws' | 'provider';
-  patch: string;
-};
-
 export type AnimalModel = {
   createdAt: Date;
   id: string;

@@ -53,7 +53,7 @@ const AnimalStatistics = () => {
           <CardDescription>
             {t.formatMessage({ id: 'ANIMALTYPE.FEMALE' })}
           </CardDescription>
-          <CardTitle className="text-4xl">
+          <CardTitle className="text-3xl">
             {animalStatistics?.sumFemales ?? 0}
           </CardTitle>
         </CardHeader>
@@ -63,7 +63,7 @@ const AnimalStatistics = () => {
           <CardDescription>
             {t.formatMessage({ id: 'ANIMALTYPE.MALE' })}
           </CardDescription>
-          <CardTitle className="text-4xl">
+          <CardTitle className="text-3xl">
             {animalStatistics?.sumMales ?? 0}
           </CardTitle>
         </CardHeader>
@@ -73,7 +73,7 @@ const AnimalStatistics = () => {
           <CardDescription>
             {t.formatMessage({ id: 'FERTILITY.RATE' })}
           </CardDescription>
-          <CardTitle className="text-4xl">
+          <CardTitle className="text-3xl">
             {Math.floor(fertilityRate * 100) / 100 || 0}%
           </CardTitle>
         </CardHeader>
@@ -83,7 +83,7 @@ const AnimalStatistics = () => {
           <CardDescription>
             {t.formatMessage({ id: 'FECONDITY.RATE' })}
           </CardDescription>
-          <CardTitle className="text-4xl">
+          <CardTitle className="text-3xl">
             {Math.floor(farrowingPercentage * 100) / 100 || 0}%
           </CardTitle>
         </CardHeader>
@@ -93,7 +93,7 @@ const AnimalStatistics = () => {
           <CardDescription>
             {t.formatMessage({ id: 'WEANING.PERCENTAGE' })}
           </CardDescription>
-          <CardTitle className="text-4xl">
+          <CardTitle className="text-3xl">
             {Math.floor(weaningPercentage * 100) / 100 || 0}%
           </CardTitle>
         </CardHeader>
@@ -103,10 +103,10 @@ const AnimalStatistics = () => {
           <CardDescription>
             {t.formatMessage({ id: 'PROLIFICITY' })}
           </CardDescription>
-          <CardTitle className="text-4xl flex">
+          <CardTitle className="text-3xl flex">
             {animalStatistics?.prolificity?.toFixed(1) ?? 0}
             <CardDescription>
-              <div className="pt-5 text-xs">
+              <div className="pt-4 text-xs">
                 / {t.formatMessage({ id: 'LITTER.PER.FEMALE' })}
               </div>
             </CardDescription>
@@ -118,7 +118,7 @@ const AnimalStatistics = () => {
           <CardDescription>
             {t.formatMessage({ id: 'YOUTH.DEATH.PERCENTAGE' })}
           </CardDescription>
-          <CardTitle className="text-4xl">
+          <CardTitle className="text-3xl">
             {Math.floor(youngDeathPercentage * 100) / 100 || 0}%
           </CardTitle>
         </CardHeader>
@@ -128,7 +128,7 @@ const AnimalStatistics = () => {
           <CardDescription>
             {t.formatMessage({ id: 'ANIMAL.ISOLATED' })}
           </CardDescription>
-          <CardTitle className="text-4xl">
+          <CardTitle className="text-3xl">
             {animalStatistics?.sumIsolations ?? 0}
           </CardTitle>
         </CardHeader>
@@ -138,7 +138,7 @@ const AnimalStatistics = () => {
           <CardDescription>
             {t.formatMessage({ id: 'ANIMAL.FEED' })}
           </CardDescription>
-          <CardTitle className="text-4xl">
+          <CardTitle className="text-3xl">
             {formatWeight(animalStatistics?.sumFeedings ?? 0)}
           </CardTitle>
         </CardHeader>

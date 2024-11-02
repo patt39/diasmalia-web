@@ -1,41 +1,24 @@
-import { CreateBulkAnimalsAPI } from '@/api-site/animals';
-import { GetBreedsAPI } from '@/api-site/breed';
+import { CreateCollaboratorAPI } from '@/api-site/contributors';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
-import { LoadingFile } from '@/components/ui-setting/ant';
-import { ErrorFile } from '@/components/ui-setting/ant/error-file';
-import { SelectInput } from '@/components/ui-setting/shadcn';
+import { SelectInput, TextInput } from '@/components/ui-setting/shadcn';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { AnimalModel } from '@/types/animal';
+import { ContributorModel } from '@/types/user';
 import {
   AlertDangerNotification,
   AlertSuccessNotification,
 } from '@/utils/alert-notification';
 import { XIcon } from 'lucide-react';
-import { useRouter } from 'next/router';
-import { Controller, SubmitHandler } from 'react-hook-form';
-import { useInView } from 'react-intersection-observer';
+import { SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
 
 const schema = yup.object({
-  codeMother: yup.string().optional(),
-  codeFather: yup.string().optional(),
-  birthday: yup.string().optional(),
-  breedName: yup.string().optional(),
-  locationCode: yup.string().optional(),
-  number: yup.number().required('number is a required field'),
-  weight: yup.number().required('weight is a required field'),
-  gender: yup.string().required('gender is a required field'),
-  productionPhase: yup.string().required('productionPhase is a required field'),
+  email: yup.string().optional(),
+  phone: yup.string().required('phone is required'),
+  occupation: yup.string().required('occupation is required'),
+  lastName: yup.string().required('last name is required'),
+  firstName: yup.string().required('first name is required'),
+  status: yup.string().required('status is required'),
 });
 
 const AddContributor = ({
@@ -46,65 +29,34 @@ const AddContributor = ({
   setShowModal: any;
   animal?: any;
 }) => {
-  const {
-    t,
-    control,
-    handleSubmit,
-    errors,
-    loading,
-    setLoading,
-    hasErrors,
-    setHasErrors,
-  } = useReactHookForm({ schema });
-  const { query } = useRouter();
-  const animalTypeId = String(query?.animalTypeId);
-  const { ref, inView } = useInView();
+  const { t, control, handleSubmit, errors, hasErrors, setHasErrors } =
+    useReactHookForm({ schema });
 
   // Create
-  const { mutateAsync: saveMutation } = CreateBulkAnimalsAPI({
-    onSuccess: () => {
-      setHasErrors(false);
-      setLoading(false);
-    },
-    onError: (error?: any) => {
-      setHasErrors(true);
-      setHasErrors(error.response.data.message);
-    },
-  });
+  const { isPending: loading, mutateAsync: saveMutation } =
+    CreateCollaboratorAPI();
 
-  const onSubmit: SubmitHandler<AnimalModel> = async (payload: AnimalModel) => {
-    setLoading(true);
+  const onSubmit: SubmitHandler<ContributorModel> = async (
+    payload: ContributorModel,
+  ) => {
     setHasErrors(undefined);
     try {
       await saveMutation({
         ...payload,
       });
       setHasErrors(false);
-      setLoading(false);
       AlertSuccessNotification({
-        text: 'Animals created successfully',
+        text: 'Collaborator created successfully',
       });
       setShowModal(false);
     } catch (error: any) {
       setHasErrors(true);
-      setLoading(false);
       setHasErrors(error.response.data.message);
       AlertDangerNotification({
         text: `${error.response.data.message}`,
       });
     }
   };
-
-  const {
-    isLoading: isLoadingBreeds,
-    isError: isErrorBreeds,
-    data: dataBreeds,
-  } = GetBreedsAPI({
-    take: 10,
-    sort: 'desc',
-    sortBy: 'createdAt',
-    animalTypeId: animalTypeId,
-  });
 
   return (
     <>
@@ -136,71 +88,83 @@ const AddContributor = ({
                   </div>
                 )}
 
-                <div>
-                  <Label>
-                    Email<span className="text-red-600">*</span>
-                  </Label>
-                  <SelectInput
-                    firstOptionName="Choose a production type"
-                    control={control}
-                    errors={errors}
-                    placeholder="Select gender"
-                    valueType="text"
-                    name="gender"
-                    dataItem={[
-                      { id: 1, name: 'MALE' },
-                      { id: 2, name: 'FEMALE' },
-                    ]}
-                  />
+                <div className="my-2 flex items-center space-x-4">
+                  <div className="w-80">
+                    <Label>Nom</Label>
+                    <span className="text-red-600">*</span>
+                    <TextInput
+                      control={control}
+                      type="text"
+                      name="firstName"
+                      placeholder="First name"
+                      errors={errors}
+                    />
+                  </div>
+                  <div className="w-80">
+                    <Label>Prénom</Label>
+                    <span className="text-red-600">*</span>
+                    <TextInput
+                      control={control}
+                      type="text"
+                      name="lastName"
+                      placeholder="Last name"
+                      errors={errors}
+                    />
+                  </div>
+                </div>
+                <div className="my-2 flex items-center space-x-4">
+                  <div className="w-80">
+                    <Label>Email</Label>
+                    <TextInput
+                      control={control}
+                      type="text"
+                      name="email"
+                      placeholder="Email"
+                      errors={errors}
+                    />
+                  </div>
+                  <div className="w-80">
+                    <Label>Phone</Label>
+                    <span className="text-red-600">*</span>
+                    <TextInput
+                      control={control}
+                      type="number"
+                      name="phone"
+                      placeholder="phone"
+                      errors={errors}
+                    />
+                  </div>
+                </div>
+                <div className="my-2 flex items-center space-x-4">
+                  <div className="w-80">
+                    <Label>Role</Label>
+                    <span className="text-red-600">*</span>
+                    <TextInput
+                      control={control}
+                      type="text"
+                      name="occupation"
+                      placeholder="Collaborator's role"
+                      errors={errors}
+                    />
+                  </div>
+                  <div className="w-80">
+                    <Label>Status</Label>
+                    <span className="text-red-600">*</span>
+                    <SelectInput
+                      firstOptionName="Choose a production type"
+                      control={control}
+                      errors={errors}
+                      placeholder="Select role"
+                      valueType="text"
+                      name="status"
+                      dataItem={[
+                        { id: 1, name: 'ADMIN' },
+                        { id: 2, name: 'SUPERADMIN' },
+                      ]}
+                    />
+                  </div>
                 </div>
 
-                <div className="my-2">
-                  <Label>
-                    {t.formatMessage({ id: 'SELECT.BREED' })}
-                    <span className="text-red-600">*</span>
-                  </Label>
-                  <Controller
-                    control={control}
-                    name="breedName"
-                    render={({ field: { value, onChange } }) => (
-                      <Select
-                        onValueChange={onChange}
-                        name="breedName"
-                        value={value}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a breed" />
-                        </SelectTrigger>
-                        <SelectContent className="dark:border-gray-800">
-                          <SelectGroup>
-                            <SelectLabel>Breeds</SelectLabel>
-                            {isLoadingBreeds ? (
-                              <LoadingFile />
-                            ) : isErrorBreeds ? (
-                              <ErrorFile
-                                title="404"
-                                description="Error finding data please try again..."
-                              />
-                            ) : Number(dataBreeds?.pages[0]?.data?.total) <=
-                              0 ? (
-                              <ErrorFile description="Don't have breeds" />
-                            ) : (
-                              dataBreeds?.pages
-                                .flatMap((page: any) => page?.data?.value)
-                                .map((item, index) => (
-                                  <>
-                                    <SelectItem key={index} value={item?.name}>
-                                      {item?.name}
-                                    </SelectItem>
-                                  </>
-                                ))
-                            )}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    )}
-                  />
-                </div>
                 <div className="mt-4 flex items-center space-x-4">
                   <ButtonInput
                     type="button"

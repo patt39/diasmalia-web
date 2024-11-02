@@ -16,9 +16,9 @@ interface Props {
   label?: string;
   className?: string;
   name: string;
-  errors: { [key: string]: any };
+  errors?: { [key: string]: any };
   placeholder?: string;
-  firstOptionName: string;
+  firstOptionName?: string;
   valueType: 'key' | 'text';
   allowClear?: boolean;
   defaultValue?: string;

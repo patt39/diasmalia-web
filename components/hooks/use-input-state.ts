@@ -9,6 +9,7 @@ export function useInputState() {
   const [fromAt, setFromAt] = useState<any>(null);
   const [toAt, setToAt] = useState<any>(null);
   const [search, setSearch] = useState<string>('');
+  const [searchUser, setUserSearch] = useState<string>('');
   const [extension, setExtension] = useState<'xlsx' | 'csv'>('xlsx');
   const initTime = fromAt?.$d?.toISOString();
   const endTime = toAt?.$d?.toISOString();
@@ -38,7 +39,14 @@ export function useInputState() {
     setSearch(event.target.value);
   };
 
+  const handleSetUserSearch = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    setUserSearch(event.target.value);
+  };
+
   const newSearch = useDebounce(search, 500);
+  const newUserSearch = useDebounce(searchUser, 500);
 
   const linkHref = typeof window !== 'undefined' ? window.location.href : null;
   return {
@@ -48,6 +56,8 @@ export function useInputState() {
     toAt,
     setToAt,
     search: newSearch,
+    searchUser: newUserSearch,
+    setUserSearch,
     setSearch,
     extension,
     setExtension,
@@ -56,6 +66,7 @@ export function useInputState() {
     handleClearDate,
     handleChangeExtension,
     handleSetSearch,
+    handleSetUserSearch,
     success,
     loading,
     isOpen,

@@ -447,24 +447,30 @@ const ViewAnimal = ({
                             )}
                           />
                         </div>
-                      ) : getOneAnimal?.gender === 'FEMALE' &&
-                        getOneAnimal?.productionPhase === 'CROISSANCE' ? (
+                      ) : getOneAnimal?.location?.productionPhase ===
+                          'GROWTH' &&
+                        getOneAnimal?.productionPhase === 'GROWTH' ? (
                         <div>
                           <Label>
-                            {t.formatMessage({ id: 'FARROWING.DATE' })}
-                          </Label>
-                          <Input disabled defaultValue={'Pas encore'} />
-                        </div>
-                      ) : (
-                        <div>
-                          <Label>
-                            {t.formatMessage({ id: 'LAST.BREEDING' })}
+                            {t.formatMessage({ id: 'DATE.WEANED' })}
                           </Label>
                           <Input
                             disabled
                             defaultValue={formatDateDDMMYY(
-                              getMaleAnimalBreeding?.createdAt,
+                              getOneAnimal?.createdAt,
                             )}
+                          />
+                        </div>
+                      ) : (
+                        <div>
+                          <Label>
+                            {t.formatMessage({ id: 'DATE.WEANED' })}
+                          </Label>
+                          <Input
+                            disabled
+                            defaultValue={t.formatMessage({
+                              id: 'NOT.YET',
+                            })}
                           />
                         </div>
                       )}

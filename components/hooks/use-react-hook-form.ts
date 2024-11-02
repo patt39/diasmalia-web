@@ -1,3 +1,4 @@
+import { useLang } from '@/i18n/context-intl-provider';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -14,6 +15,7 @@ type HookOptions<T> = {
 
 const useReactHookForm = <T>({ schema }: HookOptions<T>) => {
   const t = useIntl();
+  const locale = useLang();
   const [loading, setLoading] = useState(false);
   const [hasSuccess, setHasSuccess] = useState<boolean | string | undefined>(
     undefined,
@@ -36,6 +38,7 @@ const useReactHookForm = <T>({ schema }: HookOptions<T>) => {
 
   return {
     t,
+    locale,
     reset,
     watch,
     control,

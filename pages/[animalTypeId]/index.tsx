@@ -140,7 +140,7 @@ export function Index() {
                   <CardHeader className="pb-3">
                     {animalType?.slug === 'chèvres' ? (
                       <CardTitle>
-                        {t.formatMessage({ id: 'DIASMALIA.WELCOME.GOATS' })}
+                        {t.formatMessage({ id: 'DIASMALIA.WELCOME.GOAT' })}
                       </CardTitle>
                     ) : (
                       ''
@@ -161,7 +161,7 @@ export function Index() {
                   <CardHeader className="pb-3">
                     {animalType?.slug === 'moutons' ? (
                       <CardTitle>
-                        {t.formatMessage({ id: 'DIASMALIA.WELCOME.SHEEPS' })}
+                        {t.formatMessage({ id: 'DIASMALIA.WELCOME.SHEEP' })}
                       </CardTitle>
                     ) : (
                       ''
@@ -194,7 +194,7 @@ export function Index() {
                 </Card>
                 <AvesStatistics />
               </div>
-            ) : ['Canards'].includes(animalType?.name) ? (
+            ) : ['Canard'].includes(animalType?.name) ? (
               <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
                 <Card
                   className="sm:col-span-2 dark:border-gray-800"
@@ -255,6 +255,42 @@ export function Index() {
                 <AvesStatistics />
               </div>
             ) : ['Poulets Brahma'].includes(animalType?.name) ? (
+              <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
+                <Card
+                  className="sm:col-span-2 dark:border-gray-800"
+                  x-chunk="dashboard-05-chunk-0"
+                >
+                  <CardHeader className="pb-3">
+                    <CardTitle>
+                      {t.formatMessage({ id: 'DIASMALIA.WELCOME' })}
+                      {animalType?.slug}
+                    </CardTitle>
+                    <CardDescription className="max-w-lg text-balance leading-relaxed">
+                      {t.formatMessage({ id: 'ANIMALTYPE.LAYERS.DESCRIPTION' })}
+                    </CardDescription>
+                  </CardHeader>
+                </Card>
+                <AvesStatistics />
+              </div>
+            ) : ['Pintarde'].includes(animalType?.name) ? (
+              <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
+                <Card
+                  className="sm:col-span-2 dark:border-gray-800"
+                  x-chunk="dashboard-05-chunk-0"
+                >
+                  <CardHeader className="pb-3">
+                    <CardTitle>
+                      {t.formatMessage({ id: 'DIASMALIA.WELCOME' })}
+                      {animalType?.slug}
+                    </CardTitle>
+                    <CardDescription className="max-w-lg text-balance leading-relaxed">
+                      {t.formatMessage({ id: 'ANIMALTYPE.LAYERS.DESCRIPTION' })}
+                    </CardDescription>
+                  </CardHeader>
+                </Card>
+                <AvesStatistics />
+              </div>
+            ) : ['Quails'].includes(animalType?.name) ? (
               <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
                 <Card
                   className="sm:col-span-2 dark:border-gray-800"
@@ -424,7 +460,7 @@ export function Index() {
                   ) : [
                       'Pondeuses',
                       'Dinde',
-                      'Canards',
+                      'Canard',
                       'Pintarde',
                       'Poulets Brahma',
                       'Poulets Goliaths',

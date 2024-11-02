@@ -2,6 +2,7 @@ import { GetOneAnimalTypeAPI } from '@/api-site/animal-type';
 import { CreateOneLocationAPI } from '@/api-site/locations';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
+import { productionPhases } from '@/i18n/default-exports';
 import { LocationModel } from '@/types/location';
 import {
   AlertDangerNotification,
@@ -36,7 +37,7 @@ const CreateLocations = ({
   setShowModal: any;
   location?: any;
 }) => {
-  const { t, control, errors, handleSubmit, hasErrors, setHasErrors } =
+  const { t, locale, control, errors, handleSubmit, hasErrors, setHasErrors } =
     useReactHookForm({ schema });
   const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
@@ -122,56 +123,22 @@ const CreateLocations = ({
                     </Tooltip>
                   </TooltipProvider>
                 </div>
-                {[
-                  'Poulet de chair',
-                  'Poulets Goliaths',
-                  'Pintard',
-                  'Canard',
-                  'Dinde',
-                  'Quails',
-                  'Pondeuses',
-                  'Pisciculture',
-                  'Poulets Brahma',
-                ].includes(animalType?.name) ? (
-                  <div className="my-2">
-                    <Label>
-                      {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
-                      <span className="text-red-600">*</span>
-                    </Label>
-                    <SelectInput
-                      firstOptionName="Choose a production type"
-                      control={control}
-                      errors={errors}
-                      placeholder="Select a production phase"
-                      valueType="text"
-                      name="productionPhase"
-                      dataItem={[
-                        { id: 1, name: 'GROWTH' },
-                        { id: 2, name: 'LAYING' },
-                      ]}
-                    />
-                  </div>
-                ) : (
-                  <div className="my-2">
-                    <Label>
-                      {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
-                    </Label>
-                    <SelectInput
-                      firstOptionName="Choose a production type"
-                      control={control}
-                      errors={errors}
-                      placeholder="Select a production phase"
-                      valueType="text"
-                      name="productionPhase"
-                      dataItem={[
-                        { id: 1, name: 'GROWTH' },
-                        { id: 2, name: 'FATTENING' },
-                        { id: 3, name: 'GESTATION' },
-                        { id: 4, name: 'REPRODUCTION' },
-                      ]}
-                    />
-                  </div>
-                )}
+                <div className="my-2">
+                  <Label>
+                    {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
+                  </Label>
+                  <SelectInput
+                    firstOptionName="Choose a production type"
+                    control={control}
+                    errors={errors}
+                    placeholder="Select a production phase"
+                    valueType="key"
+                    name="productionPhase"
+                    dataItem={productionPhases.filter(
+                      (i) => i?.lang === locale,
+                    )}
+                  />
+                </div>
                 <div className="my-2 items-center space-x-1">
                   {animalType?.name === 'Pisciculture' ? (
                     <>

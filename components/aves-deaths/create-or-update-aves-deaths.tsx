@@ -63,7 +63,6 @@ const CreateOrUpdateAvesDeaths = ({
       fields?.forEach((field: any) => setValue(field, animal[field]));
     }
   }, [animal, setValue]);
-  console.log('animal ==>', animal);
 
   // Create or Update data
   const { isPending: loading, mutateAsync: saveMutation } =
@@ -129,7 +128,6 @@ const CreateOrUpdateAvesDeaths = ({
                         type="text"
                         name="code"
                         defaultValue={`${animal?.animal?.code}`}
-                        placeholder="Give a code"
                         errors={errors}
                       />
                     </div>

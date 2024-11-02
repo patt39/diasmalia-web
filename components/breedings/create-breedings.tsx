@@ -194,8 +194,11 @@ const CreateBreedings = ({
                                   .flatMap((page: any) => page?.data?.value)
                                   .map((item, index) => (
                                     <>
-                                      <SelectItem key={index} value={item.code}>
-                                        {item.code}
+                                      <SelectItem
+                                        key={index}
+                                        value={item?.code}
+                                      >
+                                        {item?.code}
                                       </SelectItem>
                                     </>
                                   ))

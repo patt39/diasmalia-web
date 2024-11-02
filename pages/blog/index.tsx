@@ -1,259 +1,181 @@
+import { GetBlogsAPI } from '@/api-site/blog';
 import { LayoutDashboard } from '@/components/layouts/dashboard';
 
 import { DashboardFooter } from '@/components/layouts/dashboard/footer';
+import { ButtonLoadMore } from '@/components/ui-setting';
+import { LoadingFile } from '@/components/ui-setting/ant';
+import { ErrorFile } from '@/components/ui-setting/ant/error-file';
 import { PrivateComponent } from '@/components/util/private-component';
 import Image from 'next/image';
+import Link from 'next/link';
+import { useEffect } from 'react';
+import { useInView } from 'react-intersection-observer';
 import { useIntl } from 'react-intl';
+import { formatDateDDMMYY } from '../../utils/formate-date';
 
 export function Blog() {
   const t = useIntl();
 
+  const { ref, inView } = useInView();
+
+  const {
+    isLoading: isLoadingBlogs,
+    isError: isErrorBlogs,
+    data: dataBlogs,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+  } = GetBlogsAPI({
+    take: 10,
+    sort: 'desc',
+    sortBy: 'createdAt',
+  });
+
+  useEffect(() => {
+    let fetching = false;
+    if (inView) {
+      fetchNextPage();
+    }
+    const onScroll = async (event: any) => {
+      const { scrollHeight, scrollTop, clientHeight } =
+        event.target.scrollingElement;
+
+      if (!fetching && scrollHeight - scrollTop <= clientHeight * 1.5) {
+        fetching = true;
+        if (hasNextPage) await fetchNextPage();
+        fetching = false;
+      }
+    };
+
+    document.addEventListener('scroll', onScroll);
+    return () => {
+      document.removeEventListener('scroll', onScroll);
+    };
+  }, [fetchNextPage, hasNextPage, inView]);
+
   return (
     <>
       <LayoutDashboard title={'Blog'}>
-        <section className="py-10 sm:py-16 lg:py-24">
-          <div className="px-4 mx-auto sm:px-6 lg:px-8 max-w-6xl">
-            <div className="flex items-end justify-between">
-              <div className="flex-1 text-center lg:text-left">
-                <h2 className="font-bold tracking-tight sm:text-4xl lg:text-4xl">
-                  Profitez des conseils de nos veterinaires et techniciens
-                </h2>
-                <p className="max-w-xl mx-auto mt-4 text-base leading-relaxed text-gray-600 lg:mx-0">
-                  Amet minim mollit non deserunt ullamco est sit aliqua dolor do
-                  amet sint. Velit officia consequat duis.
+        <div className="flex min-h-screen w-full flex-col">
+          <section className="py-10 sm:py-16 lg:py-24">
+            <div className="px-4 mx-auto sm:px-6 lg:px-8 max-w-6xl">
+              <div className="flex flex-col items-center gap-1 text-center">
+                <h4 className="sm:text-xl lg:text-2xl font-bold tracking-tight text-center">
+                  {t.formatMessage({ id: 'BLOG.TITLE' })}
+                </h4>
+                <p className="max-w-xl mx-auto text-base i text-gray-600 lg:mx-0">
+                  {t.formatMessage({ id: 'BLOG.DESCRIPTION' })}
                 </p>
               </div>
-            </div>
-
-            <div className="grid max-w-md grid-cols-1 gap-6 mx-auto mt-8 lg:mt-16 lg:grid-cols-3 lg:max-w-full">
-              <div className="overflow-hidden bg-white rounded shadow">
-                <div className="p-5">
-                  <div className="relative">
-                    <a
-                      href="#"
-                      title=""
-                      className="block aspect-w-4 aspect-h-3"
-                    >
-                      <Image
-                        className="object-cover w-full h-full"
-                        src="https://cdn.rareblocks.xyz/collection/celebration/images/blog/2/blog-post-1.jpg"
-                        alt=""
-                        width={250}
-                        height={250}
-                      />
-                    </a>
-
-                    <div className="absolute top-4 left-4">
-                      <span className="px-4 py-2 text-xs font-semibold tracking-widest text-gray-900 uppercase bg-white rounded-full">
-                        {' '}
-                        Lifestyle{' '}
-                      </span>
-                    </div>
-                  </div>
-                  <span className="block mt-6 text-sm font-semibold tracking-widest text-gray-500 uppercase">
-                    {' '}
-                    March 21, 2020{' '}
-                  </span>
-                  <p className="mt-5 text-2xl font-semibold">
-                    <a href="#" title="" className="text-black">
-                      {' '}
-                      How to build coffee inside your home in 5 minutes.{' '}
-                    </a>
-                  </p>
-                  <p className="mt-4 text-base text-gray-600">
-                    Amet minim mollit non deserunt ullamco est sit aliqua dolor
-                    do amet sint. Velit officia consequat duis enim velit
-                    mollit.
-                  </p>
-                  <a
-                    href="#"
-                    title=""
-                    className="inline-flex items-center justify-center pb-0.5 mt-5 text-base font-semibold text-blue-600 transition-all duration-200 border-b-2 border-transparent hover:border-blue-600 focus:border-blue-600"
-                  >
-                    Continue Reading
-                    <svg
-                      className="w-5 h-5"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
-                  </a>
-                </div>
-              </div>
-
-              <div className="overflow-hidden bg-white rounded shadow">
-                <div className="p-5">
-                  <div className="relative">
-                    <a
-                      href="#"
-                      title=""
-                      className="block aspect-w-4 aspect-h-3"
-                    >
-                      <Image
-                        className="object-cover w-full h-full"
-                        src="https://cdn.rareblocks.xyz/collection/celebration/images/blog/2/blog-post-2.jpg"
-                        alt=""
-                        width={250}
-                        height={250}
-                      />
-                    </a>
-
-                    <div className="absolute top-4 left-4">
-                      <span className="px-4 py-2 text-xs font-semibold tracking-widest text-gray-900 uppercase bg-white rounded-full">
-                        {' '}
-                        Marketing{' '}
-                      </span>
-                    </div>
-                  </div>
-                  <span className="block mt-6 text-sm font-semibold tracking-widest text-gray-500 uppercase">
-                    {' '}
-                    April 04, 2020{' '}
-                  </span>
-                  <p className="mt-5 text-2xl font-semibold">
-                    <a href="#" title="" className="text-black">
-                      {' '}
-                      Ho7 Tips to run your remote team faster and better.{' '}
-                    </a>
-                  </p>
-                  <p className="mt-4 text-base text-gray-600">
-                    Amet minim mollit non deserunt ullamco est sit aliqua dolor
-                    do amet sint. Velit officia consequat duis enim velit
-                    mollit.
-                  </p>
-                  <a
-                    href="#"
-                    title=""
-                    className="inline-flex items-center justify-center pb-0.5 mt-5 text-base font-semibold text-blue-600 transition-all duration-200 border-b-2 border-transparent hover:border-blue-600 focus:border-blue-600"
-                  >
-                    Continue Reading
-                    <svg
-                      className="w-5 h-5"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
-                  </a>
-                </div>
-              </div>
-
-              <div className="overflow-hidden bg-white rounded shadow">
-                <div className="p-5">
-                  <div className="relative">
-                    <a
-                      href="#"
-                      title=""
-                      className="block aspect-w-4 aspect-h-3"
-                    >
-                      <Image
-                        className="object-cover w-full h-full"
-                        src="https://cdn.rareblocks.xyz/collection/celebration/images/blog/2/blog-post-3.jpg"
-                        alt=""
-                        width={250}
-                        height={250}
-                      />
-                    </a>
-
-                    <div className="absolute top-4 left-4">
-                      <span className="px-4 py-2 text-xs font-semibold tracking-widest text-gray-900 uppercase bg-white rounded-full">
-                        {' '}
-                        Productivity{' '}
-                      </span>
-                    </div>
-                  </div>
-                  <span className="block mt-6 text-sm font-semibold tracking-widest text-gray-500 uppercase">
-                    {' '}
-                    May 12, 2020{' '}
-                  </span>
-                  <p className="mt-5 text-2xl font-semibold">
-                    <a href="#" title="" className="text-black">
-                      {' '}
-                      5 Productivity tips to write faster at morning.{' '}
-                    </a>
-                  </p>
-                  <p className="mt-4 text-base text-gray-600">
-                    Amet minim mollit non deserunt ullamco est sit aliqua dolor
-                    do amet sint. Velit officia consequat duis enim velit
-                    mollit.
-                  </p>
-                  <a
-                    href="#"
-                    title=""
-                    className="inline-flex items-center justify-center pb-0.5 mt-5 text-base font-semibold text-blue-600 transition-all duration-200 border-b-2 border-transparent hover:border-blue-600 focus:border-blue-600"
-                  >
-                    Continue Reading
-                    <svg
-                      className="w-5 h-5"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
-                  </a>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-center mt-8 space-x-3 lg:hidden">
-              <button
-                type="button"
-                className="flex items-center justify-center text-gray-400 transition-all duration-200 bg-transparent border border-gray-300 rounded w-9 h-9 hover:bg-blue-600 hover:text-white focus:bg-blue-600 focus:text-white"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-6 h-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M15 19l-7-7 7-7"
+              <div className="grid max-w-md grid-cols-1 gap-6 mx-auto mt-8 lg:mt-16 lg:grid-cols-3 lg:max-w-full">
+                {isLoadingBlogs ? (
+                  <LoadingFile />
+                ) : isErrorBlogs ? (
+                  <ErrorFile
+                    title="404"
+                    description="Error finding data please try again..."
                   />
-                </svg>
-              </button>
+                ) : Number(dataBlogs?.pages[0]?.data?.total) <= 0 ? (
+                  <ErrorFile description="Sorry no blogs added yet" />
+                ) : (
+                  dataBlogs?.pages
+                    .flatMap((page: any) => page?.data?.value)
+                    .map((item, index) => (
+                      <>
+                        <div
+                          className="overflow-hidden bg-white rounded-sm shadow"
+                          key={index}
+                        >
+                          <div className="p-5">
+                            <div className="relative">
+                              <Link
+                                href={`/blog/${item?.slug}`}
+                                className="block aspect-w-4 aspect-h-3"
+                              >
+                                <Image
+                                  className="object-cover w-full h-full rounded-sm"
+                                  src={item?.image}
+                                  alt=""
+                                  width={250}
+                                  height={250}
+                                />
+                              </Link>
+                              <div className="absolute top-4 left-4">
+                                <span className="px-4 py-2 text-xs font-semibold tracking-widest text-gray-900 uppercase bg-white rounded-full">
+                                  {item?.category === 'CARE'
+                                    ? t.formatMessage({ id: 'CARE' })
+                                    : item?.category === 'BREEDING'
+                                      ? t.formatMessage({ id: 'BREEDING' })
+                                      : item?.category === 'NUTRITION'
+                                        ? t.formatMessage({ id: 'FEEDING' })
+                                        : t.formatMessage({ id: 'MANAGEMENT' })}
+                                </span>
+                              </div>
+                            </div>
+                            <div className="flex">
+                              <span className="block mt-6 text-sm font-semibold tracking-widest text-gray-500 uppercase">
+                                {formatDateDDMMYY(item?.createdAt)}
+                              </span>
+                              <div className="ml-auto">
+                                <small className="block mt-6 text-xs font-normal tracking-widest text-gray-500 lowercase">
+                                  {t.formatMessage({ id: 'READING.TIME' })}:{' '}
+                                  {item?.readingTime}min
+                                </small>
+                              </div>
+                            </div>
 
-              <button
-                type="button"
-                className="flex items-center justify-center text-gray-400 transition-all duration-200 bg-transparent border border-gray-300 rounded w-9 h-9 hover:bg-blue-600 hover:text-white focus:bg-blue-600 focus:text-white"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-6 h-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M9 5l7 7-7 7"
-                  />
-                </svg>
-              </button>
+                            <p className="mt-5 text-xl font-semibold">
+                              <Link
+                                href={`/blog/${item?.slug}`}
+                                className="text-black"
+                              >
+                                {item?.title?.length > 50
+                                  ? item?.title?.substring(0, 50) + '...'
+                                  : item?.title}
+                              </Link>
+                            </p>
+                            <p className="mt-4 text-base text-gray-600">
+                              {item?.description?.length > 200
+                                ? item?.description?.substring(0, 200) + '...'
+                                : item?.description}
+                            </p>
+                            <Link
+                              href={`/blog/${item?.slug}`}
+                              className="inline-flex items-center justify-center pb-0.5 mt-5 text-base font-semibold text-blue-600 transition-all duration-200 border-b-2 border-transparent hover:border-blue-600 focus:border-blue-600"
+                            >
+                              {t.formatMessage({ id: 'CONTINUE.READING' })}
+                              <svg
+                                className="w-5 h-5"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                              >
+                                <path
+                                  fill-rule="evenodd"
+                                  d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                  clip-rule="evenodd"
+                                />
+                              </svg>
+                            </Link>
+                          </div>
+                        </div>
+                      </>
+                    ))
+                )}
+                {hasNextPage && (
+                  <div className="mx-auto mt-4 justify-center text-center">
+                    <ButtonLoadMore
+                      ref={ref}
+                      isFetchingNextPage={isFetchingNextPage}
+                      onClick={() => fetchNextPage()}
+                    />
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        </section>
-        <DashboardFooter />
+          </section>
+          <DashboardFooter />
+        </div>
       </LayoutDashboard>
     </>
   );

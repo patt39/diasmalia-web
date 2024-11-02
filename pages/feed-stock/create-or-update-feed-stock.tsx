@@ -1,6 +1,6 @@
 import { GetAssignedTypesAPI } from '@/api-site/assigned-type';
 import { CreateOrUpdateOneFeedStockAPI } from '@/api-site/feed-stock';
-import { useInputState, useReactHookForm } from '@/components/hooks';
+import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
 import { LoadingFile } from '@/components/ui-setting/ant';
 import { ErrorFile } from '@/components/ui-setting/ant/error-file';
@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { feedCategories } from '@/i18n/default-exports';
 import { FeedStockPostModel } from '@/types/feeding';
 import {
   AlertDangerNotification,
@@ -40,9 +41,16 @@ const CreateOrUpdateFeedStock = ({
   setShowModal: any;
   feedStock?: any;
 }) => {
-  const { control, setValue, handleSubmit, errors, hasErrors, setHasErrors } =
-    useReactHookForm({ schema });
-  const { t } = useInputState();
+  const {
+    t,
+    locale,
+    control,
+    setValue,
+    handleSubmit,
+    errors,
+    hasErrors,
+    setHasErrors,
+  } = useReactHookForm({ schema });
 
   useEffect(() => {
     if (feedStock) {
@@ -83,7 +91,7 @@ const CreateOrUpdateFeedStock = ({
     isError: isErrorAssignedTypes,
     data: dataAssignedTypes,
   } = GetAssignedTypesAPI({
-    take: 10,
+    take: 20,
     sort: 'desc',
     sortBy: 'createdAt',
   });
@@ -185,22 +193,7 @@ const CreateOrUpdateFeedStock = ({
                     placeholder="Select type"
                     valueType="text"
                     name="feedCategory"
-                    dataItem={[
-                      { id: 1, name: 'PRESTARTER' },
-                      { id: 2, name: 'STARTER' },
-                      { id: 3, name: 'GROWER' },
-                      { id: 4, name: 'FATTENER' },
-                      { id: 5, name: 'FINISHER' },
-                      { id: 6, name: 'FORAGES' },
-                      { id: 7, name: 'SILAGES' },
-                      { id: 8, name: 'BYPRODUCTS' },
-                      { id: 9, name: 'COMPLETEFEED' },
-                      { id: 10, name: 'CONCENTRATES' },
-                      { id: 11, name: 'LAYERS_FEED' },
-                      { id: 12, name: 'LACTATING_FEMALES' },
-                      { id: 13, name: 'GESTATION_FEMALES' },
-                      { id: 14, name: 'OTHER' },
-                    ]}
+                    dataItem={feedCategories.filter((i) => i?.lang === locale)}
                   />
                 </div>
                 <div className="mb-2">
@@ -212,20 +205,20 @@ const CreateOrUpdateFeedStock = ({
                     control={control}
                     type="number"
                     name="number"
-                    placeholder="Give an amount"
+                    placeholder="Give a number"
                     errors={errors}
                   />
                 </div>
                 <Label>
                   {t.formatMessage({ id: 'UNIT.WEIGHT' })}
-                  <span className="text-red-600">*</span>(gram)
+                  <span className="text-red-600">*</span>(kg)
                 </Label>
                 <div className="mb-2">
                   <TextInput
                     control={control}
                     type="number"
                     name="bagWeight"
-                    placeholder="Give an amount"
+                    placeholder="Give weight"
                     errors={errors}
                   />
                 </div>

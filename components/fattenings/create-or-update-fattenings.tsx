@@ -46,10 +46,12 @@ const CreateOrUpdateFattenings = ({
   showModal,
   setShowModal,
   fattening,
+  location,
 }: {
   showModal: boolean;
   setShowModal: any;
   fattening?: any;
+  location?: any;
 }) => {
   const {
     t,
@@ -113,6 +115,7 @@ const CreateOrUpdateFattenings = ({
     sort: 'desc',
     status: 'ACTIVE',
     sortBy: 'createdAt',
+    locationId: location?.id,
     animalTypeId: animalTypeId,
   });
 

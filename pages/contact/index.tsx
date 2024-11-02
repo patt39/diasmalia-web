@@ -1,15 +1,65 @@
+import { SendContactAPI } from '@/api-site/contact';
+import { useInputState } from '@/components/hooks';
 import { LayoutDashboard } from '@/components/layouts/dashboard';
-
 import { DashboardFooter } from '@/components/layouts/dashboard/footer';
+import { ButtonInput } from '@/components/ui-setting';
+import { TextAreaInput, TextInput } from '@/components/ui-setting/shadcn';
+import { Label } from '@/components/ui/label';
 import { PrivateComponent } from '@/components/util/private-component';
-import { useIntl } from 'react-intl';
+import { ContactsModel } from '@/types/contact';
+import { AlertDangerNotification, AlertSuccessNotification } from '@/utils';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import * as yup from 'yup';
+
+const schema = yup.object({
+  subject: yup.string().required('subject is required'),
+  description: yup.string().required('description is required'),
+});
 
 export function Contact() {
-  const t = useIntl();
+  const {
+    reset,
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<any>({
+    resolver: yupResolver(schema),
+    mode: 'onChange',
+    defaultValues: {
+      subject: '',
+      description: '',
+    },
+  });
+
+  const { t } = useInputState();
+
+  const { isPending: loading, mutateAsync: saveMutation } = SendContactAPI();
+
+  const onSubmit: SubmitHandler<ContactsModel> = async (
+    payload: ContactsModel,
+  ) => {
+    try {
+      await saveMutation({
+        ...payload,
+      });
+      AlertSuccessNotification({
+        text: 'Message send successfully',
+      });
+      reset({
+        subject: '',
+        description: '',
+      });
+    } catch (error: any) {
+      AlertDangerNotification({
+        text: `${error.response.data.message}`,
+      });
+    }
+  };
 
   return (
     <>
-      <LayoutDashboard title={'Faq'}>
+      <LayoutDashboard title={'Contact-us'}>
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
           <section className="py-10 sm:py-16 lg:py-24">
             <div className="px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl">
@@ -41,7 +91,7 @@ export function Contact() {
                         />
                       </svg>
                       <p className="mt-6 text-lg font-medium text-gray-900">
-                        +1-316-555-0116
+                        +39 3881155086
                       </p>
                       <p className="mt-1 text-lg font-medium text-gray-900">
                         +1-446-526-0117
@@ -66,14 +116,13 @@ export function Contact() {
                         />
                       </svg>
                       <p className="mt-6 text-lg font-medium text-gray-900">
-                        contact@example.com
+                        patrick.noubissi@yahoo.com
                       </p>
                       <p className="mt-1 text-lg font-medium text-gray-900">
                         hr@example.com
                       </p>
                     </div>
                   </div>
-
                   <div className="overflow-hidden bg-white rounded-xl">
                     <div className="p-6">
                       <svg
@@ -97,56 +146,49 @@ export function Contact() {
                         />
                       </svg>
                       <p className="mt-6 text-lg font-medium leading-relaxed text-gray-900">
-                        8502 Preston Rd. Ingle, Maine 98380, USA
+                        Via santa maria 17. 27029, Vigevano, IT
                       </p>
                     </div>
                   </div>
                 </div>
-
                 <div className="mt-6 overflow-hidden bg-white rounded-xl">
                   <div className="px-6 py-12 sm:p-12">
-                    <h3 className="text-3xl font-semibold text-center text-gray-900">
+                    <h3 className="text-2xl font-semibold text-center text-gray-900">
                       {t.formatMessage({ id: 'CONTACT.SUBTITLE' })}
                     </h3>
-
-                    <form action="#" method="POST" className="mt-14">
+                    <form className="mt-2" onSubmit={handleSubmit(onSubmit)}>
                       <div className="sm:col-span-2 lg:grid-cols-2 gap-x-5 gap-y-4">
-                        <div>
-                          <label className="text-base font-medium text-gray-900">
+                        <div className="items-center">
+                          <Label>
                             {t.formatMessage({ id: 'CONTACT.SUBJECT' })}
-                          </label>
-                          <div className="mt-2.5 relative">
-                            <input
-                              type="subject"
-                              name=""
-                              id=""
-                              placeholder="Subject"
-                              className="block w-full px-4 py-4 text-black placeholder-gray-500 transition-all duration-200 bg-white border border-gray-200 rounded-md focus:outline-none focus:border-blue-600 caret-blue-600"
-                            />
-                          </div>
+                          </Label>
+                          <TextInput
+                            control={control}
+                            type="text"
+                            name="subject"
+                            placeholder="Give a subject"
+                            errors={errors}
+                          />
                         </div>
-
-                        <div className="mt-4 sm:col-span-2">
-                          <label className="text-base font-medium text-gray-900">
-                            Message
-                          </label>
-                          <div className="mt-2.5 relative">
-                            <textarea
-                              name=""
-                              id=""
-                              placeholder="Your message"
-                              className="block w-full px-4 py-4 text-black placeholder-gray-500 transition-all duration-200 bg-white border border-gray-200 rounded-md resize-y focus:outline-none focus:border-blue-600 caret-blue-600"
-                            ></textarea>
-                          </div>
+                        <div className="my-4">
+                          <TextAreaInput
+                            control={control}
+                            label="Message"
+                            name="description"
+                            placeholder="We are listening ..."
+                            errors={errors}
+                          />
                         </div>
-
-                        <div className="sm:col-span-2">
-                          <button
+                        <div className="mt-4 flex items-center space-x-4">
+                          <ButtonInput
                             type="submit"
-                            className="inline-flex items-center justify-center w-full px-4 py-4 mt-2 text-base font-semibold text-white transition-all duration-200 bg-slate-600 border border-transparent rounded-md focus:outline-none"
+                            className="w-full"
+                            variant="primary"
+                            disabled={loading}
+                            loading={loading}
                           >
                             {t.formatMessage({ id: 'CONTACT.BUTTON' })}
-                          </button>
+                          </ButtonInput>
                         </div>
                       </div>
                     </form>

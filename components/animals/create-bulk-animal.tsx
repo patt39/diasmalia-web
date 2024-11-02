@@ -4,6 +4,7 @@ import { GetLocationsAPI } from '@/api-site/locations';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput, ButtonLoadMore } from '@/components/ui-setting';
 import { SelectInput, TextInput } from '@/components/ui-setting/shadcn';
+import { productionPhases } from '@/i18n/default-exports';
 import { AnimalModel } from '@/types/animal';
 import {
   AlertDangerNotification,
@@ -35,10 +36,10 @@ import {
 } from '../ui/tooltip';
 
 const schema = yup.object({
-  codeMother: yup.string().optional(),
-  codeFather: yup.string().optional(),
   birthday: yup.string().optional(),
   breedName: yup.string().optional(),
+  codeMother: yup.string().optional(),
+  codeFather: yup.string().optional(),
   locationCode: yup.string().optional(),
   number: yup.number().required('number is a required field'),
   weight: yup.number().required('weight is a required field'),
@@ -58,11 +59,20 @@ const CreateBulkAnimals = ({
   weaning?: any;
   farrowing?: any;
 }) => {
-  const { t, control, handleSubmit, errors, hasErrors, setHasErrors } =
-    useReactHookForm({ schema });
+  const {
+    t,
+    locale,
+    control,
+    handleSubmit,
+    errors,
+    hasErrors,
+    setHasErrors,
+    watch,
+  } = useReactHookForm({ schema });
   const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
   const { ref, inView } = useInView();
+  const watchProductionPhase = watch('productionPhase', '');
 
   // Create
   const { isPending: loading, mutateAsync: saveMutation } =
@@ -93,8 +103,10 @@ const CreateBulkAnimals = ({
     data: dataLocations,
   } = GetLocationsAPI({
     take: 10,
+    status: true,
     sort: 'desc',
     sortBy: 'createdAt',
+    productionPhase: watchProductionPhase,
     animalTypeId: animalTypeId,
   });
 
@@ -146,6 +158,7 @@ const CreateBulkAnimals = ({
     data: dataGrowthLocations,
   } = GetLocationsAPI({
     take: 10,
+    status: true,
     sort: 'desc',
     sortBy: 'createdAt',
     productionPhase: 'GROWTH',
@@ -173,8 +186,6 @@ const CreateBulkAnimals = ({
       document.removeEventListener('scroll', onScroll);
     };
   }, [fetchNextPage, hasNextPage, inView]);
-
-  const offspringsAlive = Number(farrowing?.litter - farrowing?.dead);
 
   return (
     <>
@@ -212,7 +223,6 @@ const CreateBulkAnimals = ({
                       type="number"
                       name="number"
                       placeholder="Give a number"
-                      defaultValue={`${offspringsAlive}`}
                       errors={errors}
                     />
                     <TooltipProvider>
@@ -243,7 +253,7 @@ const CreateBulkAnimals = ({
                   <div>
                     <Label>
                       <Label>{t.formatMessage({ id: 'VIEW.WEIGHT' })}</Label>
-                      <span className="text-red-600">*</span>
+                      <span className="text-red-600">*</span> (g)
                     </Label>
                     <TextInput
                       control={control}
@@ -396,15 +406,11 @@ const CreateBulkAnimals = ({
                       control={control}
                       errors={errors}
                       placeholder="Select a production phase"
-                      valueType="text"
+                      valueType="key"
                       name="productionPhase"
-                      defaultValue="GROWTH"
-                      dataItem={[
-                        { id: 1, name: 'GROWTH' },
-                        { id: 2, name: 'FATTENING' },
-                        { id: 3, name: 'REPRODUCTION' },
-                        { id: 4, name: 'GESTATION' },
-                      ]}
+                      dataItem={productionPhases.filter(
+                        (i) => i?.lang === locale,
+                      )}
                     />
                   </div>
                 ) : !weaning?.id ? (
@@ -418,10 +424,13 @@ const CreateBulkAnimals = ({
                       control={control}
                       errors={errors}
                       placeholder="Select a production phase"
-                      valueType="text"
+                      valueType="key"
                       name="productionPhase"
                       defaultValue="GROWTH"
-                      dataItem={[{ id: 1, name: 'GROWTH' }]}
+                      dataItem={[
+                        { id: 'GROWTH', name: 'GROWTH', lang: 'en' },
+                        { id: 'GROWTH', name: 'CROISSANCE', lang: 'fr' },
+                      ]}
                     />
                   </div>
                 ) : (
@@ -431,14 +440,16 @@ const CreateBulkAnimals = ({
                       <span className="text-red-600">*</span>
                     </Label>
                     <SelectInput
-                      firstOptionName="Choose a production type"
                       control={control}
                       errors={errors}
                       placeholder="Select a production phase"
                       valueType="text"
                       name="productionPhase"
                       defaultValue="GROWTH"
-                      dataItem={[{ id: 1, name: 'GROWTH' }]}
+                      dataItem={[
+                        { id: 'GROWTH', name: 'GROWTH', lang: 'en' },
+                        { id: 'GROWTH', name: 'CROISSANCE', lang: 'fr' },
+                      ]}
                     />
                   </div>
                 )}
@@ -497,7 +508,7 @@ const CreateBulkAnimals = ({
                       </Select>
                     )}
                   />
-                  {!farrowing?.id ? (
+                  {!farrowing?.id && watchProductionPhase ? (
                     <div className="mt-2">
                       <Label>
                         {t.formatMessage({ id: 'VIEW.LOCATION' })}

@@ -2,6 +2,7 @@ import { GetOneAnimalTypeAPI } from '@/api-site/animal-type';
 import { UpdateOneLoctionAPI } from '@/api-site/locations';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
+import { avesProductionPhases } from '@/i18n/default-exports';
 import { LocationModel } from '@/types/location';
 import {
   AlertDangerNotification,
@@ -35,6 +36,7 @@ const UpdateGrowthLocations = ({
 }) => {
   const {
     t,
+    locale,
     watch,
     control,
     errors,
@@ -141,12 +143,11 @@ const UpdateGrowthLocations = ({
                     control={control}
                     errors={errors}
                     placeholder="Select a production phase"
-                    valueType="text"
+                    valueType="key"
                     name="productionPhase"
-                    dataItem={[
-                      { id: 1, name: 'GROWTH' },
-                      { id: 2, name: 'LAYING' },
-                    ]}
+                    dataItem={avesProductionPhases.filter(
+                      (i) => i?.lang === locale,
+                    )}
                   />
                 </div>
                 <div className="my-2 items-center space-x-1">

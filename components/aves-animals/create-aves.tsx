@@ -1,9 +1,11 @@
 import { GetOneAnimalTypeAPI } from '@/api-site/animal-type';
 import { CreateOneAvesAnimalAPI } from '@/api-site/animals';
+import { GetBreedsAPI } from '@/api-site/breed';
 import { GetLocationsAPI } from '@/api-site/locations';
 import { useReactHookForm } from '@/components/hooks';
-import { ButtonInput } from '@/components/ui-setting';
+import { ButtonInput, ButtonLoadMore } from '@/components/ui-setting';
 import { SelectInput, TextInput } from '@/components/ui-setting/shadcn';
+import { avesProductionPhases } from '@/i18n/default-exports';
 import { AnimalModel } from '@/types/animal';
 import {
   AlertDangerNotification,
@@ -11,7 +13,9 @@ import {
 } from '@/utils/alert-notification';
 import { FileQuestion, XIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import { Controller, SubmitHandler } from 'react-hook-form';
+import { useInView } from 'react-intersection-observer';
 import * as yup from 'yup';
 import { DateInput, LoadingFile } from '../ui-setting/ant';
 import { ErrorFile } from '../ui-setting/ant/error-file';
@@ -40,6 +44,7 @@ const schema = yup.object({
   strain: yup.string().optional(),
   supplier: yup.string().optional(),
   quantity: yup.number().optional(),
+  breedName: yup.string().optional(),
   productionPhase: yup.string().required('productionPhase is required'),
   birthday: yup.string().required('birthday is a required field'),
   weight: yup.number().required('weight is a required field'),
@@ -54,11 +59,20 @@ const CreateAvesAnimals = ({
   setShowModal: any;
   animal?: any;
 }) => {
-  const { t, watch, control, handleSubmit, errors, hasErrors, setHasErrors } =
-    useReactHookForm({ schema });
+  const {
+    t,
+    watch,
+    control,
+    handleSubmit,
+    errors,
+    hasErrors,
+    setHasErrors,
+    locale,
+  } = useReactHookForm({ schema });
   const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
   const watchCages = watch('addCages', '');
+  const { ref, inView } = useInView();
   const watchProductionPhase = watch('productionPhase', '');
 
   const { data: animalType } = GetOneAnimalTypeAPI({
@@ -145,6 +159,42 @@ const CreateAvesAnimals = ({
     animalTypeId: animalTypeId,
   });
 
+  const {
+    isLoading: isLoadingBreeds,
+    isError: isErrorBreeds,
+    data: dataBreeds,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+  } = GetBreedsAPI({
+    take: 10,
+    sort: 'desc',
+    sortBy: 'createdAt',
+    animalTypeId: animalTypeId,
+  });
+
+  useEffect(() => {
+    let fetching = false;
+    if (inView) {
+      fetchNextPage();
+    }
+    const onScroll = async (event: any) => {
+      const { scrollHeight, scrollTop, clientHeight } =
+        event.target.scrollingElement;
+
+      if (!fetching && scrollHeight - scrollTop <= clientHeight * 1.5) {
+        fetching = true;
+        if (hasNextPage) await fetchNextPage();
+        fetching = false;
+      }
+    };
+
+    document.addEventListener('scroll', onScroll);
+    return () => {
+      document.removeEventListener('scroll', onScroll);
+    };
+  }, [fetchNextPage, hasNextPage, inView]);
+
   return (
     <>
       {showModal ? (
@@ -204,16 +254,14 @@ const CreateAvesAnimals = ({
                         <span className="text-red-600">*</span>
                       </Label>
                       <SelectInput
-                        firstOptionName="Choose a production type"
                         control={control}
                         errors={errors}
                         placeholder="Select a production phase"
                         valueType="text"
                         name="productionPhase"
-                        dataItem={[
-                          { id: 1, name: 'GROWTH' },
-                          { id: 2, name: 'LAYING' },
-                        ]}
+                        dataItem={avesProductionPhases.filter(
+                          (i) => i?.lang === locale,
+                        )}
                       />
                     </div>
                     <div className="my-2 flex space-x-4">
@@ -239,48 +287,46 @@ const CreateAvesAnimals = ({
                       </div>
                     </div>
                     {watchProductionPhase === 'GROWTH' ? (
-                      <>
-                        <div className="flex items-center space-x-4">
-                          <div className="my-2">
-                            <Label>
-                              {t.formatMessage({ id: 'NUMBER.ANIMALS' })}
-                              <span className="text-red-600">*</span>
-                            </Label>
-                            <TextInput
-                              control={control}
-                              type="number"
-                              name="quantity"
-                              placeholder="Number of animals"
-                              errors={errors}
-                            />
-                          </div>
-                          <div>
-                            <Label>
-                              {t.formatMessage({ id: 'TABANIMAL.WEIGHT' })}
-                              (g)<span className="text-red-600">*</span>
-                            </Label>
-                            <TextInput
-                              control={control}
-                              type="number"
-                              name="weight"
-                              placeholder="Give weight"
-                              errors={errors}
-                            />
-                          </div>
-                          <div className="">
-                            <Label>
-                              {t.formatMessage({ id: 'LAUNCHING.DATE' })}
-                              <span className="text-red-600">*</span>
-                            </Label>
-                            <DateInput
-                              control={control}
-                              errors={errors}
-                              placeholder="Starting date"
-                              name="birthday"
-                            />
-                          </div>
+                      <div className="my-2 flex items-center space-x-4">
+                        <div>
+                          <Label>
+                            {t.formatMessage({ id: 'NUMBER.ANIMALS' })}
+                            <span className="text-red-600">*</span>
+                          </Label>
+                          <TextInput
+                            control={control}
+                            type="number"
+                            name="quantity"
+                            placeholder="Number of animals"
+                            errors={errors}
+                          />
                         </div>
-                      </>
+                        <div>
+                          <Label>
+                            {t.formatMessage({ id: 'TABANIMAL.WEIGHT' })}
+                            (g)<span className="text-red-600">*</span>
+                          </Label>
+                          <TextInput
+                            control={control}
+                            type="number"
+                            name="weight"
+                            placeholder="Give weight"
+                            errors={errors}
+                          />
+                        </div>
+                        <div>
+                          <Label>
+                            {t.formatMessage({ id: 'LAUNCHING.DATE' })}
+                            <span className="text-red-600">*</span>
+                          </Label>
+                          <DateInput
+                            control={control}
+                            errors={errors}
+                            placeholder="Starting date"
+                            name="birthday"
+                          />
+                        </div>
+                      </div>
                     ) : (
                       <>
                         {animalType?.name === 'Poulets de chair' ? (
@@ -400,18 +446,81 @@ const CreateAvesAnimals = ({
                         {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
                       </Label>
                       <SelectInput
-                        firstOptionName="Choose a production type"
                         control={control}
                         errors={errors}
                         placeholder="Select a production phase"
-                        valueType="text"
+                        valueType="key"
                         name="productionPhase"
-                        dataItem={[
-                          { id: 1, name: 'GROWTH' },
-                          { id: 2, name: 'LAYING' },
-                        ]}
+                        dataItem={avesProductionPhases.filter(
+                          (i) => i?.lang === locale,
+                        )}
                       />
                     </div>
+                    {['Carnard', 'Dinde'].includes(animalType?.name) ? (
+                      <>
+                        <Label>
+                          Sélectionner la race
+                          <span className="text-red-600">*</span>
+                        </Label>
+                        <Controller
+                          control={control}
+                          name="breedName"
+                          render={({ field: { value, onChange } }) => (
+                            <Select
+                              onValueChange={onChange}
+                              name="breedName"
+                              value={value}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select a breed" />
+                              </SelectTrigger>
+                              <SelectContent className="dark:border-gray-800">
+                                <SelectGroup>
+                                  <SelectLabel>Breeds</SelectLabel>
+                                  {isLoadingBreeds ? (
+                                    <LoadingFile />
+                                  ) : isErrorBreeds ? (
+                                    <ErrorFile
+                                      title="404"
+                                      description="Error finding data please try again..."
+                                    />
+                                  ) : Number(
+                                      dataBreeds?.pages[0]?.data?.total,
+                                    ) <= 0 ? (
+                                    <ErrorFile description="Don't have breeds" />
+                                  ) : (
+                                    dataBreeds?.pages
+                                      .flatMap((page: any) => page?.data?.value)
+                                      .map((item, index) => (
+                                        <>
+                                          <SelectItem
+                                            key={index}
+                                            value={item.name}
+                                          >
+                                            {item.name}
+                                          </SelectItem>
+                                        </>
+                                      ))
+                                  )}
+                                  {hasNextPage && (
+                                    <div className="mx-auto mt-4 justify-center text-center">
+                                      <ButtonLoadMore
+                                        ref={ref}
+                                        isFetchingNextPage={isFetchingNextPage}
+                                        onClick={() => fetchNextPage()}
+                                      />
+                                    </div>
+                                  )}
+                                </SelectGroup>
+                              </SelectContent>
+                            </Select>
+                          )}
+                        />
+                      </>
+                    ) : (
+                      ''
+                    )}
+
                     {animalType?.name === 'Pondeuses' &&
                     watchProductionPhase === 'LAYING' ? (
                       <div className="my-2">
@@ -420,10 +529,9 @@ const CreateAvesAnimals = ({
                           <span className="text-red-600">*</span>
                         </Label>
                         <SelectInput
-                          firstOptionName="Choose a production type"
                           control={control}
                           errors={errors}
-                          placeholder="Put in cages ?"
+                          placeholder="Put in cages?"
                           valueType="text"
                           name="addCages"
                           dataItem={[
@@ -629,7 +737,7 @@ const CreateAvesAnimals = ({
                       )}
                     />
                   </div>
-                ) : watchProductionPhase === 'GROWTH' && watchCages === 'NO' ? (
+                ) : watchProductionPhase === 'GROWTH' ? (
                   <div className="w-full">
                     <Label>
                       {t.formatMessage({ id: 'LOCATION.CODE' })}

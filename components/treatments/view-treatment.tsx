@@ -1,12 +1,8 @@
 import { GetOneTreatmentAPI } from '@/api-site/treatment';
-import { useReactHookForm } from '@/components/hooks';
 import { XIcon } from 'lucide-react';
-import * as yup from 'yup';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Textarea } from '../ui/textarea';
-
-const schema = yup.object({});
 
 const ViewTreatment = ({
   showModal,
@@ -17,8 +13,6 @@ const ViewTreatment = ({
   setShowModal: any;
   treatment?: any;
 }) => {
-  const { control, errors } = useReactHookForm({ schema });
-
   const { data: getOneTreatment } = GetOneTreatmentAPI({
     treatmentId: treatment?.id,
   });

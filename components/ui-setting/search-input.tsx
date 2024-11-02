@@ -1,7 +1,7 @@
 import { Input } from '@/components/ui/input';
 
 interface Props {
-  onChange: any;
+  onChange?: any;
   className?: string;
   placeholder: string;
 }

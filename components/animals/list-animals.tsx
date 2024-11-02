@@ -33,7 +33,7 @@ import { UpdateAnimals } from './update-animal';
 import { ViewAnimal } from './view-animal';
 
 const ListAnimals = ({ item, index }: { item: any; index: number }) => {
-  const { t, isOpen, setIsOpen, setLoading } = useInputState();
+  const { t, isOpen, setIsOpen } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
   const [isView, setIsView] = useState(false);
 
@@ -41,18 +41,14 @@ const ListAnimals = ({ item, index }: { item: any; index: number }) => {
     DeleteOneAnimalAPI();
 
   const deleteItem = async (item: any) => {
-    setLoading(true);
     setIsOpen(true);
     try {
-      console.log(item);
       await deleteMutation({ animalId: item?.id });
       AlertSuccessNotification({
         text: 'Animal deleted successfully',
       });
-      setLoading(false);
       setIsOpen(false);
     } catch (error: any) {
-      setLoading(false);
       setIsOpen(true);
       AlertDangerNotification({
         text: `${error.response.data.message}`,
@@ -84,7 +80,7 @@ const ListAnimals = ({ item, index }: { item: any; index: number }) => {
               <Badge variant="default">{item?.status}</Badge>
             )}
           </div>
-          <div className="flex items-center justify-start space-x-4">
+          <div className="flex items-center justify-start space-x-2">
             <div>
               <h2 className="text-sm flex items-center font-medium text-gray-500">
                 <Anvil className="h-3.5 w-3.5  hover:shadow-xxl" />
@@ -109,14 +105,6 @@ const ListAnimals = ({ item, index }: { item: any; index: number }) => {
                 ) : item?.productionPhase === 'FATTENING' ? (
                   <p className="text-sm font-medium text-gray-500">
                     {t.formatMessage({ id: 'PRODUCTIONTYPE.FATTENING' })}
-                  </p>
-                ) : item?.productionPhase === 'GESTATION' ? (
-                  <p className="text-sm font-medium text-gray-500">
-                    {item?.productionPhase}
-                  </p>
-                ) : item?.productionPhase === 'REPRODUCTION' ? (
-                  <p className="text-sm font-medium text-gray-500">
-                    {item?.productionPhase}
                   </p>
                 ) : (
                   <p className="text-sm font-medium text-gray-500">

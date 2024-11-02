@@ -1,6 +1,7 @@
 import { CreateBulkLocationsAPI } from '@/api-site/locations';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
+import { productionPhases } from '@/i18n/default-exports';
 import { LocationModel } from '@/types/location';
 import {
   AlertDangerNotification,
@@ -35,7 +36,7 @@ const CreateBulkLocations = ({
   setShowModal: any;
   location?: any;
 }) => {
-  const { t, control, errors, handleSubmit, hasErrors, setHasErrors } =
+  const { t, locale, control, errors, handleSubmit, hasErrors, setHasErrors } =
     useReactHookForm({ schema });
   const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
@@ -128,14 +129,11 @@ const CreateBulkLocations = ({
                     control={control}
                     errors={errors}
                     placeholder="Select a production phase"
-                    valueType="text"
+                    valueType="key"
                     name="productionPhase"
-                    dataItem={[
-                      { id: 1, name: 'GROWTH' },
-                      { id: 2, name: 'FATTENING' },
-                      { id: 3, name: 'GESTATION' },
-                      { id: 4, name: 'REPRODUCTION' },
-                    ]}
+                    dataItem={productionPhases.filter(
+                      (i) => i?.lang === locale,
+                    )}
                   />
                 </div>
                 <div className="my-2 items-center space-x-1">

@@ -43,7 +43,7 @@ const ConfirmEmail = () => {
       const { data } = await validCodeAPI({ ...payload });
       setHasErrors(false);
       setLoading(false);
-      if (Number(data?.assignTypes.length) > 0) {
+      if (Number(data?.assignTypes?.length) > 0) {
         window.location.href = `${
           redirect ? redirect : `${data?.url}/dashboard`
         }`;
@@ -53,9 +53,9 @@ const ConfirmEmail = () => {
     } catch (error: any) {
       setHasErrors(true);
       setLoading(false);
-      setHasErrors(error.response.data.message);
+      setHasErrors(error?.response?.data?.message);
       AlertDangerNotification({
-        text: error.response.data.message,
+        text: error?.response?.data?.message,
       });
     }
   };
@@ -132,31 +132,6 @@ const ConfirmEmail = () => {
                 </ButtonInput>
               </div>
             </div>
-
-            {/* <div className="mt-4">
-              <TextInput
-                control={control}
-                label="Email Verification Code"
-                type="text"
-                name="code"
-                placeholder="Enter 6-digit code"
-                errors={errors}
-                required
-              />
-              <div className="mt-3 flex items-center justify-between">
-                <ButtonInput
-                  variant="primary"
-                  type="button"
-                  size="sm"
-                  className="ml-auto"
-                  onClick={() => resendCodeItem()}
-                  loading={isResend}
-                >
-                  Resend code
-                </ButtonInput>
-              </div>
-            </div> */}
-
             <div className="mt-6">
               <ButtonInput
                 type="submit"

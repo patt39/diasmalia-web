@@ -1,9 +1,14 @@
 import { CreateOneAnimalAPI, GetAnimalsAPI } from '@/api-site/animals';
 import { GetBreedsAPI } from '@/api-site/breed';
 import { GetLocationsAPI } from '@/api-site/locations';
-import { useReactHookForm } from '@/components/hooks';
-import { ButtonInput, ButtonLoadMore } from '@/components/ui-setting';
+import { useInputState, useReactHookForm } from '@/components/hooks';
+import {
+  ButtonInput,
+  ButtonLoadMore,
+  SearchInput,
+} from '@/components/ui-setting';
 import { SelectInput, TextInput } from '@/components/ui-setting/shadcn';
+import { productionPhases } from '@/i18n/default-exports';
 import { AnimalModel } from '@/types/animal';
 import {
   AlertDangerNotification,
@@ -54,11 +59,21 @@ const CreateAnimals = ({
   setShowModal: any;
   animal?: any;
 }) => {
-  const { t, control, handleSubmit, errors, hasErrors, setHasErrors } =
-    useReactHookForm({ schema });
+  const {
+    t,
+    locale,
+    control,
+    handleSubmit,
+    errors,
+    hasErrors,
+    setHasErrors,
+    watch,
+  } = useReactHookForm({ schema });
   const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
   const { ref, inView } = useInView();
+  const { search, handleSetSearch } = useInputState();
+  const watchProductionPhase = watch('productionPhase', '');
 
   // Create
   const { isPending: loading, mutateAsync: saveMutation } =
@@ -89,10 +104,13 @@ const CreateAnimals = ({
     isError: isErrorLocations,
     data: dataLocations,
   } = GetLocationsAPI({
+    search,
     take: 10,
+    status: true,
     sort: 'desc',
     sortBy: 'createdAt',
     animalTypeId: animalTypeId,
+    productionPhase: watchProductionPhase,
   });
 
   const {
@@ -100,6 +118,7 @@ const CreateAnimals = ({
     isError: isErrorBreeds,
     data: dataBreeds,
   } = GetBreedsAPI({
+    search,
     take: 10,
     sort: 'desc',
     sortBy: 'createdAt',
@@ -114,12 +133,13 @@ const CreateAnimals = ({
     hasNextPage,
     fetchNextPage,
   } = GetAnimalsAPI({
+    search,
     take: 10,
     sort: 'desc',
     gender: 'FEMALE',
     status: 'ACTIVE',
     sortBy: 'createdAt',
-    productionPhase: 'REPRODUCTION',
+    productionPhase: 'LACTATION',
     animalTypeId: animalTypeId,
   });
 
@@ -128,6 +148,7 @@ const CreateAnimals = ({
     isError: isErrorMales,
     data: dataMales,
   } = GetAnimalsAPI({
+    search,
     take: 10,
     sort: 'desc',
     gender: 'MALE',
@@ -266,6 +287,12 @@ const CreateAnimals = ({
                           <SelectValue placeholder="Select a female code" />
                         </SelectTrigger>
                         <SelectContent className="dark:border-gray-800">
+                          <div className="mr-auto items-center gap-2">
+                            <SearchInput
+                              placeholder="Search by code"
+                              onChange={handleSetSearch}
+                            />
+                          </div>
                           <SelectGroup>
                             <SelectLabel>Codes</SelectLabel>
                             {isLoadingFemales ? (
@@ -318,6 +345,12 @@ const CreateAnimals = ({
                             <SelectValue placeholder="Select a male code" />
                           </SelectTrigger>
                           <SelectContent className="dark:border-gray-800">
+                            <div className="mr-auto items-center gap-2">
+                              <SearchInput
+                                placeholder="Search by code"
+                                onChange={handleSetSearch}
+                              />
+                            </div>
                             <SelectGroup>
                               <SelectLabel>Codes</SelectLabel>
                               {isLoadingMales ? (
@@ -353,18 +386,14 @@ const CreateAnimals = ({
                   <div className="mb-2">
                     <Label>Phase de production</Label>
                     <SelectInput
-                      firstOptionName="Choose a production type"
                       control={control}
                       errors={errors}
                       placeholder="Select a production phase"
-                      valueType="text"
+                      valueType="key"
                       name="productionPhase"
-                      dataItem={[
-                        { id: 1, name: 'GROWTH' },
-                        { id: 2, name: 'FATTENING' },
-                        { id: 3, name: 'REPRODUCTION' },
-                        { id: 4, name: 'GESTATION' },
-                      ]}
+                      dataItem={productionPhases.filter(
+                        (i) => i?.lang === locale,
+                      )}
                     />
                   </div>
                 </div>
@@ -386,6 +415,12 @@ const CreateAnimals = ({
                           <SelectValue placeholder="Select a breed" />
                         </SelectTrigger>
                         <SelectContent className="dark:border-gray-800">
+                          <div className="mr-auto items-center gap-2">
+                            <SearchInput
+                              placeholder="Search by code"
+                              onChange={handleSetSearch}
+                            />
+                          </div>
                           <SelectGroup>
                             <SelectLabel>Breeds</SelectLabel>
                             {isLoadingBreeds ? (

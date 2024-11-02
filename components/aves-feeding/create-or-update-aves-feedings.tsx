@@ -192,7 +192,7 @@ const CreateOrUpdateAvesFeedings = ({
                 </div>
                 <div className="mb-2">
                   <Label>
-                    {t.formatMessage({ id: 'FEED.TYPE' })}(g)
+                    {t.formatMessage({ id: 'FEED.TYPE' })}(kg)
                     <span className="text-red-600">*</span>
                   </Label>
                   <TextInput

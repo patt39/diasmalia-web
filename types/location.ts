@@ -15,3 +15,10 @@ export type LocationModel = {
   userCreatedId: string;
   productionPhase: string;
 };
+
+export type LocationChangeModel = {
+  animals: {
+    code: string;
+  };
+  locationCode: string;
+};

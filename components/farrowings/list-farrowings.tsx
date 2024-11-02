@@ -106,7 +106,8 @@ const ListFarrowings = ({ item, index }: { item: any; index: number }) => {
                   {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
                 </span>
               </DropdownMenuItem>
-              {getOneWeaning?.farrowingId !== item?.id ? (
+              {getOneWeaning?.farrowingId !== item?.id &&
+              item?.animalType?.name !== 'Cuniculture' ? (
                 <DropdownMenuItem onClick={() => setIsWeaning(true)}>
                   <MilkOff className="size-4 text-gray-600 hover:text-violet-600" />
                   <span className="ml-2 cursor-pointer hover:text-violet-600">

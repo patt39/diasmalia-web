@@ -3,6 +3,7 @@ import { GetLocationsAPI } from '@/api-site/locations';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
 import { SelectInput } from '@/components/ui-setting/shadcn';
+import { checkPregnancyMethod, checkResults } from '@/i18n/default-exports';
 import { CheckPregnancysModel } from '@/types/breeding';
 import {
   AlertDangerNotification,
@@ -45,6 +46,7 @@ const CheckPregnancy = ({
   const {
     t,
     watch,
+    locale,
     control,
     setValue,
     handleSubmit,
@@ -54,7 +56,6 @@ const CheckPregnancy = ({
   } = useReactHookForm({ schema });
   const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
-
   const watchResult = watch('result');
 
   useEffect(() => {
@@ -140,15 +141,12 @@ const CheckPregnancy = ({
                     firstOptionName="Choose a size"
                     control={control}
                     errors={errors}
-                    placeholder="Select method"
+                    placeholder="Select a method"
                     valueType="text"
                     name="method"
-                    dataItem={[
-                      { id: 1, name: 'BLOOD_TEST' },
-                      { id: 2, name: 'RECTAL_PALPATION' },
-                      { id: 3, name: 'OBSERVATION' },
-                      { id: 4, name: 'ULTRASOUND' },
-                    ]}
+                    dataItem={checkPregnancyMethod.filter(
+                      (i) => i?.lang === locale,
+                    )}
                   />
                 </div>
                 <div className="mb-2">
@@ -161,12 +159,9 @@ const CheckPregnancy = ({
                     control={control}
                     errors={errors}
                     placeholder="Select result"
-                    valueType="text"
+                    valueType="key"
                     name="result"
-                    dataItem={[
-                      { id: 1, name: 'OPEN' },
-                      { id: 2, name: 'PREGNANT' },
-                    ]}
+                    dataItem={checkResults.filter((i) => i?.lang === locale)}
                   />
                 </div>
                 {watchResult === 'PREGNANT' ? (
@@ -185,7 +180,7 @@ const CheckPregnancy = ({
                     </div>
                     <div className="mt-2">
                       <Label>
-                        Sélectionnez un emplacement
+                        Sélectionner un emplacement
                         <span className="text-red-600">*</span>
                       </Label>
                       <Controller

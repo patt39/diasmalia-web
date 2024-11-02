@@ -26,7 +26,7 @@ import {
   TrashIcon,
 } from 'lucide-react';
 import { useState } from 'react';
-import { formatDateDDMMYY, formatWeight } from '../../utils/formate-date';
+import { formatDateDDMMYY } from '../../utils/formate-date';
 import { CreateOrUpdateFeedComposition } from './create-or-update-feed-composition';
 import { CreateOrUpdateFeedStock } from './create-or-update-feed-stock';
 
@@ -62,55 +62,68 @@ const ListFeedStock = ({ item, index }: { item: any; index: number }) => {
       >
         <div className="p-6 lg:px-8 lg:py-8">
           <div className="flex space-x-32">
-            {item?.feedCategory === 'PRESTARTER' ? (
+            {item?.feedCategory === 'PRESTARTER' ||
+            item?.feedCategory === 'PRÉDÉMARRAGE' ? (
               <div className="justify-items-start text-orange-600 text-base font-bold mb-2">
                 {t.formatMessage({ id: 'FEED.PRESTARTER' })}
               </div>
-            ) : item?.feedCategory === 'STARTER' ? (
+            ) : item?.feedCategory === 'STARTER' ||
+              item?.feedCategory === 'DÉMARRAGE' ? (
               <div className="justify-items-start text-amber-600 text-lg font-bold mb-2">
                 {t.formatMessage({ id: 'FEED.STARTER' })}
               </div>
-            ) : item?.feedCategory === 'GROWER' ? (
+            ) : item?.feedCategory === 'GROWER' ||
+              item?.feedCategory === 'CROISSANCE' ? (
               <div className="justify-items-start text-yellow-600 text-lg font-bold mb-2">
                 {t.formatMessage({ id: 'FEED.GROWER' })}
               </div>
-            ) : item?.feedCategory === 'FATTENER' ? (
+            ) : item?.feedCategory === 'FATTENER' ||
+              item?.feedCategory === 'ENGRAISSEUR' ? (
               <div className="justify-items-start text-lime-600 text-lg font-bold mb-2">
                 {t.formatMessage({ id: 'FEED.FATTENER' })}
               </div>
-            ) : item?.feedCategory === 'FINISHER' ? (
+            ) : item?.feedCategory === 'FINISHER' ||
+              item?.feedCategory === 'FINITION' ? (
               <div className="justify-items-start text-green-600 text-lg font-bold mb-2">
                 {t.formatMessage({ id: 'FEED.FINISHER' })}
               </div>
-            ) : item?.feedCategory === 'FORAGES' ? (
+            ) : item?.feedCategory === 'FORAGES' ||
+              item?.feedCategory === 'FOURAGES' ? (
               <div className="justify-items-start text-emerald-600 text-lg font-bold mb-2">
                 {t.formatMessage({ id: 'FEED.FORAGES' })}
               </div>
-            ) : item?.feedCategory === 'SILAGES' ? (
+            ) : item?.feedCategory === 'SILAGES' ||
+              item?.feedCategory === 'ENSILAGES' ? (
               <div className="justify-items-start text-teal-600 text-lg font-bold mb-2">
                 {t.formatMessage({ id: 'FEED.SILAGES' })}
               </div>
-            ) : item?.feedCategory === 'BYPRODUCTS' ? (
+            ) : item?.feedCategory === 'BYPRODUCTS' ||
+              item?.feedCategory === 'PRODUIT DÉRIVÉS' ? (
               <div className="justify-items-start text-cyan-600 text-sm font-bold mb-2">
                 {t.formatMessage({ id: 'FEED.BYPRODUCTS' })}
               </div>
-            ) : item?.feedCategory === 'COMPLETEFEED' ? (
+            ) : item?.feedCategory === 'COMPLETEFEED' ||
+              item?.feedCategory === 'ALIMENT COMPLÈT' ? (
               <div className="justify-items-start text-sky-600 text-sm font-bold mb-2">
                 {t.formatMessage({ id: 'FEED.COMPLETEFEED' })}
               </div>
-            ) : item?.feedCategory === 'CONCENTRATES' ? (
+            ) : item?.feedCategory === 'CONCENTRATES' ||
+              item?.feedCategory === 'CONCENTRÉS' ? (
               <div className="justify-items-start text-blue-600 text-lg font-bold mb-2">
                 {t.formatMessage({ id: 'FEED.CONCENTRATES' })}
               </div>
-            ) : item?.feedCategory === 'LACTATING_FEMALES' ? (
+            ) : item?.feedCategory === 'LACTATIZING FEMALE' ||
+              item?.feedCategory === 'FEMELLES ALLAITANTES' ? (
               <div className="justify-items-start text-indigo-600 text-sm font-bold mb-2">
                 {t.formatMessage({ id: 'FEED.LACTATINGFEMALES' })}
               </div>
-            ) : item?.feedCategory === 'GESTATION_FEMALES' ? (
+            ) : item?.feedCategory === 'PREGNANT FEMALE' ||
+              item?.feedCategory === 'FEMELLES GESTANTES' ? (
               <div className="justify-items-start text-violet-600 text-sm font-bold mb-2">
                 {t.formatMessage({ id: 'FEED.FEMALEGESTATION' })}
               </div>
-            ) : item?.feedCategory === 'LAYERS_FEED' ? (
+            ) : item?.feedCategory === 'LAY FOOD' ||
+              item?.feedCategory === 'ALIMENT PONTE' ? (
               <div className="justify-items-start text-purple-600 text-sm font-bold mb-2">
                 {t.formatMessage({ id: 'FEED.LAYERSFEED' })}
               </div>
@@ -150,8 +163,7 @@ const ListFeedStock = ({ item, index }: { item: any; index: number }) => {
               </h2>
               <h2 className="mb-2 flex items-center text-base font-bold text-gray-500 h-4 space-x-2">
                 <Anvil className="h-3.5 w-3.5  hover:shadow-xxl" />
-                {t.formatMessage({ id: 'TABANIMAL.WEIGHT' })}:{' '}
-                {formatWeight(item?.weight)}
+                {t.formatMessage({ id: 'TABANIMAL.WEIGHT' })}: {item?.weight}kg
               </h2>
               <h2 className="flex items-center text-base font-normal text-gray-500 h-4 space-x-2">
                 <Calendar className="h-3.5 w-3.5  hover:shadow-xxl" />
@@ -169,9 +181,6 @@ const ListFeedStock = ({ item, index }: { item: any; index: number }) => {
                   className="ml-40"
                 >
                   <MoreHorizontal className="h-4 w-4" />
-                  <span className="sr-only">
-                    {t.formatMessage({ id: 'ADD.MENU' })}
-                  </span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="dark:border-gray-800">

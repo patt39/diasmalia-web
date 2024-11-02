@@ -15,15 +15,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 const ListAnimalType = ({ item, index }: { item: any; index: number }) => {
-  const { t, isOpen, loading, setIsOpen, setLoading } = useInputState();
+  const { t, isOpen, setIsOpen } = useInputState();
 
-  const { mutateAsync: deleteMutation } = DeleteOneAssignedTypeAPI({
-    onSuccess: () => {},
-    onError: (error?: any) => {},
-  });
+  const { isPending: loading, mutateAsync: deleteMutation } =
+    DeleteOneAssignedTypeAPI();
 
   const deleteItem = async (item: any) => {
-    setLoading(true);
     setIsOpen(true);
     try {
       console.log(item);
@@ -31,10 +28,8 @@ const ListAnimalType = ({ item, index }: { item: any; index: number }) => {
       AlertSuccessNotification({
         text: 'Animal type deleted successfully',
       });
-      setLoading(false);
       setIsOpen(false);
     } catch (error: any) {
-      setLoading(false);
       setIsOpen(true);
       AlertDangerNotification({
         text: `${error.response.data.message}`,
@@ -51,18 +46,19 @@ const ListAnimalType = ({ item, index }: { item: any; index: number }) => {
         <Link href={`/${item?.animalTypeId}`}>
           <div className="py-8 px-10">
             <Image
-              height={260}
-              width={280}
+              height={300}
+              width={300}
               className="object-cover w-full h-full rounded-sm"
               src={`${item?.animalType?.photo ?? ''}`}
               alt="https://cdn.rareblocks.xyz/collection/celebration/images/blog/2/blog-post-2.jpg"
             />
-            <h3 className="mt-8 text-lg font-semibold text-black">
-              {item?.animalType?.name}
-            </h3>
-            <p className="mt-4 text-base text-gray-600">
+
+            {/* <p className="mt-4 text-base text-gray-600">
               {item?.animalType?.description}
-            </p>
+            </p> */}
+          </div>
+          <div className="text-lg font-semibold text-black text-center">
+            {item?.animalType?.name}
           </div>
         </Link>
         <div className="grid grid-cols-1 mb-2 sm:mt-2 px-20 sm:grid-cols-2 xl:grid-cols-3 sm:gap-8 xl:gap-12">

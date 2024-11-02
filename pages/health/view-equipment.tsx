@@ -71,41 +71,39 @@ const ViewEquipment = ({
                 <XIcon />
               </span>
             </button>
-            <form className="my-2">
-              <div className="px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl">
-                <div className="grid grid-cols-1 gap-5 sm:mt-12 sm:grid-cols-2 xl:grid-cols-3 sm:gap-8 xl:gap-12">
-                  {isLoadingHealth ? (
-                    <LoadingFile />
-                  ) : isErrorHealth ? (
-                    <ErrorFile
-                      title="404"
-                      description="Error finding data please try again..."
+            <div className="px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl">
+              <div className="grid grid-cols-1 gap-5 sm:mt-12 sm:grid-cols-2 xl:grid-cols-3 sm:gap-8 xl:gap-12">
+                {isLoadingHealth ? (
+                  <LoadingFile />
+                ) : isErrorHealth ? (
+                  <ErrorFile
+                    title="404"
+                    description="Error finding data please try again..."
+                  />
+                ) : Number(dataHealth?.pages[0]?.data?.total) <= 0 ? (
+                  <ErrorFile
+                    description={t.formatMessage({
+                      id: 'EQUIPMENTS.EMPTY',
+                    })}
+                  />
+                ) : (
+                  dataHealth?.pages
+                    .flatMap((page: any) => page?.data?.value)
+                    .map((item, index) => (
+                      <ListMapcheckBox key={index} item={item} />
+                    ))
+                )}
+                {hasNextPage && (
+                  <div className="mx-auto mt-4 justify-center text-center">
+                    <ButtonLoadMore
+                      ref={ref}
+                      isFetchingNextPage={isFetchingNextPage}
+                      onClick={() => fetchNextPage()}
                     />
-                  ) : Number(dataHealth?.pages[0]?.data?.total) <= 0 ? (
-                    <ErrorFile
-                      description={t.formatMessage({
-                        id: 'EQUIPMENTS.EMPTY',
-                      })}
-                    />
-                  ) : (
-                    dataHealth?.pages
-                      .flatMap((page: any) => page?.data?.value)
-                      .map((item, index) => (
-                        <ListMapcheckBox key={index} item={item} />
-                      ))
-                  )}
-                  {hasNextPage && (
-                    <div className="mx-auto mt-4 justify-center text-center">
-                      <ButtonLoadMore
-                        ref={ref}
-                        isFetchingNextPage={isFetchingNextPage}
-                        onClick={() => fetchNextPage()}
-                      />
-                    </div>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
-            </form>
+            </div>
           </div>
         </div>
       ) : null}

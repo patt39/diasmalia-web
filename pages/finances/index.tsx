@@ -321,6 +321,21 @@ export function Finances() {
                   </TabsTrigger>
                 </TabsList>
                 <div className="ml-auto flex items-center gap-2 cursor-pointer dark:border-gray-800">
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button variant="outline">
+                          {dataFinances?.pages[0]?.data?.total}
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent className="dark:border-gray-800">
+                        <p>
+                          {t.formatMessage({ id: 'ANIMALTYPE.TOOLTIP' })}{' '}
+                          {dataFinances?.pages[0]?.data?.total} transactions
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
@@ -405,21 +420,7 @@ export function Finances() {
                       </DropdownMenuSub>
                     </DropdownMenuContent>
                   </DropdownMenu>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button variant="outline">
-                          {dataFinances?.pages[0]?.data?.total}
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent className="dark:border-gray-800">
-                        <p>
-                          {t.formatMessage({ id: 'ANIMALTYPE.TOOLTIP' })}{' '}
-                          {dataFinances?.pages[0]?.data?.total} Transactions
-                        </p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+
                   <Button onClick={() => setIsOpen(true)}>
                     {t.formatMessage({ id: 'FINANCE.ADD' })}
                   </Button>

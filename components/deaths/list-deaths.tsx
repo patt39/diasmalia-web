@@ -51,21 +51,13 @@ const ListDeaths = ({ item, index }: { item: any; index: number }) => {
       <TableRow key={index} className="dark:border-gray-800">
         <TableCell className="font-medium">{item?.animal?.code}</TableCell>
         <TableCell className="font-medium">
-          {item?.animal?.productionPhase === 'REPRODUCTION' ? (
-            <p className="font-medium text-orange-600">
-              {capitalizeFirstLetter(item?.animal?.productionPhase)}
-            </p>
-          ) : item?.animal?.productionPhase === 'FATTENING' ? (
+          {item?.animal?.productionPhase === 'FATTENING' ? (
             <p className="font-medium text-blue-600">
               {t.formatMessage({ id: 'PRODUCTIONTYPE.FATTENING' })}
             </p>
           ) : item?.animal?.productionPhase === 'GROWTH' ? (
             <p className="font-medium text-cyan-600">
               {t.formatMessage({ id: 'FEED.GROWER' })}
-            </p>
-          ) : item?.animal?.productionPhase === 'GESTATION' ? (
-            <p className="font-medium text-sky-600">
-              {t.formatMessage({ id: 'ANIMALTYPE.GESTATIONS' })}
             </p>
           ) : (
             <p className="font-medium text-purple-600">

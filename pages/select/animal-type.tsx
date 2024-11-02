@@ -8,27 +8,28 @@ import { LoadingFile } from '@/components/ui-setting/ant';
 import { ErrorFile } from '@/components/ui-setting/ant/error-file';
 import { ButtonInput } from '@/components/ui-setting/button-input';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Checkbox } from '@/components/ui/checkbox';
 import { PublicComponent } from '@/components/util/public-component';
 import { AssignedTypeFormModel } from '@/types/assigned-type';
 import { AlertDangerNotification } from '@/utils';
 import { useRouter } from 'next/router';
-import { SubmitHandler } from 'react-hook-form';
+import { useEffect } from 'react';
+import { Controller, SubmitHandler } from 'react-hook-form';
 import { useInView } from 'react-intersection-observer';
 import * as yup from 'yup';
 
 const schema = yup.object({});
 
 const SelectAnimalType = () => {
-  const { ref } = useInView();
-  const { query, push } = useRouter();
-  const { redirect } = query;
+  const { ref, inView } = useInView();
+  const { push } = useRouter();
   const {
+    t,
     handleSubmit,
-    errors,
     loading,
     setLoading,
     hasErrors,
-    register,
+    control,
     setHasErrors,
   } = useReactHookForm({ schema });
 
@@ -68,34 +69,34 @@ const SelectAnimalType = () => {
     sortBy: 'createdAt',
   });
 
-  // useEffect(() => {
-  //   let fetching = false;
-  //   if (inView && hasNextPage) {
-  //     fetchNextPage();
-  //   }
-  //   const onScroll = async (event: any) => {
-  //     const { scrollHeight, scrollTop, clientHeight } =
-  //       event.target.scrollingElement;
+  useEffect(() => {
+    let fetching = false;
+    if (inView && hasNextPage) {
+      fetchNextPage();
+    }
+    const onScroll = async (event: any) => {
+      const { scrollHeight, scrollTop, clientHeight } =
+        event.target.scrollingElement;
 
-  //     if (!fetching && scrollHeight - scrollTop <= clientHeight * 1.5) {
-  //       fetching = true;
-  //       if (hasNextPage) await fetchNextPage();
-  //       fetching = false;
-  //     }
-  //   };
+      if (!fetching && scrollHeight - scrollTop <= clientHeight * 1.5) {
+        fetching = true;
+        if (hasNextPage) await fetchNextPage();
+        fetching = false;
+      }
+    };
 
-  //   document.addEventListener('scroll', onScroll);
-  //   return () => {
-  //     document.removeEventListener('scroll', onScroll);
-  //   };
-  // }, [fetchNextPage, hasNextPage, inView]);
+    document.addEventListener('scroll', onScroll);
+    return () => {
+      document.removeEventListener('scroll', onScroll);
+    };
+  }, [fetchNextPage, hasNextPage, inView]);
 
   return (
     <LayoutAuth title="Select farms">
       <div className="m-auto mt-10 w-full max-w-4xl rounded-lg p-6 py-6 bg-white shadow-md dark:bg-black md:mt-16">
         <div className="mt-2 mx-auto flex justify-center">
           <h6 className="text-center text-xl font-bold">
-            {`Choose animal type`}
+            {t.formatMessage({ id: 'SELECT.ANIMALTYPE' })}
           </h6>
         </div>
 
@@ -105,7 +106,6 @@ const SelectAnimalType = () => {
               <AlertDescription>{hasErrors}</AlertDescription>
             </Alert>
           )}
-
           <div className="space-y-2">
             {isLoadingAnimalTypes ? (
               <LoadingFile />
@@ -120,37 +120,46 @@ const SelectAnimalType = () => {
               dataAnimalTypes?.pages
                 .flatMap((page: any) => page?.data?.value)
                 .map((item, index) => (
-                  <div key={index}>
-                    <label
-                      htmlFor={item?.id}
-                      className="flex cursor-pointer items-start gap-4 rounded-lg border border-gray-200 p-4 transition hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-900"
-                    >
-                      <div className="flex items-center">
-                        &#8203;
-                        <input
-                          type="checkbox"
-                          className="size-4 rounded cursor-pointer border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:ring-offset-gray-900"
-                          id={item?.id}
-                          {...register('animalTypeIds')}
-                          value={item?.id}
-                        />
-                      </div>
-
-                      <div>
-                        <strong className="font-medium text-gray-900 dark:text-white">
-                          {item?.name}
-                        </strong>
-
-                        <p className="mt-1 text-pretty text-sm text-gray-700 dark:text-gray-200">
-                          {item?.description}
-                        </p>
-                      </div>
-                    </label>
-                  </div>
+                  <Controller
+                    key={index}
+                    control={control}
+                    name="animalTypeIds"
+                    render={({ field: { ...field } }) => (
+                      <>
+                        <div
+                          className="flex flex-row space-x-3 space-y-0 rounded-md border p-4 shadow items-center"
+                          key={item?.id}
+                        >
+                          <Checkbox
+                            checked={field?.value?.includes(item?.id)}
+                            onCheckedChange={(checked) => {
+                              return checked
+                                ? field.onChange([
+                                    ...(field.value || []),
+                                    item?.id,
+                                  ])
+                                : field?.onChange(
+                                    field?.value?.filter(
+                                      (value: any) => value !== item?.id,
+                                    ),
+                                  );
+                            }}
+                          />
+                          <div>
+                            <strong className="font-medium text-gray-900 dark:text-white">
+                              {item?.name}
+                            </strong>
+                            <p className="mt-1 text-pretty text-sm text-gray-700 dark:text-gray-200">
+                              {item?.description}
+                            </p>
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  />
                 ))
             )}
           </div>
-
           <div className="mx-auto mt-4 justify-center text-center">
             {hasNextPage && (
               <ButtonLoadMore
@@ -160,7 +169,6 @@ const SelectAnimalType = () => {
               />
             )}
           </div>
-
           <div className="mt-6">
             <ButtonInput
               type="submit"
@@ -169,7 +177,7 @@ const SelectAnimalType = () => {
               size="lg"
               loading={loading}
             >
-              Save preferences
+              {t.formatMessage({ id: 'SAVE.PREFERENCES' })}
             </ButtonInput>
           </div>
         </form>

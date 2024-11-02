@@ -189,7 +189,7 @@ const CreateFeedings = ({
 
                 <div className="mb-2 items-center w-full">
                   <Label>
-                    Sélectionnez les animaux à nourrir
+                    Sélectionner les animaux à nourrir
                     <span className="text-red-600">*</span>
                   </Label>
                   <Select>
@@ -311,7 +311,7 @@ const CreateFeedings = ({
                 </div>
                 <div>
                   <Label>
-                    Quantité (g)<span className="text-red-600">*</span>
+                    Quantité (kg)<span className="text-red-600">*</span>
                   </Label>
                   <TextInput
                     control={control}

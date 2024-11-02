@@ -7,6 +7,7 @@ import { useIntl } from 'react-intl';
 // import { AvatarComponent } from '../ui-setting/ant';
 // import { LangToggle } from '../ui-setting/lang-toggle';
 // import { Button } from '../ui/button';
+import { logoutUsersAPI } from '@/api-site/user';
 import { AvatarComponent } from '@/components/ui-setting/ant';
 import {
   DropdownMenu,
@@ -14,15 +15,20 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuPortal,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { firstLetterToUpperCase } from '@/utils/utils';
+import {
+  ClipboardList,
+  FolderArchive,
+  FolderDot,
+  LogOut,
+  UserPen,
+  Wallet,
+} from 'lucide-react';
+import Image from 'next/image';
 
 export type NavbarProps = {
   title: string;
@@ -39,6 +45,12 @@ interface Props {
 const HorizontalNavDashboard = ({ user, showDrawer }: Props) => {
   const t = useIntl();
   const { push } = useRouter();
+
+  const logoutUserItem = async () => {
+    await logoutUsersAPI();
+    push(`/login`);
+    location.reload();
+  };
 
   return (
     <>
@@ -66,25 +78,16 @@ const HorizontalNavDashboard = ({ user, showDrawer }: Props) => {
 
             <div className="ml-2 flex xl:ml-0">
               <div className="flex shrink-0 items-center">
-                <div className="block h-8 w-auto lg:hidden">
-                  <div className="flex items-center">
-                    <div className="relative shrink-0 cursor-pointer">
-                      <img
-                        src="https://landingfoliocom.imgix.net/store/collection/clarity-dashboard/images/logo-symbol.svg"
-                        alt={process.env.NEXT_PUBLIC_NAME_SITE}
-                      />
-                    </div>
-                  </div>
-                </div>
                 <div className="ml-4 hidden h-8 w-auto lg:block">
                   <div className="flex items-center">
                     <div className="relative shrink-0 cursor-pointer">
-                      <img
+                      <Image
+                        width={35}
+                        height={35}
                         src="https://landingfoliocom.imgix.net/store/collection/clarity-dashboard/images/logo-symbol.svg"
-                        alt={process.env.NEXT_PUBLIC_NAME_SITE}
+                        alt=""
                       />
                     </div>
-
                     <div className="ml-2 cursor-pointer">
                       <p className="text-lg font-bold">
                         {process.env.NEXT_PUBLIC_NAME_SITE}
@@ -123,77 +126,100 @@ const HorizontalNavDashboard = ({ user, showDrawer }: Props) => {
                           </div>
                         </button>
                       </DropdownMenuTrigger>
-                      {/* <DropdownMenuContent className="w-40 dark:border-gray-800 dark:bg-[#1c1b22]">
+                      <DropdownMenuContent className="w-40 dark:border-gray-800 dark:bg-[#1c1b22]">
+                        <DropdownMenuLabel>
+                          {t.formatMessage({ id: 'ACCOUNT' })}
+                        </DropdownMenuLabel>
+                        <DropdownMenuSeparator />
                         <DropdownMenuGroup>
-                          <DropdownMenuItem onClick={() => push(`/dashboard`)}>
-                            <span className="cursor-pointer">
-                              {t.formatMessage({ id: 'MENU.DASHBOARD' })}
+                          <DropdownMenuItem>
+                            <span className="cursor-pointer  hover:text-orange-600">
+                              {t.formatMessage({ id: 'PROFILE' })}
                             </span>
+                            <DropdownMenuShortcut>
+                              <UserPen className="h-3.5 w-3.5  hover:shadow-xxl  hover:text-orange-600" />
+                            </DropdownMenuShortcut>
                           </DropdownMenuItem>
-                          <DropdownMenuSeparator />
+                          {/* <DropdownMenuItem
+                            onClick={() => push(`/animal-types`)}
+                          >
+                            <span className="cursor-pointer  hover:text-amber-600">
+                              {t.formatMessage({ id: 'FARMS' })}
+                            </span>
+                            <DropdownMenuShortcut>
+                              <Tractor className="h-3.5 w-3.5  hover:shadow-xxl  hover:text-amber-600" />
+                            </DropdownMenuShortcut>
+                          </DropdownMenuItem> */}
+                          {user?.role === 'ADMIN' ? (
+                            <DropdownMenuItem
+                              onClick={() => push(`/tasks/${user?.id}`)}
+                            >
+                              <span className="cursor-pointer  hover:text-yellow-600">
+                                {t.formatMessage({ id: 'USER.TASKS' })}
+                              </span>
+                              <DropdownMenuShortcut>
+                                <ClipboardList className="h-3.5 w-3.5  hover:shadow-xxl  hover:text-yellow-600" />
+                              </DropdownMenuShortcut>
+                            </DropdownMenuItem>
+                          ) : (
+                            ''
+                          )}
+                          <DropdownMenuItem onClick={() => push(`/projects`)}>
+                            <span className="cursor-pointer  hover:text-lime-600">
+                              {t.formatMessage({ id: 'PROJECTS' })}
+                            </span>
+                            <DropdownMenuShortcut>
+                              <FolderDot className="h-3.5 w-3.5  hover:shadow-xxl  hover:text-lime-600" />
+                            </DropdownMenuShortcut>
+                          </DropdownMenuItem>
+                          {user?.role === 'SUPERADMIN' ? (
+                            <>
+                              <DropdownMenuItem
+                                onClick={() => push(`/archives`)}
+                              >
+                                <span className="cursor-pointer  hover:text-green-600">
+                                  Archives
+                                </span>
+                                <DropdownMenuShortcut>
+                                  <FolderArchive className="h-3.5 w-3.5  hover:shadow-xxl  hover:text-green-600" />
+                                </DropdownMenuShortcut>
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => push(`/finances`)}
+                              >
+                                <span className="cursor-pointer  hover:text-emerald-600">
+                                  Finances
+                                </span>
+                                <DropdownMenuShortcut>
+                                  <Wallet className="h-3.5 w-3.5  hover:shadow-xxl  hover:text-emerald-600" />
+                                </DropdownMenuShortcut>
+                              </DropdownMenuItem>
+                            </>
+                          ) : (
+                            ''
+                          )}
+                        </DropdownMenuGroup>
+                        {/* <DropdownMenuSeparator />
+                        <DropdownMenuGroup>
                           <DropdownMenuItem
                             onClick={() => push(`/contributors`)}
                           >
-                            <span className="cursor-pointer">
+                            <span className="cursor-pointer  hover:text-teal-600">
                               {t.formatMessage({ id: 'MENU.CONTRIBUTOR' })}
                             </span>
+                            <DropdownMenuShortcut>
+                              <Users className="h-3.5 w-3.5  hover:shadow-xxl  hover:text-teal-600" />
+                            </DropdownMenuShortcut>
                           </DropdownMenuItem>
-                        </DropdownMenuGroup>
+                        </DropdownMenuGroup> */}
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>
-                          <span className="cursor-pointer">
+                        <DropdownMenuItem onClick={() => logoutUserItem()}>
+                          <span className="cursor-pointer  hover:text-cyan-600">
                             {t.formatMessage({ id: 'MENU.LOGOUT' })}
                           </span>
-                        </DropdownMenuItem>
-                      </DropdownMenuContent> */}
-                      <DropdownMenuContent className="w-40 dark:border-gray-800 dark:bg-[#1c1b22]">
-                        <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuGroup>
-                          <DropdownMenuItem>
-                            Profile
-                            <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            Billing
-                            <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            Settings
-                            <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-                          </DropdownMenuItem>
-                        </DropdownMenuGroup>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuGroup>
-                          <DropdownMenuItem
-                            onClick={() => push(`/contributors`)}
-                          >
-                            <span className="cursor-pointer">
-                              {t.formatMessage({ id: 'MENU.CONTRIBUTOR' })}
-                            </span>
-                          </DropdownMenuItem>
-                          <DropdownMenuSub>
-                            <DropdownMenuSubTrigger>
-                              Invite users
-                            </DropdownMenuSubTrigger>
-                            <DropdownMenuPortal>
-                              <DropdownMenuSubContent>
-                                <DropdownMenuItem>Email</DropdownMenuItem>
-                                <DropdownMenuItem>Message</DropdownMenuItem>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem>More...</DropdownMenuItem>
-                              </DropdownMenuSubContent>
-                            </DropdownMenuPortal>
-                          </DropdownMenuSub>
-                          <DropdownMenuItem>
-                            New Team
-                            <DropdownMenuShortcut>⌘+T</DropdownMenuShortcut>
-                          </DropdownMenuItem>
-                        </DropdownMenuGroup>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem>
-                          Log out
-                          <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+                          <DropdownMenuShortcut>
+                            <LogOut className="h-3.5 w-3.5  hover:shadow-xxl  hover:text-cyan-600" />
+                          </DropdownMenuShortcut>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>

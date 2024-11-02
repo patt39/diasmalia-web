@@ -4,6 +4,7 @@ import { GetLocationsAPI } from '@/api-site/locations';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
 import { SelectInput, TextInput } from '@/components/ui-setting/shadcn';
+import { avesProductionPhases } from '@/i18n/default-exports';
 import { AnimalModel } from '@/types/animal';
 import {
   AlertDangerNotification,
@@ -51,6 +52,7 @@ const UpdateAvesAnimals = ({
 }) => {
   const {
     t,
+    locale,
     watch,
     control,
     setValue,
@@ -255,12 +257,11 @@ const UpdateAvesAnimals = ({
                           control={control}
                           errors={errors}
                           placeholder="Select a production phase"
-                          valueType="text"
+                          valueType="key"
                           name="productionPhase"
-                          dataItem={[
-                            { id: 1, name: 'GROWTH' },
-                            { id: 2, name: 'LAYING' },
-                          ]}
+                          dataItem={avesProductionPhases.filter(
+                            (i) => i?.lang === locale,
+                          )}
                         />
                       </div>
                     ) : (
@@ -274,7 +275,7 @@ const UpdateAvesAnimals = ({
                           firstOptionName="Choose a production type"
                           control={control}
                           errors={errors}
-                          placeholder="Add in cages ?"
+                          placeholder="Add in cages?"
                           valueType="text"
                           name="addCages"
                           dataItem={[
@@ -354,12 +355,11 @@ const UpdateAvesAnimals = ({
                         control={control}
                         errors={errors}
                         placeholder="Select a production phase"
-                        valueType="text"
+                        valueType="key"
                         name="productionPhase"
-                        dataItem={[
-                          { id: 1, name: 'GROWTH' },
-                          { id: 2, name: 'LAYING' },
-                        ]}
+                        dataItem={avesProductionPhases.filter(
+                          (i) => i?.lang === locale,
+                        )}
                       />
                     </div>
                     <div className="my-2 flex items-center space-x-16">

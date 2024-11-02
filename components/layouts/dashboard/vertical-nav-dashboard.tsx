@@ -1,16 +1,14 @@
 import { cn } from '@/lib/utils';
 import {
-  Calendar,
+  ClipboardList,
   Dice6Icon,
-  ExternalLinkIcon,
   Fence,
-  FolderArchive,
+  Fuel,
   HomeIcon,
   Hospital,
-  ImageIcon,
   MailQuestion,
   MessageCircleQuestion,
-  Wallet,
+  Users,
   Warehouse,
   Webhook,
 } from 'lucide-react';
@@ -45,13 +43,8 @@ const VerticalNavDashboard = ({ user }: Props) => {
       icon: <HomeIcon className={classIcon} />,
     },
     {
-      title: `${t.formatMessage({ id: 'MENU.PAGE' })}`,
-      href: `/${user?.username}`,
-      icon: <ExternalLinkIcon className={classIcon} />,
-    },
-    {
       title: `${t.formatMessage({ id: 'MENU.HOME' })}`,
-      href: '/home',
+      href: '/',
       icon: <Dice6Icon className={classIcon} />,
     },
   ]);
@@ -68,31 +61,26 @@ const VerticalNavDashboard = ({ user }: Props) => {
       icon: <Hospital className={classIcon} />,
     },
     {
-      title: `${t.formatMessage({ id: 'MENU.TASKS' })}`,
-      href: '/tasks',
-      icon: <Calendar className={classIcon} />,
-    },
-    {
       title: `${t.formatMessage({ id: 'MENU.FEEDSTOCK' })}`,
       href: '/feed-stock',
       icon: <Warehouse className={classIcon} />,
     },
     {
-      title: `${t.formatMessage({ id: 'MENU.ARCHIVES' })}`,
-      href: '/archives',
-      icon: <FolderArchive className={classIcon} />,
+      title: `${t.formatMessage({ id: 'MENU.CONTRIBUTOR' })}`,
+      href: '/contributors',
+      icon: <Users className={classIcon} />,
+    },
+    {
+      title: `${t.formatMessage({ id: 'MENU.TASKS' })}`,
+      href: '/tasks',
+      icon: <ClipboardList className={classIcon} />,
     },
   ]);
   const [transactionItems] = useState<NavbarProps[]>([
     {
-      title: `${t.formatMessage({ id: 'MENU.FINANCES' })}`,
-      href: '/finances',
-      icon: <Wallet className={classIcon} />,
-    },
-    {
       title: `${t.formatMessage({ id: 'MENU.SUBSCRIPTION' })}`,
-      href: '/subscription-plans',
-      icon: <ImageIcon className={classIcon} />,
+      href: '/billing',
+      icon: <Fuel className={classIcon} />,
     },
   ]);
   const [supportItems] = useState<NavbarProps[]>([
@@ -117,7 +105,7 @@ const VerticalNavDashboard = ({ user }: Props) => {
     <>
       <div className="flex h-full flex-1 flex-col justify-between overflow-x-scroll px-4">
         <div className="space-y-4">
-          <nav className="flex-1 space-y-2">
+          <nav className="mt-4 flex-1 space-y-1">
             {navigationItems.map((item: any, index: number) => {
               const isActive = pathname?.startsWith(item.href);
               return (
@@ -140,12 +128,10 @@ const VerticalNavDashboard = ({ user }: Props) => {
               );
             })}
           </nav>
-
           <>
             <p className="px-4 text-xs font-semibold uppercase tracking-widest text-gray-400">
               Activities
             </p>
-
             <nav className="mt-4 flex-1 space-y-1">
               {activitiesItems.map((item: any, index: number) => {
                 const isActive = pathname?.startsWith(item.href);
@@ -168,17 +154,8 @@ const VerticalNavDashboard = ({ user }: Props) => {
                   </Link>
                 );
               })}
-
-              {/* <a href="#" title="" className="flex items-center px-4 py-2.5 text-sm font-medium transition-all duration-200 text-gray-900 rounded-lg hover:bg-gray-200 group">
-                                        <svg className="flex-shrink-0 w-5 h-5 mr-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
-                                        </svg>
-                                        Hotjar
-                                        <span className="text-xs uppercase ml-auto font-semibold text-indigo-600 bg-indigo-50 border border-indigo-300 rounded-full inline-flex items-center px-2 py-0.5"> New </span>
-                                    </a> */}
             </nav>
           </>
-
           <>
             <p className="px-4 text-xs font-semibold uppercase tracking-widest text-gray-400">
               Transactions
@@ -207,7 +184,6 @@ const VerticalNavDashboard = ({ user }: Props) => {
               })}
             </nav>
           </>
-
           <>
             <p className="px-4 text-xs font-semibold uppercase tracking-widest text-gray-400">
               Support
@@ -234,20 +210,6 @@ const VerticalNavDashboard = ({ user }: Props) => {
                   </Link>
                 );
               })}
-
-              {/* <Link
-                    key={index}
-                    href={`${item.href}`}
-                    title={item?.title}
-                    className={`flex items-center px-4 py-2 text-sm font-medium transition-all duration-200 group rounded-lg ${isActive
-                      ? `dark:text-white bg-${user?.profile?.color}-600`
-                      : "text-black dark:text-white"
-                      } `}
-                  >
-                    {item?.icon}
-
-                    {item?.title}
-                  </Link> */}
             </nav>
           </>
         </div>

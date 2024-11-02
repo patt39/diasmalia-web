@@ -63,7 +63,7 @@ const TabAnimalDeathStatistics = ({
               <CardDescription>
                 {t.formatMessage({ id: 'ANIMAL.FEMALE.GROWTH' })}
               </CardDescription>
-              <CardTitle className="text-3xl">
+              <CardTitle className="text-2xl">
                 {animalStatistics?.sumAnimalFemaleGrowthDead ?? 0}
               </CardTitle>
             </CardHeader>
@@ -76,7 +76,7 @@ const TabAnimalDeathStatistics = ({
               <CardDescription>
                 {t.formatMessage({ id: 'ANIMAL.MALE.GROWTH' })}
               </CardDescription>
-              <CardTitle className="text-3xl">
+              <CardTitle className="text-2xl">
                 {animalStatistics?.sumAnimalMaleGrowthDead ?? 0}
               </CardTitle>
             </CardHeader>
@@ -89,7 +89,7 @@ const TabAnimalDeathStatistics = ({
               <CardDescription>
                 {t.formatMessage({ id: 'ANIMAL.FATTENING.DEAD' })}
               </CardDescription>
-              <CardTitle className="text-3xl">
+              <CardTitle className="text-2xl">
                 {animalStatistics?.sumAnimalFatteningDead ?? 0}
               </CardTitle>
             </CardHeader>

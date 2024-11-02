@@ -1,9 +1,14 @@
 import { GetAnimalsAPI, UpdateOneAnimalAPI } from '@/api-site/animals';
 import { GetBreedsAPI } from '@/api-site/breed';
 import { GetLocationsAPI } from '@/api-site/locations';
-import { useReactHookForm } from '@/components/hooks';
-import { ButtonInput, ButtonLoadMore } from '@/components/ui-setting';
+import { useInputState, useReactHookForm } from '@/components/hooks';
+import {
+  ButtonInput,
+  ButtonLoadMore,
+  SearchInput,
+} from '@/components/ui-setting';
 import { SelectInput, TextInput } from '@/components/ui-setting/shadcn';
+import { productionPhases } from '@/i18n/default-exports';
 import { AnimalModel } from '@/types/animal';
 import {
   AlertDangerNotification,
@@ -27,17 +32,7 @@ import {
   SelectValue,
 } from '../ui/select';
 
-const schema = yup.object({
-  code: yup.string().optional(),
-  weight: yup.number().optional(),
-  gender: yup.string().optional(),
-  birthday: yup.string().optional(),
-  breedName: yup.string().optional(),
-  locationCode: yup.string().optional(),
-  isCastrated: yup.string().optional(),
-
-  productionPhase: yup.string().optional(),
-});
+const schema = yup.object({});
 
 const UpdateAnimals = ({
   showModal,
@@ -50,6 +45,7 @@ const UpdateAnimals = ({
 }) => {
   const {
     t,
+    locale,
     control,
     setValue,
     handleSubmit,
@@ -58,6 +54,7 @@ const UpdateAnimals = ({
     setHasErrors,
   } = useReactHookForm({ schema });
   const { ref, inView } = useInView();
+  const { search, handleSetSearch } = useInputState();
 
   useEffect(() => {
     if (animal) {
@@ -107,6 +104,7 @@ const UpdateAnimals = ({
     isError: isErrorLocations,
     data: dataLocations,
   } = GetLocationsAPI({
+    search,
     take: 10,
     sort: 'desc',
     status: true,
@@ -133,6 +131,7 @@ const UpdateAnimals = ({
     hasNextPage,
     fetchNextPage,
   } = GetAnimalsAPI({
+    search,
     take: 10,
     sort: 'desc',
     gender: 'FEMALE',
@@ -147,6 +146,7 @@ const UpdateAnimals = ({
     isError: isErrorMales,
     data: dataMales,
   } = GetAnimalsAPI({
+    search,
     take: 10,
     sort: 'desc',
     gender: 'MALE',
@@ -272,6 +272,12 @@ const UpdateAnimals = ({
                           />
                         </SelectTrigger>
                         <SelectContent className="dark:border-gray-800">
+                          <div className="mr-auto items-center gap-2">
+                            <SearchInput
+                              placeholder="Search by code"
+                              onChange={handleSetSearch}
+                            />
+                          </div>
                           <SelectGroup>
                             <SelectLabel>Codes</SelectLabel>
                             {isLoadingFemales ? (
@@ -326,6 +332,12 @@ const UpdateAnimals = ({
                             />
                           </SelectTrigger>
                           <SelectContent className="dark:border-gray-800">
+                            <div className="mr-auto items-center gap-2">
+                              <SearchInput
+                                placeholder="Search by code"
+                                onChange={handleSetSearch}
+                              />
+                            </div>
                             <SelectGroup>
                               <SelectLabel>Codes</SelectLabel>
                               {isLoadingMales ? (
@@ -376,12 +388,11 @@ const UpdateAnimals = ({
                       control={control}
                       errors={errors}
                       placeholder="Select a production phase"
-                      valueType="text"
+                      valueType="key"
                       name="productionPhase"
-                      dataItem={[
-                        { id: 1, name: 'GROWTH' },
-                        { id: 2, name: 'REPRODUCTION' },
-                      ]}
+                      dataItem={productionPhases.filter(
+                        (i) => i?.lang === locale,
+                      )}
                     />
                   </div>
                 </div>
@@ -400,6 +411,12 @@ const UpdateAnimals = ({
                           <SelectValue placeholder={animal?.breed?.name} />
                         </SelectTrigger>
                         <SelectContent className="dark:border-gray-800">
+                          <div className="mr-auto items-center gap-2">
+                            <SearchInput
+                              placeholder="Search by code"
+                              onChange={handleSetSearch}
+                            />
+                          </div>
                           <SelectGroup>
                             <SelectLabel>Breeds</SelectLabel>
                             {isLoadingBreeds ? (
@@ -454,6 +471,12 @@ const UpdateAnimals = ({
                             />
                           </SelectTrigger>
                           <SelectContent className="dark:border-gray-800">
+                            <div className="mr-auto items-center gap-2">
+                              <SearchInput
+                                placeholder="Search by code"
+                                onChange={handleSetSearch}
+                              />
+                            </div>
                             <SelectGroup>
                               <SelectLabel>Location codes</SelectLabel>
                               {isLoadingLocations ? (
@@ -497,12 +520,11 @@ const UpdateAnimals = ({
                     />
                     {animal?.gender === 'MALE' && animal?.id ? (
                       <div className="my-2">
-                        <Label>Castré</Label>
+                        <Label>Castré?</Label>
                         <SelectInput
-                          firstOptionName="Choose a castration"
                           control={control}
                           errors={errors}
-                          placeholder="Choose if animal is castrated"
+                          placeholder="Animal is castrated?"
                           valueType="text"
                           name="isCastrated"
                           dataItem={[

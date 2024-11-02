@@ -15,6 +15,7 @@ import {
   formatDateDDMMYY,
   formatWeight,
 } from '@/utils';
+import { firstLetterToUpperCase } from '@/utils/utils';
 import { MoreHorizontal, PencilIcon, TrashIcon } from 'lucide-react';
 import { useState } from 'react';
 import { ActionModalDialog } from '../ui-setting/shadcn';
@@ -49,45 +50,59 @@ const ListAvesFeedings = ({ item, index }: { item: any; index: number }) => {
       <TableRow key={index} className="dark:border-gray-800">
         <TableCell className="font-medium">{item?.animal?.code}</TableCell>
         <TableCell className="font-medium">
-          {item?.feedStock?.feedCategory === 'PRESTARTER' ? (
+          {item?.feedStock?.feedCategory === 'PRESTARTER' ||
+          item?.feedStock?.feedCategory === 'PRÉDÉMARRAGE' ? (
             <p className="font-medium text-orange-600">
               {t.formatMessage({ id: 'FEED.PRESTARTER' })}
             </p>
-          ) : item?.feedStock?.feedCategory === 'CONCENTRATES' ? (
-            <p className="font-medium text-blue-600">
-              {t.formatMessage({ id: 'FEED.CONCENTRATES' })}
-            </p>
-          ) : item?.feedStock?.feedCategory === 'BYPRODUCTS' ? (
+          ) : item?.feedStock?.feedCategory === 'BYPRODUCTS' ||
+            item?.feedStock?.feedCategory === 'PRODUIT DÉRIVÉS' ? (
             <p className="font-medium text-cyan-600">
               {t.formatMessage({ id: 'BYPRODUCTS' })}
             </p>
-          ) : item?.feedStock?.feedCategory === 'COMPLETEFEED' ? (
-            <p className="font-medium text-sky-600">
-              {t.formatMessage({ id: 'FEED.COMPLETEFEED' })}
+          ) : item?.feedStock?.feedCategory === 'FORAGES' ||
+            item?.feedStock?.feedCategory === 'FOURAGES' ? (
+            <p className="font-medium text-emerald-600 ">
+              {t.formatMessage({ id: 'FEED.FORAGES' })}
             </p>
-          ) : item?.feedStock?.feedCategory === 'STARTER' ? (
+          ) : item?.feedStock?.feedCategory === 'SILAGES' ||
+            item?.feedStock?.feedCategory === 'ENSILAGES' ? (
+            <p className="font-medium text-teal-600">
+              {t.formatMessage({ id: 'FORAGES.SILAGES' })}
+            </p>
+          ) : item?.feedStock?.feedCategory === 'LACTATIZING FEMALE' ||
+            item?.feedStock?.feedCategory === 'FEMELLES ALLAITANTES' ? (
+            <p className="font-medium text-indigo-600">
+              {t.formatMessage({ id: 'FEED.LACTATINGFEMALES' })}
+            </p>
+          ) : item?.feedStock?.feedCategory === 'PREGNANT FEMALE' ||
+            item?.feedStock?.feedCategory === 'FEMELLES GESTANTES' ? (
+            <p className="font-medium text-violet-600">
+              {t.formatMessage({ id: 'FEED.FEMALEGESTATION' })}
+            </p>
+          ) : item?.feedStock?.feedCategory === 'STARTER' ||
+            item?.feedStock?.feedCategory === 'DÉMARRAGE' ? (
             <p className="font-medium text-amber-600">
               {t.formatMessage({ id: 'FEED.STARTER' })}
             </p>
-          ) : item?.feedStock?.feedCategory === 'GROWER' ? (
+          ) : item?.feedStock?.feedCategory === 'GROWER' ||
+            item?.feedStock?.feedCategory === 'CROISSANCE' ? (
             <p className="font-medium text-yellow-600">
               {t.formatMessage({ id: 'FEED.GROWER' })}
             </p>
-          ) : item?.feedStock?.feedCategory === 'FATTENER' ? (
+          ) : item?.feedStock?.feedCategory === 'FATTENER' ||
+            item?.feedStock?.feedCategory === 'ENGRAISSEUR' ? (
             <p className="font-medium text-lime-600">
               {t.formatMessage({ id: 'FEED.FATTENER' })}
             </p>
-          ) : item?.feedStock?.feedCategory === 'FINISHER' ? (
+          ) : item?.feedStock?.feedCategory === 'FINISHER' ||
+            item?.feedStock?.feedCategory === 'FINITION' ? (
             <p className="font-medium text-green-600">
               {t.formatMessage({ id: 'FEED.FINISHER' })}
             </p>
-          ) : item?.feedCategory === 'LAYERS_FEED' ? (
-            <div className="justify-items-start text-purple-600 text-sm font-bold mb-2">
-              {t.formatMessage({ id: 'FEED.LAYERSFEED' })}
-            </div>
           ) : (
             <p className="font-medium text-purple-600">
-              {item?.feedStock?.feedCategory}
+              {firstLetterToUpperCase(item?.feedStock?.feedCategory)}
             </p>
           )}
         </TableCell>

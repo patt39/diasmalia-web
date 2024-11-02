@@ -155,6 +155,48 @@ export const UpdateOneLoctionAPI = ({
   return result;
 };
 
+export const ChangeAnimalsLoctionAPI = ({
+  onSuccess,
+  onError,
+}: {
+  onSuccess?: () => void;
+  onError?: (error: any) => void;
+} = {}) => {
+  const queryKey = ['locations'];
+  const queryClient = useQueryClient();
+  const result = useMutation({
+    mutationKey: queryKey,
+    mutationFn: async (payload: any & { locationId: string }) => {
+      const { locationId } = payload;
+      return await makeApiCall({
+        action: 'changeLocation',
+        body: { ...payload },
+        urlParams: { locationId },
+      });
+    },
+    onError: async (error) => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onError) {
+        onError(error);
+      }
+    },
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+  });
+
+  return result;
+};
+
 export const GetLocationsAPI = (
   payload: {
     search?: string;

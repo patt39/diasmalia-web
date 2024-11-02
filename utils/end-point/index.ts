@@ -84,6 +84,7 @@ export const apiEndpoints: ClientApiMethods = {
   resendCode: GET(`${baseUrl}/resend-code`),
   validCode: POST(`${baseUrl}/confirm-email`),
   registerUser: POST(`${baseUrl}/register`),
+  logoutUsers: GET(`${baseUrl}/logout`),
 
   /****************** Animal Types route */
   getAnimalTypes: GET(`${baseUrl}/animal-type`),
@@ -102,6 +103,20 @@ export const apiEndpoints: ClientApiMethods = {
 
   /****************** Activity logs route */
   getActivityLogs: GET(`${baseUrl}/activity-logs`),
+
+  /****************** Contacts route */
+  sendContact: POST(`${baseUrl}/contacts`),
+
+  /****************** Faqs route */
+  getFaqs: GET(`${baseUrl}/faqs`),
+  createFaq: POST(`${baseUrl}/faqs/create`),
+  updateFaq: POST(`${baseUrl}/faqs/:faqId/edit`),
+
+  /****************** blog route */
+  getBlogs: GET(`${baseUrl}/blogs`),
+  creatBlog: POST(`${baseUrl}/blogs/create`),
+  viewBlog: GET(`${baseUrl}/blogs/:slug/view`),
+  updateBlog: POST(`${baseUrl}/blogs/:blogId/edit`),
 
   /****************** Sales route */
   getSales: GET(`${baseUrl}/sales`),
@@ -123,6 +138,7 @@ export const apiEndpoints: ClientApiMethods = {
   /****************** User route */
   ipLocation: GET(`${baseUrl}/ip-location`),
   getOneUserMe: GET(`${baseUrl}/users/me`),
+  verifyToken: GET(`${baseUrl}/verify/:token`),
 
   /****************** AssignedType route */
   createAssignedType: POST(`${baseUrl}/assigned-type/multiple/create`),
@@ -133,6 +149,25 @@ export const apiEndpoints: ClientApiMethods = {
 
   /****************** Contributors route */
   getContributors: GET(`${baseUrl}/contributors`),
+  addCollaborator: POST(`${baseUrl}/contributors/new`),
+  getOrganizations: GET(`${baseUrl}/contributors/organizations`),
+  inviteCollaborator: POST(`${baseUrl}/contributors/invitation`),
+  updateOneContributor: PUT(`${baseUrl}/profiles/:profileId/edit`),
+  resendEmail: GET(`${baseUrl}/contributors/:userId/resend-email`),
+  invitationResendEmail: GET(
+    `${baseUrl}/contributors/:userId/invitation/resend-email`,
+  ),
+  collaborationRejection: PUT(`${baseUrl}/users/rejection/:token`),
+  contributorConfirmation: PUT(`${baseUrl}/users/confirmation/:token`),
+  contributorInvitationConfirmation: PUT(
+    `${baseUrl}/users/invitation/confirmation/:token`,
+  ),
+  changeContributorStatus: PUT(
+    `${baseUrl}/contributors/:contributorId/role/edit`,
+  ),
+  changeOrganization: PUT(`${baseUrl}/organization/:organizationId/show`),
+  getUserByOrganization: GET(`${baseUrl}/organization/:organizationId/view`),
+  deleteOneContributor: DELETE(`${baseUrl}/contributors/:contributorId/delete`),
 
   /****************** Breeds route */
   getBreeds: GET(`${baseUrl}/breeds`),
@@ -152,6 +187,7 @@ export const apiEndpoints: ClientApiMethods = {
   createBulkLocations: POST(`${baseUrl}/locations/:animalTypeId/bulk`),
   updateOneLocation: PUT(`${baseUrl}/locations/:locationId/edit`),
   changeStatus: PUT(`${baseUrl}/locations/:locationId/change-status`),
+  changeLocation: PUT(`${baseUrl}/locations/:locationId/change-location`),
   deleteOneLocation: DELETE(`${baseUrl}/locations/:locationId/delete`),
 
   /****************** Animals route */
@@ -242,6 +278,13 @@ export const apiEndpoints: ClientApiMethods = {
   createOneMilking: POST(`${baseUrl}/milkings/bulk/create`),
   updateOneMilking: GET(`${baseUrl}/milkings/:milkingId/edit`),
   deleteOneMilking: DELETE(`${baseUrl}/milkings/:milkingId/delete`),
+
+  /****************** Tasks routes */
+  getTasks: GET(`${baseUrl}/tasks`),
+  assigneTask: POST(`${baseUrl}/tasks/create`),
+  viewTask: GET(`${baseUrl}/tasks/:taskId/show`),
+  updateTask: PUT(`${baseUrl}/tasks/:taskId/edit`),
+  deleteTask: DELETE(`${baseUrl}/tasks/:taskId/delete`),
 
   /****************** Incubations route */
   getIncubations: GET(`${baseUrl}/incubations`),

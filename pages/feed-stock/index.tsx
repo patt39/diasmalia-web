@@ -10,14 +10,12 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { useState } from 'react';
-import { formatWeight } from '../../utils/formate-date';
 import { TabFeedStock } from './tab-feed-stock';
 
 export function FeedStock() {
   const { t } = useInputState();
   const { data: dataAssignedTypes } = GetAssignedTypesAPI({
-    take: 10,
+    take: 20,
     sort: 'desc',
     sortBy: 'createdAt',
   });
@@ -25,10 +23,6 @@ export function FeedStock() {
   const { data: animalStatistics } = GetAnimalStatisticsAPI({
     animalTypeId: dataAssignedTypes?.pages[0]?.data?.value[0].animalTypeId,
   });
-
-  const [animalTypeName, setAnimalTypeName] = useState(
-    dataAssignedTypes?.pages[0]?.data?.value[0].animalType?.name,
-  );
 
   return (
     <>
@@ -71,7 +65,7 @@ export function FeedStock() {
                     {t.formatMessage({ id: 'TOTAL.WEIGHT' })}
                   </CardDescription>
                   <CardTitle className="text-4xl">
-                    {formatWeight(animalStatistics?.sumStocks?.weight) ?? 0}
+                    {animalStatistics?.sumStocks?.weight ?? 0}kg
                   </CardTitle>
                 </CardHeader>
               </Card>

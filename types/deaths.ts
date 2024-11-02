@@ -6,10 +6,10 @@ export type DeathsModel = {
   animalId: string;
   animal: {
     code: string;
-    isIsolated: boolean;
     status: string;
     gender: string;
     weight: number;
+    isIsolated: boolean;
     electronicCode: string;
     productionPhase: string;
   };

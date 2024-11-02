@@ -122,7 +122,7 @@ const CreateOrUpdateFeedComposition = ({
                   <div className="my-2 flex lg:col-span-2 space-x-4 items-center">
                     <div className="w-96">
                       <Label>
-                        Matière première
+                        {t.formatMessage({ id: 'RAW.MATERIAL' })}
                         <span className="text-red-600">*</span>
                       </Label>
                       <TextInput
@@ -135,7 +135,7 @@ const CreateOrUpdateFeedComposition = ({
                     </div>
                     <div>
                       <Label>
-                        Valeur
+                        {t.formatMessage({ id: 'FEED.QUANTITY' })}
                         <span className="text-red-600">*</span>
                       </Label>
                       <TextInput
