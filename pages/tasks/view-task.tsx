@@ -1,13 +1,10 @@
 import { ViewTaskAPI } from '@/api-site/task';
-import { useReactHookForm } from '@/components/hooks';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { formatDateDDMMYY } from '@/utils';
 import { XIcon } from 'lucide-react';
-import * as yup from 'yup';
-
-const schema = yup.object();
+import { useIntl } from 'react-intl';
 
 const ViewTask = ({
   showModal,
@@ -18,7 +15,7 @@ const ViewTask = ({
   setShowModal: any;
   task?: any;
 }) => {
-  const { t } = useReactHookForm({ schema });
+  const t = useIntl();
   const { data: getTask } = ViewTaskAPI({
     taskId: task?.id,
   });

@@ -11,6 +11,7 @@ import {
   TextAreaInput,
   TextInput,
 } from '@/components/ui-setting/shadcn';
+import { sellingMethods } from '@/i18n/default-exports';
 import { SalesModel } from '@/types/sale';
 import {
   AlertDangerNotification,
@@ -63,6 +64,7 @@ const CreateOrUpdateSales = ({
 }) => {
   const {
     t,
+    locale,
     watch,
     control,
     setValue,
@@ -212,7 +214,7 @@ const CreateOrUpdateSales = ({
                   <div className="flex mb-4 w-full items-center mt-2">
                     <Select>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select animals" />
+                        <SelectValue placeholder="select animals" />
                       </SelectTrigger>
                       <SelectContent className="dark:border-gray-800">
                         <div className="mr-auto items-center gap-2">
@@ -306,7 +308,7 @@ const CreateOrUpdateSales = ({
                     control={control}
                     type="text"
                     name="soldTo"
-                    placeholder="Customer name"
+                    placeholder="customer name"
                     errors={errors}
                   />
                 </div>
@@ -316,7 +318,7 @@ const CreateOrUpdateSales = ({
                     control={control}
                     type="text"
                     name="email"
-                    placeholder="Customer email"
+                    placeholder="customer email"
                     errors={errors}
                   />
                 </div>
@@ -326,7 +328,7 @@ const CreateOrUpdateSales = ({
                     control={control}
                     type="text"
                     name="address"
-                    placeholder="Customer address"
+                    placeholder="customer address"
                     errors={errors}
                   />
                 </div>
@@ -338,7 +340,7 @@ const CreateOrUpdateSales = ({
                     control={control}
                     type="number"
                     name="price"
-                    placeholder="Give a price"
+                    placeholder="price"
                     errors={errors}
                   />
                   <Label>Phone:</Label>
@@ -346,7 +348,7 @@ const CreateOrUpdateSales = ({
                     control={control}
                     type="number"
                     name="phone"
-                    placeholder="Customer phone number"
+                    placeholder="customer phone number"
                     errors={errors}
                   />
                 </div>
@@ -354,28 +356,20 @@ const CreateOrUpdateSales = ({
                 <span className="text-red-600">*</span>
                 <div className="mb-4 flex items-center space-x-1">
                   <SelectInput
-                    firstOptionName="Choose a sale method"
                     control={control}
                     errors={errors}
-                    placeholder="Select the selling method"
-                    valueType="text"
+                    placeholder="selling method"
+                    valueType="key"
                     name="method"
-                    dataItem={[
-                      { id: 1, name: 'FARM' },
-                      { id: 2, name: 'MARKET' },
-                      { id: 3, name: 'AUCTION' },
-                      { id: 4, name: 'CONTRACT' },
-                      { id: 5, name: 'SOCIALMEDIA' },
-                      { id: 12, name: 'OTHER' },
-                    ]}
+                    dataItem={sellingMethods.filter((i) => i?.lang === locale)}
                   />
                 </div>
                 <div className="mb-4">
                   <TextAreaInput
                     control={control}
-                    label="Details of sale"
+                    label="Détails de la vente"
                     name="note"
-                    placeholder="Give details about animals and client"
+                    placeholder="details about animals and client"
                     errors={errors}
                   />
                 </div>

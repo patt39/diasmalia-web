@@ -134,16 +134,20 @@ const CreateOrUpdateAvesFeedings = ({
                     </div>
                   </div>
                 )}
-                <div className="items-center">
-                  <Label>{t.formatMessage({ id: 'ANIMAL.CODE' })}</Label>
-                  <TextInput
-                    control={control}
-                    type="text"
-                    name="code"
-                    placeholder="Give a code"
-                    errors={errors}
-                  />
-                </div>
+                {!feeding?.id ? (
+                  <div className="items-center mb-2">
+                    <Label>{t.formatMessage({ id: 'ANIMAL.CODE' })}</Label>
+                    <TextInput
+                      control={control}
+                      type="text"
+                      name="code"
+                      errors={errors}
+                      disabled
+                    />
+                  </div>
+                ) : (
+                  ''
+                )}
                 <div className="mb-2">
                   <Label>
                     {t.formatMessage({ id: 'SELECT.FEEDTYPE' })}
@@ -159,7 +163,7 @@ const CreateOrUpdateAvesFeedings = ({
                         value={value}
                       >
                         <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select feed type" />
+                          <SelectValue placeholder="select feed type" />
                         </SelectTrigger>
                         <SelectContent className="dark:border-gray-800">
                           <SelectGroup>
@@ -192,14 +196,14 @@ const CreateOrUpdateAvesFeedings = ({
                 </div>
                 <div className="mb-2">
                   <Label>
-                    {t.formatMessage({ id: 'FEED.TYPE' })}(kg)
+                    {t.formatMessage({ id: 'TABFEEDING.QUANTITY' })}(kg)
                     <span className="text-red-600">*</span>
                   </Label>
                   <TextInput
                     control={control}
                     type="number"
                     name="quantity"
-                    placeholder="Give a quantity"
+                    placeholder="quantity"
                     errors={errors}
                   />
                 </div>

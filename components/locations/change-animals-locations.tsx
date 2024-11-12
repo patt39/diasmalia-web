@@ -1,7 +1,11 @@
 import { GetAnimalsAPI } from '@/api-site/animals';
 import { ChangeAnimalsLoctionAPI, GetLocationsAPI } from '@/api-site/locations';
-import { useReactHookForm } from '@/components/hooks';
-import { ButtonInput, ButtonLoadMore } from '@/components/ui-setting';
+import { useInputState, useReactHookForm } from '@/components/hooks';
+import {
+  ButtonInput,
+  ButtonLoadMore,
+  SearchInput,
+} from '@/components/ui-setting';
 import { LocationChangeModel } from '@/types/location';
 import {
   AlertDangerNotification,
@@ -55,6 +59,7 @@ const AnimalsChangeLocations = ({
   const animalTypeId = String(query?.animalTypeId);
   const selectedAnimals = watch('animals', []);
   const countSelectedAnimals = selectedAnimals.length;
+  const { search, handleSetSearch } = useInputState();
 
   const {
     isLoading: isLoadingAnimals,
@@ -77,6 +82,7 @@ const AnimalsChangeLocations = ({
     isError: isErrorLocations,
     data: dataLocations,
   } = GetLocationsAPI({
+    search,
     take: 10,
     sort: 'desc',
     sortBy: 'createdAt',
@@ -190,7 +196,7 @@ const AnimalsChangeLocations = ({
                     </Label>
                     <Select>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select animals" />
+                        <SelectValue placeholder="select animals" />
                       </SelectTrigger>
                       <SelectContent className="dark:border-gray-800">
                         <SelectGroup>
@@ -276,9 +282,15 @@ const AnimalsChangeLocations = ({
                         value={value}
                       >
                         <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select a location code" />
+                          <SelectValue placeholder="select location code" />
                         </SelectTrigger>
                         <SelectContent className="dark:border-gray-800">
+                          <div className="mr-auto items-center gap-2">
+                            <SearchInput
+                              placeholder="Search by code"
+                              onChange={handleSetSearch}
+                            />
+                          </div>
                           <SelectGroup>
                             <SelectLabel>Location codes</SelectLabel>
                             {isLoadingLocations ? (

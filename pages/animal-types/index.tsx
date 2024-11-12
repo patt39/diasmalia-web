@@ -12,7 +12,7 @@ import { useRouter } from 'next/router';
 import { ListAnimalType } from './list-animal-type';
 
 export function AnimalType() {
-  const { t } = useInputState();
+  const { t, userStorage } = useInputState();
   const { push, back } = useRouter();
 
   const {
@@ -27,7 +27,9 @@ export function AnimalType() {
 
   return (
     <>
-      <LayoutDashboard title={'Animal types'}>
+      <LayoutDashboard
+        title={`${userStorage?.user?.profile?.firstName} ${userStorage?.user?.profile?.lastName} - Animal types`}
+      >
         <CardHeader>
           <div className="flex items-center">
             <ButtonInput

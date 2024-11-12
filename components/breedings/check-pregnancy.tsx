@@ -1,3 +1,4 @@
+import { GetOneAnimalAPI } from '@/api-site/animals';
 import { CreateOneCheckAPI } from '@/api-site/breedings';
 import { GetLocationsAPI } from '@/api-site/locations';
 import { useReactHookForm } from '@/components/hooks';
@@ -12,7 +13,6 @@ import {
 import { Label } from '@radix-ui/react-label';
 import { XIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
 import { Controller, SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
 import { DateInput, LoadingFile } from '../ui-setting/ant';
@@ -48,7 +48,6 @@ const CheckPregnancy = ({
     watch,
     locale,
     control,
-    setValue,
     handleSubmit,
     errors,
     hasErrors,
@@ -58,12 +57,9 @@ const CheckPregnancy = ({
   const animalTypeId = String(query?.animalTypeId);
   const watchResult = watch('result');
 
-  useEffect(() => {
-    if (breeding) {
-      const fields = ['method', 'result', 'farrowingDate'];
-      fields?.forEach((field: any) => setValue(field, breeding[field]));
-    }
-  }, [breeding, setValue]);
+  const { data: getOneAnimal } = GetOneAnimalAPI({
+    animalId: breeding?.animalFemaleId,
+  });
 
   // Create data
   const { isPending: loading, mutateAsync: saveMutation } = CreateOneCheckAPI();
@@ -138,12 +134,11 @@ const CheckPregnancy = ({
                     <span className="text-red-600">*</span>
                   </Label>
                   <SelectInput
-                    firstOptionName="Choose a size"
                     control={control}
                     errors={errors}
-                    placeholder="Select a method"
-                    valueType="text"
+                    valueType="key"
                     name="method"
+                    placeholder="select method"
                     dataItem={checkPregnancyMethod.filter(
                       (i) => i?.lang === locale,
                     )}
@@ -155,10 +150,9 @@ const CheckPregnancy = ({
                     <span className="text-red-600">*</span>
                   </Label>
                   <SelectInput
-                    firstOptionName="Choose a size"
                     control={control}
                     errors={errors}
-                    placeholder="Select result"
+                    placeholder="result"
                     valueType="key"
                     name="result"
                     dataItem={checkResults.filter((i) => i?.lang === locale)}
@@ -174,61 +168,65 @@ const CheckPregnancy = ({
                       <DateInput
                         control={control}
                         errors={errors}
-                        placeholder="Pick a date"
+                        placeholder="farrowing date"
                         name="farrowingDate"
                       />
                     </div>
-                    <div className="mt-2">
-                      <Label>
-                        Sélectionner un emplacement
-                        <span className="text-red-600">*</span>
-                      </Label>
-                      <Controller
-                        control={control}
-                        name="locationCode"
-                        render={({ field: { value, onChange } }) => (
-                          <Select
-                            onValueChange={onChange}
-                            name={'locationCode'}
-                            value={value}
-                          >
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Select a location code" />
-                            </SelectTrigger>
-                            <SelectContent className="dark:border-gray-800">
-                              <SelectGroup>
-                                <SelectLabel>Location codes</SelectLabel>
-                                {isLoadingLocations ? (
-                                  <LoadingFile />
-                                ) : isErrorLocations ? (
-                                  <ErrorFile
-                                    title="404"
-                                    description="Error finding data please try again..."
-                                  />
-                                ) : Number(
-                                    dataLocations?.pages[0]?.data?.total,
-                                  ) <= 0 ? (
-                                  <ErrorFile description="Don't have location codes" />
-                                ) : (
-                                  dataLocations?.pages
-                                    .flatMap((page: any) => page?.data?.value)
-                                    .map((item, index) => (
-                                      <>
-                                        <SelectItem
-                                          key={index}
-                                          value={item?.code}
-                                        >
-                                          {item?.code}
-                                        </SelectItem>
-                                      </>
-                                    ))
-                                )}
-                              </SelectGroup>
-                            </SelectContent>
-                          </Select>
-                        )}
-                      />
-                    </div>
+                    {getOneAnimal?.location?._count?.animals > 1 ? (
+                      <div className="mt-2">
+                        <Label>
+                          Sélectionner un emplacement
+                          <span className="text-red-600">*</span>
+                        </Label>
+                        <Controller
+                          control={control}
+                          name="locationCode"
+                          render={({ field: { value, onChange } }) => (
+                            <Select
+                              onValueChange={onChange}
+                              name={'locationCode'}
+                              value={value}
+                            >
+                              <SelectTrigger className="w-full">
+                                <SelectValue placeholder="select location code" />
+                              </SelectTrigger>
+                              <SelectContent className="dark:border-gray-800">
+                                <SelectGroup>
+                                  <SelectLabel>Location codes</SelectLabel>
+                                  {isLoadingLocations ? (
+                                    <LoadingFile />
+                                  ) : isErrorLocations ? (
+                                    <ErrorFile
+                                      title="404"
+                                      description="Error finding data please try again..."
+                                    />
+                                  ) : Number(
+                                      dataLocations?.pages[0]?.data?.total,
+                                    ) <= 0 ? (
+                                    <ErrorFile description="Don't have location codes" />
+                                  ) : (
+                                    dataLocations?.pages
+                                      .flatMap((page: any) => page?.data?.value)
+                                      .map((item, index) => (
+                                        <>
+                                          <SelectItem
+                                            key={index}
+                                            value={item?.code}
+                                          >
+                                            {item?.code}
+                                          </SelectItem>
+                                        </>
+                                      ))
+                                  )}
+                                </SelectGroup>
+                              </SelectContent>
+                            </Select>
+                          )}
+                        />
+                      </div>
+                    ) : (
+                      ''
+                    )}
                   </>
                 ) : (
                   ''

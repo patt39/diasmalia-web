@@ -49,7 +49,7 @@ export const CopyShareLink = ({
             </div>
             <ButtonInput
               type="button"
-              variant="info"
+              variant="default"
               size="sm"
               className="px-3"
               onClick={() => {

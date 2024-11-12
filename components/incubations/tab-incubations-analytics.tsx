@@ -26,8 +26,7 @@ const TabIncubationsAnalytics = ({
 }: {
   animalTypeId: string;
 }) => {
-  const { t, locale } = useInputState();
-  const [periode, setPeriode] = useState('');
+  const { t, locale, userStorage } = useInputState();
   const [year, setYear] = useState<String>(`${dateTimeNowUtc().getFullYear()}`);
   const [months, setMonths] = useState<String>(`${getMonthNow(new Date())}`);
 
@@ -47,6 +46,7 @@ const TabIncubationsAnalytics = ({
   });
   const { data: animalStatistics } = GetAnimalStatisticsAPI({
     animalTypeId: animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   const chartConfig = {

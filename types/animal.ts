@@ -40,6 +40,7 @@ export type AnimalModel = {
   };
   _count: {
     select: {
+      cages: number;
       milkings: Number;
       weanings: Number;
       gestations: Number;
@@ -47,4 +48,12 @@ export type AnimalModel = {
       treatments: Number;
     };
   };
+};
+
+export type CagesModel = {
+  createdAt: Date;
+  id: string;
+  code: string;
+  dimention: number;
+  animalsPerCage: number;
 };

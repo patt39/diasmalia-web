@@ -31,7 +31,7 @@ import {
 import { ListIncubations } from './list-incubations';
 
 const TabIncubations = ({ animalTypeId }: { animalTypeId: string }) => {
-  const { t } = useInputState();
+  const { t, userStorage } = useInputState();
   const [pageItem, setPageItem] = useState(1);
   const [periode, setPeriode] = useState('');
 
@@ -47,6 +47,7 @@ const TabIncubations = ({ animalTypeId }: { animalTypeId: string }) => {
     sort: 'desc',
     sortBy: 'createdAt',
     animalTypeId: animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   return (

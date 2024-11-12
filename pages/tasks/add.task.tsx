@@ -143,7 +143,7 @@ const AssigneTask = ({
                   <SelectInput
                     control={control}
                     errors={errors}
-                    placeholder="Select task type"
+                    placeholder="select task type"
                     valueType="key"
                     name="type"
                     dataItem={taskType.filter((i) => i?.lang === locale)}
@@ -156,7 +156,7 @@ const AssigneTask = ({
                     <SelectInput
                       control={control}
                       errors={errors}
-                      placeholder="Select frequency"
+                      placeholder="select frequency"
                       valueType="text"
                       name="frequency"
                       dataItem={taskFrequency.filter((i) => i?.lang === locale)}
@@ -172,7 +172,7 @@ const AssigneTask = ({
                     <SelectInput
                       control={control}
                       errors={errors}
-                      placeholder="Select periode"
+                      placeholder="select periode"
                       valueType="text"
                       name="periode"
                       dataItem={taskPeriode.filter((i) => i?.lang === locale)}
@@ -182,7 +182,11 @@ const AssigneTask = ({
                   ''
                 )}
                 <div className="w-full my-2">
-                  <Label>Sélectionner le type d'élevage</Label>
+                  <Label>
+                    {t.formatMessage({
+                      id: 'SELECT.ANIMALTYPE',
+                    })}
+                  </Label>
                   <span className="text-red-600">*</span>
                   <Controller
                     control={control}
@@ -292,7 +296,7 @@ const AssigneTask = ({
                       <DateInput
                         control={control}
                         errors={errors}
-                        placeholder="Due date"
+                        placeholder="due date"
                         name="dueDate"
                       />
                     </div>
@@ -359,7 +363,7 @@ const AssigneTask = ({
                     control={control}
                     type="text"
                     name="title"
-                    placeholder="Task title"
+                    placeholder="title"
                     errors={errors}
                   />
                 </div>
@@ -368,7 +372,7 @@ const AssigneTask = ({
                     control={control}
                     label="Description de la tâche"
                     name="description"
-                    placeholder="Describe task"
+                    placeholder="describe task"
                     errors={errors}
                   />
                 </div>

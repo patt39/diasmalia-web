@@ -111,7 +111,6 @@ const UpdateIncubations = ({
                       control={control}
                       type="number"
                       name="quantityStart"
-                      placeholder="Number eggs incubated"
                       errors={errors}
                     />
                   </div>
@@ -123,7 +122,7 @@ const UpdateIncubations = ({
                       control={control}
                       type="number"
                       name="quantityEnd"
-                      placeholder="Number hatched"
+                      placeholder="eggs hatched"
                       errors={errors}
                     />
                   </div>
@@ -135,7 +134,6 @@ const UpdateIncubations = ({
                     <DateInput
                       control={control}
                       errors={errors}
-                      placeholder="Hatching date"
                       name="dueDate"
                     />
                   </div>

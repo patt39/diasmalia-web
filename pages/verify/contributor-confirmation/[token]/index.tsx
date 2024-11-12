@@ -99,7 +99,7 @@ const ContributorConfirmation = () => {
                 label="Password"
                 type="text"
                 name="password"
-                placeholder="Insert your password"
+                placeholder="insert password"
                 errors={errors}
               />
             </div>
@@ -109,7 +109,7 @@ const ContributorConfirmation = () => {
                 label="Confirm password"
                 type="text"
                 name="passwordConfirm"
-                placeholder="Confirm password"
+                placeholder="confirm password"
                 errors={errors}
               />
             </div>

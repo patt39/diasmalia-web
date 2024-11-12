@@ -2,7 +2,7 @@ import { GetOneAnimalTypeAPI } from '@/api-site/animal-type';
 import { CreateOneLocationAPI } from '@/api-site/locations';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
-import { avesProductionPhases } from '@/i18n/default-exports';
+import { avesProductionPhases, fishLocationType } from '@/i18n/default-exports';
 import { LocationModel } from '@/types/location';
 import {
   AlertDangerNotification,
@@ -26,8 +26,8 @@ const schema = yup.object({
   nest: yup.number().optional(),
   cages: yup.number().optional(),
   addCages: yup.string().optional(),
-  manger: yup.number().required('manger is required field'),
-  through: yup.number().required('through is required field'),
+  manger: yup.number().optional(),
+  through: yup.number().optional(),
   productionPhase: yup.string().required('productionPhase is required field'),
   squareMeter: yup.number().required('squareMeter is required field'),
 });
@@ -119,7 +119,7 @@ const CreateAvesLocations = ({
                     control={control}
                     type="text"
                     name="code"
-                    placeholder="Give a code"
+                    placeholder="code"
                     errors={errors}
                   />
                   <TooltipProvider>
@@ -141,10 +141,9 @@ const CreateAvesLocations = ({
                     <span className="text-red-600">*</span>
                   </Label>
                   <SelectInput
-                    firstOptionName="Choose a production type"
                     control={control}
                     errors={errors}
-                    placeholder="Select a production phase"
+                    placeholder="select production phase"
                     valueType="key"
                     name="productionPhase"
                     dataItem={avesProductionPhases.filter(
@@ -152,14 +151,10 @@ const CreateAvesLocations = ({
                     )}
                   />
                 </div>
-                {!['Canard'].includes(animalType?.name) ? (
+                {!['Canard', 'Pisciculture'].includes(animalType?.name) ? (
                   <div className="my-2">
-                    <Label>
-                      Ajouter des cages?
-                      <span className="text-red-600">*</span>
-                    </Label>
+                    <Label>Ajouter des cages?</Label>
                     <SelectInput
-                      firstOptionName="Choose a production type"
                       control={control}
                       errors={errors}
                       placeholder="Add cages?"
@@ -171,10 +166,25 @@ const CreateAvesLocations = ({
                       ]}
                     />
                   </div>
+                ) : animalType?.name === 'Pisciculture' ? (
+                  <div className="my-2">
+                    <Label>Type</Label>
+                    <span className="text-red-600">*</span>
+                    <SelectInput
+                      control={control}
+                      errors={errors}
+                      placeholder="type?"
+                      valueType="key"
+                      name="addCages"
+                      dataItem={fishLocationType.filter(
+                        (i) => i?.lang === locale,
+                      )}
+                    />
+                  </div>
                 ) : (
                   ''
                 )}
-                <div className="my-2 items-center space-x-1">
+                <div className="my-2 items-center">
                   {animalType?.name === 'Pisciculture' ? (
                     <>
                       <Label>
@@ -184,30 +194,23 @@ const CreateAvesLocations = ({
                         control={control}
                         type="number"
                         name="squareMeter"
-                        placeholder="Meters cube"
+                        placeholder="meters cube"
                         errors={errors}
                       />
                     </>
                   ) : (
                     <>
-                      <div className="items-center flex space-x-9 my-2">
+                      <div className="items-center flex space-x-4 my-2">
                         <div className="w-60">
-                          {watchCages === 'YES' ? (
-                            <Label>
-                              Dimensions
-                              <span className="text-red-600">*</span>
-                            </Label>
-                          ) : (
-                            <Label>
-                              {t.formatMessage({ id: 'SURFACE.AREA' })}
-                              <span className="text-red-600">*</span>
-                            </Label>
-                          )}
+                          <Label>
+                            {t.formatMessage({ id: 'SURFACE.AREA' })}
+                            <span className="text-red-600">*</span>
+                          </Label>
                           <TextInput
                             control={control}
                             type="number"
                             name="squareMeter"
-                            placeholder="Square meters"
+                            placeholder="square meters"
                             errors={errors}
                           />
                         </div>
@@ -220,7 +223,7 @@ const CreateAvesLocations = ({
                             control={control}
                             type="number"
                             name="manger"
-                            placeholder="Number of mangers"
+                            placeholder="number of mangers"
                             errors={errors}
                           />
                         </div>
@@ -233,7 +236,7 @@ const CreateAvesLocations = ({
                             control={control}
                             type="number"
                             name="through"
-                            placeholder="Number of throughs"
+                            placeholder="number of throughs"
                             errors={errors}
                           />
                         </div>
@@ -249,7 +252,7 @@ const CreateAvesLocations = ({
                             control={control}
                             type="number"
                             name="nest"
-                            placeholder="Number of nests"
+                            placeholder="number of nests"
                             errors={errors}
                           />
                         </div>
@@ -268,7 +271,7 @@ const CreateAvesLocations = ({
                             control={control}
                             type="number"
                             name="nest"
-                            placeholder="Number of nests"
+                            placeholder="number of nests"
                             errors={errors}
                           />
                         </div>
@@ -282,7 +285,7 @@ const CreateAvesLocations = ({
                             control={control}
                             type="number"
                             name="cages"
-                            placeholder="Number of cages"
+                            placeholder="number of cages"
                             errors={errors}
                           />
                         </div>

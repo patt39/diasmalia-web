@@ -515,7 +515,7 @@ export function Index() {
                         </TabsTrigger>
                       ) : (
                         <TabsTrigger value="aves-locations">
-                          {t.formatMessage({ id: 'ANIMALTYPE.LOCATIONS.FISH' })}
+                          {t.formatMessage({ id: 'ANIMALTYPE.LOCATIONS' })}
                         </TabsTrigger>
                       )}
                       <TabsTrigger value="aves-animals">

@@ -20,10 +20,11 @@ const TabAnimalDeathStatistics = ({
 }: {
   animalTypeId: string;
 }) => {
-  const { t } = useInputState();
+  const { t, userStorage } = useInputState();
 
   const { data: animalStatistics } = GetAnimalDeadSoldStatisticsAPI({
     animalTypeId: animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   return (

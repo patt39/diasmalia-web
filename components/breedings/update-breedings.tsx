@@ -45,7 +45,6 @@ const UpdateBreedings = ({
   const {
     t,
     errors,
-    loading,
     control,
     setValue,
     hasErrors,
@@ -62,8 +61,9 @@ const UpdateBreedings = ({
     }
   }, [breeding, setValue]);
 
-  // Create or Update data
-  const { mutateAsync: saveMutation } = CreateOrUpdateOneBreedingAPI();
+  // Update data
+  const { isPending: loading, mutateAsync: saveMutation } =
+    CreateOrUpdateOneBreedingAPI();
 
   const onSubmit: SubmitHandler<BreedingsModel> = async (
     payload: BreedingsModel,
@@ -158,7 +158,9 @@ const UpdateBreedings = ({
                           value={value}
                         >
                           <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select a male code" />
+                            <SelectValue
+                              placeholder={`${breeding?.maleCode}`}
+                            />
                           </SelectTrigger>
                           <SelectContent className="dark:border-gray-800">
                             <SelectGroup>
@@ -203,7 +205,9 @@ const UpdateBreedings = ({
                           value={value}
                         >
                           <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select a female code" />
+                            <SelectValue
+                              placeholder={`${breeding?.femaleCode}`}
+                            />
                           </SelectTrigger>
                           <SelectContent className="dark:border-gray-800">
                             <SelectGroup>
@@ -243,24 +247,21 @@ const UpdateBreedings = ({
                 <div className="mb-4">
                   <Label>Method</Label>
                   <SelectInput
-                    firstOptionName="Choose a method"
                     control={control}
                     errors={errors}
-                    placeholder="Select method"
                     valueType="text"
                     name="method"
                     dataItem={[
                       { id: 1, name: 'NATURAL' },
-                      { id: 1, name: 'INVITRO' },
+                      { id: 2, name: 'INVITRO' },
                     ]}
                   />
                 </div>
                 <div className="mb-4">
-                  <Label>Note</Label>
+                  <Label>Observation</Label>
                   <TextAreaInput
                     control={control}
                     name="note"
-                    placeholder="Note"
                     errors={errors}
                   />
                 </div>

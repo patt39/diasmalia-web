@@ -20,22 +20,28 @@ import {
   ClipboardPlus,
   Eye,
   History,
+  Hospital,
   MoreHorizontal,
+  Origami,
   PencilIcon,
   ScanQrCode,
   TrashIcon,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
+import { CreateFarrowings } from '../farrowings/create-farrowings';
+import { CreateTreatments } from '../treatments/create-treatments';
 import { ActionModalDialog } from '../ui-setting/shadcn';
 import { Badge } from '../ui/badge';
 import { UpdateAnimals } from './update-animal';
 import { ViewAnimal } from './view-animal';
 
 const ListAnimals = ({ item, index }: { item: any; index: number }) => {
-  const { t, isOpen, setIsOpen } = useInputState();
+  const { t, isOpen, setIsOpen, userStorage } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
   const [isView, setIsView] = useState(false);
+  const [isFarrowing, setIsFarrowing] = useState(false);
+  const [isTreatment, setIsTreatment] = useState(false);
 
   const { isPending: loading, mutateAsync: deleteMutation } =
     DeleteOneAnimalAPI();
@@ -80,7 +86,10 @@ const ListAnimals = ({ item, index }: { item: any; index: number }) => {
               <Badge variant="default">{item?.status}</Badge>
             )}
           </div>
-          <div className="flex items-center justify-start space-x-2">
+          <div
+            className="flex items-center justify-center space-x-2 cursor-pointer"
+            onClick={() => setIsView(true)}
+          >
             <div>
               <h2 className="text-sm flex items-center font-medium text-gray-500">
                 <Anvil className="h-3.5 w-3.5  hover:shadow-xxl" />
@@ -141,6 +150,12 @@ const ListAnimals = ({ item, index }: { item: any; index: number }) => {
                     {t.formatMessage({ id: 'TABANIMAL.VIEW' })}
                   </span>
                 </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setIsTreatment(true)}>
+                  <Hospital className="size-4 text-gray-600 hover:text-lime-600" />
+                  <span className="ml-2 cursor-pointer hover:text-lime-600">
+                    {t.formatMessage({ id: 'ANIMALTYPE.CARE' })}
+                  </span>
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setIsEdit(true)}>
                   <PencilIcon className="size-4 text-gray-600 hover:text-cyan-600" />
                   <span className="ml-2 cursor-pointer hover:text-cyan-600">
@@ -155,6 +170,17 @@ const ListAnimals = ({ item, index }: { item: any; index: number }) => {
                     </span>
                   </DropdownMenuItem>
                 </Link>
+                {item?.location?._count?.animals == 1 &&
+                ['GESTATION'].includes(item?.productionPhase) ? (
+                  <DropdownMenuItem onClick={() => setIsFarrowing(true)}>
+                    <Origami className="size-4 text-gray-600 hover:text-emerald-600" />
+                    <span className="ml-2 cursor-pointer hover:text-emerald-600">
+                      {t.formatMessage({ id: 'TABWEANING.FARROWING' })}
+                    </span>
+                  </DropdownMenuItem>
+                ) : (
+                  ''
+                )}
                 {['GESTATION', 'LACTATION', 'REPRODUCTION'].includes(
                   item?.productionPhase,
                 ) && item?.gender === 'FEMALE' ? (
@@ -181,12 +207,16 @@ const ListAnimals = ({ item, index }: { item: any; index: number }) => {
                 ) : (
                   ''
                 )}
-                <DropdownMenuItem onClick={() => setIsOpen(true)}>
-                  <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
-                  <span className="ml-2 cursor-pointer hover:text-red-600">
-                    {t.formatMessage({ id: 'TABANIMAL.DELETE' })}
-                  </span>
-                </DropdownMenuItem>
+                {userStorage?.role === 'SUPERADMIN' ? (
+                  <DropdownMenuItem onClick={() => setIsOpen(true)}>
+                    <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
+                    <span className="ml-2 cursor-pointer hover:text-red-600">
+                      {t.formatMessage({ id: 'TABANIMAL.DELETE' })}
+                    </span>
+                  </DropdownMenuItem>
+                ) : (
+                  ''
+                )}
               </DropdownMenuContent>
               <ActionModalDialog
                 loading={loading}
@@ -204,6 +234,16 @@ const ListAnimals = ({ item, index }: { item: any; index: number }) => {
               animal={item}
               showModal={isView}
               setShowModal={setIsView}
+            />
+            <CreateTreatments
+              animal={item}
+              showModal={isTreatment}
+              setShowModal={setIsTreatment}
+            />
+            <CreateFarrowings
+              animal={item}
+              showModal={isFarrowing}
+              setShowModal={setIsFarrowing}
             />
           </div>
         </div>

@@ -6,6 +6,8 @@ import {
   TextAreaInput,
   TextInput,
 } from '@/components/ui-setting/shadcn';
+import { Label } from '@/components/ui/label';
+import { financeType } from '@/i18n/default-exports';
 import { FinancesModel } from '@/types/finance';
 import {
   AlertDangerNotification,
@@ -33,6 +35,7 @@ const CreateOrUpdateFinances = ({
 }) => {
   const {
     t,
+    locale,
     control,
     setValue,
     handleSubmit,
@@ -104,35 +107,34 @@ const CreateOrUpdateFinances = ({
                     </div>
                   </div>
                 )}
-                <div className="mb-4">
+
+                <div className="mb-2">
+                  <Label>Type de transaction</Label>
+                  <SelectInput
+                    control={control}
+                    errors={errors}
+                    placeholder="transaction type"
+                    valueType="key"
+                    name="type"
+                    dataItem={financeType.filter((i) => i?.lang === locale)}
+                  />
+                </div>
+                <div className="my-2">
+                  <Label>Montant</Label>
                   <TextInput
                     control={control}
                     type="number"
                     name="amount"
-                    placeholder="Give an amount"
+                    placeholder="amount"
                     errors={errors}
-                  />
-                </div>
-                <div className="mb-4">
-                  <SelectInput
-                    firstOptionName="Choose a transaction type"
-                    control={control}
-                    errors={errors}
-                    placeholder="Select type"
-                    valueType="text"
-                    name="type"
-                    dataItem={[
-                      { id: 1, name: 'INCOME' },
-                      { id: 2, name: 'EXPENSE' },
-                    ]}
                   />
                 </div>
                 <div className="mb-4">
                   <TextAreaInput
                     control={control}
-                    label="Detail"
+                    label="Détail"
                     name="detail"
-                    placeholder="Give details about transaction"
+                    placeholder="transaction details"
                     errors={errors}
                   />
                 </div>

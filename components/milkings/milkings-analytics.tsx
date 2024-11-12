@@ -22,7 +22,7 @@ import {
 } from '../ui/dropdown-menu';
 
 const MilkingsAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
-  const { t, locale } = useInputState();
+  const { t, locale, userStorage } = useInputState();
   const [periode, setPeriode] = useState('');
   const [year, setYear] = useState<String>(`${dateTimeNowUtc().getFullYear()}`);
   const [months, setMonths] = useState<String>(`${getMonthNow(new Date())}`);
@@ -37,10 +37,12 @@ const MilkingsAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
   const { data: dataMilkingAnalyticsMonth } = MilkingsAnalyticAPI({
     year: String(year),
     animalTypeId: animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   const { data: dataMilkingAnalyticsYear } = MilkingsAnalyticAPI({
     animalTypeId: animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   const chartConfig = {

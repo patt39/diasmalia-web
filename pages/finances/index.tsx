@@ -6,12 +6,7 @@ import {
   ListFilter,
 } from 'lucide-react';
 
-import {
-  GetFinancesAnalyticAPI,
-  GetFinancesAPI,
-  GetFinanceStatisticsAPI,
-} from '@/api-site/finances';
-import { GetOneUserMeAPI } from '@/api-site/user';
+import { GetFinancesAnalyticAPI, GetFinancesAPI } from '@/api-site/finances';
 import { useInputState } from '@/components/hooks';
 import { DashboardFooter } from '@/components/layouts/dashboard/footer';
 import { ButtonLoadMore } from '@/components/ui-setting';
@@ -71,30 +66,25 @@ export function Finances() {
   const [periode, setPeriode] = useState('');
   const [year, setYear] = useState<String>(`${dateTimeNowUtc().getFullYear()}`);
   const [months, setMonths] = useState<String>(`${getMonthNow(new Date())}`);
-  const { data: user } = GetOneUserMeAPI();
-  const { t, isOpen, setIsOpen, locale } = useInputState();
-
-  const { data: financeStatistics } = GetFinanceStatisticsAPI();
+  const { t, isOpen, setIsOpen, locale, userStorage } = useInputState();
 
   const { data: dataFinancesAnalytics } = GetFinancesAnalyticAPI({
     year: String(year),
     months: String(months),
     periode: String(periode),
+    organizationId: userStorage?.organizationId,
   });
 
   const { data: dataFinancesAnalyticsMonth } = GetFinancesAnalyticAPI({
     year: String(year),
+    organizationId: userStorage?.organizationId,
   });
 
   const { data: dataFinancesAnalyticsYear } = GetFinancesAnalyticAPI({});
 
-  const revenue =
-    Number(financeStatistics?.sumIncome) -
-    Number(financeStatistics?.sumExpense);
-
   const {
     isLoading: isLoadingFinances,
-    isError: isErrorFiances,
+    isError: isErrorFinances,
     data: dataFinances,
     isFetchingNextPage,
     hasNextPage,
@@ -105,6 +95,7 @@ export function Finances() {
     take: 10,
     sort: 'desc',
     sortBy: 'createdAt',
+    organizationId: userStorage?.organizationId,
   });
 
   useEffect(() => {
@@ -145,7 +136,9 @@ export function Finances() {
 
   return (
     <>
-      <LayoutDashboard title={'Finances'}>
+      <LayoutDashboard
+        title={`${userStorage?.profile?.firstName} ${userStorage?.profile?.lastName} - Finances`}
+      >
         <div className="flex min-h-screen w-full flex-col">
           <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
             <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
@@ -170,21 +163,25 @@ export function Finances() {
                   <CreditCard className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  {revenue < 0 ? (
+                  {Number(dataFinances?.pages[0]?.data?.revenue) < 0 ? (
                     <div className="text-4xl my-2 font-bold text-red-600">
-                      {revenue.toLocaleString('en-US', {
+                      {Number(
+                        dataFinances?.pages[0]?.data?.revenue,
+                      ).toLocaleString('en-US', {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
                       })}{' '}
-                      {user?.profile?.currency?.symbol}
+                      {userStorage?.profile?.currency?.symbol}
                     </div>
                   ) : (
                     <div className="text-4xl my-2 font-bold text-green-600">
-                      {revenue.toLocaleString('en-US', {
+                      {Number(
+                        dataFinances?.pages[0]?.data?.revenue,
+                      ).toLocaleString('en-US', {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
                       })}{' '}
-                      {user?.profile?.currency?.symbol}
+                      {userStorage?.profile?.currency?.symbol}
                     </div>
                   )}
                 </CardContent>
@@ -297,7 +294,7 @@ export function Finances() {
                     <ChartTooltip
                       content={
                         <ChartTooltipContent
-                          className="w-[150px]"
+                          className="w-[200px]"
                           nameKey="views"
                         />
                       }
@@ -449,7 +446,7 @@ export function Finances() {
                       <TableBody>
                         {isLoadingFinances ? (
                           <LoadingFile />
-                        ) : isErrorFiances ? (
+                        ) : isErrorFinances ? (
                           <ErrorFile
                             title="404"
                             description="Error finding data please try again..."
@@ -460,15 +457,11 @@ export function Finances() {
                           dataFinances?.pages
                             .flatMap((page: any) => page?.data?.value)
                             .map((item, index) => (
-                              <>
-                                <>
-                                  <ListFinances
-                                    item={item}
-                                    index={index}
-                                    key={index}
-                                  />
-                                </>
-                              </>
+                              <ListFinances
+                                item={item}
+                                index={index}
+                                key={index}
+                              />
                             ))
                         )}
                       </TableBody>

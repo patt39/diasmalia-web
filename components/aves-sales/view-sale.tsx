@@ -1,12 +1,9 @@
 import { GetOneSaleAPI } from '@/api-site/sales';
-import { useReactHookForm } from '@/components/hooks';
 import { XIcon } from 'lucide-react';
-import * as yup from 'yup';
+import { useIntl } from 'react-intl';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Textarea } from '../ui/textarea';
-
-const schema = yup.object({});
 
 const ViewAvesSale = ({
   showModal,
@@ -17,8 +14,7 @@ const ViewAvesSale = ({
   setShowModal: any;
   sale?: any;
 }) => {
-  const { t } = useReactHookForm({ schema });
-
+  const t = useIntl();
   const { data: getOneSale } = GetOneSaleAPI({
     saleId: sale?.id,
   });

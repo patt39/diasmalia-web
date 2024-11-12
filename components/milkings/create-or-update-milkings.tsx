@@ -57,7 +57,6 @@ const CreateOrUpdateMilkings = ({
     handleSubmit,
     hasErrors,
     setHasErrors,
-    register,
   } = useReactHookForm({ schema });
   const { query } = useRouter();
   const { ref, inView } = useInView();
@@ -67,7 +66,7 @@ const CreateOrUpdateMilkings = ({
 
   useEffect(() => {
     if (milking) {
-      const fields = ['animals', 'note', 'quantity'];
+      const fields = ['note', 'quantity'];
       fields?.forEach((field: any) => setValue(field, milking[field]));
     }
   }, [milking, setValue]);
@@ -193,12 +192,12 @@ const CreateOrUpdateMilkings = ({
                 {!milking.id ? (
                   <div className="mb-2 w-full">
                     <Label>
-                      Sélectionez les animaux à traire
+                      Sélectionner les animaux à traire
                       <span className="text-red-600">*</span>
                     </Label>
                     <Select>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select animals" />
+                        <SelectValue placeholder="select animals" />
                       </SelectTrigger>
                       <SelectContent className="dark:border-gray-800">
                         <SelectGroup>
@@ -278,16 +277,15 @@ const CreateOrUpdateMilkings = ({
                     control={control}
                     type="number"
                     name="quantity"
-                    placeholder="Give a quantity"
+                    placeholder="quantity"
                     errors={errors}
                   />
                 </div>
                 <div className="mb-4">
                   <TextAreaInput
                     control={control}
-                    label="Description"
+                    label="Observation"
                     name="note"
-                    placeholder="Note"
                     errors={errors}
                   />
                 </div>

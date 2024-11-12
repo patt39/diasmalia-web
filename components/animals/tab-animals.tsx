@@ -33,7 +33,8 @@ import { CreateBulkAnimals } from './create-bulk-animal';
 import { ListAnimals } from './list-animals';
 
 const TabAnimals = ({ animalTypeId }: { animalTypeId: string }) => {
-  const { t, search, handleSetSearch, isOpen, setIsOpen } = useInputState();
+  const { t, search, handleSetSearch, isOpen, setIsOpen, userStorage } =
+    useInputState();
   const { ref, inView } = useInView();
   const [gender, setGender] = useState('');
   const [status, setStatus] = useState('');
@@ -59,6 +60,7 @@ const TabAnimals = ({ animalTypeId }: { animalTypeId: string }) => {
     sortBy: 'createdAt',
     productionPhase,
     animalTypeId: animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   useEffect(() => {
@@ -230,7 +232,13 @@ const TabAnimals = ({ animalTypeId }: { animalTypeId: string }) => {
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           className="cursor-pointer"
-                          onClick={() => setProductionPhase('GESTATIONS')}
+                          onClick={() => setProductionPhase('REPRODUCTION')}
+                        >
+                          Reproduction
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          className="cursor-pointer"
+                          onClick={() => setProductionPhase('GESTATION')}
                         >
                           Gestation
                         </DropdownMenuItem>
@@ -248,32 +256,39 @@ const TabAnimals = ({ animalTypeId }: { animalTypeId: string }) => {
             ) : (
               ''
             )}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="h-8 gap-1">
-                  <ListFilter className="h-3.5 w-3.5" />
-                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    {t.formatMessage({ id: 'CREATION.TYPE' })}
-                  </span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="dark:border-gray-800">
-                <DropdownMenuCheckboxItem
-                  className="cursor-pointer"
-                  onClick={() => setIsOpen(true)}
+            {userStorage?.role === 'SUPERADMIN' ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="h-8 gap-1">
+                    <ListFilter className="h-3.5 w-3.5" />
+                    <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                      {t.formatMessage({ id: 'CREATION.TYPE' })}
+                    </span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="end"
+                  className="dark:border-gray-800"
                 >
-                  <Replace className="h-4 w-4  hover:shadow-xxl mr-1" />
-                  {t.formatMessage({ id: 'ADD.AN.ANIMAL' })}
-                </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem
-                  className="cursor-pointer"
-                  onClick={() => setIsBulkOpen(true)}
-                >
-                  <ReplaceAll className="h-4 w-4  hover:shadow-xxl mr-1" />
-                  {t.formatMessage({ id: 'ADD.MANY.ANIMALS' })}
-                </DropdownMenuCheckboxItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                  <DropdownMenuCheckboxItem
+                    className="cursor-pointer"
+                    onClick={() => setIsOpen(true)}
+                  >
+                    <Replace className="h-4 w-4  hover:shadow-xxl mr-1" />
+                    {t.formatMessage({ id: 'ADD.AN.ANIMAL' })}
+                  </DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem
+                    className="cursor-pointer"
+                    onClick={() => setIsBulkOpen(true)}
+                  >
+                    <ReplaceAll className="h-4 w-4  hover:shadow-xxl mr-1" />
+                    {t.formatMessage({ id: 'ADD.MANY.ANIMALS' })}
+                  </DropdownMenuCheckboxItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              ''
+            )}
           </div>
         </div>
       </CardHeader>

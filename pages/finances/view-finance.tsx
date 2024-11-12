@@ -1,11 +1,7 @@
 import { GetOneFinanceAPI } from '@/api-site/finances';
-import { useReactHookForm } from '@/components/hooks';
-import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { XIcon } from 'lucide-react';
-import * as yup from 'yup';
-
-const schema = yup.object({});
 
 const ViewFinance = ({
   showModal,
@@ -16,8 +12,6 @@ const ViewFinance = ({
   setShowModal: any;
   finance?: any;
 }) => {
-  const { control, errors } = useReactHookForm({ schema });
-
   const { data: getOneFinance } = GetOneFinanceAPI({
     financeId: finance.id,
   });
@@ -36,19 +30,10 @@ const ViewFinance = ({
                 <XIcon />
               </span>
             </button>
-            <form className="mt-4">
-              <div className="flex-auto justify-center p-2">
-                <div className="mb-4">
-                  <Input disabled defaultValue={getOneFinance.amount} />
-                </div>
-                <div className="mb-4">
-                  <Input defaultValue={getOneFinance.type} disabled />
-                </div>
-              </div>
-              <div className="mb-4">
-                <Textarea defaultValue={getOneFinance.detail} disabled />
-              </div>
-            </form>
+            <div className="mt-8 mb-4">
+              <Label>Details</Label>
+              <Textarea defaultValue={getOneFinance.detail} disabled />
+            </div>
           </div>
         </div>
       ) : null}

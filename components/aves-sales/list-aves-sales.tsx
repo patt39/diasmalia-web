@@ -1,6 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
 import { DeleteOneSaleAPI, SalesPdfDownloadAPI } from '@/api-site/sales';
-import { GetOneUserMeAPI } from '@/api-site/user';
 import { useInputState } from '@/components/hooks';
 import { Button } from '@/components/ui/button';
 import {
@@ -29,10 +28,9 @@ import { UpdateAvesSales } from './update-aves-sales';
 import { ViewAvesSale } from './view-sale';
 
 const ListAvesSales = ({ item, index }: { item: any; index: number }) => {
-  const { t, isOpen, setIsOpen } = useInputState();
+  const { t, isOpen, setIsOpen, userStorage } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
   const [isView, setIsView] = useState(false);
-  const { data: user } = GetOneUserMeAPI();
 
   const handleDownloadPdf = async () => {
     try {
@@ -100,7 +98,7 @@ const ListAvesSales = ({ item, index }: { item: any; index: number }) => {
         <TableCell className="hidden md:table-cell">{item?.number}</TableCell>
         <TableCell className="hidden md:table-cell">
           {item?.price.toLocaleString('en-US')}{' '}
-          {user?.profile?.currency?.symbol}
+          {userStorage?.profile?.currency?.symbol}
         </TableCell>
         <TableCell className="hidden md:table-cell">
           {formatDateDDMMYY(item?.createdAt as Date)}

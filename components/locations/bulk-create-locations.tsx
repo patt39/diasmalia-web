@@ -125,10 +125,9 @@ const CreateBulkLocations = ({
                     {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
                   </Label>
                   <SelectInput
-                    firstOptionName="Choose a production type"
                     control={control}
                     errors={errors}
-                    placeholder="Select a production phase"
+                    placeholder="select production phase"
                     valueType="key"
                     name="productionPhase"
                     dataItem={productionPhases.filter(
@@ -147,7 +146,7 @@ const CreateBulkLocations = ({
                         control={control}
                         type="number"
                         name="squareMeter"
-                        placeholder="Square meters"
+                        placeholder="square meters"
                         errors={errors}
                       />
                     </div>
@@ -160,7 +159,7 @@ const CreateBulkLocations = ({
                         control={control}
                         type="number"
                         name="manger"
-                        placeholder="Number of mangers"
+                        placeholder="number of mangers"
                         errors={errors}
                       />
                     </div>
@@ -173,7 +172,7 @@ const CreateBulkLocations = ({
                         control={control}
                         type="number"
                         name="through"
-                        placeholder="Number of throughs"
+                        placeholder="number of throughs"
                         errors={errors}
                       />
                     </div>

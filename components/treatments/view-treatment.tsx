@@ -47,15 +47,11 @@ const ViewTreatment = ({
                 </div>
                 <div className="mb-4 flex items-center space-x-4">
                   <Label>Medication:</Label>
-                  <Input disabled value={getOneTreatment.medication} />
-                  <Label>Dose:</Label>
-                  <Input disabled type="number" value={getOneTreatment?.dose} />
-                  <Label>Method:</Label>
-                  <Input disabled value={getOneTreatment?.method} />
+                  <Input disabled value={getOneTreatment.health?.name} />
                 </div>
                 <Label>Observation</Label>
                 <div className="mb-4 disabled">
-                  <Textarea value={getOneTreatment?.note} />
+                  <Textarea value={getOneTreatment?.note} disabled />
                 </div>
               </div>
             </form>

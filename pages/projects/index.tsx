@@ -10,7 +10,6 @@ import { ErrorFile } from '@/components/ui-setting/ant/error-file';
 import { CardHeader } from '@/components/ui/card';
 
 import { GetOrganizationsAPI } from '@/api-site/contributors';
-import { GetOneUserMeAPI } from '@/api-site/user';
 import { PrivateComponent } from '@/components/util/private-component';
 import { MoveLeftIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
@@ -19,10 +18,9 @@ import { useInView } from 'react-intersection-observer';
 import { ProjectsList } from './projects-list';
 
 export function Projects() {
-  const { t, search, handleSetSearch } = useInputState();
+  const { t, search, handleSetSearch, userStorage } = useInputState();
   const { ref, inView } = useInView();
   const { back } = useRouter();
-  const { data: user } = GetOneUserMeAPI();
 
   const {
     isLoading: isLoadingProjects,
@@ -36,7 +34,7 @@ export function Projects() {
     take: 10,
     sort: 'desc',
     sortBy: 'createdAt',
-    userId: user?.userId,
+    userId: userStorage?.userId,
   });
 
   useEffect(() => {
@@ -64,7 +62,7 @@ export function Projects() {
   return (
     <>
       <LayoutDashboard
-        title={`${user?.profile?.firstName} ${user?.profile?.lastName}- projects`}
+        title={`${userStorage?.profile?.firstName} ${userStorage?.profile?.lastName}- Projects`}
       >
         <CardHeader>
           <div className="flex items-center">

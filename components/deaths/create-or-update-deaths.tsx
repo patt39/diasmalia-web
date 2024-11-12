@@ -46,9 +46,11 @@ const CreateOrUpdateDeaths = ({
   showModal,
   setShowModal,
   death,
+  location,
 }: {
   showModal: boolean;
   setShowModal: any;
+  location?: any;
   death?: any;
 }) => {
   const {
@@ -70,7 +72,7 @@ const CreateOrUpdateDeaths = ({
 
   useEffect(() => {
     if (death) {
-      const fields = ['animals', 'note'];
+      const fields = ['note'];
       fields?.forEach((field: any) => setValue(field, death[field]));
     }
   }, [death, setValue]);
@@ -113,6 +115,20 @@ const CreateOrUpdateDeaths = ({
     sort: 'desc',
     status: 'ACTIVE',
     sortBy: 'createdAt',
+    animalTypeId: animalTypeId,
+  });
+
+  const {
+    isLoading: isLoadingLocationAnimals,
+    isError: isErrorLocationAnimals,
+    data: dataLocationAnimals,
+  } = GetAnimalsAPI({
+    search,
+    take: 10,
+    sort: 'desc',
+    status: 'ACTIVE',
+    sortBy: 'createdAt',
+    locationId: location?.id,
     animalTypeId: animalTypeId,
   });
 
@@ -189,7 +205,7 @@ const CreateOrUpdateDeaths = ({
                   </div>
                 )}
                 <div className="flex items-center space-x-4 w-full">
-                  {!death?.id ? (
+                  {!death?.id && !location?.id ? (
                     <div className="mb-4 w-full">
                       <Label>
                         Sélectionner les animaux morts
@@ -197,7 +213,7 @@ const CreateOrUpdateDeaths = ({
                       </Label>
                       <Select>
                         <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select animals" />
+                          <SelectValue placeholder="select animals" />
                         </SelectTrigger>
                         <SelectContent className="dark:border-gray-800">
                           <div className="mr-auto items-center gap-2">
@@ -273,14 +289,101 @@ const CreateOrUpdateDeaths = ({
                         </SelectContent>
                       </Select>
                     </div>
-                  ) : null}
+                  ) : location?.id ? (
+                    <div className="mb-4 w-full">
+                      <Label>
+                        Sélectionner les animaux morts
+                        <span className="text-red-600">*</span>
+                      </Label>
+                      <Select>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="select animals" />
+                        </SelectTrigger>
+                        <SelectContent className="dark:border-gray-800">
+                          <div className="mr-auto items-center gap-2">
+                            <SearchInput
+                              placeholder="Search by code"
+                              onChange={handleSetSearch}
+                            />
+                          </div>
+                          <SelectGroup>
+                            {isLoadingLocationAnimals ? (
+                              <LoadingFile />
+                            ) : isErrorLocationAnimals ? (
+                              <ErrorFile
+                                title="404"
+                                description="Error finding data please try again..."
+                              />
+                            ) : Number(
+                                dataLocationAnimals?.pages[0]?.data?.total,
+                              ) <= 0 ? (
+                              <ErrorFile description="Don't have active animals created yet please do" />
+                            ) : (
+                              dataLocationAnimals?.pages
+                                .flatMap((page: any) => page?.data?.value)
+                                .map((item) => (
+                                  <>
+                                    <Controller
+                                      key={item?.code}
+                                      control={control}
+                                      name="animals"
+                                      render={({ field: { ...field } }) => (
+                                        <>
+                                          <div
+                                            className="flex flex-row items-start space-x-3 space-y-0 rounded-md p-4"
+                                            key={item?.code}
+                                          >
+                                            <Checkbox
+                                              checked={field?.value?.includes(
+                                                item?.code,
+                                              )}
+                                              onCheckedChange={(checked) => {
+                                                return checked
+                                                  ? field.onChange([
+                                                      ...(field.value || []),
+                                                      item?.code,
+                                                    ])
+                                                  : field?.onChange(
+                                                      field?.value?.filter(
+                                                        (value: any) =>
+                                                          value !== item?.code,
+                                                      ),
+                                                    );
+                                              }}
+                                            />
+                                            <div className="space-y-1 leading-none">
+                                              <Label>{item?.code}</Label>
+                                            </div>
+                                          </div>
+                                        </>
+                                      )}
+                                    />
+                                  </>
+                                ))
+                            )}
+                            {hasNextPage && (
+                              <div className="mx-auto mt-4 justify-center text-center">
+                                <ButtonLoadMore
+                                  ref={ref}
+                                  isFetchingNextPage={isFetchingNextPage}
+                                  onClick={() => fetchNextPage()}
+                                />
+                              </div>
+                            )}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  ) : (
+                    ''
+                  )}
                 </div>
                 <div className="mb-4">
                   <TextAreaInput
                     control={control}
                     label="Cause et moyen de disposition des carcasses"
                     name="note"
-                    placeholder="Note"
+                    placeholder="cause and disposal method"
                     errors={errors}
                   />
                 </div>

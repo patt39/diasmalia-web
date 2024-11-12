@@ -22,7 +22,7 @@ import { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 export function Faq() {
-  const { t } = useInputState();
+  const { t, userStorage } = useInputState();
   const { ref, inView } = useInView();
   const { query, back } = useRouter();
   const animalId = String(query?.animalId);
@@ -44,6 +44,7 @@ export function Faq() {
     sortBy: 'createdAt',
     animalId: animalId,
     animalTypeId: getOneAnimal?.animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   useEffect(() => {

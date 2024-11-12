@@ -11,38 +11,30 @@ const FeedCompositionComponent = ({
   onClick: () => void;
 }) => {
   return (
-    <div className="">
-      <div className="mt-2 flex lg:col-span-2 space-x-4 items-center">
-        <div className="w-96">
-          <Input
-            type="text"
-            name="type"
-            defaultValue={`${item?.type.toUpperCase()}`}
-            disabled
-          />
-        </div>
-        <div>
-          <Input
-            disabled
-            type="text"
-            name="percentage"
-            defaultValue={`${item?.percentage}`}
-          />
-        </div>
-        <div className="">
-          <TooltipProvider>
-            <Tooltip>
-              <Button
-                onClick={onClick}
-                variant={'link'}
-                size="default"
-                className="cursor-pointer"
-              >
-                <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
-              </Button>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
+    <div className="mt-4 ml-2 flex items-center">
+      <div className="w-96">
+        <Input
+          type="text"
+          defaultValue={`${item?.type.toUpperCase()}`}
+          disabled
+        />
+      </div>
+      <div className="w-60 ml-4">
+        <Input disabled type="text" defaultValue={`${item?.percentage}`} />
+      </div>
+      <div>
+        <TooltipProvider>
+          <Tooltip>
+            <Button
+              onClick={onClick}
+              variant={'link'}
+              size="default"
+              className="cursor-pointer"
+            >
+              <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
+            </Button>
+          </Tooltip>
+        </TooltipProvider>
       </div>
     </div>
   );

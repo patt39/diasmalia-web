@@ -1,10 +1,6 @@
 import { GetOneIsolationAPI } from '@/api-site/isolations';
-import { useReactHookForm } from '@/components/hooks';
 import { XIcon } from 'lucide-react';
-import * as yup from 'yup';
 import { Textarea } from '../ui/textarea';
-
-const schema = yup.object({});
 
 const ViewIsolation = ({
   showModal,
@@ -15,8 +11,6 @@ const ViewIsolation = ({
   setShowModal: any;
   isolation?: any;
 }) => {
-  const { control, errors } = useReactHookForm({ schema });
-
   const { data: getOneIsolation } = GetOneIsolationAPI({
     isolationId: isolation?.id,
   });

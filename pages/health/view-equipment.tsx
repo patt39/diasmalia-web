@@ -1,4 +1,5 @@
 import { GetHealthsAPI } from '@/api-site/health';
+import { GetOneUserMeAPI } from '@/api-site/user';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonLoadMore } from '@/components/ui-setting';
 import { LoadingFile } from '@/components/ui-setting/ant';
@@ -21,6 +22,7 @@ const ViewEquipment = ({
 }) => {
   const { t } = useReactHookForm({ schema });
   const { ref, inView } = useInView();
+  const { data: user } = GetOneUserMeAPI();
   const {
     isLoading: isLoadingHealth,
     isError: isErrorHealth,
@@ -33,6 +35,7 @@ const ViewEquipment = ({
     sort: 'desc',
     sortBy: 'createdAt',
     category: 'EQUIPMENT',
+    organizationId: user?.organizationId,
   });
 
   useEffect(() => {
@@ -72,7 +75,7 @@ const ViewEquipment = ({
               </span>
             </button>
             <div className="px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl">
-              <div className="grid grid-cols-1 gap-5 sm:mt-12 sm:grid-cols-2 xl:grid-cols-3 sm:gap-8 xl:gap-12">
+              <div className="grid grid-cols-1 gap-5 sm:mt-12 sm:grid-cols-2 xl:grid-cols-3 sm:gap-8 xl:gap-12 mb-8">
                 {isLoadingHealth ? (
                   <LoadingFile />
                 ) : isErrorHealth ? (

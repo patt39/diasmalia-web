@@ -36,11 +36,12 @@ const TabMilkings = ({ animalTypeId }: { animalTypeId: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [pageItem, setPageItem] = useState(1);
   const [periode, setPeriode] = useState('');
-  const { t, search, handleSetSearch } = useInputState();
+  const { t, search, handleSetSearch, userStorage } = useInputState();
 
   const { data: animalStatistics } = GetAnimalStatisticsAPI({
     periode,
     animalTypeId: animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   const {
@@ -56,6 +57,7 @@ const TabMilkings = ({ animalTypeId }: { animalTypeId: string }) => {
     sort: 'desc',
     sortBy: 'createdAt',
     animalTypeId: animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   return (

@@ -36,14 +36,14 @@ import { ListAvesFeedings } from './list-aves-feedings';
 
 const TabAvesFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { userStorage } = useInputState();
   const [periode, setPeriode] = useState('');
   const [pageItem, setPageItem] = useState(1);
-  const { t, search, handleSetSearch } = useInputState();
+  const { t, search, handleSetSearch, userStorage } = useInputState();
 
   const { data: animalStatistics } = GetAnimalStatisticsAPI({
     periode,
     animalTypeId: animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   const {

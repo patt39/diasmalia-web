@@ -1,10 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { DeleteOneAnimalAPI } from '@/api-site/animals';
-import {
-  ChangeOrganizationAPI,
-  GetOneUserMeAPI,
-  GetUserByOrganizationAPI,
-} from '@/api-site/user';
+import { ChangeOrganizationAPI } from '@/api-site/user';
 import { useInputState } from '@/components/hooks';
 import { ActionModalDialog } from '@/components/ui-setting/shadcn';
 import { Button } from '@/components/ui/button';
@@ -27,15 +23,10 @@ import { useState } from 'react';
 import { ViewProject } from './view-project';
 
 const ProjectsList = ({ item, index }: { item: any; index: number }) => {
-  const { t, isOpen, setIsOpen } = useInputState();
+  const { t, isOpen, setIsOpen, userStorage } = useInputState();
   const [isView, setIsView] = useState(false);
-  const { data: user } = GetOneUserMeAPI();
   const { query, push } = useRouter();
   const { redirect } = query;
-
-  const { data: getUser } = GetUserByOrganizationAPI({
-    organizationId: item?.organizationId,
-  });
 
   const { isPending: loading, mutateAsync: deleteMutation } =
     DeleteOneAnimalAPI();
@@ -64,7 +55,7 @@ const ProjectsList = ({ item, index }: { item: any; index: number }) => {
       AlertSuccessNotification({
         text: 'Organization changed successfully',
       });
-      push(`/dashboard${redirect ? `?redirect=${redirect}` : ''}`);
+      window.location.href = `/dashboard${redirect ? `?redirect=${redirect}` : ''}`;
     } catch (error: any) {
       AlertDangerNotification({
         text: `${error.response.data.message}`,
@@ -79,7 +70,7 @@ const ProjectsList = ({ item, index }: { item: any; index: number }) => {
         className="relative overflow-hidden transition-allduration-200 bg-gray-200 rounded-xl hover:bg-gray-400"
       >
         <div className="p-6 lg:px-8 lg:py-8 cursor-pointer">
-          {user?.organizationId === item?.organizationId ? (
+          {userStorage?.organizationId === item?.organizationId ? (
             <div className="ml-60" onClick={() => handleChangeOrganization()}>
               <TooltipProvider>
                 <Tooltip>
@@ -112,63 +103,49 @@ const ProjectsList = ({ item, index }: { item: any; index: number }) => {
                 : item?.organization?.name}
             </div>
           </div>
-          {getUser?.profile?.userId !== item?.userId ? (
-            <div className="grid grid-cols-1 mb-2 sm:mt-2 px-20 sm:grid-cols-2 xl:grid-cols-3 sm:gap-8 xl:gap-12">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    aria-haspopup="true"
-                    size="icon"
-                    variant="ghost"
-                    className="ml-40 mt-2"
-                  >
-                    <MoreHorizontal className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  align="end"
-                  className="dark:border-gray-800"
+          <div className="grid grid-cols-1 mb-2 sm:mt-2 px-20 sm:grid-cols-2 xl:grid-cols-3 sm:gap-8 xl:gap-12">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  aria-haspopup="true"
+                  size="icon"
+                  variant="ghost"
+                  className="ml-40 mt-2"
                 >
-                  <DropdownMenuItem onClick={() => setIsView(true)}>
-                    <Eye className="size-4 text-gray-600 hover:text-indigo-600" />
-                    <span className="ml-2 cursor-pointer hover:text-indigo-600">
-                      {t.formatMessage({ id: 'TABANIMAL.VIEW' })}
-                    </span>
-                  </DropdownMenuItem>
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="dark:border-gray-800">
+                <DropdownMenuItem onClick={() => setIsView(true)}>
+                  <Eye className="size-4 text-gray-600 hover:text-indigo-600" />
+                  <span className="ml-2 cursor-pointer hover:text-indigo-600">
+                    {t.formatMessage({ id: 'TABANIMAL.VIEW' })}
+                  </span>
+                </DropdownMenuItem>
+                {item?.user?.organizationId !== item?.organizationId ? (
                   <DropdownMenuItem onClick={() => setIsOpen(true)}>
                     <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
                     <span className="ml-2 cursor-pointer hover:text-red-600">
                       {t.formatMessage({ id: 'TABANIMAL.DELETE' })}
                     </span>
                   </DropdownMenuItem>
-                </DropdownMenuContent>
-                <ActionModalDialog
-                  loading={loading}
-                  isOpen={isOpen}
-                  setIsOpen={setIsOpen}
-                  onClick={() => deleteItem(item)}
-                />
-                <ViewProject
-                  organization={item}
-                  showModal={isView}
-                  setShowModal={setIsView}
-                />
-              </DropdownMenu>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 mb-2 sm:mt-2 px-20 sm:grid-cols-2 xl:grid-cols-3 sm:gap-8 xl:gap-12">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    aria-haspopup="true"
-                    size="icon"
-                    variant="ghost"
-                    className="ml-40 mt-2"
-                  ></Button>
-                </DropdownMenuTrigger>
-              </DropdownMenu>
-            </div>
-          )}
+                ) : (
+                  ''
+                )}
+              </DropdownMenuContent>
+              <ActionModalDialog
+                loading={loading}
+                isOpen={isOpen}
+                setIsOpen={setIsOpen}
+                onClick={() => deleteItem(item)}
+              />
+              <ViewProject
+                organization={item}
+                showModal={isView}
+                setShowModal={setIsView}
+              />
+            </DropdownMenu>
+          </div>
         </div>
       </div>
     </>

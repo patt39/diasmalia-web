@@ -37,11 +37,12 @@ const TabAvesDeaths = ({ animalTypeId }: { animalTypeId: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [periode, setPeriode] = useState('');
   const [pageItem, setPageItem] = useState(1);
-  const { t, search, handleSetSearch } = useInputState();
+  const { t, search, handleSetSearch, userStorage } = useInputState();
 
   const { data: animalStatistics } = GetAnimalStatisticsAPI({
     periode,
     animalTypeId: animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   const {
@@ -57,6 +58,7 @@ const TabAvesDeaths = ({ animalTypeId }: { animalTypeId: string }) => {
     sort: 'desc',
     sortBy: 'createdAt',
     animalTypeId: animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   return (

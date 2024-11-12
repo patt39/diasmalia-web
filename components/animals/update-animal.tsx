@@ -214,7 +214,6 @@ const UpdateAnimals = ({
                       control={control}
                       type="text"
                       name="code"
-                      placeholder="Give a code"
                       errors={errors}
                     />
                   </div>
@@ -223,7 +222,6 @@ const UpdateAnimals = ({
                     <DateInput
                       control={control}
                       errors={errors}
-                      placeholder="Birth date"
                       name="birthday"
                     />
                   </div>
@@ -235,87 +233,108 @@ const UpdateAnimals = ({
                       control={control}
                       type="number"
                       name="weight"
-                      placeholder="Weight"
                       errors={errors}
                     />
                   </div>
                 </div>
-                <div>
-                  <Label>{t.formatMessage({ id: 'ANIMALTYPE.GENDER' })}</Label>
-                  <SelectInput
-                    firstOptionName="Choose a production type"
-                    control={control}
-                    errors={errors}
-                    placeholder="Select gender"
-                    valueType="text"
-                    name="gender"
-                    dataItem={[
-                      { id: 1, name: 'MALE' },
-                      { id: 2, name: 'FEMALE' },
-                    ]}
-                  />
+                <div className="flex items-center space-x-4">
+                  <div className="w-80">
+                    <Label>
+                      {t.formatMessage({ id: 'ANIMALTYPE.GENDER' })}
+                    </Label>
+                    <SelectInput
+                      control={control}
+                      errors={errors}
+                      valueType="text"
+                      name="gender"
+                      dataItem={[
+                        { id: 1, name: 'MALE' },
+                        { id: 2, name: 'FEMALE' },
+                      ]}
+                    />
+                  </div>
+                  <div className="w-80">
+                    <Label>
+                      {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
+                    </Label>
+                    <SelectInput
+                      control={control}
+                      errors={errors}
+                      valueType="key"
+                      name="productionPhase"
+                      dataItem={productionPhases.filter(
+                        (i) => i?.lang === locale,
+                      )}
+                    />
+                  </div>
                 </div>
-                <div className="my-2">
-                  <Label> {t.formatMessage({ id: 'VIEW.MOTHER' })}</Label>
-                  <Controller
-                    control={control}
-                    name="codeMother"
-                    render={({ field: { value, onChange } }) => (
-                      <Select
-                        onValueChange={onChange}
-                        name={'codeMother'}
-                        value={value}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue
-                            placeholder={animal?.codeMother?.toUpperCase()}
-                          />
-                        </SelectTrigger>
-                        <SelectContent className="dark:border-gray-800">
-                          <div className="mr-auto items-center gap-2">
-                            <SearchInput
-                              placeholder="Search by code"
-                              onChange={handleSetSearch}
+
+                <div className="my-2 flex space-x-4">
+                  <div className="w-80">
+                    <Label> {t.formatMessage({ id: 'VIEW.MOTHER' })}</Label>
+                    <Controller
+                      control={control}
+                      name="codeMother"
+                      render={({ field: { value, onChange } }) => (
+                        <Select
+                          onValueChange={onChange}
+                          name={'codeMother'}
+                          value={value}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue
+                              placeholder={animal?.codeMother?.toUpperCase()}
                             />
-                          </div>
-                          <SelectGroup>
-                            <SelectLabel>Codes</SelectLabel>
-                            {isLoadingFemales ? (
-                              <LoadingFile />
-                            ) : isErrorFemales ? (
-                              <ErrorFile
-                                title="404"
-                                description="Error finding data please try again..."
+                          </SelectTrigger>
+                          <SelectContent className="dark:border-gray-800">
+                            <div className="items-center gap-2">
+                              <SearchInput
+                                placeholder="Search by code"
+                                onChange={handleSetSearch}
                               />
-                            ) : Number(dataFemales?.pages[0]?.data?.total) <=
-                              0 ? (
-                              <ErrorFile description="Don't have active female animals yet" />
-                            ) : (
-                              dataFemales?.pages
-                                .flatMap((page: any) => page?.data?.value)
-                                .map((item, index) => (
-                                  <>
-                                    <SelectItem key={index} value={item?.code}>
-                                      {item?.code}
-                                    </SelectItem>
-                                  </>
-                                ))
-                            )}
-                            {hasNextPage && (
-                              <div className="mx-auto mt-4 justify-center text-center">
-                                <ButtonLoadMore
-                                  ref={ref}
-                                  isFetchingNextPage={isFetchingNextPage}
-                                  onClick={() => fetchNextPage()}
+                            </div>
+                            <SelectGroup>
+                              <SelectLabel>Codes</SelectLabel>
+                              {isLoadingFemales ? (
+                                <LoadingFile />
+                              ) : isErrorFemales ? (
+                                <ErrorFile
+                                  title="404"
+                                  description="Error finding data please try again..."
                                 />
-                              </div>
-                            )}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    )}
-                  />
-                  <div className="my-2">
+                              ) : Number(dataFemales?.pages[0]?.data?.total) <=
+                                0 ? (
+                                <ErrorFile description="Don't have active female animals yet" />
+                              ) : (
+                                dataFemales?.pages
+                                  .flatMap((page: any) => page?.data?.value)
+                                  .map((item, index) => (
+                                    <>
+                                      <SelectItem
+                                        key={index}
+                                        value={item?.code}
+                                      >
+                                        {item?.code}
+                                      </SelectItem>
+                                    </>
+                                  ))
+                              )}
+                              {hasNextPage && (
+                                <div className="mx-auto mt-4 justify-center text-center">
+                                  <ButtonLoadMore
+                                    ref={ref}
+                                    isFetchingNextPage={isFetchingNextPage}
+                                    onClick={() => fetchNextPage()}
+                                  />
+                                </div>
+                              )}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                      )}
+                    />
+                  </div>
+                  <div className="w-80">
                     <Label>{t.formatMessage({ id: 'VIEW.FATHER' })}</Label>
                     <Controller
                       control={control}
@@ -379,23 +398,8 @@ const UpdateAnimals = ({
                       )}
                     />
                   </div>
-                  <div className="mb-2">
-                    <Label>
-                      {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
-                    </Label>
-                    <SelectInput
-                      firstOptionName="Choose a production type"
-                      control={control}
-                      errors={errors}
-                      placeholder="Select a production phase"
-                      valueType="key"
-                      name="productionPhase"
-                      dataItem={productionPhases.filter(
-                        (i) => i?.lang === locale,
-                      )}
-                    />
-                  </div>
                 </div>
+
                 <div className="my-2">
                   <Label>{t.formatMessage({ id: 'SELECT.BREED' })}</Label>
                   <Controller
@@ -524,7 +528,7 @@ const UpdateAnimals = ({
                         <SelectInput
                           control={control}
                           errors={errors}
-                          placeholder="Animal is castrated?"
+                          placeholder="castrated?"
                           valueType="text"
                           name="isCastrated"
                           dataItem={[

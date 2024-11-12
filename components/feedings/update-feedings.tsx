@@ -21,7 +21,6 @@ import {
 } from '@/utils/alert-notification';
 import { XIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
 import { Controller, SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
 import { TextInput } from '../ui-setting/shadcn';
@@ -42,25 +41,11 @@ const UpdateFeedings = ({
   setShowModal: any;
   feeding?: any;
 }) => {
-  const {
-    t,
-    control,
-    errors,
-    setValue,
-    hasErrors,
-    handleSubmit,
-    setHasErrors,
-  } = useReactHookForm({ schema });
+  const { t, control, errors, hasErrors, handleSubmit, setHasErrors } =
+    useReactHookForm({ schema });
   const { query } = useRouter();
   const { userStorage } = useInputState();
   const animalTypeId = String(query?.animalTypeId);
-
-  useEffect(() => {
-    if (feeding) {
-      const fields = ['animals', 'quantity', 'feedStockId'];
-      fields?.forEach((field: any) => setValue(field, feeding[field]));
-    }
-  }, [feeding, setValue]);
 
   //Update data
   const { isPending: loading, mutateAsync: saveMutation } =
@@ -145,54 +130,65 @@ const UpdateFeedings = ({
                 )}
 
                 <div className="mb-4 flex items-center space-x-4">
-                  <Controller
-                    control={control}
-                    name="code"
-                    render={({ field: { value, onChange } }) => (
-                      <Select
-                        onValueChange={onChange}
-                        name={'code'}
-                        value={value}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a code" />
-                        </SelectTrigger>
-                        <SelectContent className="dark:border-gray-800">
-                          <SelectGroup>
-                            <SelectLabel>Codes</SelectLabel>
-                            {isLoadingAnimals ? (
-                              <LoadingFile />
-                            ) : isErrorAnimals ? (
-                              <ErrorFile
-                                title="404"
-                                description="Error finding data please try again..."
-                              />
-                            ) : Number(dataAnimals?.pages[0]?.data?.total) <=
-                              0 ? (
-                              <ErrorFile description="Don't have active animals yet" />
-                            ) : (
-                              dataAnimals?.pages
-                                .flatMap((page: any) => page?.data?.value)
-                                .map((item, index) => (
-                                  <>
-                                    <SelectItem key={index} value={item?.code}>
-                                      {item?.code}
-                                    </SelectItem>
-                                  </>
-                                ))
-                            )}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    )}
-                  />
-                  <TextInput
-                    control={control}
-                    type="number"
-                    name="quantity"
-                    placeholder="Give a number"
-                    errors={errors}
-                  />
+                  <div className="w-80">
+                    <Label>Code</Label>
+                    <Controller
+                      control={control}
+                      name="code"
+                      render={({ field: { value, onChange } }) => (
+                        <Select
+                          onValueChange={onChange}
+                          name={'code'}
+                          value={value}
+                        >
+                          <SelectTrigger>
+                            <SelectValue
+                              placeholder={`${feeding?.animal?.code}`}
+                            />
+                          </SelectTrigger>
+                          <SelectContent className="dark:border-gray-800">
+                            <SelectGroup>
+                              <SelectLabel>Codes</SelectLabel>
+                              {isLoadingAnimals ? (
+                                <LoadingFile />
+                              ) : isErrorAnimals ? (
+                                <ErrorFile
+                                  title="404"
+                                  description="Error finding data please try again..."
+                                />
+                              ) : Number(dataAnimals?.pages[0]?.data?.total) <=
+                                0 ? (
+                                <ErrorFile description="Don't have active animals yet" />
+                              ) : (
+                                dataAnimals?.pages
+                                  .flatMap((page: any) => page?.data?.value)
+                                  .map((item, index) => (
+                                    <>
+                                      <SelectItem
+                                        key={index}
+                                        value={item?.code}
+                                      >
+                                        {item?.code}
+                                      </SelectItem>
+                                    </>
+                                  ))
+                              )}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                      )}
+                    />
+                  </div>
+                  <div className="w-80">
+                    <Label>{t.formatMessage({ id: 'FEED.QUANTITY' })}(g)</Label>
+                    <TextInput
+                      control={control}
+                      type="number"
+                      name="quantity"
+                      defaultValue={`${feeding?.quantity}`}
+                      errors={errors}
+                    />
+                  </div>
                 </div>
                 <div className="mb-2">
                   <Label>
@@ -209,7 +205,9 @@ const UpdateFeedings = ({
                         value={value}
                       >
                         <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select a feed type" />
+                          <SelectValue
+                            placeholder={`${feeding?.feedStock?.feedCategory}`}
+                          />
                         </SelectTrigger>
                         <SelectContent className="dark:border-gray-800">
                           <SelectGroup>

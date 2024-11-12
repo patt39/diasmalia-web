@@ -119,7 +119,7 @@ const CreateAnimals = ({
     data: dataBreeds,
   } = GetBreedsAPI({
     search,
-    take: 10,
+    take: 20,
     sort: 'desc',
     sortBy: 'createdAt',
     animalTypeId: animalTypeId,
@@ -215,7 +215,7 @@ const CreateAnimals = ({
                       control={control}
                       type="text"
                       name="code"
-                      placeholder="Give a code"
+                      placeholder="code"
                       errors={errors}
                     />
                     <TooltipProvider>
@@ -239,7 +239,7 @@ const CreateAnimals = ({
                     <DateInput
                       control={control}
                       errors={errors}
-                      placeholder="Birth date"
+                      placeholder="dirth date"
                       name="birthday"
                     />
                   </div>
@@ -255,22 +255,38 @@ const CreateAnimals = ({
                     />
                   </div>
                 </div>
-                <div>
-                  <Label>
-                    Genre<span className="text-red-600">*</span>
-                  </Label>
-                  <SelectInput
-                    firstOptionName="Choose a production type"
-                    control={control}
-                    errors={errors}
-                    placeholder="Select gender"
-                    valueType="text"
-                    name="gender"
-                    dataItem={[
-                      { id: 1, name: 'MALE' },
-                      { id: 2, name: 'FEMALE' },
-                    ]}
-                  />
+                <div className="flex items-center space-x-4">
+                  <div className="w-80">
+                    <Label>
+                      {t.formatMessage({ id: 'ANIMALTYPE.GENDER' })}
+                    </Label>
+                    <SelectInput
+                      control={control}
+                      errors={errors}
+                      valueType="text"
+                      name="gender"
+                      placeholder="select gender"
+                      dataItem={[
+                        { id: 1, name: 'MALE' },
+                        { id: 2, name: 'FEMALE' },
+                      ]}
+                    />
+                  </div>
+                  <div className="w-80">
+                    <Label>
+                      {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
+                    </Label>
+                    <SelectInput
+                      control={control}
+                      errors={errors}
+                      valueType="key"
+                      name="productionPhase"
+                      placeholder="select production phase"
+                      dataItem={productionPhases.filter(
+                        (i) => i?.lang === locale,
+                      )}
+                    />
+                  </div>
                 </div>
                 <div className="my-2">
                   <Label>{t.formatMessage({ id: 'VIEW.MOTHER' })}</Label>
@@ -284,7 +300,7 @@ const CreateAnimals = ({
                         value={value}
                       >
                         <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select a female code" />
+                          <SelectValue placeholder="select female code" />
                         </SelectTrigger>
                         <SelectContent className="dark:border-gray-800">
                           <div className="mr-auto items-center gap-2">
@@ -342,7 +358,7 @@ const CreateAnimals = ({
                           value={value}
                         >
                           <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select a male code" />
+                            <SelectValue placeholder="select male code" />
                           </SelectTrigger>
                           <SelectContent className="dark:border-gray-800">
                             <div className="mr-auto items-center gap-2">
@@ -383,19 +399,6 @@ const CreateAnimals = ({
                       )}
                     />
                   </div>
-                  <div className="mb-2">
-                    <Label>Phase de production</Label>
-                    <SelectInput
-                      control={control}
-                      errors={errors}
-                      placeholder="Select a production phase"
-                      valueType="key"
-                      name="productionPhase"
-                      dataItem={productionPhases.filter(
-                        (i) => i?.lang === locale,
-                      )}
-                    />
-                  </div>
                 </div>
                 <div className="my-2">
                   <Label>
@@ -412,7 +415,7 @@ const CreateAnimals = ({
                         value={value}
                       >
                         <SelectTrigger>
-                          <SelectValue placeholder="Select a breed" />
+                          <SelectValue placeholder="select breed" />
                         </SelectTrigger>
                         <SelectContent className="dark:border-gray-800">
                           <div className="mr-auto items-center gap-2">
@@ -473,7 +476,7 @@ const CreateAnimals = ({
                           value={value}
                         >
                           <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select a location code" />
+                            <SelectValue placeholder="select location code" />
                           </SelectTrigger>
                           <SelectContent className="dark:border-gray-800">
                             <SelectGroup>

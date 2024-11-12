@@ -50,14 +50,22 @@ const ListTreatments = ({ item, index }: { item: any; index: number }) => {
       <TableRow key={index} className="dark:border-gray-800">
         <TableCell className="font-medium">{item?.animal?.code}</TableCell>
         <TableCell className="font-medium">
-          <div className="font-medium">{item?.name}</div>
+          <div className="font-medium">
+            {item?.name?.length > 20
+              ? item?.name?.substring(0, 20) + '...'
+              : item?.name || 'N/A'}
+          </div>
           <div className="hidden text-sm text-muted-foreground md:inline">
             {item?.diagnosis?.length > 20
               ? item?.diagnosis?.substring(0, 20) + '...'
               : item?.diagnosis || 'N/A'}
           </div>
         </TableCell>
-        <TableCell className="font-medium">{item?.health?.name}</TableCell>
+        <TableCell className="font-medium">
+          {item?.health?.name.length > 20
+            ? item?.health?.name?.substring(0, 20) + '...'
+            : item?.health?.name || 'N/A'}
+        </TableCell>
         <TableCell className="font-medium">{item.dose || 'N/A'}</TableCell>
         <TableCell className="hidden md:table-cell">{item?.method}</TableCell>
         <TableCell className="hidden md:table-cell">
@@ -73,16 +81,16 @@ const ListTreatments = ({ item, index }: { item: any; index: number }) => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="dark:border-gray-800">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => setIsEdit(true)}>
-                <PencilIcon className="size-4 text-gray-600 hover:text-indigo-600" />
-                <span className="ml-2 cursor-pointer hover:text-indigo-600">
-                  {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
-                </span>
-              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setIsView(true)}>
                 <Eye className="size-4 text-gray-600 hover:text-indigo-600" />
                 <span className="ml-2 cursor-pointer hover:text-indigo-600">
                   {t.formatMessage({ id: 'TABANIMAL.VIEW' })}
+                </span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setIsEdit(true)}>
+                <PencilIcon className="size-4 text-gray-600 hover:text-indigo-600" />
+                <span className="ml-2 cursor-pointer hover:text-indigo-600">
+                  {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
                 </span>
               </DropdownMenuItem>
               {item?.animal.status !== 'ACTIVE' ? (

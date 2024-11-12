@@ -8,6 +8,7 @@ import {
   TableBody,
   TableHead,
   TableHeader,
+  TableRow,
 } from '@/components/ui/table';
 import { Eclipse, ListFilter } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -36,7 +37,7 @@ const TabIsolations = ({ animalTypeId }: { animalTypeId: string }) => {
   const { ref, inView } = useInView();
   const [isOpen, setIsOpen] = useState(false);
   const [periode, setPeriode] = useState('');
-  const { t, search, handleSetSearch } = useInputState();
+  const { t, search, handleSetSearch, userStorage } = useInputState();
 
   const {
     isLoading: isLoadingIsolations,
@@ -52,6 +53,7 @@ const TabIsolations = ({ animalTypeId }: { animalTypeId: string }) => {
     sort: 'desc',
     sortBy: 'createdAt',
     animalTypeId: animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   useEffect(() => {
@@ -87,6 +89,18 @@ const TabIsolations = ({ animalTypeId }: { animalTypeId: string }) => {
             />
           </div>
           <div className="ml-auto flex items-center gap-2">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="outline">
+                    {t.formatMessage({ id: 'WHAT.TODO' })}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{t.formatMessage({ id: 'ISOLATION.WHAT.TODO' })}</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -169,12 +183,17 @@ const TabIsolations = ({ animalTypeId }: { animalTypeId: string }) => {
         <CardContent>
           <Table>
             <TableHeader>
-              <TableHead>Code</TableHead>
-              <TableHead>Note</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead>
-                <span>Actions</span>
-              </TableHead>
+              <TableRow className="dark:border-gray-800">
+                <TableHead>Code</TableHead>
+                <TableHead>
+                  {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
+                </TableHead>
+                <TableHead>Note</TableHead>
+                <TableHead>Date</TableHead>
+                <TableHead>
+                  <span>Actions</span>
+                </TableHead>
+              </TableRow>
             </TableHeader>
             <TableBody>
               {isLoadingIsolations ? (

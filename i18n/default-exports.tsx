@@ -29,6 +29,42 @@ export const feedCategories = [
   { id: 'OTHER', name: 'AUTRE', lang: 'en' },
 ];
 
+export const treatmentMethods = [
+  { id: 'EYE', name: 'EYE', lang: 'en' },
+  { id: 'EYE', name: 'OEUIL', lang: 'fr' },
+  { id: 'ORAL', name: 'ORAL', lang: 'en' },
+  { id: 'ORAL', name: 'ORAL', lang: 'fr' },
+  { id: 'NASAL', name: 'NASAL', lang: 'en' },
+  { id: 'NASAL', name: 'NASAL', lang: 'fr' },
+  { id: 'INJECTION', name: 'INJECTION', lang: 'en' },
+  { id: 'INJECTION', name: 'INJECTION', lang: 'fr' },
+  { id: 'NEBULIZATION', name: 'NEBULIZATION', lang: 'en' },
+  { id: 'NEBULIZATION', name: 'NÉBULISATION', lang: 'fr' },
+  { id: 'FOOD', name: 'FOOD', lang: 'en' },
+  { id: 'FOOD', name: 'ALIMENT', lang: 'fr' },
+  { id: 'WATER', name: 'WATER', lang: 'en' },
+  { id: 'WATER', name: 'EAU', lang: 'fr' },
+  { id: 'CUTANEOUS', name: 'CUTANEOUS', lang: 'en' },
+  { id: 'CUTANEOUS', name: 'CUTANÉE', lang: 'fr' },
+  { id: 'OTHER', name: 'OTHER', lang: 'en' },
+  { id: 'OTHER', name: 'AUTRE', lang: 'fr' },
+];
+
+export const sellingMethods = [
+  { id: 'FARM', name: 'FARM', lang: 'en' },
+  { id: 'FARM', name: 'A LA FERME', lang: 'fr' },
+  { id: 'MARKET', name: 'MARKET', lang: 'en' },
+  { id: 'MARKET', name: 'MARCHÉ', lang: 'fr' },
+  { id: 'AUCTION', name: 'AUCTION', lang: 'en' },
+  { id: 'AUCTION', name: 'AUX ENCHèRE', lang: 'fr' },
+  { id: 'CONTRACT', name: 'CONTRACT', lang: 'en' },
+  { id: 'CONTRACT', name: 'CONTRACT', lang: 'fr' },
+  { id: 'ONLINE', name: 'ONLINE', lang: 'en' },
+  { id: 'ONLINE', name: 'EN LIGNE', lang: 'fr' },
+  { id: 'OTHER', name: 'OTHER', lang: 'en' },
+  { id: 'OTHER', name: 'AUTRE', lang: 'fr' },
+];
+
 export const productionPhases = [
   { id: 'GROWTH', name: 'GROWTH', lang: 'en' },
   { id: 'GROWTH', name: 'CROISSANCE', lang: 'fr' },
@@ -47,6 +83,43 @@ export const avesProductionPhases = [
   { id: 'LAYING', name: 'PONTE', lang: 'fr' },
   { id: 'FATTENING', name: 'FATTENING', lang: 'en' },
   { id: 'FATTENING', name: 'ENGRAISSEMENT', lang: 'fr' },
+];
+
+export const saleType = [
+  { id: 'EGGS', name: 'EGGS', lang: 'en' },
+  { id: 'EGGS', name: 'OEUFS', lang: 'fr' },
+  { id: 'CHICKS', name: 'CHICKS', lang: 'en' },
+  { id: 'CHICKS', name: 'POUSSINS', lang: 'fr' },
+  { id: 'CHICKENS', name: 'CHICKENS', lang: 'en' },
+  { id: 'CHICKENS', name: 'POULETS', lang: 'fr' },
+];
+
+export const healthType = [
+  { id: 'MEDICATION', name: 'MEDICATION', lang: 'en' },
+  { id: 'MEDICATION', name: 'MEDICAMENTS', lang: 'fr' },
+  { id: 'HYGIENE', name: 'HYGIENE PRODUCTS', lang: 'en' },
+  { id: 'HYGIENE', name: 'PRODUITS HYGIÈNE', lang: 'fr' },
+  { id: 'EQUIPMENT', name: 'MEDICAL EQUIPMENTS', lang: 'en' },
+  { id: 'EQUIPMENT', name: 'ÉQUIPEMENTS DE SOIN', lang: 'fr' },
+];
+
+export const saleTypeNoChicks = [
+  { id: 'EGGS', name: 'EGGS', lang: 'en' },
+  { id: 'EGGS', name: 'OEUFS', lang: 'fr' },
+  { id: 'CHICKENS', name: 'CHICKENS', lang: 'en' },
+  { id: 'CHICKENS', name: 'POULETS', lang: 'fr' },
+];
+
+export const offspringsProductionPhase = [
+  { id: 'GROWTH', name: 'GROWTH', lang: 'en' },
+  { id: 'GROWTH', name: 'CROISSANCE', lang: 'fr' },
+];
+
+export const financeType = [
+  { id: 'INCOME', name: 'INCOME', lang: 'en' },
+  { id: 'INCOME', name: 'ENTRÉE', lang: 'fr' },
+  { id: 'EXPENSE', name: 'EXPENSE', lang: 'en' },
+  { id: 'EXPENSE', name: 'DÉPENSE', lang: 'fr' },
 ];
 
 export const checkPregnancyMethod = [
@@ -81,6 +154,13 @@ export const taskPeriode = [
   { id: 'MONTH', name: 'CE MOIS', lang: 'fr' },
 ];
 
+export const fishLocationType = [
+  { id: 'YES', name: 'TANK', lang: 'en' },
+  { id: 'YES', name: 'BAC', lang: 'fr' },
+  { id: 'NO', name: 'POND', lang: 'en' },
+  { id: 'NO', name: 'ÉTANG', lang: 'fr' },
+];
+
 export const taskFrequency = [
   { id: 'DAILY', name: 'DAILY', lang: 'en' },
   { id: 'DAILY', name: 'QUOTIDIEN', lang: 'fr' },
@@ -88,4 +168,13 @@ export const taskFrequency = [
   { id: 'WEEKLY', name: 'HEBDOMADAIRE', lang: 'fr' },
   { id: 'MONTHLY', name: 'MONTHLY', lang: 'en' },
   { id: 'MONTHLY', name: 'MENSUELLEMENT', lang: 'fr' },
+];
+
+export const eggSize = [
+  { id: 'SMALL', name: 'SMALL', lang: 'en' },
+  { id: 'SMALL', name: 'PETIT', lang: 'fr' },
+  { id: 'MEDIUM', name: 'MEDIUM', lang: 'en' },
+  { id: 'MEDIUM', name: 'MOYEN', lang: 'fr' },
+  { id: 'BIG', name: 'BIG', lang: 'en' },
+  { id: 'BIG', name: 'GROS', lang: 'fr' },
 ];

@@ -202,7 +202,7 @@ const CreateBulkAvesFeedings = ({
                   </Label>
                   <Select>
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select band codes" />
+                      <SelectValue placeholder="select band codes" />
                     </SelectTrigger>
                     <SelectContent className="dark:border-gray-800">
                       <SelectGroup>
@@ -286,7 +286,7 @@ const CreateBulkAvesFeedings = ({
                         value={value}
                       >
                         <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select feed type" />
+                          <SelectValue placeholder="select feed type" />
                         </SelectTrigger>
                         <SelectContent className="dark:border-gray-800">
                           <SelectGroup>
@@ -326,7 +326,7 @@ const CreateBulkAvesFeedings = ({
                     control={control}
                     type="number"
                     name="quantity"
-                    placeholder="Give a quantity"
+                    placeholder="quantity"
                     errors={errors}
                   />
                 </div>

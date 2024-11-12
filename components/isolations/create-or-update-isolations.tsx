@@ -1,5 +1,6 @@
 import { GetAnimalsAPI } from '@/api-site/animals';
 import { CreateOrUpdateOneIsolationAPI } from '@/api-site/isolations';
+import { GetLocationsAPI } from '@/api-site/locations';
 import { useInputState, useReactHookForm } from '@/components/hooks';
 import {
   ButtonInput,
@@ -27,6 +28,8 @@ import {
   Select,
   SelectContent,
   SelectGroup,
+  SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '../ui/select';
@@ -46,10 +49,12 @@ const CreateOrUpdateIsolations = ({
   showModal,
   setShowModal,
   isolation,
+  location,
 }: {
   showModal: boolean;
   setShowModal: any;
   isolation?: any;
+  location?: any;
 }) => {
   const {
     t,
@@ -70,7 +75,7 @@ const CreateOrUpdateIsolations = ({
 
   useEffect(() => {
     if (isolation) {
-      const fields = ['animals', 'note'];
+      const fields = ['note'];
       fields?.forEach((field: any) => setValue(field, isolation[field]));
     }
   }, [isolation, setValue]);
@@ -113,9 +118,36 @@ const CreateOrUpdateIsolations = ({
     search,
     take: 10,
     sort: 'desc',
+    isIsolated: 'NO',
     status: 'ACTIVE',
     sortBy: 'createdAt',
+    animalTypeId: animalTypeId,
+  });
+
+  const {
+    isLoading: isLoadingIsolatedAnimals,
+    isError: isErrorIsolatedAnimals,
+    data: dataIsolatedAnimals,
+  } = GetAnimalsAPI({
+    search,
+    take: 10,
+    sort: 'desc',
     isIsolated: 'NO',
+    status: 'ACTIVE',
+    sortBy: 'createdAt',
+    locationId: location?.id,
+    animalTypeId: animalTypeId,
+  });
+
+  const {
+    isLoading: isLoadingLocations,
+    isError: isErrorLocations,
+    data: dataLocations,
+  } = GetLocationsAPI({
+    search,
+    take: 10,
+    sort: 'desc',
+    sortBy: 'createdAt',
     animalTypeId: animalTypeId,
   });
 
@@ -190,15 +222,15 @@ const CreateOrUpdateIsolations = ({
                     </div>
                   </div>
                 )}
-                {!isolation?.id ? (
+                {!isolation?.id && !location?.id ? (
                   <div className="mb-4 w-full mt-2">
                     <Label>
-                      Sélectionez les animaux à isoler
+                      Sélectionner les animaux à isoler
                       <span className="text-red-600">*</span>
                     </Label>
                     <Select>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select animals" />
+                        <SelectValue placeholder="select animals" />
                       </SelectTrigger>
                       <SelectContent className="dark:border-gray-800">
                         <div className="mr-auto items-center gap-2">
@@ -274,15 +306,153 @@ const CreateOrUpdateIsolations = ({
                       </SelectContent>
                     </Select>
                   </div>
+                ) : location?.id ? (
+                  <div className="mb-2 w-full mt-2">
+                    <Label>
+                      Sélectionner les animaux à isoler
+                      <span className="text-red-600">*</span>
+                    </Label>
+                    <Select>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="select animals" />
+                      </SelectTrigger>
+                      <SelectContent className="dark:border-gray-800">
+                        <div className="mr-auto items-center gap-2">
+                          <SearchInput
+                            placeholder="Search by code"
+                            onChange={handleSetSearch}
+                          />
+                        </div>
+                        <SelectGroup>
+                          {isLoadingIsolatedAnimals ? (
+                            <LoadingFile />
+                          ) : isErrorIsolatedAnimals ? (
+                            <ErrorFile
+                              title="404"
+                              description="Error finding data please try again..."
+                            />
+                          ) : Number(
+                              dataIsolatedAnimals?.pages[0]?.data?.total,
+                            ) <= 0 ? (
+                            <ErrorFile description="Don't have active animals created yet please do" />
+                          ) : (
+                            dataIsolatedAnimals?.pages
+                              .flatMap((page: any) => page?.data?.value)
+                              .map((item) => (
+                                <>
+                                  <Controller
+                                    key={item?.code}
+                                    control={control}
+                                    name="animals"
+                                    render={({ field: { ...field } }) => (
+                                      <>
+                                        <div
+                                          className="flex flex-row items-start space-x-3 space-y-0 rounded-md p-4"
+                                          key={item?.code}
+                                        >
+                                          <Checkbox
+                                            checked={field?.value?.includes(
+                                              item?.code,
+                                            )}
+                                            onCheckedChange={(checked) => {
+                                              return checked
+                                                ? field.onChange([
+                                                    ...(field.value || []),
+                                                    item?.code,
+                                                  ])
+                                                : field?.onChange(
+                                                    field?.value?.filter(
+                                                      (value: any) =>
+                                                        value !== item?.code,
+                                                    ),
+                                                  );
+                                            }}
+                                          />
+                                          <div className="space-y-1 leading-none">
+                                            <Label>{item?.code}</Label>
+                                          </div>
+                                        </div>
+                                      </>
+                                    )}
+                                  />
+                                </>
+                              ))
+                          )}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 ) : (
                   ''
                 )}
+                <div className="mb-2">
+                  <Label>
+                    {t.formatMessage({ id: 'VIEW.LOCATION' })}
+                    <span className="text-red-600">*</span>
+                  </Label>
+                  <Controller
+                    control={control}
+                    name="locationCode"
+                    render={({ field: { value, onChange } }) => (
+                      <Select
+                        onValueChange={onChange}
+                        name={'locationCode'}
+                        value={value}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="select location code" />
+                        </SelectTrigger>
+                        <SelectContent className="dark:border-gray-800">
+                          <div className="mr-auto items-center gap-2">
+                            <SearchInput
+                              placeholder="Search by code"
+                              onChange={handleSetSearch}
+                            />
+                          </div>
+                          <SelectGroup>
+                            <SelectLabel>Location codes</SelectLabel>
+                            {isLoadingLocations ? (
+                              <LoadingFile />
+                            ) : isErrorLocations ? (
+                              <ErrorFile
+                                title="404"
+                                description="Error finding data please try again..."
+                              />
+                            ) : Number(dataLocations?.pages[0]?.data?.total) <=
+                              0 ? (
+                              <ErrorFile description="Don't have location codes" />
+                            ) : (
+                              dataLocations?.pages
+                                .flatMap((page: any) => page?.data?.value)
+                                .map((item, index) => (
+                                  <>
+                                    <SelectItem key={index} value={item?.code}>
+                                      {item?.code}
+                                    </SelectItem>
+                                  </>
+                                ))
+                            )}
+                            {hasNextPage && (
+                              <div className="mx-auto mt-4 justify-center text-center">
+                                <ButtonLoadMore
+                                  ref={ref}
+                                  isFetchingNextPage={isFetchingNextPage}
+                                  onClick={() => fetchNextPage()}
+                                />
+                              </div>
+                            )}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                </div>
                 <div className="mb-4">
                   <TextAreaInput
                     control={control}
-                    label="Description"
+                    label="Motif"
                     name="note"
-                    placeholder="Note"
+                    placeholder="reason"
                     errors={errors}
                   />
                 </div>

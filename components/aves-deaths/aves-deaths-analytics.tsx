@@ -21,7 +21,7 @@ import {
 } from '../ui/dropdown-menu';
 
 const AvesDeathsAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
-  const { t, locale } = useInputState();
+  const { t, locale, userStorage } = useInputState();
   const [year, setYear] = useState<String>(`${dateTimeNowUtc().getFullYear()}`);
   const [months, setMonths] = useState<String>('');
 
@@ -29,15 +29,18 @@ const AvesDeathsAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
     year: String(year),
     months: String(months),
     animalTypeId: animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   const { data: dataAvesDeathsAnalyticsMonth } = GetavesDeathsAnalyticAPI({
     year: String(year),
     animalTypeId: animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   const { data: dataAvesDeathsAnalyticsYear } = GetavesDeathsAnalyticAPI({
     animalTypeId: animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   const chartConfig = {

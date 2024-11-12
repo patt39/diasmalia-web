@@ -18,7 +18,7 @@ import {
 import { Eye, MoreHorizontal, PencilIcon, TrashIcon } from 'lucide-react';
 import { useState } from 'react';
 import { ActionModalDialog } from '../ui-setting/shadcn';
-import { CreateOrUpdateAvestreatments } from './create-or-update-aves-treatments';
+import { UpdateAvestreatments } from './update-aves-treatments';
 import { ViewAvesTreatment } from './view-treatment';
 
 const ListAvesTreatments = ({ item, index }: { item: any; index: number }) => {
@@ -71,16 +71,16 @@ const ListAvesTreatments = ({ item, index }: { item: any; index: number }) => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="dark:border-gray-800">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => setIsEdit(true)}>
-                <PencilIcon className="size-4 text-gray-600 hover:text-indigo-600" />
-                <span className="ml-2 cursor-pointer hover:text-indigo-600">
-                  {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
-                </span>
-              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setIsView(true)}>
                 <Eye className="size-4 text-gray-600 hover:text-indigo-600" />
                 <span className="ml-2 cursor-pointer hover:text-indigo-600">
                   {t.formatMessage({ id: 'TABANIMAL.VIEW' })}
+                </span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setIsEdit(true)}>
+                <PencilIcon className="size-4 text-gray-600 hover:text-indigo-600" />
+                <span className="ml-2 cursor-pointer hover:text-indigo-600">
+                  {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
                 </span>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setIsOpen(true)}>
@@ -99,7 +99,7 @@ const ListAvesTreatments = ({ item, index }: { item: any; index: number }) => {
           </DropdownMenu>
         </TableCell>
       </TableRow>
-      <CreateOrUpdateAvestreatments
+      <UpdateAvestreatments
         treatment={item}
         showModal={isEdit}
         setShowModal={setIsEdit}

@@ -11,7 +11,6 @@ import {
 import { formatDateDDMMYY } from '@/utils';
 import { Check, Eye, MoreHorizontal, PencilIcon } from 'lucide-react';
 import { useState } from 'react';
-import { firstLetterToUpperCase } from '../../utils/utils';
 import { Badge } from '../ui/badge';
 import { TableCell, TableRow } from '../ui/table';
 import { CheckPregnancy } from './check-pregnancy';
@@ -29,7 +28,7 @@ const ListBreedings = ({ item, index }: { item: any; index: number }) => {
       <TableRow key={index} className="dark:border-gray-800">
         <TableCell className="font-medium">{item?.maleCode}</TableCell>
         <TableCell className="font-medium">{item?.femaleCode}</TableCell>
-        <TableCell>{firstLetterToUpperCase(item?.method)}</TableCell>
+        <TableCell>{item?.method}</TableCell>
         <TableCell>
           {item?.checkStatus === true && item?.result === 'PREGNANT' ? (
             <Badge className="text-xs" variant="secondary">

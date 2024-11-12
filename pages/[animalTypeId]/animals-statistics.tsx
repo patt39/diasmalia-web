@@ -1,5 +1,6 @@
 import { GetAnimalStatisticsAPI } from '@/api-site/animals';
 import { GetBestSaleChannelAPI } from '@/api-site/sales';
+import { useInputState } from '@/components/hooks';
 import { TabBestSaleChannel } from '@/components/sales-analytics/tab-best-channel';
 import {
   Card,
@@ -8,11 +9,10 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { useRouter } from 'next/router';
-import { useIntl } from 'react-intl';
 import { formatWeight } from '../../utils/formate-date';
 
 const AnimalStatistics = () => {
-  const t = useIntl();
+  const { t, userStorage } = useInputState();
   const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
 
@@ -22,6 +22,7 @@ const AnimalStatistics = () => {
 
   const { data: animalStatistics } = GetAnimalStatisticsAPI({
     animalTypeId: animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   const weaningPercentage =
@@ -84,7 +85,10 @@ const AnimalStatistics = () => {
             {t.formatMessage({ id: 'FECONDITY.RATE' })}
           </CardDescription>
           <CardTitle className="text-3xl">
-            {Math.floor(farrowingPercentage * 100) / 100 || 0}%
+            {Math.floor(farrowingPercentage * 100) / 100 !== 0
+              ? 0
+              : Math.floor(farrowingPercentage * 100) / 100}
+            %
           </CardTitle>
         </CardHeader>
       </Card>

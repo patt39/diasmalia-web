@@ -18,7 +18,7 @@ import { useInView } from 'react-intersection-observer';
 import { ListArchives } from './list-archives';
 
 export function Archives() {
-  const { t, search, handleSetSearch } = useInputState();
+  const { t, search, handleSetSearch, userStorage } = useInputState();
   const { ref, inView } = useInView();
 
   const { back } = useRouter();
@@ -36,6 +36,7 @@ export function Archives() {
     sort: 'desc',
     status: 'ARCHIVED',
     sortBy: 'createdAt',
+    organizationId: userStorage?.organizationId,
   });
 
   useEffect(() => {
@@ -62,7 +63,9 @@ export function Archives() {
 
   return (
     <>
-      <LayoutDashboard title="Archives">
+      <LayoutDashboard
+        title={`${userStorage?.user?.profile?.firstName} ${userStorage?.user?.profile?.lastName} - Archives`}
+      >
         <CardHeader>
           <div className="flex items-center">
             <ButtonInput

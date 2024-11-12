@@ -1,5 +1,6 @@
 import { GetAssignedTypesAPI } from '@/api-site/assigned-type';
 import { GetHealthsAPI } from '@/api-site/health';
+import { GetOneUserMeAPI } from '@/api-site/user';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonLoadMore } from '@/components/ui-setting';
 import { LoadingFile } from '@/components/ui-setting/ant';
@@ -36,13 +37,14 @@ const ViewMedication = ({
 }) => {
   const { t, watch, control } = useReactHookForm({ schema });
   const { ref, inView } = useInView();
+  const { data: user } = GetOneUserMeAPI();
   const watchAnimalTypeId = watch('animalTypeId', '');
   const {
     isLoading: isLoadingAssignedTypes,
     isError: isErrorAssignedTypes,
     data: dataAssignedTypes,
   } = GetAssignedTypesAPI({
-    take: 10,
+    take: 20,
     sort: 'desc',
     sortBy: 'createdAt',
   });
@@ -62,6 +64,7 @@ const ViewMedication = ({
     sortBy: 'createdAt',
     category: 'MEDICATION',
     animalTypeId: watchAnimalTypeId,
+    organizationId: user?.organizationId,
   });
 
   const { data: dataHealthCount } = GetHealthsAPI({
@@ -71,6 +74,7 @@ const ViewMedication = ({
     sortBy: 'createdAt',
     category: 'MEDICATION',
     animalTypeId: watchAnimalTypeId,
+    organizationId: user?.organizationId,
   });
 
   useEffect(() => {
@@ -187,7 +191,7 @@ const ViewMedication = ({
               </div>
             </div>
             <div className="px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl">
-              <div className="grid grid-cols-1 gap-5 sm:mt-12 sm:grid-cols-2 xl:grid-cols-3 sm:gap-8 xl:gap-12">
+              <div className="grid grid-cols-1 gap-5 sm:mt-12 sm:grid-cols-2 xl:grid-cols-3 sm:gap-8 xl:gap-12 mb-8">
                 {isLoadingHealth ? (
                   <LoadingFile />
                 ) : isErrorHealth ? (

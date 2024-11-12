@@ -2,7 +2,6 @@ import {
   GetContributorsAPI,
   InviteCollaboratorAPI,
 } from '@/api-site/contributors';
-import { GetOneUserMeAPI } from '@/api-site/user';
 import { useInputState } from '@/components/hooks';
 import { LayoutDashboard } from '@/components/layouts/dashboard';
 
@@ -54,7 +53,7 @@ export function Contributors() {
   const schema = yup.object({
     email: yup.string().required('email is required'),
   });
-  const { t, search, handleSetSearch } = useInputState();
+  const { t, search, handleSetSearch, userStorage } = useInputState();
   const [role, setRole] = useState('');
   const [isAddContributor, setIsAddContributor] = useState(false);
   const {
@@ -70,8 +69,6 @@ export function Contributors() {
     },
   });
 
-  const { data: user } = GetOneUserMeAPI();
-
   const {
     isLoading: isLoadingCollaborators,
     isError: isErrorCollaborators,
@@ -82,7 +79,7 @@ export function Contributors() {
     take: 10,
     sort: 'desc',
     sortBy: 'createdAt',
-    organizationId: user?.organizationId,
+    organizationId: userStorage?.organizationId,
   });
 
   const { isPending: loading, mutateAsync: saveMutation } =
@@ -110,10 +107,12 @@ export function Contributors() {
 
   return (
     <>
-      <LayoutDashboard title={'Contributors'}>
+      <LayoutDashboard
+        title={`${userStorage?.user?.profile?.firstName} ${userStorage?.user?.profile?.lastName} - Collaborators`}
+      >
         <div className="flex min-h-screen w-full flex-col">
           <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-            {user?.role === 'SUPERADMIN' ? (
+            {userStorage?.role === 'SUPERADMIN' ? (
               <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
                 <Card
                   className="sm:col-span-2 dark:border-gray-800"
@@ -160,7 +159,6 @@ export function Contributors() {
                           errors={errors}
                           type="text"
                         />
-
                         <ButtonInput
                           type="submit"
                           variant="primary"

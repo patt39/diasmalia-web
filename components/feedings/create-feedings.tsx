@@ -194,7 +194,7 @@ const CreateFeedings = ({
                   </Label>
                   <Select>
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select animals" />
+                      <SelectValue placeholder="select animals" />
                     </SelectTrigger>
                     <SelectContent className="dark:border-gray-800">
                       <SelectGroup>
@@ -278,7 +278,7 @@ const CreateFeedings = ({
                         value={value}
                       >
                         <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select a feed type" />
+                          <SelectValue placeholder="select feed type" />
                         </SelectTrigger>
                         <SelectContent className="dark:border-gray-800">
                           <SelectGroup>
@@ -317,7 +317,7 @@ const CreateFeedings = ({
                     control={control}
                     type="number"
                     name="quantity"
-                    placeholder="Give quantity feed in (kg)"
+                    placeholder="feed quantity in (kg)"
                     errors={errors}
                   />
                 </div>

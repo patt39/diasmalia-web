@@ -7,6 +7,11 @@ import {
   TextAreaInput,
   TextInput,
 } from '@/components/ui-setting/shadcn';
+import {
+  saleType,
+  saleTypeNoChicks,
+  sellingMethods,
+} from '@/i18n/default-exports';
 import { SalesModel } from '@/types/sale';
 import {
   AlertDangerNotification,
@@ -47,6 +52,7 @@ const CreateAvesSales = ({
 }) => {
   const {
     t,
+    locale,
     watch,
     control,
     handleSubmit,
@@ -132,7 +138,7 @@ const CreateAvesSales = ({
                       control={control}
                       type="text"
                       name="code"
-                      placeholder="Give a code"
+                      disabled
                       errors={errors}
                     />
                   </div>
@@ -148,17 +154,14 @@ const CreateAvesSales = ({
                       <span className="text-red-600">*</span>
                     </Label>
                     <SelectInput
-                      className="cursor-pointer"
-                      firstOptionName="Choose selling detail"
                       control={control}
                       errors={errors}
-                      placeholder="Select a detail"
-                      valueType="text"
+                      placeholder="Select detail"
+                      valueType="key"
                       name="detail"
-                      dataItem={[
-                        { id: 1, name: 'EGGS' },
-                        { id: 2, name: 'CHICKENS' },
-                      ]}
+                      dataItem={saleTypeNoChicks.filter(
+                        (i) => i?.lang === locale,
+                      )}
                     />
                   </div>
                 ) : (
@@ -168,43 +171,42 @@ const CreateAvesSales = ({
                       <span className="text-red-600">*</span>
                     </Label>
                     <SelectInput
-                      firstOptionName="Choose selling detail"
                       control={control}
                       errors={errors}
-                      placeholder="Select a detail"
-                      valueType="text"
+                      placeholder="select detail"
+                      valueType="key"
                       name="detail"
-                      dataItem={[
-                        { id: 1, name: 'EGGS' },
-                        { id: 2, name: 'CHICKS' },
-                        { id: 3, name: 'CHICKENS' },
-                      ]}
+                      dataItem={saleType.filter((i) => i?.lang === locale)}
                     />
                   </div>
                 )}
                 {['Pisciculture'].includes(animalType?.name) ? (
-                  <div className="mb-2 flex items-center space-x-1">
-                    <Label>
-                      Nombre:<span className="text-red-600">*</span>
-                    </Label>
-                    <TextInput
-                      control={control}
-                      type="number"
-                      name="number"
-                      placeholder="Give a number"
-                      errors={errors}
-                    />
-                    <Label>
-                      {t.formatMessage({ id: 'SALE.PRICE' })}:
-                      <span className="text-red-600">*</span>
-                    </Label>
-                    <TextInput
-                      control={control}
-                      type="number"
-                      name="price"
-                      placeholder="Give a price"
-                      errors={errors}
-                    />
+                  <div className="mb-2 flex items-center space-x-8 mt-2">
+                    <div className="w-80">
+                      <Label>
+                        Nombre<span className="text-red-600">*</span>
+                      </Label>
+                      <TextInput
+                        control={control}
+                        type="number"
+                        name="number"
+                        placeholder="number"
+                        errors={errors}
+                      />
+                    </div>
+                    <div className="w-80">
+                      <Label>
+                        {t.formatMessage({ id: 'SALE.PRICE' })}:
+                        <span className="text-red-600">*</span>
+                      </Label>
+                      <TextInput
+                        control={control}
+                        type="number"
+                        name="price"
+                        placeholder="price"
+                        errors={errors}
+                      />
+                    </div>
                   </div>
                 ) : (
                   <div className="flex justify-center">
@@ -221,7 +223,7 @@ const CreateAvesSales = ({
                             control={control}
                             type="number"
                             name="number"
-                            placeholder="Give a number"
+                            placeholder="number"
                             errors={errors}
                           />
                         </div>
@@ -234,13 +236,13 @@ const CreateAvesSales = ({
                             control={control}
                             type="number"
                             name="price"
-                            placeholder="Give a price"
+                            placeholder="price"
                             errors={errors}
                           />
                         </div>
                       </div>
                     ) : ['EGGS', 'CHICKS'].includes(watchDetail) ? (
-                      <div className="flex space-x-8">
+                      <div className="flex space-x-4">
                         <div>
                           <Label>
                             Nombre<span className="text-red-600">*</span>
@@ -249,7 +251,7 @@ const CreateAvesSales = ({
                             control={control}
                             type="number"
                             name="number"
-                            placeholder="Give a number"
+                            placeholder="number"
                             errors={errors}
                           />
                         </div>
@@ -262,14 +264,14 @@ const CreateAvesSales = ({
                             control={control}
                             type="number"
                             name="price"
-                            placeholder="Give a price"
+                            placeholder="price"
                             errors={errors}
                           />
                         </div>
                       </div>
                     ) : (
-                      <div className="flex items-center space-x-16">
-                        <div>
+                      <div className="flex items-center space-x-8">
+                        <div className="w-40">
                           <Label>
                             {t.formatMessage({ id: 'ANIMAL.MALE' })}
                             <span className="text-red-600">*</span>
@@ -279,11 +281,11 @@ const CreateAvesSales = ({
                             type="number"
                             name="male"
                             defaultValue="0"
-                            placeholder="Number of males"
+                            placeholder="number of males"
                             errors={errors}
                           />
                         </div>
-                        <div>
+                        <div className="w-40">
                           <Label>
                             {t.formatMessage({ id: 'ANIMAL.FEMALE' })}
                             <span className="text-red-600">*</span>
@@ -293,11 +295,11 @@ const CreateAvesSales = ({
                             type="number"
                             name="female"
                             defaultValue="0"
-                            placeholder="Number of females"
+                            placeholder="number of females"
                             errors={errors}
                           />
                         </div>
-                        <div>
+                        <div className="w-60">
                           <Label>
                             {t.formatMessage({ id: 'SALE.PRICE' })}
                             <span className="text-red-600">*</span>
@@ -306,7 +308,7 @@ const CreateAvesSales = ({
                             control={control}
                             type="number"
                             name="price"
-                            placeholder="Give a price"
+                            placeholder="price"
                             errors={errors}
                           />
                         </div>
@@ -321,7 +323,7 @@ const CreateAvesSales = ({
                     control={control}
                     type="text"
                     name="soldTo"
-                    placeholder="Customer name"
+                    placeholder="customer name"
                     errors={errors}
                   />
                 </div>
@@ -331,7 +333,7 @@ const CreateAvesSales = ({
                     control={control}
                     type="text"
                     name="email"
-                    placeholder="Customer email"
+                    placeholder="customer email"
                     errors={errors}
                   />
                 </div>
@@ -341,7 +343,7 @@ const CreateAvesSales = ({
                     control={control}
                     type="number"
                     name="phone"
-                    placeholder="Customer phone number"
+                    placeholder="customer phone number"
                     errors={errors}
                   />
                 </div>
@@ -351,7 +353,7 @@ const CreateAvesSales = ({
                     control={control}
                     type="text"
                     name="address"
-                    placeholder="Customer address"
+                    placeholder="customer address"
                     errors={errors}
                   />
                 </div>
@@ -359,29 +361,21 @@ const CreateAvesSales = ({
                 <span className="text-red-600">*</span>
                 <div className="mb-4 flex items-center">
                   <SelectInput
-                    firstOptionName="Choose a sale method"
                     control={control}
                     errors={errors}
-                    placeholder="Select the selling method"
-                    valueType="text"
+                    placeholder="selling method"
+                    valueType="key"
                     name="method"
-                    dataItem={[
-                      { id: 1, name: 'FARM' },
-                      { id: 2, name: 'MARKET' },
-                      { id: 3, name: 'AUCTION' },
-                      { id: 4, name: 'CONTRACT' },
-                      { id: 5, name: 'SOCIALMEDIA' },
-                      { id: 6, name: 'OTHER' },
-                    ]}
+                    dataItem={sellingMethods.filter((i) => i?.lang === locale)}
                   />
                 </div>
                 {watchSaleCanale === 'OTHER' ? (
                   <div className="mb-4">
                     <TextAreaInput
                       control={control}
-                      label="Details of sale"
+                      label="Detail de la vente"
                       name="note"
-                      placeholder="Give details about animals and client"
+                      placeholder="give details about animals and client"
                       errors={errors}
                     />
                   </div>

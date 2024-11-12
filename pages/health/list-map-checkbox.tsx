@@ -3,6 +3,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { AlertDangerNotification, AlertSuccessNotification } from '@/utils';
 import { useState } from 'react';
+import { firstLetterToUpperCase } from '../../utils/utils';
 
 const ListMapcheckBox = ({ item }: { item: any }) => {
   const [isChangeStatus, setIsChangeStatus] = useState<boolean>(item?.status);
@@ -35,7 +36,7 @@ const ListMapcheckBox = ({ item }: { item: any }) => {
         }}
       />
       <div className="space-y-1 leading-none">
-        <Label>{item?.name}</Label>
+        <Label>{firstLetterToUpperCase(item?.name)}</Label>
       </div>
     </div>
   );

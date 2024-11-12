@@ -1,11 +1,9 @@
 import { GetOneDeathAPI } from '@/api-site/deaths';
-import { useReactHookForm } from '@/components/hooks';
 import { XIcon } from 'lucide-react';
-import * as yup from 'yup';
+import { useIntl } from 'react-intl';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
-
-const schema = yup.object({});
+import { Textarea } from '../ui/textarea';
 
 const ViewAvesDeath = ({
   showModal,
@@ -16,8 +14,7 @@ const ViewAvesDeath = ({
   setShowModal: any;
   death?: any;
 }) => {
-  const { t } = useReactHookForm({ schema });
-
+  const t = useIntl();
   const { data: GetOneDeath } = GetOneDeathAPI({
     deathId: death?.id,
   });
@@ -42,44 +39,30 @@ const ViewAvesDeath = ({
                   GetOneDeath?.animalType?.name,
                 ) ? (
                   <div className="my-4">
-                    <Label>
-                      {t.formatMessage({ id: 'NUMBER.ANIMALS' })}
-                      <span className="text-red-600">*</span>
-                    </Label>
+                    <Label>{t.formatMessage({ id: 'NUMBER.ANIMALS' })}</Label>
                     <Input defaultValue={GetOneDeath?.number} disabled />
                   </div>
                 ) : GetOneDeath?.male !== 0 ? (
                   <div className="my-4">
-                    <Label>
-                      {t.formatMessage({ id: 'ANIMAL.MALES' })}:
-                      <span className="text-red-600">*</span>
-                    </Label>
+                    <Label>{t.formatMessage({ id: 'ANIMAL.MALES' })}</Label>
                     <Input defaultValue={GetOneDeath?.male} disabled />
                   </div>
                 ) : GetOneDeath?.female !== 0 ? (
                   <div className="my-4">
-                    <Label>
-                      {t.formatMessage({ id: 'ANIMAL.FEMALES' })}:
-                      <span className="text-red-600">*</span>
-                    </Label>
+                    <Label>{t.formatMessage({ id: 'ANIMAL.FEMALES' })}</Label>
                     <Input defaultValue={GetOneDeath?.female} disabled />
                   </div>
                 ) : (
                   <div className="my-4 flex items-center space-x-1">
-                    <Label>
-                      {t.formatMessage({ id: 'ANIMAL.MALES' })}:
-                      <span className="text-red-600">*</span>
-                    </Label>
+                    <Label>{t.formatMessage({ id: 'ANIMAL.MALES' })}</Label>
                     <Input defaultValue={GetOneDeath?.male} disabled />
-                    <Label>
-                      {t.formatMessage({ id: 'ANIMAL.FEMALES' })}:
-                      <span className="text-red-600">*</span>
-                    </Label>
+                    <Label>{t.formatMessage({ id: 'ANIMAL.FEMALES' })}</Label>
                     <Input defaultValue={GetOneDeath?.female} disabled />
                   </div>
                 )}
                 <div className="mb-4">
-                  <Input defaultValue={GetOneDeath?.note} disabled />
+                  <Label>Cause</Label>
+                  <Textarea defaultValue={GetOneDeath?.note} disabled />
                 </div>
               </div>
             </form>

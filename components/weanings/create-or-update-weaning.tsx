@@ -120,6 +120,7 @@ const CreateOrUpdateWeanings = ({
                       name="code"
                       defaultValue={`${animal?.animal?.code}`}
                       errors={errors}
+                      disabled
                     />
                   </div>
                 ) : null}
@@ -132,7 +133,7 @@ const CreateOrUpdateWeanings = ({
                     control={control}
                     type="number"
                     name="litter"
-                    placeholder="Litter"
+                    placeholder="litter"
                     errors={errors}
                   />
                 </div>
@@ -145,7 +146,7 @@ const CreateOrUpdateWeanings = ({
                     control={control}
                     type="number"
                     name="weight"
-                    placeholder="Unit weight"
+                    placeholder="weight"
                     errors={errors}
                   />
                 </div>

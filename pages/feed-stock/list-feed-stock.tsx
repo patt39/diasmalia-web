@@ -62,79 +62,73 @@ const ListFeedStock = ({ item, index }: { item: any; index: number }) => {
       >
         <div className="p-6 lg:px-8 lg:py-8">
           <div className="flex space-x-32">
-            {item?.feedCategory === 'PRESTARTER' ||
-            item?.feedCategory === 'PRÉDÉMARRAGE' ? (
+            {['PRESTARTER', 'PRÉDÉMARRAGE'].includes(item?.feedCategory) ? (
               <div className="justify-items-start text-orange-600 text-base font-bold mb-2">
                 {t.formatMessage({ id: 'FEED.PRESTARTER' })}
               </div>
-            ) : item?.feedCategory === 'STARTER' ||
-              item?.feedCategory === 'DÉMARRAGE' ? (
+            ) : ['STARTER', 'DÉMARRAGE'].includes(item?.feedCategory) ? (
               <div className="justify-items-start text-amber-600 text-lg font-bold mb-2">
                 {t.formatMessage({ id: 'FEED.STARTER' })}
               </div>
-            ) : item?.feedCategory === 'GROWER' ||
-              item?.feedCategory === 'CROISSANCE' ? (
+            ) : ['GROWER', 'CROISSANCE'].includes(item?.feedCategory) ? (
               <div className="justify-items-start text-yellow-600 text-lg font-bold mb-2">
                 {t.formatMessage({ id: 'FEED.GROWER' })}
               </div>
-            ) : item?.feedCategory === 'FATTENER' ||
-              item?.feedCategory === 'ENGRAISSEUR' ? (
+            ) : ['FATTENER', 'ENGRAISSEUR'].includes(item?.feedCategory) ? (
               <div className="justify-items-start text-lime-600 text-lg font-bold mb-2">
                 {t.formatMessage({ id: 'FEED.FATTENER' })}
               </div>
-            ) : item?.feedCategory === 'FINISHER' ||
-              item?.feedCategory === 'FINITION' ? (
+            ) : ['FINISHER', 'FINITION'].includes(item?.feedCategory) ? (
               <div className="justify-items-start text-green-600 text-lg font-bold mb-2">
                 {t.formatMessage({ id: 'FEED.FINISHER' })}
               </div>
-            ) : item?.feedCategory === 'FORAGES' ||
-              item?.feedCategory === 'FOURAGES' ? (
+            ) : ['FORAGES', 'FOURAGES'].includes(item?.feedCategory) ? (
               <div className="justify-items-start text-emerald-600 text-lg font-bold mb-2">
                 {t.formatMessage({ id: 'FEED.FORAGES' })}
               </div>
-            ) : item?.feedCategory === 'SILAGES' ||
-              item?.feedCategory === 'ENSILAGES' ? (
+            ) : ['SILAGES', 'ENSILAGES'].includes(item?.feedCategory) ? (
               <div className="justify-items-start text-teal-600 text-lg font-bold mb-2">
                 {t.formatMessage({ id: 'FEED.SILAGES' })}
               </div>
-            ) : item?.feedCategory === 'BYPRODUCTS' ||
-              item?.feedCategory === 'PRODUIT DÉRIVÉS' ? (
+            ) : ['BYPRODUCTS', 'PRODUIT DÉRIVÉS'].includes(
+                item?.feedCategory,
+              ) ? (
               <div className="justify-items-start text-cyan-600 text-sm font-bold mb-2">
                 {t.formatMessage({ id: 'FEED.BYPRODUCTS' })}
               </div>
-            ) : item?.feedCategory === 'COMPLETEFEED' ||
-              item?.feedCategory === 'ALIMENT COMPLÈT' ? (
+            ) : ['COMPLETEFEED', 'ALIMENT COMPLÈT'].includes(
+                item?.feedCategory,
+              ) ? (
               <div className="justify-items-start text-sky-600 text-sm font-bold mb-2">
                 {t.formatMessage({ id: 'FEED.COMPLETEFEED' })}
               </div>
-            ) : item?.feedCategory === 'CONCENTRATES' ||
-              item?.feedCategory === 'CONCENTRÉS' ? (
+            ) : ['CONCENTRATES', 'CONCENTRÉS'].includes(item?.feedCategory) ? (
               <div className="justify-items-start text-blue-600 text-lg font-bold mb-2">
                 {t.formatMessage({ id: 'FEED.CONCENTRATES' })}
               </div>
-            ) : item?.feedCategory === 'LACTATIZING FEMALE' ||
-              item?.feedCategory === 'FEMELLES ALLAITANTES' ? (
+            ) : ['LAY FOOD', 'ALIMENT PONTE'].includes(item?.feedCategory) ? (
               <div className="justify-items-start text-indigo-600 text-sm font-bold mb-2">
+                {t.formatMessage({ id: 'FEED.LAYERSFEED' })}
+              </div>
+            ) : ['LACTATIZING FEMALE', 'FEMELLES ALLAITANTES'].includes(
+                item?.feedCategory,
+              ) ? (
+              <div className="justify-items-start text-violet-600 text-sm font-bold mb-2">
                 {t.formatMessage({ id: 'FEED.LACTATINGFEMALES' })}
               </div>
-            ) : item?.feedCategory === 'PREGNANT FEMALE' ||
-              item?.feedCategory === 'FEMELLES GESTANTES' ? (
-              <div className="justify-items-start text-violet-600 text-sm font-bold mb-2">
-                {t.formatMessage({ id: 'FEED.FEMALEGESTATION' })}
-              </div>
-            ) : item?.feedCategory === 'LAY FOOD' ||
-              item?.feedCategory === 'ALIMENT PONTE' ? (
+            ) : ['PREGNANT FEMALE', 'FEMELLES GESTANTES'].includes(
+                item?.feedCategory,
+              ) ? (
               <div className="justify-items-start text-purple-600 text-sm font-bold mb-2">
-                {t.formatMessage({ id: 'FEED.LAYERSFEED' })}
+                {t.formatMessage({ id: 'FEED.FEMALEGESTATION' })}
               </div>
             ) : (
               <div className="justify-items-start text-fuchsia-600 text-lg font-bold mb-2">
                 {item?.feedCategory}
               </div>
             )}
-
             <div>
-              {item?.number < 4 ? (
+              {item?.number < 4 && item?.number != 0 ? (
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -155,19 +149,26 @@ const ListFeedStock = ({ item, index }: { item: any; index: number }) => {
               )}
             </div>
           </div>
-          <div className="flex items-center justify-center space-x-6 mt-2">
-            <div>
-              <h2 className="mb-2 items-center flex text-base font-bold text-gray-500 h-4">
-                <Backpack className="h-3.5 w-3.5 hover:shadow-xxl" />{' '}
-                {t.formatMessage({ id: 'BAGS' })}: {item?.number}
-              </h2>
+          <div className="flex items-center justify-center space-x-6 mt-2 cursor-pointer">
+            <div onClick={() => setIsComposition(true)}>
+              {item?.number !== 0 ? (
+                <h2 className="mb-2 items-center flex text-base font-bold text-gray-500 h-4">
+                  <Backpack className="h-3.5 w-3.5 hover:shadow-xxl" />{' '}
+                  {t.formatMessage({ id: 'BAGS' })}: {item?.number}
+                </h2>
+              ) : (
+                ''
+              )}
               <h2 className="mb-2 flex items-center text-base font-bold text-gray-500 h-4 space-x-2">
                 <Anvil className="h-3.5 w-3.5  hover:shadow-xxl" />
                 {t.formatMessage({ id: 'TABANIMAL.WEIGHT' })}: {item?.weight}kg
               </h2>
-              <h2 className="flex items-center text-base font-normal text-gray-500 h-4 space-x-2">
+              <h2 className="mb-2 flex items-center text-base font-normal text-gray-500 h-4 space-x-2">
                 <Calendar className="h-3.5 w-3.5  hover:shadow-xxl" />
                 Date: {formatDateDDMMYY(item?.updatedAt as Date)}
+              </h2>
+              <h2 className="flex items-center text-base font-normal text-gray-500 h-4 space-x-2">
+                {item?.animalType?.name}
               </h2>
             </div>
           </div>

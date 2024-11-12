@@ -1,9 +1,8 @@
 import { GetOneAnimalAPI } from '@/api-site/animals';
-import { GetOneUserMeAPI } from '@/api-site/user';
 import { formatDateDDMMYY } from '@/utils';
 import { XIcon } from 'lucide-react';
-import { useIntl } from 'react-intl';
 import { formatWeight } from '../../utils/formate-date';
+import { useInputState } from '../hooks';
 import { Card, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
@@ -17,8 +16,7 @@ const ViewAvesAnimal = ({
   setShowModal: any;
   animal?: any;
 }) => {
-  const t = useIntl();
-  const { data: user } = GetOneUserMeAPI();
+  const { t, userStorage } = useInputState();
   const { data: getOneAnimal } = GetOneAnimalAPI({
     animalId: animal?.id,
   });
@@ -68,22 +66,31 @@ const ViewAvesAnimal = ({
                   />
                 </div>
               </div>
-              {['Poulet de chair', 'Pondeuses'].includes(
+              {['Poulet de chair', 'Pondeuses', 'Pisciculture'].includes(
                 getOneAnimal?.animalType?.name,
               ) ? (
                 <div className="mb-4 flex space-x-4">
                   <div className="w-96">
                     <Input disabled value={getOneAnimal?.supplier || 'N/A'} />
                   </div>
-                  <div className="w-60">
-                    <Input disabled value={getOneAnimal?.strain || 'N/A'} />
-                  </div>
+                  {getOneAnimal?.animalType?.name !== 'Pisciculture' ? (
+                    <div className="w-60">
+                      <Input disabled value={getOneAnimal?.strain || 'N/A'} />
+                    </div>
+                  ) : (
+                    <div className="w-60">
+                      <Input
+                        disabled
+                        value={getOneAnimal?.breed?.name || 'N/A'}
+                      />
+                    </div>
+                  )}
                 </div>
               ) : (
                 ''
               )}
               <>
-                <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
+                <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-3 mb-8">
                   {[
                     'Poulet de chair',
                     'Pisciculture',
@@ -97,8 +104,9 @@ const ViewAvesAnimal = ({
                     <>
                       {getOneAnimal?.animalType?.name !== 'Pondeuses' ? (
                         <>
-                          {getOneAnimal?.animalType?.name !==
-                          'Poulet de chair' ? (
+                          {!['Poulet de chair', 'Pisciculture'].includes(
+                            getOneAnimal?.animalType?.name,
+                          ) ? (
                             <>
                               <Card
                                 x-chunk="dashboard-05-chunk-1"
@@ -237,7 +245,7 @@ const ViewAvesAnimal = ({
                                   maximumFractionDigits: 2,
                                 },
                               )}
-                              {user?.profile?.currency?.symbol}
+                              {userStorage?.profile?.currency?.symbol}
                             </CardTitle>
                           </CardHeader>
                         </Card>
@@ -615,7 +623,7 @@ const ViewAvesAnimal = ({
                                     maximumFractionDigits: 2,
                                   },
                                 )}
-                                {user?.profile?.currency?.symbol}
+                                {userStorage?.profile?.currency?.symbol}
                               </CardTitle>
                             </CardHeader>
                           </Card>
@@ -648,7 +656,7 @@ const ViewAvesAnimal = ({
                                     maximumFractionDigits: 2,
                                   },
                                 )}
-                                {user?.profile?.currency?.symbol}
+                                {userStorage?.profile?.currency?.symbol}
                               </CardTitle>
                             </CardHeader>
                           </Card>
@@ -681,7 +689,7 @@ const ViewAvesAnimal = ({
                                     maximumFractionDigits: 2,
                                   },
                                 )}
-                                {user?.profile?.currency?.symbol}
+                                {userStorage?.profile?.currency?.symbol}
                               </CardTitle>
                             </CardHeader>
                           </Card>

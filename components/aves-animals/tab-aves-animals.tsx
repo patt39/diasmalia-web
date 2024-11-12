@@ -19,7 +19,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { TooltipProvider } from '@radix-ui/react-tooltip';
-import { Bird, ListFilter } from 'lucide-react';
+import { Bird, Fish, ListFilter } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { CreateAvesAnimals } from './create-aves';
@@ -28,7 +28,8 @@ import { ListAvesAnimals } from './list-aves';
 const TabAvesAnimals = ({ animalTypeId }: { animalTypeId: string }) => {
   const { ref, inView } = useInView();
   const [productionPhase, setProductionPhase] = useState('');
-  const { t, search, handleSetSearch, isOpen, setIsOpen } = useInputState();
+  const { t, search, handleSetSearch, isOpen, setIsOpen, userStorage } =
+    useInputState();
 
   const { data: animalType } = GetOneAnimalTypeAPI({
     animalTypeId: animalTypeId,
@@ -48,6 +49,7 @@ const TabAvesAnimals = ({ animalTypeId }: { animalTypeId: string }) => {
     sortBy: 'createdAt',
     productionPhase,
     animalTypeId: animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   useEffect(() => {
@@ -83,22 +85,6 @@ const TabAvesAnimals = ({ animalTypeId }: { animalTypeId: string }) => {
             />
           </div>
           <div className="ml-auto flex items-center gap-2">
-            {animalType?.name === 'Poulet de chair' ? (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button variant="outline">
-                      {t.formatMessage({ id: 'WHAT.TODO' })}
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent className="dark:border-gray-800">
-                    <p>{t.formatMessage({ id: 'WHATTODO.BROILERS' })}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            ) : (
-              ''
-            )}
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -150,16 +136,33 @@ const TabAvesAnimals = ({ animalTypeId }: { animalTypeId: string }) => {
                 </DropdownMenuCheckboxItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            <Button
-              size="sm"
-              className="h-8 gap-1"
-              onClick={() => setIsOpen(true)}
-            >
-              <Bird className="h-3.5 w-3.5  hover:shadow-xxl" />
-              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                {t.formatMessage({ id: 'ANIMALTYPE.ANIMALS.AVES.CREATE' })}
-              </span>
-            </Button>
+            {userStorage?.role === 'SUPERADMIN' &&
+            animalType?.name !== 'Pisciculture' ? (
+              <Button
+                size="sm"
+                className="h-8 gap-1"
+                onClick={() => setIsOpen(true)}
+              >
+                <Bird className="h-3.5 w-3.5  hover:shadow-xxl" />
+                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                  {t.formatMessage({ id: 'ANIMALTYPE.ANIMALS.AVES.CREATE' })}
+                </span>
+              </Button>
+            ) : userStorage?.role === 'SUPERADMIN' &&
+              animalType?.name == 'Pisciculture' ? (
+              <Button
+                size="sm"
+                className="h-8 gap-1"
+                onClick={() => setIsOpen(true)}
+              >
+                <Fish className="h-3.5 w-3.5  hover:shadow-xxl" />
+                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                  {t.formatMessage({ id: 'ANIMALTYPE.ANIMALS.AVES.CREATE' })}
+                </span>
+              </Button>
+            ) : (
+              ''
+            )}
           </div>
         </div>
       </CardHeader>

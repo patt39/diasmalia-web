@@ -36,13 +36,11 @@ import { formatDDMMYYDate } from '@/utils';
 import { ListFilter } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { useIntl } from 'react-intl';
 
 const ActivityLogs = () => {
   const [periode, setPeriode] = useState('');
-  const { userStorage } = useInputState();
+  const { t, userStorage } = useInputState();
   const { ref, inView } = useInView();
-  const t = useIntl();
 
   const {
     isLoading: isLoadingActivityLog,

@@ -29,7 +29,7 @@ const TabFeedStock = () => {
     isError: isErrorAssignedTypes,
     data: dataAssignedTypes,
   } = GetAssignedTypesAPI({
-    take: 10,
+    take: 20,
     sort: 'desc',
     sortBy: 'createdAt',
   });
@@ -38,7 +38,7 @@ const TabFeedStock = () => {
     dataAssignedTypes?.pages[0]?.data?.value[0].animalType?.name,
   );
   const { ref, inView } = useInView();
-  const { t, isOpen, setIsOpen } = useInputState();
+  const { t, isOpen, setIsOpen, userStorage } = useInputState();
   const { control, watch, setValue } = useReactHookForm({ schema });
   const watchAnimalTypeId = watch('animalTypeId', '');
 
@@ -55,6 +55,7 @@ const TabFeedStock = () => {
     sort: 'desc',
     sortBy: 'createdAt',
     animalTypeName: watchAnimalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   useEffect(() => {

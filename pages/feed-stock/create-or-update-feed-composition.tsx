@@ -129,11 +129,11 @@ const CreateOrUpdateFeedComposition = ({
                         control={control}
                         type="text"
                         name="type"
-                        placeholder="Add a raw material"
+                        placeholder="add raw material"
                         errors={errors}
                       />
                     </div>
-                    <div>
+                    <div className="w-44">
                       <Label>
                         {t.formatMessage({ id: 'FEED.QUANTITY' })}
                         <span className="text-red-600">*</span>
@@ -142,14 +142,14 @@ const CreateOrUpdateFeedComposition = ({
                         control={control}
                         type="text"
                         name="percentage"
-                        placeholder="Add a value"
+                        placeholder="add a value"
                         errors={errors}
                       />
                     </div>
                   </div>
                 </>
 
-                <div className="mt-4 flex items-center space-x-4">
+                <div className="mt-8 flex items-center space-x-4">
                   <ButtonInput
                     type="button"
                     className="w-full"

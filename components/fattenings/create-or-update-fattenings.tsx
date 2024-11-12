@@ -212,7 +212,7 @@ const CreateOrUpdateFattenings = ({
                       </Label>
                       <Select>
                         <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select animals" />
+                          <SelectValue placeholder="select animals" />
                         </SelectTrigger>
                         <SelectContent className="dark:border-gray-800">
                           <SelectGroup>
@@ -297,7 +297,7 @@ const CreateOrUpdateFattenings = ({
                             value={value}
                           >
                             <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Select a location code" />
+                              <SelectValue placeholder="select location" />
                             </SelectTrigger>
                             <SelectContent className="dark:border-gray-800">
                               <SelectGroup>
@@ -353,7 +353,7 @@ const CreateOrUpdateFattenings = ({
                       control={control}
                       type="number"
                       name="actualWeight"
-                      placeholder="Give a number"
+                      placeholder="weight"
                       errors={errors}
                     />
                   </div>

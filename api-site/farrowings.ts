@@ -62,7 +62,7 @@ export const CreateOrUpdateOneFarrowingAPI = ({
   const queryClient = useQueryClient();
   const result = useMutation({
     mutationKey: queryKey,
-    mutationFn: async (payload: FarrowingsModel & { farrowingId: string }) => {
+    mutationFn: async (payload: FarrowingsModel & { farrowingId?: string }) => {
       const { farrowingId } = payload;
       return farrowingId
         ? await makeApiCall({

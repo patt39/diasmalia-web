@@ -3,11 +3,8 @@ import { GetHealthsAPI } from '@/api-site/health';
 import { CreateOneTreatmentAPI } from '@/api-site/treatment';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput, ButtonLoadMore } from '@/components/ui-setting';
-import {
-  SelectInput,
-  TextAreaInput,
-  TextInput,
-} from '@/components/ui-setting/shadcn';
+import { SelectInput, TextInput } from '@/components/ui-setting/shadcn';
+import { treatmentMethods } from '@/i18n/default-exports';
 import { TreatmentsPostModel } from '@/types/treatments';
 import {
   AlertDangerNotification,
@@ -43,7 +40,6 @@ const schema = yup.object({
   dose: yup.number().optional(),
   animals: yup.array().optional(),
   name: yup.string().required('name is required'),
-  note: yup.string().required('note is a required field'),
   healthId: yup.string().required('medication is required'),
   diagnosis: yup.string().required('diagnostic is required'),
   method: yup.string().required('method is required'),
@@ -64,6 +60,7 @@ const BulkCreateTreatments = ({
 }) => {
   const {
     t,
+    locale,
     watch,
     control,
     setValue,
@@ -235,7 +232,7 @@ const BulkCreateTreatments = ({
                       </Label>
                       <Select>
                         <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select animals" />
+                          <SelectValue placeholder="select animals" />
                         </SelectTrigger>
                         <SelectContent className="dark:border-gray-800">
                           <SelectGroup>
@@ -316,7 +313,7 @@ const BulkCreateTreatments = ({
                       </Label>
                       <Select>
                         <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select animals" />
+                          <SelectValue placeholder="select animals" />
                         </SelectTrigger>
                         <SelectContent className="dark:border-gray-800">
                           <SelectGroup>
@@ -407,7 +404,7 @@ const BulkCreateTreatments = ({
                     control={control}
                     type="text"
                     name="name"
-                    placeholder="Give treatment name"
+                    placeholder="treatment name"
                     errors={errors}
                   />
                 </div>
@@ -419,90 +416,84 @@ const BulkCreateTreatments = ({
                     control={control}
                     type="text"
                     name="diagnosis"
-                    placeholder="Give a diagnosis"
+                    placeholder="diagnosis"
                     errors={errors}
                   />
                 </div>
-                <div className="mb-4">
-                  <Label>
-                    Medication<span className="text-red-600">*</span>
-                  </Label>
-                  <Controller
-                    control={control}
-                    name="healthId"
-                    render={({ field: { value, onChange } }) => (
-                      <Select
-                        onValueChange={onChange}
-                        name={'healthId'}
-                        value={value}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select medication" />
-                        </SelectTrigger>
-                        <SelectContent className="dark:border-gray-800">
-                          <SelectGroup>
-                            {isLoadingTreatments ? (
-                              <LoadingFile />
-                            ) : isErrorTreatments ? (
-                              <ErrorFile
-                                title="404"
-                                description="Error finding data please try again..."
-                              />
-                            ) : Number(dataTreatments?.pages[0]?.data?.total) <=
-                              0 ? (
-                              <ErrorFile description="Don't have active animals yet" />
-                            ) : (
-                              dataTreatments?.pages
-                                .flatMap((page: any) => page?.data?.value)
-                                .map((item: any, index: any) => (
-                                  <>
-                                    <SelectItem key={index} value={item?.id}>
-                                      {item?.name}
-                                    </SelectItem>
-                                  </>
-                                ))
-                            )}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    )}
-                  />
-                </div>
-                <div className="mb-4 flex items-center space-x-2">
-                  <Label>Dose:</Label>
-                  <TextInput
-                    control={control}
-                    type="number"
-                    name="dose"
-                    placeholder="Give a dose"
-                    errors={errors}
-                  />
-                  <Label>
-                    Voie:<span className="text-red-600">*</span>
-                  </Label>
-                  <SelectInput
-                    firstOptionName="Give a method"
-                    control={control}
-                    errors={errors}
-                    placeholder="Select method"
-                    valueType="text"
-                    name="method"
-                    dataItem={[
-                      { id: 1, name: 'EYE' },
-                      { id: 2, name: 'ORAL' },
-                      { id: 1, name: 'NASAL' },
-                      { id: 2, name: 'INJECTION' },
-                    ]}
-                  />
-                </div>
-                <div className="mb-4">
-                  <TextAreaInput
-                    control={control}
-                    label="Feedback"
-                    name="note"
-                    placeholder="Give details about animal state"
-                    errors={errors}
-                  />
+                <div className="mb-4 flex items-center space-x-4">
+                  <div className="w-80">
+                    <Label>
+                      Medication<span className="text-red-600">*</span>
+                    </Label>
+                    <Controller
+                      control={control}
+                      name="healthId"
+                      render={({ field: { value, onChange } }) => (
+                        <Select
+                          onValueChange={onChange}
+                          name={'healthId'}
+                          value={value}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="select medication" />
+                          </SelectTrigger>
+                          <SelectContent className="dark:border-gray-800">
+                            <SelectGroup>
+                              {isLoadingTreatments ? (
+                                <LoadingFile />
+                              ) : isErrorTreatments ? (
+                                <ErrorFile
+                                  title="404"
+                                  description="Error finding data please try again..."
+                                />
+                              ) : Number(
+                                  dataTreatments?.pages[0]?.data?.total,
+                                ) <= 0 ? (
+                                <ErrorFile description="Don't have active animals yet" />
+                              ) : (
+                                dataTreatments?.pages
+                                  .flatMap((page: any) => page?.data?.value)
+                                  .map((item: any, index: any) => (
+                                    <>
+                                      <SelectItem key={index} value={item?.id}>
+                                        {item?.name}
+                                      </SelectItem>
+                                    </>
+                                  ))
+                              )}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                      )}
+                    />
+                  </div>
+                  <div className="w-60">
+                    <Label>
+                      Voie<span className="text-red-600">*</span>
+                    </Label>
+                    <SelectInput
+                      control={control}
+                      errors={errors}
+                      placeholder="select method"
+                      valueType="text"
+                      name="method"
+                      dataItem={treatmentMethods.filter(
+                        (i) => i?.lang === locale,
+                      )}
+                    />
+                  </div>
+                  <div className="w-40">
+                    <Label>
+                      Dose<span className="text-red-600">*</span>
+                    </Label>
+                    <TextInput
+                      control={control}
+                      type="number"
+                      name="dose"
+                      placeholder="doses"
+                      errors={errors}
+                    />
+                  </div>
                 </div>
                 <div className="mt-4 flex items-center space-x-4">
                   <ButtonInput

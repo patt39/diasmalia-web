@@ -2,6 +2,7 @@ import { GetOneAnimalAPI } from '@/api-site/animals';
 import { GetOneMaleBreedingAPI } from '@/api-site/breedings';
 import { GetOneFarrowingByAnimalIdAPI } from '@/api-site/farrowings';
 import { GetOneFatteningAPI } from '@/api-site/fattenings';
+import { GetGestationByAnimalIdAPI } from '@/api-site/gestation';
 import { GetOneSaleAnimalTypeAPI } from '@/api-site/sales';
 import { GetOneTreatmentByAnimalIdAPI } from '@/api-site/treatment';
 import { GetOneAnimalWeanedAPI } from '@/api-site/weanings';
@@ -43,6 +44,9 @@ const ViewAnimal = ({
   });
   const { data: getMaleAnimalBreeding } = GetOneMaleBreedingAPI({
     animalMaleId: animal?.id,
+  });
+  const { data: getGestation } = GetGestationByAnimalIdAPI({
+    animalId: animal?.id,
   });
 
   const feedConversionIndex =
@@ -428,9 +432,8 @@ const ViewAnimal = ({
                           <Input
                             disabled
                             value={
-                              formatDateDDMMYY(
-                                getOneFarrowing?.farrowingDate,
-                              ) || 'N/A'
+                              formatDateDDMMYY(getGestation?.farrowingDate) ||
+                              'N/A'
                             }
                           />
                         </div>

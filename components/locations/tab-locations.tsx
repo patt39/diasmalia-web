@@ -30,7 +30,7 @@ const TabLocations = ({ animalTypeId }: { animalTypeId: string }) => {
   const { ref, inView } = useInView();
   const [isOpen, setIsOpen] = useState(false);
   const [productionPhase, setProductionPhase] = useState('');
-  const { t, search, handleSetSearch } = useInputState();
+  const { t, search, handleSetSearch, userStorage } = useInputState();
   const [isBulkOpen, setIsBulkOpen] = useState<boolean>(false);
 
   const { data: animalType } = GetOneAnimalTypeAPI({
@@ -51,6 +51,7 @@ const TabLocations = ({ animalTypeId }: { animalTypeId: string }) => {
     sortBy: 'createdAt',
     productionPhase,
     animalTypeId: animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   useEffect(() => {
@@ -152,35 +153,39 @@ const TabLocations = ({ animalTypeId }: { animalTypeId: string }) => {
             ) : (
               ''
             )}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm" className="h-8 gap-1">
-                  <ListFilter className="h-3.5 w-3.5" />
-                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                    {t.formatMessage({ id: 'CREATION.TYPE' })}
-                  </span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                align="end"
-                className="dark:border-gray-800 w-auto"
-              >
-                <DropdownMenuCheckboxItem
-                  className="cursor-pointer"
-                  onClick={() => setIsOpen(true)}
+            {userStorage?.role === 'SUPERADMIN' ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="h-8 gap-1">
+                    <ListFilter className="h-3.5 w-3.5" />
+                    <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                      {t.formatMessage({ id: 'CREATION.TYPE' })}
+                    </span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="end"
+                  className="dark:border-gray-800 w-auto"
                 >
-                  <Replace className="h-4 w-4  hover:shadow-xxl mr-1" />
-                  {t.formatMessage({ id: 'ADD.A.LOCATION' })}
-                </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem
-                  className="cursor-pointer"
-                  onClick={() => setIsBulkOpen(true)}
-                >
-                  <ReplaceAll className="h-4 w-4  hover:shadow-xxl mr-1" />
-                  {t.formatMessage({ id: 'ADD.MANY.LOCATIONS' })}
-                </DropdownMenuCheckboxItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                  <DropdownMenuCheckboxItem
+                    className="cursor-pointer"
+                    onClick={() => setIsOpen(true)}
+                  >
+                    <Replace className="h-4 w-4  hover:shadow-xxl mr-1" />
+                    {t.formatMessage({ id: 'ADD.A.LOCATION' })}
+                  </DropdownMenuCheckboxItem>
+                  <DropdownMenuCheckboxItem
+                    className="cursor-pointer"
+                    onClick={() => setIsBulkOpen(true)}
+                  >
+                    <ReplaceAll className="h-4 w-4  hover:shadow-xxl mr-1" />
+                    {t.formatMessage({ id: 'ADD.MANY.LOCATIONS' })}
+                  </DropdownMenuCheckboxItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              ''
+            )}
           </div>
         </div>
       </CardHeader>

@@ -15,7 +15,7 @@ import { useState } from 'react';
 import { Health } from './tab-health';
 
 export function FeedStock() {
-  const { t } = useInputState();
+  const { t, userStorage } = useInputState();
   const { data: dataAssignedTypes } = GetAssignedTypesAPI({
     take: 10,
     sort: 'desc',
@@ -24,6 +24,7 @@ export function FeedStock() {
 
   const { data: animalStatistics } = GetAnimalStatisticsAPI({
     animalTypeId: dataAssignedTypes?.pages[0]?.data?.value[0].animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   const [animalTypeName, setAnimalTypeName] = useState(
@@ -32,7 +33,9 @@ export function FeedStock() {
 
   return (
     <>
-      <LayoutDashboard title={'Prophylaxie'}>
+      <LayoutDashboard
+        title={`${userStorage?.user?.profile?.firstName} ${userStorage?.user?.profile?.lastName} - Health box`}
+      >
         <div className="flex min-h-screen w-full flex-col">
           <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
             <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">

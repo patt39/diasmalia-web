@@ -1,12 +1,9 @@
 import { GetOneIsolationAPI } from '@/api-site/isolations';
-import { useReactHookForm } from '@/components/hooks';
 import { XIcon } from 'lucide-react';
-import * as yup from 'yup';
+import { useIntl } from 'react-intl';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Textarea } from '../ui/textarea';
-
-const schema = yup.object({});
 
 const ViewAvesIsolation = ({
   showModal,
@@ -17,8 +14,7 @@ const ViewAvesIsolation = ({
   setShowModal: any;
   isolation?: any;
 }) => {
-  const { t } = useReactHookForm({ schema });
-
+  const t = useIntl();
   const { data: getOneIsolation } = GetOneIsolationAPI({
     isolationId: isolation?.id,
   });

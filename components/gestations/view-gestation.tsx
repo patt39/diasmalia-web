@@ -29,7 +29,7 @@ const ViewGestation = ({
                 <XIcon />
               </span>
             </button>
-            <form className="mt-4">
+            <form className="mt-6">
               <div className="flex-auto justify-center p-2">
                 <div className="mb-4 disabled">
                   <Textarea defaultValue={getOneGestation?.note} disabled />

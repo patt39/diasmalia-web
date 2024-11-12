@@ -56,19 +56,15 @@ const ListWeanings = ({ item, index }: { item: any; index: number }) => {
     }
   };
 
-  const offspringsAlive = Number(
-    item?.farrowing?.litter - item?.farrowing?.dead,
-  );
-
   return (
     <>
       <TableRow key={index} className="dark:border-gray-800">
         <TableCell className="font-medium">{item?.animal?.code}</TableCell>
-        <TableCell>{offspringsAlive}</TableCell>
+        <TableCell>{item?.farrowing?.litter}</TableCell>
         <TableCell>{item?.litter}</TableCell>
         <TableCell>{formatWeight(item?.weight)}</TableCell>
         <TableCell>
-          {Number(offspringsAlive - item?.litter) <= 2 ? (
+          {Number(item?.farrowing?.litter - item?.litter) <= 2 ? (
             <Badge className="text-xs" variant="default">
               {t.formatMessage({ id: 'GOOD.MOTHER' })}
             </Badge>
@@ -100,36 +96,34 @@ const ListWeanings = ({ item, index }: { item: any; index: number }) => {
               <DropdownMenuItem onClick={() => setIsTreatment(true)}>
                 <Hospital className="size-4 text-gray-600 hover:text-lime-600" />
                 <span className="ml-2 cursor-pointer hover:text-lime-600">
-                  {t.formatMessage({
-                    id: 'FEMALE.CARE',
-                  })}
+                  {t.formatMessage({ id: 'FEMALE.CARE' })}
                 </span>
               </DropdownMenuItem>
-              {item?.animal?.location?._count?.animals ===
-                Number(offspringsAlive + 1) ||
-              item?.animal?.location?._count?.animals ===
-                Number(item?.litter + 1) ? (
+              {item?.animal?.location?._count?.animals ==
+                Number(item?.farrowing?.litter + 1) ||
+              (item?.animal?.location?._count?.animals ==
+                Number(item?.litter + 1) &&
+                item?.animalType?.name !== 'Cuniculture') ? (
                 <DropdownMenuItem onClick={() => setIsGrowthTreatment(true)}>
                   <Hospital className="size-4 text-gray-600 hover:text-green-600" />
                   <span className="ml-2 cursor-pointer hover:text-green-600">
-                    {t.formatMessage({
-                      id: 'OFFSPRINGS.CARE',
-                    })}
+                    {t.formatMessage({ id: 'OFFSPRINGS.CARE' })}
                   </span>
                 </DropdownMenuItem>
               ) : (
                 ''
               )}
-              {item?.animal?.location?._count?.animals ===
-              Number(offspringsAlive + 1) ? (
-                ''
-              ) : (
+              {item?.animal?.location?._count?.animals !==
+                Number(item?.farrowing?.litter + 1) &&
+              item?.animalType?.name !== 'Cuniculture' ? (
                 <DropdownMenuItem onClick={() => setIsIdentification(true)}>
                   <IdCard className="size-4 text-gray-600 hover:text-fuchsia-600" />
                   <span className="ml-2 cursor-pointer hover:text-fuchsia-600">
                     {t.formatMessage({ id: 'OFFSPRING.IDENTIFICATION' })}
                   </span>
                 </DropdownMenuItem>
+              ) : (
+                ''
               )}
               <DropdownMenuItem onClick={() => setIsOpen(true)}>
                 <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />

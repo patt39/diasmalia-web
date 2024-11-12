@@ -1,5 +1,4 @@
 /* eslint-disable @next/next/no-img-element */
-import { GetOneUserMeAPI } from '@/api-site/user';
 import { useInputState } from '@/components/hooks';
 import { Button } from '@/components/ui/button';
 import {
@@ -17,10 +16,9 @@ import { CreateOrUpdateFinances } from './create-or-update-finances';
 import { ViewFinance } from './view-finance';
 
 const ListFinances = ({ item, index }: { item: any; index: number }) => {
-  const { t } = useInputState();
+  const { t, userStorage } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
   const [isView, setIsView] = useState(false);
-  const { data: user } = GetOneUserMeAPI();
 
   return (
     <>
@@ -40,11 +38,20 @@ const ListFinances = ({ item, index }: { item: any; index: number }) => {
         </TableCell>
         {item?.type === 'INCOME' ? (
           <TableCell className="font-bold text-green-600">
-            +{item?.amount} {user?.profile?.currency?.symbol}
+            +
+            {item?.amount?.toLocaleString('en-US', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}{' '}
+            {userStorage?.profile?.currency?.symbol}
           </TableCell>
         ) : item.type === 'EXPENSE' ? (
           <TableCell className="font-bold text-red-600">
-            {item?.amount} {user?.profile?.currency?.symbol}
+            {item?.amount?.toLocaleString('en-US', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}{' '}
+            {userStorage?.profile?.currency?.symbol}
           </TableCell>
         ) : (
           ''
@@ -55,26 +62,22 @@ const ListFinances = ({ item, index }: { item: any; index: number }) => {
               <Button aria-haspopup="true" size="icon" variant="ghost">
                 <MoreHorizontal className="h-4 w-4" />
                 <span className="sr-only">
-                  {t.formatMessage({
-                    id: 'TABANIMAL.MENU',
-                  })}
+                  {t.formatMessage({ id: 'TABANIMAL.MENU' })}
                 </span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => setIsEdit(true)}>
-                <PencilIcon className="size-4 text-gray-600 hover:text-indigo-600" />
-                <span className="ml-2 cursor-pointer hover:text-indigo-600">
-                  {t.formatMessage({
-                    id: 'TABANIMAL.EDIT',
-                  })}
-                </span>
-              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setIsView(true)}>
                 <Eye className="size-4 text-gray-600 hover:text-indigo-600" />
                 <span className="ml-2 cursor-pointer hover:text-indigo-600">
                   {t.formatMessage({ id: 'TABANIMAL.VIEW' })}
+                </span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setIsEdit(true)}>
+                <PencilIcon className="size-4 text-gray-600 hover:text-indigo-600" />
+                <span className="ml-2 cursor-pointer hover:text-indigo-600">
+                  {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
                 </span>
               </DropdownMenuItem>
             </DropdownMenuContent>

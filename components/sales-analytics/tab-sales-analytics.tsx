@@ -2,16 +2,15 @@
 import { GetOneAnimalTypeAPI } from '@/api-site/animal-type';
 import { GetAnimalStatisticsAPI } from '@/api-site/animals';
 import { GetBestSaleChannelAPI } from '@/api-site/sales';
-import { GetOneUserMeAPI } from '@/api-site/user';
 import { useInputState } from '@/components/hooks';
 import { Card, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { TabBestSaleChannel } from './tab-best-channel';
 
 const TabSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
-  const { t } = useInputState();
-  const { data: user } = GetOneUserMeAPI();
+  const { t, userStorage } = useInputState();
   const { data: animalStatistics } = GetAnimalStatisticsAPI({
     animalTypeId: animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   const { data: animalType } = GetOneAnimalTypeAPI({
@@ -118,7 +117,7 @@ const TabSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                     {animalStatistics?.sumSaleChickens?.price?.toLocaleString(
                       'en-US',
                     ) ?? 0}{' '}
-                    {user?.profile?.currency?.symbol}
+                    {userStorage?.profile?.currency?.symbol}
                   </CardTitle>
                 </CardHeader>
               </Card>
@@ -134,7 +133,7 @@ const TabSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                     {animalStatistics?.sumSaleEggs?.price?.toLocaleString(
                       'en-US',
                     ) ?? 0}{' '}
-                    {user?.profile?.currency?.symbol}
+                    {userStorage?.profile?.currency?.symbol}
                   </CardTitle>
                 </CardHeader>
               </Card>
@@ -153,7 +152,7 @@ const TabSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                     {animalStatistics?.sumSaleChickens?.price?.toLocaleString(
                       'en-US',
                     ) ?? 0}{' '}
-                    {user?.profile?.currency?.symbol}
+                    {userStorage?.profile?.currency?.symbol}
                   </CardTitle>
                 </CardHeader>
               </Card>
@@ -169,7 +168,7 @@ const TabSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                     {animalStatistics?.sumSaleEggs?.price?.toLocaleString(
                       'en-US',
                     ) ?? 0}{' '}
-                    {user?.profile?.currency?.symbol}
+                    {userStorage?.profile?.currency?.symbol}
                   </CardTitle>
                 </CardHeader>
               </Card>
@@ -185,7 +184,7 @@ const TabSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                     {animalStatistics?.sumSaleChicks?.price?.toLocaleString(
                       'en-US',
                     ) ?? 0}{' '}
-                    {user?.profile?.currency?.symbol}
+                    {userStorage?.profile?.currency?.symbol}
                   </CardTitle>
                 </CardHeader>
               </Card>

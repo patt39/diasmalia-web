@@ -21,7 +21,9 @@ import {
   ClipboardPlus,
   Eclipse,
   Egg,
+  Eye,
   FileArchive,
+  Grid,
   HeartHandshakeIcon,
   Hospital,
   ListCollapse,
@@ -36,7 +38,7 @@ import { CreateOrUpdateAvesDeaths } from '../aves-deaths/create-or-update-aves-d
 import { CreateOrUpdateAvesFeedings } from '../aves-feeding/create-or-update-aves-feedings';
 import { CreateOrUpdateAvesIsolations } from '../aves-isolations/create-or-update-aves-isolations';
 import { CreateAvesSales } from '../aves-sales/create-aves-sales';
-import { CreateOrUpdateAvestreatments } from '../aves-treatments/create-or-update-aves-treatments';
+import { CreateAvestreatments } from '../aves-treatments/create-aves-treatments';
 import { CreateOrUpdateEggHarvestings } from '../egg-harvestings/create-or-update-egg-harvestings';
 import { ActionModalDialog } from '../ui-setting/shadcn';
 import { Badge } from '../ui/badge';
@@ -46,11 +48,12 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '../ui/tooltip';
+import { PutInCages } from './put-in-cages';
 import { UpdateAvesAnimals } from './update-aves';
 import { ViewAvesAnimal } from './view-aves-animal';
 
 const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
-  const { t, isOpen, setIsOpen, setLoading } = useInputState();
+  const { t, isOpen, setIsOpen, setLoading, userStorage } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
   const [isView, setIsView] = useState(false);
   const [isFeeding, setIsFeeding] = useState(false);
@@ -59,6 +62,7 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
   const [isDeath, setIsDeath] = useState(false);
   const [isSold, setIsSold] = useState(false);
   const [isIsolation, setIsIsolation] = useState(false);
+  const [putIncages, setPutInCages] = useState(false);
 
   const { isPending: loading, mutateAsync: deleteMutation } =
     DeleteOneAnimalAPI();
@@ -146,8 +150,11 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
               </TooltipProvider>
             </div>
           </div>
-          <div className="flex justify-center space-x-4">
-            <div className="mt-2">
+          <div
+            className="flex justify-center space-x-4 cursor-pointer"
+            onClick={() => setIsView(true)}
+          >
+            <div>
               <h2 className="text-sm flex items-center font-medium text-gray-500 h-4">
                 <Anvil className="h-3.5 w-3.5  hover:shadow-xxl" />
                 {t.formatMessage({ id: 'TABANIMAL.WEIGHT' })}:{' '}
@@ -167,15 +174,38 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
                 <p className=" text-sm font-medium text-gray-500">
                   {t.formatMessage({ id: 'PRODUCTIONPHASE.GROWTH' })}
                 </p>
-              ) : (
+              ) : item?.productionPhase === 'LAYING' ? (
                 <p className=" text-sm font-medium text-gray-500">
                   {t.formatMessage({ id: 'PRODUCTIONPHASE.LAYING' })}
                 </p>
+              ) : (
+                <p className=" text-sm font-medium text-gray-500">
+                  {t.formatMessage({ id: 'PRODUCTIONPHASE.FATTENING' })}
+                </p>
               )}
-              {item?.productionPhase === 'LAYING' &&
-              item?.animalType?.name === 'Pondeuses' &&
-              item?.location?.addCages === 'YES' ? (
-                <p className="text-xs font-normal text-gray-500">CAGES</p>
+              {item?.location?.addCages === 'YES' &&
+              item?.animalType?.name !== 'Pisciculture' ? (
+                <p className="text-xs font-normal text-gray-500">cages</p>
+              ) : item?.location?.addCages === 'YES' &&
+                item?.animalType?.name == 'Pisciculture' ? (
+                <>
+                  <p className="text-xs font-normal text-gray-500">
+                    {t.formatMessage({ id: 'TANK' })}
+                  </p>
+                  <p className="text-xs font-normal text-gray-500">
+                    {item?.breed?.name}
+                  </p>
+                </>
+              ) : item?.location?.addCages === 'NO' &&
+                item?.animalType?.name == 'Pisciculture' ? (
+                <>
+                  <p className="text-xs font-normal text-gray-500">
+                    {t.formatMessage({ id: 'POND' })}
+                  </p>
+                  <p className="text-xs font-normal text-gray-500">
+                    {item?.breed?.name}
+                  </p>
+                </>
               ) : (
                 ''
               )}
@@ -201,21 +231,19 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
                   <DropdownMenuItem onClick={() => setIsTreatment(true)}>
                     <Hospital className="size-4 text-gray-600 hover:text-lime-600" />
                     <span className="ml-2 cursor-pointer hover:text-lime-600">
-                      {t.formatMessage({
-                        id: 'ANIMALTYPE.CARE',
-                      })}
+                      {t.formatMessage({ id: 'ANIMALTYPE.CARE' })}
                     </span>
                   </DropdownMenuItem>
                 ) : (
                   ''
                 )}
-                {item?.status == 'ACTIVE' && item?.quantity !== 0 ? (
+                {item?.status == 'ACTIVE' &&
+                item?.quantity !== 0 &&
+                item?._count?.cages !== item?.location?.cages ? (
                   <DropdownMenuItem onClick={() => setIsDeath(true)}>
                     <Bone className="size-4 text-gray-600 hover:text-amber-600" />
                     <span className="ml-2 cursor-pointer hover:text-amber-600">
-                      {t.formatMessage({
-                        id: 'ANIMALTYPE.DEATHS',
-                      })}
+                      {t.formatMessage({ id: 'ANIMALTYPE.DEATHS' })}
                     </span>
                   </DropdownMenuItem>
                 ) : (
@@ -225,9 +253,7 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
                   <DropdownMenuItem onClick={() => setIsIsolation(true)}>
                     <Eclipse className="size-4 text-gray-600 hover:text-yellow-600" />
                     <span className="ml-2 cursor-pointer hover:text-yellow-600">
-                      {t.formatMessage({
-                        id: 'ANIMALTYPE.ISOLATIONS',
-                      })}
+                      {t.formatMessage({ id: 'ANIMALTYPE.ISOLATIONS' })}
                     </span>
                   </DropdownMenuItem>
                 ) : (
@@ -237,9 +263,7 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
                   <DropdownMenuItem onClick={() => setIsFeeding(true)}>
                     <Salad className="size-4 text-gray-600 hover:text-violet-600" />
                     <span className="ml-2 cursor-pointer hover:text-violet-600">
-                      {t.formatMessage({
-                        id: 'ANIMALTYPE.FEEDINGS',
-                      })}
+                      {t.formatMessage({ id: 'ANIMALTYPE.FEEDINGS' })}
                     </span>
                   </DropdownMenuItem>
                 ) : (
@@ -247,15 +271,57 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
                 )}
                 {item?.productionPhase == 'LAYING' &&
                 item?.quantity !== 0 &&
-                item?.status == 'ACTIVE' ? (
+                item?.status == 'ACTIVE' &&
+                item?.location?.addCages == 'YES' &&
+                ['Pondeuses', 'Poulet de chair', 'Poulets Brahma'].includes(
+                  item?.animalType?.name,
+                ) ? (
                   <DropdownMenuItem onClick={() => setIsHarvesting(true)}>
                     <Egg className="size-4 text-gray-600 hover:text-purple-600" />
                     <span className="ml-2 cursor-pointer hover:text-purple-600">
-                      {t.formatMessage({
-                        id: 'ANIMALTYPE.EGGHAVESTING',
-                      })}
+                      {t.formatMessage({ id: 'ANIMALTYPE.EGGHAVESTING' })}
                     </span>
                   </DropdownMenuItem>
+                ) : item?._count?.cages !== item?.location?.cages &&
+                  item?.productionPhase == 'LAYING' &&
+                  item?.status == 'ACTIVE' &&
+                  !['Pondeuses', 'Poulet de chair', 'Poulets Brahma'].includes(
+                    item?.animalType?.name,
+                  ) ? (
+                  <>
+                    <DropdownMenuItem onClick={() => setPutInCages(true)}>
+                      <Grid className="size-4 text-gray-600 hover:text-purple-600" />
+                      <span className="ml-2 cursor-pointer hover:text-purple-600">
+                        {t.formatMessage({ id: 'PUT.IN.CAGES' })}
+                      </span>
+                    </DropdownMenuItem>
+                    {item?._count?.cages == 0 ? (
+                      <DropdownMenuItem onClick={() => setIsHarvesting(true)}>
+                        <Egg className="size-4 text-gray-600 hover:text-purple-600" />
+                        <span className="ml-2 cursor-pointer hover:text-purple-600">
+                          {t.formatMessage({ id: 'ANIMALTYPE.EGGHAVESTING' })}
+                        </span>
+                      </DropdownMenuItem>
+                    ) : (
+                      <Link href={`/cages/${item?.id}`}>
+                        <DropdownMenuItem>
+                          <Eye className="size-4 text-gray-600 hover:text-purple-600" />
+                          <span className="ml-2 cursor-pointer hover:text-purple-600">
+                            {t.formatMessage({ id: 'VIEW.CAGES' })}
+                          </span>
+                        </DropdownMenuItem>
+                      </Link>
+                    )}
+                  </>
+                ) : item?._count?.cages !== 0 ? (
+                  <Link href={`/cages/${item?.id}`}>
+                    <DropdownMenuItem>
+                      <Eye className="size-4 text-gray-600 hover:text-purple-600" />
+                      <span className="ml-2 cursor-pointer hover:text-purple-600">
+                        View cages
+                      </span>
+                    </DropdownMenuItem>
+                  </Link>
                 ) : (
                   ''
                 )}
@@ -273,7 +339,7 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
                     {t.formatMessage({ id: 'TABANIMAL.STATISTICS' })}
                   </span>
                 </DropdownMenuItem>
-                {item?.quantity === 0 ? (
+                {item?.quantity === 0 && userStorage?.role === 'SUPERADMIN' ? (
                   <DropdownMenuItem onClick={() => archiveItem(item)}>
                     <FileArchive className="size-4 text-gray-600 hover:text-fuchsia-600" />
                     <span className="ml-2 cursor-pointer hover:text-fuchsia-600">
@@ -283,7 +349,9 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
                 ) : (
                   ''
                 )}
-                {item?.quantity !== 0 && item?.status == 'ACTIVE' ? (
+                {item?.quantity !== 0 &&
+                item?.status == 'ACTIVE' &&
+                userStorage?.role === 'SUPERADMIN' ? (
                   <DropdownMenuItem onClick={() => setIsSold(true)}>
                     <HeartHandshakeIcon className="size-4 text-gray-600 hover:text-indigo-600" />
                     <span className="ml-2 cursor-pointer hover:text-indigo-600">
@@ -293,7 +361,9 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
                 ) : (
                   ''
                 )}
-                {item?.quantity !== 0 && item?.status == 'ACTIVE' ? (
+                {item?.quantity !== 0 &&
+                item?.status == 'ACTIVE' &&
+                userStorage?.role === 'SUPERADMIN' ? (
                   <DropdownMenuItem onClick={() => setIsEdit(true)}>
                     <PencilIcon className="size-4 text-gray-600 hover:text-violet-600" />
                     <span className="ml-2 cursor-pointer hover:text-violet-600">
@@ -303,12 +373,16 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
                 ) : (
                   ''
                 )}
-                <DropdownMenuItem onClick={() => setIsOpen(true)}>
-                  <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
-                  <span className="ml-2 cursor-pointer hover:text-red-600">
-                    {t.formatMessage({ id: 'TABANIMAL.DELETE' })}
-                  </span>
-                </DropdownMenuItem>
+                {userStorage?.role === 'SUPERADMIN' ? (
+                  <DropdownMenuItem onClick={() => setIsOpen(true)}>
+                    <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
+                    <span className="ml-2 cursor-pointer hover:text-red-600">
+                      {t.formatMessage({ id: 'TABANIMAL.DELETE' })}
+                    </span>
+                  </DropdownMenuItem>
+                ) : (
+                  ''
+                )}
               </DropdownMenuContent>
               <ActionModalDialog
                 loading={loading}
@@ -333,7 +407,7 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
               showModal={isFeeding}
               setShowModal={setIsFeeding}
             />
-            <CreateOrUpdateAvestreatments
+            <CreateAvestreatments
               animal={item}
               treatment={item?.animalTypeId}
               showModal={isTreatment}
@@ -362,6 +436,11 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
               isolation={item?.animalTypeId}
               showModal={isIsolation}
               setShowModal={setIsIsolation}
+            />
+            <PutInCages
+              animal={item}
+              showModal={putIncages}
+              setShowModal={setPutInCages}
             />
           </div>
         </div>

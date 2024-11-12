@@ -1,10 +1,17 @@
 import { CreateBulkAnimalsAPI, GetAnimalsAPI } from '@/api-site/animals';
 import { GetBreedsAPI } from '@/api-site/breed';
 import { GetLocationsAPI } from '@/api-site/locations';
-import { useReactHookForm } from '@/components/hooks';
-import { ButtonInput, ButtonLoadMore } from '@/components/ui-setting';
+import { useInputState, useReactHookForm } from '@/components/hooks';
+import {
+  ButtonInput,
+  ButtonLoadMore,
+  SearchInput,
+} from '@/components/ui-setting';
 import { SelectInput, TextInput } from '@/components/ui-setting/shadcn';
-import { productionPhases } from '@/i18n/default-exports';
+import {
+  offspringsProductionPhase,
+  productionPhases,
+} from '@/i18n/default-exports';
 import { AnimalModel } from '@/types/animal';
 import {
   AlertDangerNotification,
@@ -37,13 +44,13 @@ import {
 
 const schema = yup.object({
   birthday: yup.string().optional(),
-  breedName: yup.string().optional(),
   codeMother: yup.string().optional(),
   codeFather: yup.string().optional(),
-  locationCode: yup.string().optional(),
   number: yup.number().required('number is a required field'),
   weight: yup.number().required('weight is a required field'),
   gender: yup.string().required('gender is a required field'),
+  breedName: yup.string().required('breed name is a required field'),
+  locationCode: yup.string().required('location code is a required field'),
   productionPhase: yup.string().required('productionPhase is a required field'),
 });
 
@@ -73,6 +80,7 @@ const CreateBulkAnimals = ({
   const animalTypeId = String(query?.animalTypeId);
   const { ref, inView } = useInView();
   const watchProductionPhase = watch('productionPhase', '');
+  const { search, handleSetSearch } = useInputState();
 
   // Create
   const { isPending: loading, mutateAsync: saveMutation } =
@@ -129,6 +137,7 @@ const CreateBulkAnimals = ({
     hasNextPage,
     fetchNextPage,
   } = GetAnimalsAPI({
+    search,
     take: 10,
     sort: 'desc',
     gender: 'FEMALE',
@@ -143,6 +152,7 @@ const CreateBulkAnimals = ({
     isError: isErrorMales,
     data: dataMales,
   } = GetAnimalsAPI({
+    search,
     take: 10,
     sort: 'desc',
     gender: 'MALE',
@@ -157,6 +167,7 @@ const CreateBulkAnimals = ({
     isError: isErrorGrowthLocations,
     data: dataGrowthLocations,
   } = GetLocationsAPI({
+    search,
     take: 10,
     status: true,
     sort: 'desc',
@@ -250,37 +261,106 @@ const CreateBulkAnimals = ({
                       name="birthday"
                     />
                   </div>
-                  <div>
+                  {farrowing?.id ? (
+                    <div>
+                      <Label>
+                        <Label>{t.formatMessage({ id: 'VIEW.WEIGHT' })}</Label>
+                        <span className="text-red-600">*</span> (g)
+                      </Label>
+                      <TextInput
+                        control={control}
+                        type="number"
+                        name="weight"
+                        placeholder="weight"
+                        defaultValue={`${farrowing?.weight}`}
+                        errors={errors}
+                      />
+                    </div>
+                  ) : (
+                    <div>
+                      <Label>
+                        <Label>{t.formatMessage({ id: 'VIEW.WEIGHT' })}</Label>
+                        <span className="text-red-600">*</span> (g)
+                      </Label>
+                      <TextInput
+                        control={control}
+                        type="number"
+                        name="weight"
+                        placeholder="weight"
+                        errors={errors}
+                      />
+                    </div>
+                  )}
+                </div>
+                <div className="flex items-center space-x-4">
+                  <div className="w-80">
                     <Label>
-                      <Label>{t.formatMessage({ id: 'VIEW.WEIGHT' })}</Label>
-                      <span className="text-red-600">*</span> (g)
+                      {t.formatMessage({ id: 'ANIMALTYPE.GENDER' })}
                     </Label>
-                    <TextInput
+                    <SelectInput
                       control={control}
-                      type="number"
-                      name="weight"
-                      placeholder="Weight"
-                      defaultValue={`${farrowing?.weight}`}
                       errors={errors}
+                      valueType="text"
+                      name="gender"
+                      placeholder="select gender"
+                      dataItem={[
+                        { id: 1, name: 'MALE' },
+                        { id: 2, name: 'FEMALE' },
+                      ]}
                     />
                   </div>
-                </div>
-                <div>
-                  <Label>
-                    Genre<span className="text-red-600">*</span>
-                  </Label>
-                  <SelectInput
-                    firstOptionName="Choose a production type"
-                    control={control}
-                    errors={errors}
-                    placeholder="Select gender"
-                    valueType="text"
-                    name="gender"
-                    dataItem={[
-                      { id: 1, name: 'MALE' },
-                      { id: 2, name: 'FEMALE' },
-                    ]}
-                  />
+                  {farrowing?.id ? (
+                    <div className="w-80">
+                      <Label>
+                        {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
+                        <span className="text-red-600">*</span>
+                      </Label>
+                      <SelectInput
+                        control={control}
+                        errors={errors}
+                        placeholder="select production phase"
+                        valueType="key"
+                        name="productionPhase"
+                        dataItem={offspringsProductionPhase.filter(
+                          (i) => i?.lang === locale,
+                        )}
+                      />
+                    </div>
+                  ) : weaning?.id ? (
+                    <div className="w-80">
+                      <Label>
+                        {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
+                        <span className="text-red-600">*</span>
+                      </Label>
+                      <SelectInput
+                        control={control}
+                        errors={errors}
+                        placeholder="select production phase"
+                        valueType="key"
+                        name="productionPhase"
+                        dataItem={offspringsProductionPhase.filter(
+                          (i) => i?.lang === locale,
+                        )}
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-80">
+                      <Label>
+                        {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
+                        <span className="text-red-600">*</span>
+                      </Label>
+                      <SelectInput
+                        control={control}
+                        errors={errors}
+                        placeholder="select production phase"
+                        valueType="text"
+                        name="productionPhase"
+                        dataItem={productionPhases.filter(
+                          (i) => i?.lang === locale,
+                        )}
+                      />
+                    </div>
+                  )}
                 </div>
                 {!farrowing?.id ? (
                   <div className="my-2">
@@ -292,12 +372,18 @@ const CreateBulkAnimals = ({
                         <Select
                           onValueChange={onChange}
                           name={'codeMother'}
-                          value={value ? value : farrowing?.animal?.code}
+                          value={value}
                         >
                           <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select a female code" />
+                            <SelectValue placeholder="select female code" />
                           </SelectTrigger>
                           <SelectContent className="dark:border-gray-800">
+                            <div className="mr-auto items-center gap-2">
+                              <SearchInput
+                                placeholder="Search by code"
+                                onChange={handleSetSearch}
+                              />
+                            </div>
                             <SelectGroup>
                               <SelectLabel>Codes</SelectLabel>
                               {isLoadingFemales ? (
@@ -363,9 +449,15 @@ const CreateBulkAnimals = ({
                         value={value}
                       >
                         <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select a male code" />
+                          <SelectValue placeholder="select male code" />
                         </SelectTrigger>
                         <SelectContent className="dark:border-gray-800">
+                          <div className="mr-auto items-center gap-2">
+                            <SearchInput
+                              placeholder="Search by code"
+                              onChange={handleSetSearch}
+                            />
+                          </div>
                           <SelectGroup>
                             <SelectLabel>Codes</SelectLabel>
                             {isLoadingMales ? (
@@ -395,64 +487,6 @@ const CreateBulkAnimals = ({
                     )}
                   />
                 </div>
-                {!farrowing?.id ? (
-                  <div className="mb-2">
-                    <Label>
-                      {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
-                      <span className="text-red-600">*</span>
-                    </Label>
-                    <SelectInput
-                      firstOptionName="Choose a production type"
-                      control={control}
-                      errors={errors}
-                      placeholder="Select a production phase"
-                      valueType="key"
-                      name="productionPhase"
-                      dataItem={productionPhases.filter(
-                        (i) => i?.lang === locale,
-                      )}
-                    />
-                  </div>
-                ) : !weaning?.id ? (
-                  <div className="mb-2">
-                    <Label>
-                      {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
-                      <span className="text-red-600">*</span>
-                    </Label>
-                    <SelectInput
-                      firstOptionName="Choose a production type"
-                      control={control}
-                      errors={errors}
-                      placeholder="Select a production phase"
-                      valueType="key"
-                      name="productionPhase"
-                      defaultValue="GROWTH"
-                      dataItem={[
-                        { id: 'GROWTH', name: 'GROWTH', lang: 'en' },
-                        { id: 'GROWTH', name: 'CROISSANCE', lang: 'fr' },
-                      ]}
-                    />
-                  </div>
-                ) : (
-                  <div className="mb-2">
-                    <Label>
-                      {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
-                      <span className="text-red-600">*</span>
-                    </Label>
-                    <SelectInput
-                      control={control}
-                      errors={errors}
-                      placeholder="Select a production phase"
-                      valueType="text"
-                      name="productionPhase"
-                      defaultValue="GROWTH"
-                      dataItem={[
-                        { id: 'GROWTH', name: 'GROWTH', lang: 'en' },
-                        { id: 'GROWTH', name: 'CROISSANCE', lang: 'fr' },
-                      ]}
-                    />
-                  </div>
-                )}
                 <div className="my-2">
                   <Label>
                     {t.formatMessage({ id: 'SELECT.BREED' })}
@@ -468,7 +502,7 @@ const CreateBulkAnimals = ({
                         value={value}
                       >
                         <SelectTrigger>
-                          <SelectValue placeholder="Select a breed" />
+                          <SelectValue placeholder="select breed" />
                         </SelectTrigger>
                         <SelectContent className="dark:border-gray-800">
                           <SelectGroup>
@@ -524,9 +558,15 @@ const CreateBulkAnimals = ({
                             value={value}
                           >
                             <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Select a location code" />
+                              <SelectValue placeholder="select location code" />
                             </SelectTrigger>
                             <SelectContent className="dark:border-gray-800">
+                              <div className="mr-auto items-center gap-2">
+                                <SearchInput
+                                  placeholder="Search by code"
+                                  onChange={handleSetSearch}
+                                />
+                              </div>
                               <SelectGroup>
                                 <SelectLabel>Location codes</SelectLabel>
                                 {isLoadingLocations ? (
@@ -585,9 +625,15 @@ const CreateBulkAnimals = ({
                             value={value}
                           >
                             <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Select a location code" />
+                              <SelectValue placeholder="select location code" />
                             </SelectTrigger>
                             <SelectContent className="dark:border-gray-800">
+                              <div className="mr-auto items-center gap-2">
+                                <SearchInput
+                                  placeholder="Search by code"
+                                  onChange={handleSetSearch}
+                                />
+                              </div>
                               <SelectGroup>
                                 <SelectLabel>Location codes</SelectLabel>
                                 {isLoadingGrowthLocations ? (
@@ -630,7 +676,7 @@ const CreateBulkAnimals = ({
                         )}
                       />
                     </div>
-                  ) : (
+                  ) : farrowing?.id ? (
                     <div className="my-2 items-center">
                       {t.formatMessage({ id: 'VIEW.LOCATION' })}
                       <TextInput
@@ -641,6 +687,19 @@ const CreateBulkAnimals = ({
                         errors={errors}
                       />
                     </div>
+                  ) : weaning?.id ? (
+                    <div className="my-2 items-center">
+                      {t.formatMessage({ id: 'VIEW.LOCATION' })}
+                      <TextInput
+                        control={control}
+                        type="text"
+                        name="locationCode"
+                        defaultValue={`${weaning?.animal?.location?.code}`}
+                        errors={errors}
+                      />
+                    </div>
+                  ) : (
+                    ''
                   )}
                 </div>
                 <div className="mt-4 flex items-center space-x-4">

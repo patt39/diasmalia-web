@@ -39,11 +39,12 @@ const TabAvesIsolations = ({ animalTypeId }: { animalTypeId: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [periode, setPeriode] = useState('');
   const { ref, inView } = useInView();
-  const { search, handleSetSearch } = useInputState();
+  const { search, handleSetSearch, userStorage } = useInputState();
 
   const { data: animalStatistics } = GetAnimalStatisticsAPI({
     periode,
     animalTypeId: animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   const {
@@ -60,6 +61,7 @@ const TabAvesIsolations = ({ animalTypeId }: { animalTypeId: string }) => {
     sort: 'desc',
     sortBy: 'createdAt',
     animalTypeId: animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   useEffect(() => {

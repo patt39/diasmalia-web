@@ -3,11 +3,11 @@ import {
   ClipboardList,
   Dice6Icon,
   Fence,
-  Fuel,
   HomeIcon,
   Hospital,
   MailQuestion,
   MessageCircleQuestion,
+  ShieldCheck,
   Users,
   Warehouse,
   Webhook,
@@ -71,18 +71,23 @@ const VerticalNavDashboard = ({ user }: Props) => {
       icon: <Users className={classIcon} />,
     },
     {
+      title: `${t.formatMessage({ id: 'MENU.BIOSECURITY' })}`,
+      href: '/biosecurity',
+      icon: <ShieldCheck className={classIcon} />,
+    },
+    {
       title: `${t.formatMessage({ id: 'MENU.TASKS' })}`,
       href: '/tasks',
       icon: <ClipboardList className={classIcon} />,
     },
   ]);
-  const [transactionItems] = useState<NavbarProps[]>([
-    {
-      title: `${t.formatMessage({ id: 'MENU.SUBSCRIPTION' })}`,
-      href: '/billing',
-      icon: <Fuel className={classIcon} />,
-    },
-  ]);
+  // const [transactionItems] = useState<NavbarProps[]>([
+  //   {
+  //     title: `${t.formatMessage({ id: 'MENU.SUBSCRIPTION' })}`,
+  //     href: '/billing',
+  //     icon: <Fuel className={classIcon} />,
+  //   },
+  // ]);
   const [supportItems] = useState<NavbarProps[]>([
     {
       title: `${t.formatMessage({ id: 'MENU.FAQ' })}`,
@@ -151,17 +156,28 @@ const VerticalNavDashboard = ({ user }: Props) => {
                     {item?.icon}
 
                     {item?.title}
+                    {item?.title ===
+                    t.formatMessage({ id: 'MENU.BIOSECURITY' }) ? (
+                      <div className="ml-auto">
+                        <span className="relative flex size-3">
+                          <span className="absolute inline-flex size-full animate-ping rounded-full bg-green-400 opacity-75"></span>
+                          <span className="relative inline-flex size-3 rounded-full bg-green-500"></span>
+                        </span>
+                      </div>
+                    ) : (
+                      ''
+                    )}
                   </Link>
                 );
               })}
             </nav>
           </>
           <>
-            <p className="px-4 text-xs font-semibold uppercase tracking-widest text-gray-400">
+            {/* <p className="px-4 text-xs font-semibold uppercase tracking-widest text-gray-400">
               Transactions
-            </p>
+            </p> */}
             <nav className="mt-4 flex-1 space-y-1">
-              {transactionItems.map((item: any, index: number) => {
+              {/* {transactionItems.map((item: any, index: number) => {
                 const isActive = pathname?.startsWith(item.href);
                 return (
                   <Link
@@ -181,7 +197,7 @@ const VerticalNavDashboard = ({ user }: Props) => {
                     {item?.title}
                   </Link>
                 );
-              })}
+              })} */}
             </nav>
           </>
           <>

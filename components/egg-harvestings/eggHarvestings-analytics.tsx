@@ -25,7 +25,7 @@ const EggHarvestingsAnalytics = ({
 }: {
   animalTypeId: string;
 }) => {
-  const { t, locale } = useInputState();
+  const { t, locale, userStorage } = useInputState();
   const [year, setYear] = useState<String>(`${dateTimeNowUtc().getFullYear()}`);
   const [months, setMonths] = useState<String>('');
 
@@ -33,16 +33,18 @@ const EggHarvestingsAnalytics = ({
     year: String(year),
     months: String(months),
     animalTypeId: animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   const { data: dataEggHarvestingAnalyticsMonth } =
     GetEggHarvestingsAnalyticAPI({
       year: String(year),
       animalTypeId: animalTypeId,
+      organizationId: userStorage?.organizationId,
     });
 
   const { data: dataEggHarvestingAnalyticsYear } = GetEggHarvestingsAnalyticAPI(
-    { animalTypeId: animalTypeId },
+    { animalTypeId: animalTypeId, organizationId: userStorage?.organizationId },
   );
 
   const chartConfig = {

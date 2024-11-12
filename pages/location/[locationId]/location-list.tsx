@@ -2,6 +2,7 @@
 import { DeleteOneAnimalAPI } from '@/api-site/animals';
 import { UpdateAnimals } from '@/components/animals/update-animal';
 import { ViewAnimal } from '@/components/animals/view-animal';
+import { CreateFarrowings } from '@/components/farrowings/create-farrowings';
 import { useInputState } from '@/components/hooks';
 import { ActionModalDialog } from '@/components/ui-setting/shadcn';
 import { Badge } from '@/components/ui/badge';
@@ -25,6 +26,7 @@ import {
   History,
   Hospital,
   MoreHorizontal,
+  Origami,
   PencilIcon,
   ScanQrCode,
   TrashIcon,
@@ -35,6 +37,7 @@ const LocationList = ({ item, index }: { item: any; index: number }) => {
   const { t, isOpen, setIsOpen } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
   const [isView, setIsView] = useState(false);
+  const [isFarrowing, setIsFarrowing] = useState(false);
 
   const { isPending: loading, mutateAsync: deleteMutation } =
     DeleteOneAnimalAPI();
@@ -77,7 +80,7 @@ const LocationList = ({ item, index }: { item: any; index: number }) => {
               </Badge>
             )}
           </div>
-          <div className="flex items-center justify-start space-x-4">
+          <div className="flex items-center justify-center space-x-4">
             <div>
               <h2 className="text-sm flex items-center font-medium text-gray-500">
                 <Anvil className="h-3.5 w-3.5  hover:shadow-xxl" />
@@ -184,6 +187,17 @@ const LocationList = ({ item, index }: { item: any; index: number }) => {
                 ) : (
                   ''
                 )}
+                {item?.location?._count?.animals == 1 &&
+                ['GESTATION'].includes(item?.productionPhase) ? (
+                  <DropdownMenuItem onClick={() => setIsFarrowing(true)}>
+                    <Origami className="size-4 text-gray-600 hover:text-emerald-600" />
+                    <span className="ml-2 cursor-pointer hover:text-emerald-600">
+                      {t.formatMessage({ id: 'TABWEANING.FARROWING' })}
+                    </span>
+                  </DropdownMenuItem>
+                ) : (
+                  ''
+                )}
                 <DropdownMenuItem onClick={() => setIsOpen(true)}>
                   <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
                   <span className="ml-2 cursor-pointer hover:text-red-600">
@@ -207,6 +221,11 @@ const LocationList = ({ item, index }: { item: any; index: number }) => {
               animal={item}
               showModal={isView}
               setShowModal={setIsView}
+            />
+            <CreateFarrowings
+              animal={item}
+              showModal={isFarrowing}
+              setShowModal={setIsFarrowing}
             />
           </div>
         </div>

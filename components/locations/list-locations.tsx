@@ -16,19 +16,25 @@ import {
   Anvil,
   ArrowLeftRight,
   BadgeCheck,
+  Bone,
   Droplets,
+  Eclipse,
   Eye,
   Grid2X2,
   Hospital,
   MoreHorizontal,
+  Origami,
   PencilIcon,
   Salad,
   TrashIcon,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
+import { CreateOrUpdateDeaths } from '../deaths/create-or-update-deaths';
+import { CreateFarrowings } from '../farrowings/create-farrowings';
 import { CreateOrUpdateFattenings } from '../fattenings/create-or-update-fattenings';
 import { CreateFeedings } from '../feedings/create-feedings';
+import { CreateOrUpdateIsolations } from '../isolations/create-or-update-isolations';
 import { BulkCreateTreatments } from '../treatments/bulk-create-treatments';
 import { ActionModalDialog } from '../ui-setting/shadcn';
 import { ActionModalConfirmeDialog } from '../ui-setting/shadcn/action-modal-confirme-dialog';
@@ -46,9 +52,12 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
   const { t, isOpen, setIsOpen, isConfirmOpen, setIsConfirmOpen } =
     useInputState();
   const [isEdit, setIsEdit] = useState(false);
+  const [isDeath, setIsDeath] = useState(false);
   const [isFeeding, setIsFeeding] = useState(false);
   const [isTreatment, setIsTreatment] = useState(false);
   const [isFattening, setIsFattening] = useState(false);
+  const [isFarrowing, setIsFarrowing] = useState(false);
+  const [isIsolation, setIsIsolation] = useState(false);
   const [isChangeLocation, setIsChangeLocation] = useState(false);
 
   const { isPending: loading, mutateAsync: deleteMutation } =
@@ -245,7 +254,10 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
             </div>
           </div>
           {item?.productionPhase !== 'FATTENING' ? (
-            <div className="flex items-center justify-center space-x-2">
+            <Link
+              className="flex items-center justify-center space-x-2"
+              href={`/location/${item?.id}`}
+            >
               <div>
                 <h2 className="text-sm font-medium text-gray-500 h-4">
                   <h2 className="mt-2 flex items-center text-sm font-medium text-gray-500 h-4">
@@ -289,9 +301,9 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
                   </p>
                 )}
               </div>
-            </div>
+            </Link>
           ) : (
-            <div className="flex items-center justify-center space-x-1">
+            <div className="flex items-center justify-center space-x-2">
               <div>
                 <h2 className="text-sm font-medium text-gray-500 h-4">
                   <h2 className="mt-2 flex items-center text-sm font-medium text-gray-500 h-4">
@@ -374,6 +386,28 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
                 ) : (
                   ''
                 )}
+                {item?._count?.animals !== 0 &&
+                ['GROWTH', 'FATTENING'].includes(item?.productionPhase) ? (
+                  <DropdownMenuItem onClick={() => setIsDeath(true)}>
+                    <Bone className="size-4 text-gray-600 hover:text-emerald-600" />
+                    <span className="ml-2 cursor-pointer hover:text-emerald-600">
+                      {t.formatMessage({ id: 'ANIMALTYPE.DEATHS' })}
+                    </span>
+                  </DropdownMenuItem>
+                ) : (
+                  ''
+                )}
+                {item?._count?.animals !== 0 &&
+                ['GROWTH', 'FATTENING'].includes(item?.productionPhase) ? (
+                  <DropdownMenuItem onClick={() => setIsIsolation(true)}>
+                    <Eclipse className="size-4 text-gray-600 hover:text-emerald-600" />
+                    <span className="ml-2 cursor-pointer hover:text-emerald-600">
+                      {t.formatMessage({ id: 'ANIMALTYPE.ISOLATIONS' })}
+                    </span>
+                  </DropdownMenuItem>
+                ) : (
+                  ''
+                )}
                 {item?._count?.animals !== 0 ? (
                   <DropdownMenuItem onClick={() => setIsFeeding(true)}>
                     <Salad className="size-4 text-gray-600 hover:text-green-600" />
@@ -387,11 +421,23 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
                   ''
                 )}
                 {item?._count?.animals !== 0 &&
-                !['FATTENING', 'GESTATION'].includes(item?.productionPhase) ? (
+                ['GROWTH', 'REPRODUCTION'].includes(item?.productionPhase) ? (
                   <DropdownMenuItem onClick={() => setIsFattening(true)}>
                     <Anvil className="size-4 text-gray-600 hover:text-emerald-600" />
                     <span className="ml-2 cursor-pointer hover:text-emerald-600">
                       {t.formatMessage({ id: 'ANIMALTYPE.FATTENING' })}
+                    </span>
+                  </DropdownMenuItem>
+                ) : (
+                  ''
+                )}
+
+                {item?._count?.animals == 1 &&
+                ['GESTATION'].includes(item?.productionPhase) ? (
+                  <DropdownMenuItem onClick={() => setIsFarrowing(true)}>
+                    <Origami className="size-4 text-gray-600 hover:text-emerald-600" />
+                    <span className="ml-2 cursor-pointer hover:text-emerald-600">
+                      {t.formatMessage({ id: 'TABWEANING.FARROWING' })}
                     </span>
                   </DropdownMenuItem>
                 ) : (
@@ -477,6 +523,21 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
         fattening={item?.animalTypeId}
         showModal={isFattening}
         setShowModal={setIsFattening}
+      />
+      <CreateFarrowings
+        location={item}
+        showModal={isFarrowing}
+        setShowModal={setIsFarrowing}
+      />
+      <CreateOrUpdateDeaths
+        location={item}
+        showModal={isDeath}
+        setShowModal={setIsDeath}
+      />
+      <CreateOrUpdateIsolations
+        location={item}
+        showModal={isIsolation}
+        setShowModal={setIsIsolation}
       />
     </>
   );

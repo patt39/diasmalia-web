@@ -2,6 +2,7 @@ import { UpdateOneCheckAPI } from '@/api-site/breedings';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
 import { SelectInput } from '@/components/ui-setting/shadcn';
+import { checkPregnancyMethod, checkResults } from '@/i18n/default-exports';
 import { CheckPregnancysModel } from '@/types/breeding';
 import {
   AlertDangerNotification,
@@ -26,15 +27,8 @@ const ReCheckPregnancy = ({
   setShowModal: any;
   gestation?: any;
 }) => {
-  const {
-    t,
-    control,
-    handleSubmit,
-    errors,
-    setLoading,
-    hasErrors,
-    setHasErrors,
-  } = useReactHookForm({ schema });
+  const { t, control, handleSubmit, errors, hasErrors, setHasErrors, locale } =
+    useReactHookForm({ schema });
 
   //Update data
   const { isPending: loading, mutateAsync: saveMutation } = UpdateOneCheckAPI();
@@ -97,18 +91,14 @@ const ReCheckPregnancy = ({
                     <span className="text-red-600">*</span>
                   </Label>
                   <SelectInput
-                    firstOptionName="Choose a size"
                     control={control}
                     errors={errors}
-                    placeholder="Select method"
-                    valueType="text"
+                    valueType="key"
                     name="method"
-                    dataItem={[
-                      { id: 1, name: 'BLOOD_TEST' },
-                      { id: 2, name: 'RECTAL_PALPATION' },
-                      { id: 3, name: 'OBSERVATION' },
-                      { id: 4, name: 'ULTRASOUND' },
-                    ]}
+                    placeholder="select method"
+                    dataItem={checkPregnancyMethod.filter(
+                      (i) => i?.lang === locale,
+                    )}
                   />
                 </div>
                 <div className="mb-2">
@@ -117,16 +107,12 @@ const ReCheckPregnancy = ({
                     <span className="text-red-600">*</span>
                   </Label>
                   <SelectInput
-                    firstOptionName="Choose a size"
                     control={control}
                     errors={errors}
-                    placeholder="Select result"
-                    valueType="text"
+                    placeholder="result"
+                    valueType="key"
                     name="result"
-                    dataItem={[
-                      { id: 1, name: 'OPEN' },
-                      { id: 2, name: 'PREGNANT' },
-                    ]}
+                    dataItem={checkResults.filter((i) => i?.lang === locale)}
                   />
                 </div>
                 <div className="mt-4 flex items-center space-x-4">

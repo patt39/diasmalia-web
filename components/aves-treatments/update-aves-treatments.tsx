@@ -1,12 +1,14 @@
+import { GetAnimalsAPI } from '@/api-site/animals';
 import { GetHealthsAPI } from '@/api-site/health';
 import { CreateOrUpdateOneAvesTreatmentAPI } from '@/api-site/treatment';
-import { useReactHookForm } from '@/components/hooks';
-import { ButtonInput } from '@/components/ui-setting';
+import { useInputState, useReactHookForm } from '@/components/hooks';
+import { ButtonInput, SearchInput } from '@/components/ui-setting';
 import {
   SelectInput,
   TextAreaInput,
   TextInput,
 } from '@/components/ui-setting/shadcn';
+import { treatmentMethods } from '@/i18n/default-exports';
 import { TreatmentAvesModel } from '@/types/treatments';
 import {
   AlertDangerNotification,
@@ -25,6 +27,7 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '../ui/select';
@@ -39,19 +42,18 @@ const schema = yup.object({
   method: yup.string().required('method is required'),
 });
 
-const CreateOrUpdateAvestreatments = ({
+const UpdateAvestreatments = ({
   showModal,
   setShowModal,
   treatment,
-  animal,
 }: {
   showModal: boolean;
   setShowModal: any;
   treatment?: any;
-  animal?: any;
 }) => {
   const {
     t,
+    locale,
     control,
     setValue,
     handleSubmit,
@@ -61,6 +63,7 @@ const CreateOrUpdateAvestreatments = ({
   } = useReactHookForm({ schema });
   const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
+  const { search, handleSetSearch } = useInputState();
 
   useEffect(() => {
     if (treatment) {
@@ -77,14 +80,7 @@ const CreateOrUpdateAvestreatments = ({
     }
   }, [treatment, setValue]);
 
-  useEffect(() => {
-    if (animal) {
-      const fields = ['code'];
-      fields?.forEach((field: any) => setValue(field, animal[field]));
-    }
-  }, [animal, setValue]);
-
-  // Create or Update data
+  //Update data
   const { isPending: loading, mutateAsync: saveMutation } =
     CreateOrUpdateOneAvesTreatmentAPI();
 
@@ -124,6 +120,19 @@ const CreateOrUpdateAvestreatments = ({
     animalTypeId: animalTypeId,
   });
 
+  const {
+    isLoading: isLoadingAnimals,
+    isError: isErrorAnimals,
+    data: dataAnimals,
+  } = GetAnimalsAPI({
+    search,
+    take: 10,
+    sort: 'desc',
+    status: 'ACTIVE',
+    sortBy: 'createdAt',
+    animalTypeId: animalTypeId,
+  });
+
   return (
     <>
       {showModal ? (
@@ -153,14 +162,56 @@ const CreateOrUpdateAvestreatments = ({
                     </div>
                   </div>
                 )}
-                <div className="items-center">
+                <div className="my-2">
                   <Label>{t.formatMessage({ id: 'ANIMAL.CODE' })}</Label>
-                  <TextInput
+                  <Controller
                     control={control}
-                    type="text"
                     name="code"
-                    placeholder="Give a code"
-                    errors={errors}
+                    render={({ field: { value, onChange } }) => (
+                      <Select
+                        onValueChange={onChange}
+                        name={'code'}
+                        value={value}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue
+                            placeholder={`${treatment?.animal?.code}`}
+                          />
+                        </SelectTrigger>
+                        <SelectContent className="dark:border-gray-800">
+                          <div className="mr-auto items-center gap-2">
+                            <SearchInput
+                              placeholder="Search by code"
+                              onChange={handleSetSearch}
+                            />
+                          </div>
+                          <SelectGroup>
+                            <SelectLabel>Codes</SelectLabel>
+                            {isLoadingAnimals ? (
+                              <LoadingFile />
+                            ) : isErrorAnimals ? (
+                              <ErrorFile
+                                title="404"
+                                description="Error finding data please try again..."
+                              />
+                            ) : Number(dataAnimals?.pages[0]?.data?.total) <=
+                              0 ? (
+                              <ErrorFile description="Don't have active animals yet" />
+                            ) : (
+                              dataAnimals?.pages
+                                .flatMap((page: any) => page?.data?.value)
+                                .map((item, index) => (
+                                  <>
+                                    <SelectItem key={index} value={item?.code}>
+                                      {item?.code}
+                                    </SelectItem>
+                                  </>
+                                ))
+                            )}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    )}
                   />
                 </div>
                 <div className="mb-2">
@@ -171,7 +222,7 @@ const CreateOrUpdateAvestreatments = ({
                     control={control}
                     type="text"
                     name="name"
-                    placeholder="Give treatment name"
+                    placeholder="treatment name"
                     errors={errors}
                   />
                 </div>
@@ -183,90 +234,91 @@ const CreateOrUpdateAvestreatments = ({
                     control={control}
                     type="text"
                     name="diagnosis"
-                    placeholder="Give a diagnosis"
+                    placeholder="diagnosis"
                     errors={errors}
                   />
                 </div>
-                <div className="mb-4">
-                  <Label>
-                    Medication<span className="text-red-600">*</span>
-                  </Label>
-                  <Controller
-                    control={control}
-                    name="healthId"
-                    render={({ field: { value, onChange } }) => (
-                      <Select
-                        onValueChange={onChange}
-                        name={'healthId'}
-                        value={value}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select medication" />
-                        </SelectTrigger>
-                        <SelectContent className="dark:border-gray-800">
-                          <SelectGroup>
-                            {isLoadingTreatments ? (
-                              <LoadingFile />
-                            ) : isErrorTreatments ? (
-                              <ErrorFile
-                                title="404"
-                                description="Error finding data please try again..."
-                              />
-                            ) : Number(dataTreatments?.pages[0]?.data?.total) <=
-                              0 ? (
-                              <ErrorFile description="Don't have active animals yet" />
-                            ) : (
-                              dataTreatments?.pages
-                                .flatMap((page: any) => page?.data?.value)
-                                .map((item: any, index: any) => (
-                                  <>
-                                    <SelectItem key={index} value={item?.id}>
-                                      {item?.name}
-                                    </SelectItem>
-                                  </>
-                                ))
-                            )}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    )}
-                  />
-                </div>
-                <div className="mb-4 flex items-center space-x-1">
-                  <Label>
-                    Dose:<span className="text-red-600">*</span>
-                  </Label>
-                  <TextInput
-                    control={control}
-                    type="number"
-                    name="dose"
-                    placeholder="Give a dose"
-                    errors={errors}
-                  />
-                  <Label>
-                    Voie:<span className="text-red-600">*</span>
-                  </Label>
-                  <SelectInput
-                    firstOptionName="Give a method"
-                    control={control}
-                    errors={errors}
-                    placeholder="Select method"
-                    valueType="text"
-                    name="method"
-                    dataItem={[
-                      { id: 1, name: 'EYE' },
-                      { id: 2, name: 'ORAL' },
-                      { id: 1, name: 'NASAL' },
-                      { id: 2, name: 'INJECTION' },
-                    ]}
-                  />
+                <div className="mb-4 flex items-center space-x-4">
+                  <div className="w-80">
+                    <Label>
+                      Medication<span className="text-red-600">*</span>
+                    </Label>
+                    <Controller
+                      control={control}
+                      name="healthId"
+                      render={({ field: { value, onChange } }) => (
+                        <Select
+                          onValueChange={onChange}
+                          name={'healthId'}
+                          value={value}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="select medication" />
+                          </SelectTrigger>
+                          <SelectContent className="dark:border-gray-800">
+                            <SelectGroup>
+                              {isLoadingTreatments ? (
+                                <LoadingFile />
+                              ) : isErrorTreatments ? (
+                                <ErrorFile
+                                  title="404"
+                                  description="Error finding data please try again..."
+                                />
+                              ) : Number(
+                                  dataTreatments?.pages[0]?.data?.total,
+                                ) <= 0 ? (
+                                <ErrorFile description="Don't have active animals yet" />
+                              ) : (
+                                dataTreatments?.pages
+                                  .flatMap((page: any) => page?.data?.value)
+                                  .map((item: any, index: any) => (
+                                    <>
+                                      <SelectItem key={index} value={item?.id}>
+                                        {item?.name}
+                                      </SelectItem>
+                                    </>
+                                  ))
+                              )}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                      )}
+                    />
+                  </div>
+                  <div className="w-60">
+                    <Label>
+                      Voie<span className="text-red-600">*</span>
+                    </Label>
+                    <SelectInput
+                      control={control}
+                      errors={errors}
+                      placeholder="select method"
+                      valueType="text"
+                      name="method"
+                      dataItem={treatmentMethods.filter(
+                        (i) => i?.lang === locale,
+                      )}
+                    />
+                  </div>
+                  <div className="w-40">
+                    <Label>
+                      Dose<span className="text-red-600">*</span>
+                    </Label>
+                    <TextInput
+                      control={control}
+                      type="number"
+                      name="dose"
+                      placeholder="doses"
+                      errors={errors}
+                    />
+                  </div>
                 </div>
                 <div className="mb-4">
                   <TextAreaInput
                     control={control}
                     label="Feedback"
                     name="note"
-                    placeholder="Give details about animal state"
+                    placeholder="details about animal state"
                     errors={errors}
                   />
                 </div>
@@ -298,4 +350,4 @@ const CreateOrUpdateAvestreatments = ({
   );
 };
 
-export { CreateOrUpdateAvestreatments };
+export { UpdateAvestreatments };

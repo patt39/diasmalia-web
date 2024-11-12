@@ -127,8 +127,8 @@ const CreateOrUpdateAvesDeaths = ({
                         control={control}
                         type="text"
                         name="code"
-                        defaultValue={`${animal?.animal?.code}`}
                         errors={errors}
+                        disabled
                       />
                     </div>
                     {['Pisciculture', 'Pondeuses'].includes(
@@ -143,7 +143,7 @@ const CreateOrUpdateAvesDeaths = ({
                           control={control}
                           type="number"
                           name="number"
-                          placeholder="Give a number"
+                          placeholder="number"
                           errors={errors}
                         />
                       </div>
@@ -158,7 +158,7 @@ const CreateOrUpdateAvesDeaths = ({
                           control={control}
                           type="number"
                           name="number"
-                          placeholder="Give a number"
+                          placeholder="number"
                           errors={errors}
                         />
                       </div>
@@ -174,7 +174,7 @@ const CreateOrUpdateAvesDeaths = ({
                             type="number"
                             name="male"
                             defaultValue="0"
-                            placeholder="Number of males"
+                            placeholder="number of males"
                             errors={errors}
                           />
                         </div>
@@ -188,7 +188,7 @@ const CreateOrUpdateAvesDeaths = ({
                             type="number"
                             name="female"
                             defaultValue="0"
-                            placeholder="Number of females"
+                            placeholder="number of females"
                             errors={errors}
                           />
                         </div>
@@ -204,7 +204,7 @@ const CreateOrUpdateAvesDeaths = ({
                   <TextAreaInput
                     control={control}
                     name="note"
-                    placeholder="Cause and disposal method"
+                    placeholder="cause and disposal method"
                     errors={errors}
                   />
                 </div>

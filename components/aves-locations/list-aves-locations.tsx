@@ -15,14 +15,15 @@ import { AlertDangerNotification, AlertSuccessNotification } from '@/utils';
 import {
   BadgeCheck,
   Columns4,
+  Container,
   Droplets,
   Egg,
   Grid2X2,
-  Grid3x3,
   MoreHorizontal,
   PencilIcon,
   Salad,
   TrashIcon,
+  Waves,
 } from 'lucide-react';
 import { useState } from 'react';
 import { ActionModalDialog } from '../ui-setting/shadcn';
@@ -34,14 +35,12 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '../ui/tooltip';
-import { UpdateGrowthLocations } from './update-growth-locations';
-import { UpdateLayingLocations } from './update-laying-locations';
+import { UpdateAvesLocations } from './update-aves-locations';
 
 const ListAvesLocations = ({ item, index }: { item: any; index: number }) => {
-  const { t, isOpen, setIsOpen, isConfirmOpen, setIsConfirmOpen } =
+  const { t, isOpen, setIsOpen, isConfirmOpen, setIsConfirmOpen, userStorage } =
     useInputState();
   const [isEdit, setIsEdit] = useState(false);
-  const [isGrowthEdit, setIsGrowthEdit] = useState(false);
 
   const { isPending: loading, mutateAsync: deleteMutation } =
     DeleteOneLocationAPI();
@@ -171,18 +170,25 @@ const ListAvesLocations = ({ item, index }: { item: any; index: number }) => {
               )}
             </div>
           </div>
-          <div className="flex items-center justify-center space-x-2">
+          <div
+            className="flex items-center justify-center space-x-2 cursor-pointer"
+            onClick={() => setIsEdit(true)}
+          >
             <div>
               <h2 className="text-sm font-medium text-gray-500 h-4">
-                {['Pisciculture'].includes(item?.animalType?.name) ? (
-                  <h2 className="mt-2 flex text-sm items-center font-medium text-gray-500 h-4">
-                    <Grid3x3 className="h-3.5 w-3.5  hover:shadow-xxl" />
-                    Volume: {item?.squareMeter}m<sup>3</sup>
+                {item?.addCages === 'YES' &&
+                ['Pisciculture'].includes(item?.animalType?.name) ? (
+                  <h2 className="mt-2 text-sm flex items-center font-medium text-gray-500 h-4">
+                    <Container className="h-3.5 w-3.5  hover:shadow-xxl mr-1" />
+                    {t.formatMessage({ id: 'TANK' })}: {item?.squareMeter}m
+                    <sup>3</sup>
                   </h2>
-                ) : item?.addCages === 'YES' ? (
-                  <h2 className="mt-2 text-sm  items-center flex font-medium text-gray-500 h-4">
-                    <Grid2X2 className="h-3.5 w-3.5  hover:shadow-xxl" />
-                    Dimension: {item?.squareMeter}m<sup>2</sup>
+                ) : item?.addCages === 'NO' &&
+                  ['Pisciculture'].includes(item?.animalType?.name) ? (
+                  <h2 className="mt-2 text-sm flex items-center font-medium text-gray-500 h-4">
+                    <Waves className="h-3.5 w-3.5  hover:shadow-xxl mr-1" />
+                    {t.formatMessage({ id: 'POND' })}: {item?.squareMeter}m
+                    <sup>3</sup>
                   </h2>
                 ) : (
                   <h2 className="mt-2 text-sm  items-center flex font-medium text-gray-500 h-4">
@@ -211,8 +217,10 @@ const ListAvesLocations = ({ item, index }: { item: any; index: number }) => {
                       <Egg className="h-3.5 w-3.5  hover:shadow-xxl" />
                       {t.formatMessage({ id: 'LOCATION.NEST' })}: {item?.nest}
                     </h2>
-                  ) : item?.productionPhase === 'LAYING' &&
-                    item?.addCages === 'YES' ? (
+                  ) : item?.addCages === 'YES' &&
+                    !['Canard', 'Pisciculture'].includes(
+                      item?.animalType?.name,
+                    ) ? (
                     <h2 className="mt-2 text-sm flex items-center font-medium text-gray-500 h-4">
                       <Columns4 className="h-3.5 w-3.5  hover:shadow-xxl" />
                       Cages: {item?.cages}
@@ -232,68 +240,68 @@ const ListAvesLocations = ({ item, index }: { item: any; index: number }) => {
                 <p className=" text-sm font-medium text-gray-500">
                   {t.formatMessage({ id: 'PRODUCTIONPHASE.GROWTH' })}
                 </p>
-              ) : (
+              ) : item?.productionPhase === 'LAYING' ? (
                 <p className=" text-sm font-medium text-gray-500">
                   {t.formatMessage({ id: 'PRODUCTIONPHASE.LAYING' })}
+                </p>
+              ) : (
+                <p className=" text-sm font-medium text-gray-500">
+                  {t.formatMessage({ id: 'PRODUCTIONTYPE.FATTENING' })}
                 </p>
               )}
             </div>
           </div>
           <div className="grid grid-cols-1 mt-6 sm:mt-2 px-20 sm:grid-cols-2 xl:grid-cols-3 sm:gap-8 xl:gap-12">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  aria-haspopup="true"
-                  size="icon"
-                  variant="ghost"
-                  className="ml-40"
+            {userStorage?.role === 'SUPERADMIN' ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    aria-haspopup="true"
+                    size="icon"
+                    variant="ghost"
+                    className="ml-40"
+                  >
+                    <MoreHorizontal className="h-4 w-4" />
+                    <span className="sr-only">
+                      {t.formatMessage({ id: 'TABANIMAL.MENU' })}
+                    </span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="end"
+                  className="dark:border-gray-800"
                 >
-                  <MoreHorizontal className="h-4 w-4" />
-                  <span className="sr-only">
-                    {t.formatMessage({ id: 'TABANIMAL.MENU' })}
-                  </span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="dark:border-gray-800">
-                {item?.productionPhase === 'LAYING' ? (
                   <DropdownMenuItem onClick={() => setIsEdit(true)}>
                     <PencilIcon className="size-4 text-gray-600 hover:text-indigo-600" />
                     <span className="ml-2 cursor-pointer hover:text-indigo-600">
                       {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
                     </span>
                   </DropdownMenuItem>
-                ) : item?.productionPhase === 'GROWTH' ? (
-                  <DropdownMenuItem onClick={() => setIsGrowthEdit(true)}>
-                    <PencilIcon className="size-4 text-gray-600 hover:text-indigo-600" />
-                    <span className="ml-2 cursor-pointer hover:text-indigo-600">
-                      {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
-                    </span>
-                  </DropdownMenuItem>
-                ) : (
-                  ''
-                )}
-                {item?._count?.animals === 0 ? (
-                  <DropdownMenuItem onClick={() => setIsConfirmOpen(true)}>
-                    <BadgeCheck className="size-4 text-gray-600 hover:text-yellow-600 cursor-pointer" />
-                    <span className="ml-2 cursor-pointer hover:text-yellow-400">
-                      {t.formatMessage({ id: 'CHANGE.STATUS' })}
-                    </span>
-                  </DropdownMenuItem>
-                ) : (
-                  ''
-                )}
-                {item?._count?.animals === 0 ? (
-                  <DropdownMenuItem onClick={() => setIsOpen(true)}>
-                    <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
-                    <span className="ml-2 cursor-pointer hover:text-red-600">
-                      {t.formatMessage({ id: 'TABANIMAL.DELETE' })}
-                    </span>
-                  </DropdownMenuItem>
-                ) : (
-                  ''
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
+                  {item?._count?.animals === 0 ? (
+                    <DropdownMenuItem onClick={() => setIsConfirmOpen(true)}>
+                      <BadgeCheck className="size-4 text-gray-600 hover:text-yellow-600 cursor-pointer" />
+                      <span className="ml-2 cursor-pointer hover:text-yellow-400">
+                        {t.formatMessage({ id: 'CHANGE.STATUS' })}
+                      </span>
+                    </DropdownMenuItem>
+                  ) : (
+                    ''
+                  )}
+                  {item?._count?.animals === 0 ? (
+                    <DropdownMenuItem onClick={() => setIsOpen(true)}>
+                      <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
+                      <span className="ml-2 cursor-pointer hover:text-red-600">
+                        {t.formatMessage({ id: 'TABANIMAL.DELETE' })}
+                      </span>
+                    </DropdownMenuItem>
+                  ) : (
+                    ''
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <div className="grid grid-cols-1 mt-6 sm:mt-2 px-20 sm:grid-cols-2 xl:grid-cols-3 sm:gap-8 xl:gap-12"></div>
+            )}
           </div>
         </div>
       </div>
@@ -309,15 +317,10 @@ const ListAvesLocations = ({ item, index }: { item: any; index: number }) => {
         setIsConfirmOpen={setIsConfirmOpen}
         onClick={() => changeItem(item)}
       />
-      <UpdateLayingLocations
+      <UpdateAvesLocations
         location={item}
         showModal={isEdit}
         setShowModal={setIsEdit}
-      />
-      <UpdateGrowthLocations
-        location={item}
-        showModal={isGrowthEdit}
-        setShowModal={setIsGrowthEdit}
       />
     </>
   );

@@ -2,7 +2,6 @@ import { exportSalesAPI, GetSalesAPI } from '@/api-site/sales';
 import { useInputState } from '@/components/hooks';
 
 import { GetAnimalStatisticsAPI } from '@/api-site/animals';
-import { GetOneUserMeAPI } from '@/api-site/user';
 import { SearchInput } from '@/components/ui-setting';
 import { LoadingFile } from '@/components/ui-setting/ant';
 import { ErrorFile } from '@/components/ui-setting/ant/error-file';
@@ -37,14 +36,14 @@ import { ListSales } from './list-sales';
 
 const TabSales = ({ animalTypeId }: { animalTypeId: string }) => {
   const { search, handleSetSearch } = useInputState();
-  const { t, isOpen, setIsOpen } = useInputState();
+  const { t, isOpen, setIsOpen, userStorage } = useInputState();
   const [periode, setPeriode] = useState('');
   const [pageItem, setPageItem] = useState(1);
-  const { data: user } = GetOneUserMeAPI();
 
   const { data: animalStatistics } = GetAnimalStatisticsAPI({
     periode,
     animalTypeId: animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   const handleExport = async () => {
@@ -72,6 +71,7 @@ const TabSales = ({ animalTypeId }: { animalTypeId: string }) => {
     sort: 'desc',
     sortBy: 'createdAt',
     animalTypeId: animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   return (
@@ -100,7 +100,7 @@ const TabSales = ({ animalTypeId }: { animalTypeId: string }) => {
                     {animalStatistics?.sumSaleAnimals?.toLocaleString(
                       'en-US',
                     ) || 0}
-                    {user?.profile?.currency?.symbol}
+                    {userStorage?.profile?.currency?.symbol}
                   </p>
                 </TooltipContent>
               </Tooltip>

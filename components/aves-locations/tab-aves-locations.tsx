@@ -22,7 +22,7 @@ import { ListAvesLocations } from './list-aves-locations';
 const TabAvesLocations = ({ animalTypeId }: { animalTypeId: string }) => {
   const { ref, inView } = useInView();
   const [isOpen, setIsOpen] = useState(false);
-  const { t, search, handleSetSearch } = useInputState();
+  const { t, search, handleSetSearch, userStorage } = useInputState();
 
   const { data: animalType } = GetOneAnimalTypeAPI({
     animalTypeId: animalTypeId,
@@ -41,6 +41,7 @@ const TabAvesLocations = ({ animalTypeId }: { animalTypeId: string }) => {
     sort: 'desc',
     sortBy: 'createdAt',
     animalTypeId: animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   useEffect(() => {
@@ -110,16 +111,20 @@ const TabAvesLocations = ({ animalTypeId }: { animalTypeId: string }) => {
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-            <Button
-              size="sm"
-              className="h-8 gap-1"
-              onClick={() => setIsOpen(true)}
-            >
-              <Fence className="h-3.5 w-3.5  hover:shadow-xxl" />
-              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                {t.formatMessage({ id: 'ANIMALTYPE.LOCATION.AVES.CREATE' })}
-              </span>
-            </Button>
+            {userStorage?.role === 'SUPERADMIN' ? (
+              <Button
+                size="sm"
+                className="h-8 gap-1"
+                onClick={() => setIsOpen(true)}
+              >
+                <Fence className="h-3.5 w-3.5  hover:shadow-xxl" />
+                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                  {t.formatMessage({ id: 'ANIMALTYPE.LOCATION.AVES.CREATE' })}
+                </span>
+              </Button>
+            ) : (
+              ''
+            )}
           </div>
         </div>
       </CardHeader>

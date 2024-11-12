@@ -1,9 +1,9 @@
-import { GetOneUserMeAPI } from '@/api-site/user';
 import { useInputState } from '@/components/hooks';
 import { LayoutDashboard } from '@/components/layouts/dashboard';
 
 import { GetTasksAPI } from '@/api-site/task';
 import { DashboardFooter } from '@/components/layouts/dashboard/footer';
+import { ButtonInput } from '@/components/ui-setting';
 import { LoadingFile } from '@/components/ui-setting/ant';
 import { ErrorFile } from '@/components/ui-setting/ant/error-file';
 import {
@@ -22,13 +22,13 @@ import {
 } from '@/components/ui/table';
 import { PrivateComponent } from '@/components/util/private-component';
 import { PaginationPage } from '@/utils';
+import { MoveLeftIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { ListTasks } from '../list-tasks';
 
 export function UserTasks() {
-  const { t } = useInputState();
-  const { data: user } = GetOneUserMeAPI();
+  const { t, userStorage } = useInputState();
   const [pageItem, setPageItem] = useState(1);
   const { query, back } = useRouter();
   const userId = String(query?.userId);
@@ -44,12 +44,31 @@ export function UserTasks() {
     sort: 'desc',
     sortBy: 'createdAt',
     contributorId: userId,
-    organizationId: user?.organizationId,
+    organizationId: userStorage?.organizationId,
   });
 
   return (
     <>
-      <LayoutDashboard title={'Contributors'}>
+      <LayoutDashboard
+        title={`${userStorage?.profile?.firstName} ${userStorage?.profile?.lastName} - Tasks`}
+      >
+        <CardHeader>
+          <div className="flex items-center">
+            <ButtonInput
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={() => {
+                back();
+              }}
+              icon={<MoveLeftIcon className="size-4" />}
+            >
+              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                {t.formatMessage({ id: 'UTIL.COME_BACK' })}
+              </span>
+            </ButtonInput>
+          </div>
+        </CardHeader>
         <div className="flex min-h-screen w-full flex-col">
           <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
             <Card
@@ -58,11 +77,9 @@ export function UserTasks() {
             >
               <CardHeader className="flex flex-row items-center">
                 <div className="grid gap-2">
-                  <CardTitle>
-                    {t.formatMessage({ id: 'ACTIVITY.TITLE' })}
-                  </CardTitle>
+                  <CardTitle>{t.formatMessage({ id: 'USER.TASKS' })}</CardTitle>
                   <CardDescription>
-                    {t.formatMessage({ id: 'ACTIVITY.DESCRIPTION' })}
+                    {t.formatMessage({ id: 'USER.TASKS.DESCRIPTION' })}
                   </CardDescription>
                 </div>
               </CardHeader>

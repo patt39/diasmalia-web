@@ -32,7 +32,7 @@ import { CreateTreatments } from '../treatments/create-treatments';
 import { ActionModalDialog } from '../ui-setting/shadcn';
 import { TableCell, TableRow } from '../ui/table';
 import { CreateOrUpdateWeanings } from '../weanings/create-or-update-weaning';
-import { CreateOrUpdateFarrowings } from './create-or-update-farrowings';
+import { UpdateFarrowings } from './update-farrowings';
 import { ViewFarrowing } from './view-farrowing';
 
 const ListFarrowings = ({ item, index }: { item: any; index: number }) => {
@@ -77,8 +77,8 @@ const ListFarrowings = ({ item, index }: { item: any; index: number }) => {
         <TableCell>{item?.dead ?? 0}</TableCell>
         <TableCell>{formatWeight(item?.weight)}</TableCell>
         <TableCell>
-          {item?.note?.length > 60
-            ? item?.note?.substring(0, 60) + '...'
+          {item?.note?.length > 20
+            ? item?.note?.substring(0, 20) + '...'
             : item?.note}
         </TableCell>
         <TableCell>{formatDateDDMMYY(item?.createdAt as Date)}</TableCell>
@@ -106,8 +106,7 @@ const ListFarrowings = ({ item, index }: { item: any; index: number }) => {
                   {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
                 </span>
               </DropdownMenuItem>
-              {getOneWeaning?.farrowingId !== item?.id &&
-              item?.animalType?.name !== 'Cuniculture' ? (
+              {getOneWeaning?.animalId !== item?.animalId ? (
                 <DropdownMenuItem onClick={() => setIsWeaning(true)}>
                   <MilkOff className="size-4 text-gray-600 hover:text-violet-600" />
                   <span className="ml-2 cursor-pointer hover:text-violet-600">
@@ -125,24 +124,31 @@ const ListFarrowings = ({ item, index }: { item: any; index: number }) => {
                   })}
                 </span>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setIsGrowthTreatment(true)}>
-                <Hospital className="size-4 text-gray-600 hover:text-green-600" />
-                <span className="ml-2 cursor-pointer hover:text-green-600">
-                  {t.formatMessage({
-                    id: 'OFFSPRINGS.CARE',
-                  })}
-                </span>
-              </DropdownMenuItem>
               {item?.animal?.location?._count?.animals ===
-              Number(offspringsAlive + 1) ? (
-                ''
+                Number(offspringsAlive + 1) &&
+              item?.animalType?.name !== 'Cuniculture' ? (
+                <DropdownMenuItem onClick={() => setIsGrowthTreatment(true)}>
+                  <Hospital className="size-4 text-gray-600 hover:text-green-600" />
+                  <span className="ml-2 cursor-pointer hover:text-green-600">
+                    {t.formatMessage({
+                      id: 'OFFSPRINGS.CARE',
+                    })}
+                  </span>
+                </DropdownMenuItem>
               ) : (
+                ''
+              )}
+              {item?.animal?.location?._count?.animals ===
+                Number(offspringsAlive + 1) &&
+              item?.animalType?.name !== 'Cuniculture' ? (
                 <DropdownMenuItem onClick={() => setIsIdentification(true)}>
                   <IdCard className="size-4 text-gray-600 hover:text-fuchsia-600" />
                   <span className="ml-2 cursor-pointer hover:text-fuchsia-600">
                     {t.formatMessage({ id: 'OFFSPRING.IDENTIFICATION' })}
                   </span>
                 </DropdownMenuItem>
+              ) : (
+                ''
               )}
               <DropdownMenuItem onClick={() => setIsOpen(true)}>
                 <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
@@ -160,7 +166,7 @@ const ListFarrowings = ({ item, index }: { item: any; index: number }) => {
           </DropdownMenu>
         </TableCell>
       </TableRow>
-      <CreateOrUpdateFarrowings
+      <UpdateFarrowings
         farrowing={item}
         showModal={isEdit}
         setShowModal={setIsEdit}

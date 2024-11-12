@@ -11,7 +11,7 @@ import {
 import { formatDateDDMMYY } from '@/utils';
 import { Check, Eye, MoreHorizontal, Origami, PencilIcon } from 'lucide-react';
 import { useState } from 'react';
-import { CreateOrUpdateFarrowings } from '../farrowings/create-or-update-farrowings';
+import { CreateFarrowings } from '../farrowings/create-farrowings';
 import { TableCell, TableRow } from '../ui/table';
 import { ReCheckPregnancy } from './recheck-pregnancy';
 import { UpdateGestations } from './update-gestations';
@@ -56,7 +56,11 @@ const ListGestations = ({ item, index }: { item: any; index: number }) => {
             </p>
           )}
         </TableCell>
-        <TableCell>{formatDateDDMMYY(item?.farrowingDate) || 'RAS'}</TableCell>
+        <TableCell>
+          {item?.farrowingDate !== null
+            ? formatDateDDMMYY(item?.farrowingDate)
+            : 'RAS'}
+        </TableCell>
         <TableCell>
           {item?.note?.length > 20
             ? item?.note?.substring(0, 20) + '...'
@@ -73,6 +77,12 @@ const ListGestations = ({ item, index }: { item: any; index: number }) => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="dark:border-gray-800">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem onClick={() => setIsView(true)}>
+                <Eye className="size-4 text-gray-600 hover:text-indigo-600" />
+                <span className="ml-2 cursor-pointer hover:text-indigo-600">
+                  {t.formatMessage({ id: 'TABANIMAL.VIEW' })}
+                </span>
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setIsEdit(true)}>
                 <PencilIcon className="size-4 text-gray-600 hover:text-indigo-600" />
                 <span className="ml-2 cursor-pointer hover:text-indigo-600">
@@ -89,12 +99,6 @@ const ListGestations = ({ item, index }: { item: any; index: number }) => {
               ) : (
                 ''
               )}
-              <DropdownMenuItem onClick={() => setIsView(true)}>
-                <Eye className="size-4 text-gray-600 hover:text-indigo-600" />
-                <span className="ml-2 cursor-pointer hover:text-indigo-600">
-                  {t.formatMessage({ id: 'TABANIMAL.VIEW' })}
-                </span>
-              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setIsFarrowing(true)}>
                 <Origami className="size-4 text-gray-600 hover:text-violet-600" />
                 <span className="ml-2 cursor-pointer hover:text-violet-600">
@@ -120,9 +124,8 @@ const ListGestations = ({ item, index }: { item: any; index: number }) => {
         showModal={isView}
         setShowModal={setIsView}
       />
-      <CreateOrUpdateFarrowings
-        animal={item}
-        farrowing={item?.animalTypeId}
+      <CreateFarrowings
+        farrowing={item}
         showModal={isFarrowing}
         setShowModal={setIsFarrowing}
       />

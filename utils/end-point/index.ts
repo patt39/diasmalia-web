@@ -178,7 +178,6 @@ export const apiEndpoints: ClientApiMethods = {
   createOneFinance: POST(`${baseUrl}/finances/create`),
   getOneFinance: GET(`${baseUrl}/finances/:financeId/view`),
   updateOneFinance: PUT(`${baseUrl}/finances/:financeId/edit`),
-  getFinanceStatistics: GET(`${baseUrl}/finances/statistics`),
 
   /****************** Locations route */
   getLocations: GET(`${baseUrl}/locations`),
@@ -189,6 +188,13 @@ export const apiEndpoints: ClientApiMethods = {
   changeStatus: PUT(`${baseUrl}/locations/:locationId/change-status`),
   changeLocation: PUT(`${baseUrl}/locations/:locationId/change-location`),
   deleteOneLocation: DELETE(`${baseUrl}/locations/:locationId/delete`),
+
+  /****************** Cages route */
+  getAnimalCages: GET(`${baseUrl}/cages`),
+  putInCages: POST(`${baseUrl}/cages/create`),
+  updateCage: PUT(`${baseUrl}/cages/:cageId/edit`),
+  cageEggHarvesting: PUT(`${baseUrl}/cages/:cageId/eggHarvest`),
+  deleteOneCage: DELETE(`${baseUrl}/cages/:cageId/delete`),
 
   /****************** Animals route */
   getAnimals: GET(`${baseUrl}/animals`),
@@ -306,6 +312,7 @@ export const apiEndpoints: ClientApiMethods = {
   /****************** Gestation route */
   getGestations: GET(`${baseUrl}/gestations`),
   getOneGestation: GET(`${baseUrl}/gestations/:gestationId/view`),
+  getGestationByAnimalId: GET(`${baseUrl}/gestations/:animalId/show`),
   updateOneGestation: PUT(`${baseUrl}/gestations/:gestationId/edit`),
   deleteOneGestation: DELETE(`${baseUrl}/gestations/:gestationId/delete`),
 

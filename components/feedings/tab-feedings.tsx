@@ -42,6 +42,7 @@ const TabFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
   const { data: animalStatistics } = GetAnimalStatisticsAPI({
     periode,
     animalTypeId: animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   const {

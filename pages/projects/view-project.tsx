@@ -1,12 +1,9 @@
 import { GetUserByOrganizationAPI } from '@/api-site/user';
-import { useReactHookForm } from '@/components/hooks';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { XIcon } from 'lucide-react';
-import * as yup from 'yup';
-
-const schema = yup.object();
+import { useIntl } from 'react-intl';
 
 const ViewProject = ({
   showModal,
@@ -17,7 +14,7 @@ const ViewProject = ({
   setShowModal: any;
   organization?: any;
 }) => {
-  const { t } = useReactHookForm({ schema });
+  const t = useIntl();
   const { data: getUser } = GetUserByOrganizationAPI({
     organizationId: organization?.organizationId,
   });

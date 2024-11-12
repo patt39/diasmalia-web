@@ -109,7 +109,6 @@ const CreateIncubations = ({
                       type="number"
                       name="quantityStart"
                       defaultValue={`${incubation?.quantity}`}
-                      placeholder="Number eggs incubated"
                       errors={errors}
                     />
                   </div>
@@ -121,7 +120,7 @@ const CreateIncubations = ({
                     <DateInput
                       control={control}
                       errors={errors}
-                      placeholder="Hatching date"
+                      placeholder="hatching date"
                       name="dueDate"
                     />
                   </div>

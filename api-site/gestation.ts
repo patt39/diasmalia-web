@@ -29,6 +29,28 @@ export const GetOneGestationAPI = (payload: { gestationId: string }) => {
   };
 };
 
+export const GetGestationByAnimalIdAPI = (payload: { animalId: string }) => {
+  const { animalId } = payload;
+  const { data, isError, isLoading, status, isPending, refetch } = useQuery({
+    queryKey: ['gestation', animalId],
+    queryFn: async () =>
+      await makeApiCall({
+        action: 'getGestationByAnimalId',
+        urlParams: { animalId },
+      }),
+    refetchOnWindowFocus: false,
+  });
+
+  return {
+    data: data?.data as any,
+    isError,
+    isLoading,
+    status,
+    isPending,
+    refetch,
+  };
+};
+
 export const UpdateOneGestationAPI = ({
   onSuccess,
   onError,

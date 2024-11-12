@@ -1,7 +1,9 @@
 import { GetOneAnimalAPI } from '@/api-site/animals';
 import { GetOneFarrowingByAnimalIdAPI } from '@/api-site/farrowings';
 import { GetOneFatteningAPI } from '@/api-site/fattenings';
+import { GetGestationByAnimalIdAPI } from '@/api-site/gestation';
 import { GetTreatmentsAPI } from '@/api-site/treatment';
+import { useInputState } from '@/components/hooks';
 
 import { DashboardFooter } from '@/components/layouts/dashboard/footer';
 import { ButtonLoadMore } from '@/components/ui-setting';
@@ -25,13 +27,12 @@ import { formatDateDDMMYY, formatWeight } from '@/utils';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { useIntl } from 'react-intl';
 
 export function AnimalSaleProfile() {
   const { query, back } = useRouter();
   const { ref, inView } = useInView();
   const animalId = String(query?.animalId);
-  const t = useIntl();
+  const { t, userStorage } = useInputState();
   const { data: getOneAnimal } = GetOneAnimalAPI({
     animalId: animalId,
   });
@@ -39,6 +40,9 @@ export function AnimalSaleProfile() {
     animalId: animalId,
   });
   const { data: getOneFarrowing } = GetOneFarrowingByAnimalIdAPI({
+    animalId: animalId,
+  });
+  const { data: getGestation } = GetGestationByAnimalIdAPI({
     animalId: animalId,
   });
   const feedConversionIndex =
@@ -57,6 +61,7 @@ export function AnimalSaleProfile() {
     sortBy: 'createdAt',
     animalId: animalId,
     animalTypeId: getOneAnimal?.animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   useEffect(() => {
@@ -347,16 +352,14 @@ export function AnimalSaleProfile() {
                         }
                       />
                     </div>
-                  ) : ['GESTATION', 'LACTATION'].includes(
-                      getOneAnimal?.productionPhase,
-                    ) ? (
+                  ) : ['GESTATION'].includes(getOneAnimal?.productionPhase) ? (
                     <div>
                       <Label>{t.formatMessage({ id: 'FARROWING.DATE' })}</Label>
                       <Input
                         disabled
                         type="text"
                         value={
-                          formatDateDDMMYY(getOneFarrowing?.createdAt) || 'N/A'
+                          formatDateDDMMYY(getGestation?.farrowingDate) || 'N/A'
                         }
                       />
                     </div>

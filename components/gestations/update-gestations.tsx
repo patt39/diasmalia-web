@@ -1,6 +1,7 @@
 import { UpdateOneGestationAPI } from '@/api-site/gestation';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
+import { checkPregnancyMethod } from '@/i18n/default-exports';
 import { GestationsModel } from '@/types/gestation';
 import {
   AlertDangerNotification,
@@ -31,6 +32,7 @@ const UpdateGestations = ({
 }) => {
   const {
     t,
+    locale,
     control,
     errors,
     setValue,
@@ -110,18 +112,13 @@ const UpdateGestations = ({
                       <span className="text-red-600">*</span>
                     </Label>
                     <SelectInput
-                      firstOptionName="Choose a size"
                       control={control}
                       errors={errors}
-                      placeholder="Select method"
-                      valueType="text"
+                      valueType="key"
                       name="method"
-                      dataItem={[
-                        { id: 1, name: 'BLOOD_TEST' },
-                        { id: 2, name: 'RECTAL_PALPATION' },
-                        { id: 3, name: 'OBSERVATION' },
-                        { id: 4, name: 'ULTRASOUND' },
-                      ]}
+                      dataItem={checkPregnancyMethod.filter(
+                        (i) => i?.lang === locale,
+                      )}
                     />
                   </div>
                   <div className="w-80">
@@ -129,7 +126,6 @@ const UpdateGestations = ({
                     <DateInput
                       control={control}
                       errors={errors}
-                      placeholder="Pick a date"
                       name="farrowingDate"
                     />
                   </div>
@@ -139,7 +135,6 @@ const UpdateGestations = ({
                   <TextAreaInput
                     control={control}
                     name="note"
-                    placeholder="Note about animal state"
                     errors={errors}
                   />
                 </div>

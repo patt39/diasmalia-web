@@ -4,10 +4,11 @@ import { useInputState } from '@/components/hooks';
 import { Card, CardDescription, CardHeader, CardTitle } from '../ui/card';
 
 const TabAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
-  const { t } = useInputState();
+  const { t, userStorage } = useInputState();
 
   const { data: animalStatistics } = GetAnimalStatisticsAPI({
     animalTypeId: animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   return (

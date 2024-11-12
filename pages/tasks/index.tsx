@@ -104,7 +104,9 @@ export function Contributors() {
 
   return (
     <>
-      <LayoutDashboard title={'Contributors'}>
+      <LayoutDashboard
+        title={`${user?.profile?.firstName} ${user?.profile?.lastName} - Assigned tasks`}
+      >
         <div className="flex min-h-screen w-full flex-col">
           <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
             <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
@@ -129,7 +131,9 @@ export function Contributors() {
                   <Frame className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">12</div>
+                  <div className="text-2xl font-bold">
+                    {dataAssignedTypes?.pages[0]?.data?.total}
+                  </div>
                 </CardContent>
               </Card>
               <Card className="dark:border-gray-800">
@@ -322,6 +326,9 @@ export function Contributors() {
                       </TableHead>
                       <TableHead className="md:table-cell">
                         {t.formatMessage({ id: 'ASSIGNE.TO' })}
+                      </TableHead>
+                      <TableHead className="md:table-cell">
+                        {t.formatMessage({ id: 'By' })}
                       </TableHead>
                       <TableHead>
                         <span>Actions</span>

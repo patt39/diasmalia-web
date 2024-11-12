@@ -4,7 +4,6 @@ import {
   DeleteOneContributorAPI,
   InvitationResendEmailAPI,
 } from '@/api-site/contributors';
-import { GetOneUserMeAPI, GetUserByOrganizationAPI } from '@/api-site/user';
 import { useInputState } from '@/components/hooks';
 import { ActionModalDialog } from '@/components/ui-setting/shadcn';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -35,15 +34,9 @@ import { UpdateContributorStatus } from './update-contributor-status';
 import { ViewContributor } from './view-contributor';
 
 const ListContributors = ({ item, index }: { item: any; index: number }) => {
-  const { t, isOpen, setIsOpen } = useInputState();
+  const { t, isOpen, setIsOpen, userStorage } = useInputState();
   const [isEdit, isSetEdit] = useState(false);
   const [isView, setIsView] = useState(false);
-  const { data: user } = GetOneUserMeAPI();
-  console.log('item ==>', item);
-
-  const { data: getUser } = GetUserByOrganizationAPI({
-    organizationId: item?.organizationId,
-  });
 
   const { isPending: loading, mutateAsync: deleteMutation } =
     DeleteOneContributorAPI();
@@ -151,7 +144,8 @@ const ListContributors = ({ item, index }: { item: any; index: number }) => {
                   {t.formatMessage({ id: 'TABANIMAL.VIEW' })}
                 </span>
               </DropdownMenuItem>
-              {item?.confirmedAt == null && user?.confirmedAt === null ? (
+              {item?.confirmedAt == null &&
+              userStorage?.confirmedAt === null ? (
                 <DropdownMenuItem onClick={() => resendEmail(item)}>
                   <MailCheck className="size-4 text-gray-600 hover:text-indigo-600" />
                   <span className="ml-2 cursor-pointer hover:text-indigo-600">
@@ -159,7 +153,7 @@ const ListContributors = ({ item, index }: { item: any; index: number }) => {
                   </span>
                 </DropdownMenuItem>
               ) : item?.confirmedAt == null &&
-                user?.confirmedAt !== null &&
+                userStorage?.confirmedAt !== null &&
                 item?.confirmation === 'CHOOSE' ? (
                 <DropdownMenuItem onClick={() => resendInvitationEmail(item)}>
                   <MailCheck className="size-4 text-gray-600 hover:text-indigo-600" />
@@ -185,9 +179,9 @@ const ListContributors = ({ item, index }: { item: any; index: number }) => {
               ) : (
                 ''
               )}
-              {user?.role === 'SUPERADMIN' ? (
+              {userStorage?.role === 'SUPERADMIN' ? (
                 <>
-                  {user?.userCreatedId !== item?.user?.id ? (
+                  {userStorage?.userCreatedId !== item?.user?.id ? (
                     <>
                       <DropdownMenuItem onClick={() => isSetEdit(true)}>
                         <ScanFace className="size-4 text-gray-600 hover:text-cyan-600" />

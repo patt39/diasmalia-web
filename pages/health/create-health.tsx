@@ -14,6 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { healthType } from '@/i18n/default-exports';
 import { HealthsModel } from '@/types/health';
 import {
   AlertDangerNotification,
@@ -37,8 +38,16 @@ const CreateHealth = ({
   setShowModal: any;
   health?: any;
 }) => {
-  const { t, watch, control, handleSubmit, errors, hasErrors, setHasErrors } =
-    useReactHookForm({ schema });
+  const {
+    t,
+    watch,
+    control,
+    handleSubmit,
+    errors,
+    hasErrors,
+    setHasErrors,
+    locale,
+  } = useReactHookForm({ schema });
   const watchHealthType = watch('category', '');
 
   // Create
@@ -71,7 +80,7 @@ const CreateHealth = ({
     isError: isErrorAssignedTypes,
     data: dataAssignedTypes,
   } = GetAssignedTypesAPI({
-    take: 10,
+    take: 20,
     sort: 'desc',
     sortBy: 'createdAt',
   });
@@ -111,17 +120,12 @@ const CreateHealth = ({
                     <span className="text-red-600">*</span>
                   </Label>
                   <SelectInput
-                    firstOptionName="Choose a transaction type"
                     control={control}
                     errors={errors}
-                    placeholder="Select type"
-                    valueType="text"
+                    placeholder="select type"
+                    valueType="key"
                     name="category"
-                    dataItem={[
-                      { id: 1, name: 'MEDICATION' },
-                      { id: 2, name: 'HYGIENE' },
-                      { id: 3, name: 'EQUIPMENT' },
-                    ]}
+                    dataItem={healthType.filter((i) => i?.lang === locale)}
                   />
                 </div>
                 {watchHealthType === 'MEDICATION' ? (
@@ -154,7 +158,7 @@ const CreateHealth = ({
                               ) : Number(
                                   dataAssignedTypes?.pages[0]?.data?.total,
                                 ) <= 0 ? (
-                                <ErrorFile description="Don't have location codes" />
+                                <ErrorFile description="Don't have medication yet" />
                               ) : (
                                 dataAssignedTypes?.pages
                                   .flatMap((page: any) => page?.data?.value)
@@ -187,7 +191,7 @@ const CreateHealth = ({
                     control={control}
                     type="text"
                     name="name"
-                    placeholder="Give a name"
+                    placeholder="name"
                     errors={errors}
                   />
                 </div>

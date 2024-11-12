@@ -26,10 +26,11 @@ import { Controller, SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
 
 const schema = yup.object({
+  number: yup.number().optional(),
+  bagWeight: yup.number().optional(),
+  weight: yup.number().optional(),
   feedCategory: yup.string().required('feedCategory is required'),
   animalTypeId: yup.string().required('animalTypeId is required'),
-  number: yup.number().required('quantity is a required field'),
-  bagWeight: yup.number().required('bagWeight is a required field'),
 });
 
 const CreateOrUpdateFeedStock = ({
@@ -43,6 +44,7 @@ const CreateOrUpdateFeedStock = ({
 }) => {
   const {
     t,
+    watch,
     locale,
     control,
     setValue,
@@ -51,6 +53,7 @@ const CreateOrUpdateFeedStock = ({
     hasErrors,
     setHasErrors,
   } = useReactHookForm({ schema });
+  const watchCategory = watch('feedCategory', '');
 
   useEffect(() => {
     if (feedStock) {
@@ -142,7 +145,7 @@ const CreateOrUpdateFeedStock = ({
                             value={value}
                           >
                             <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Select animal type" />
+                              <SelectValue placeholder="select animal type" />
                             </SelectTrigger>
                             <SelectContent className="dark:border-gray-800">
                               <SelectGroup>
@@ -187,41 +190,77 @@ const CreateOrUpdateFeedStock = ({
                     <span className="text-red-600">*</span>
                   </Label>
                   <SelectInput
-                    firstOptionName="Choose a transaction type"
                     control={control}
                     errors={errors}
-                    placeholder="Select type"
+                    placeholder="select type"
                     valueType="text"
                     name="feedCategory"
                     dataItem={feedCategories.filter((i) => i?.lang === locale)}
                   />
                 </div>
-                <div className="mb-2">
-                  <Label>
-                    {t.formatMessage({ id: 'NUMBER.BAGS' })}
-                    <span className="text-red-600">*</span>
-                  </Label>
-                  <TextInput
-                    control={control}
-                    type="number"
-                    name="number"
-                    placeholder="Give a number"
-                    errors={errors}
-                  />
-                </div>
-                <Label>
-                  {t.formatMessage({ id: 'UNIT.WEIGHT' })}
-                  <span className="text-red-600">*</span>(kg)
-                </Label>
-                <div className="mb-2">
-                  <TextInput
-                    control={control}
-                    type="number"
-                    name="bagWeight"
-                    placeholder="Give weight"
-                    errors={errors}
-                  />
-                </div>
+                {!['FORAGES', 'SILAGES'].includes(watchCategory) ? (
+                  <>
+                    <div className="mb-2">
+                      <Label>
+                        {t.formatMessage({ id: 'NUMBER.BAGS' })}
+                        <span className="text-red-600">*</span>
+                      </Label>
+                      <TextInput
+                        control={control}
+                        type="number"
+                        name="number"
+                        placeholder="number"
+                        errors={errors}
+                      />
+                    </div>
+                    <Label>
+                      {t.formatMessage({ id: 'UNIT.WEIGHT' })}
+                      <span className="text-red-600">*</span>(kg)
+                    </Label>
+                    <div className="mb-2">
+                      <TextInput
+                        control={control}
+                        type="number"
+                        name="bagWeight"
+                        placeholder="weight"
+                        errors={errors}
+                      />
+                    </div>
+                  </>
+                ) : !feedStock?.id ? (
+                  <>
+                    <Label>
+                      {t.formatMessage({ id: 'TABANIMAL.WEIGHT' })}
+                      <span className="text-red-600">*</span>(kg)
+                    </Label>
+                    <div className="mb-2">
+                      <TextInput
+                        control={control}
+                        type="number"
+                        name="weight"
+                        placeholder="weight"
+                        errors={errors}
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <Label>
+                      {t.formatMessage({ id: 'TABANIMAL.WEIGHT' })}
+                      <span className="text-red-600">*</span>(kg)
+                    </Label>
+                    <div className="mb-2">
+                      <TextInput
+                        control={control}
+                        type="number"
+                        name="weight"
+                        placeholder="weight"
+                        errors={errors}
+                      />
+                    </div>
+                  </>
+                )}
+
                 <div className="mt-4 flex items-center space-x-4">
                   <ButtonInput
                     type="button"

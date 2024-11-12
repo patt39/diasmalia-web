@@ -1,37 +1,35 @@
 import { GetOneAnimalTypeAPI } from '@/api-site/animal-type';
-import { CreateBulkLocationsAPI } from '@/api-site/locations';
+import { UpdateOneLoctionAPI } from '@/api-site/locations';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
+import { avesProductionPhases } from '@/i18n/default-exports';
 import { LocationModel } from '@/types/location';
 import {
   AlertDangerNotification,
   AlertSuccessNotification,
 } from '@/utils/alert-notification';
-import { FileQuestion, XIcon } from 'lucide-react';
+import { XIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import { SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
-import { TextInput } from '../ui-setting/shadcn';
+import { SelectInput, TextInput } from '../ui-setting/shadcn';
 import { Label } from '../ui/label';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '../ui/tooltip';
 
 const schema = yup.object({
-  manger: yup.number().required(),
-  nest: yup.number().required(),
-  through: yup.number().required(),
+  code: yup.string().optional(),
   productionPhase: yup.string().optional(),
-  number: yup.number().required('number is required field'),
-  squareMeter: yup.number().required('squareMeter is required field'),
+  squareMeter: yup.number().optional(),
+  manger: yup.number().optional(),
+  through: yup.number().optional(),
+  cages: yup.number().optional(),
+  nest: yup.number().optional(),
 });
 
-const CreateBulkAvesLocations = ({
+const UpdateAvesLocations = ({
   showModal,
   setShowModal,
+  location,
 }: {
   showModal: boolean;
   setShowModal: any;
@@ -39,52 +37,57 @@ const CreateBulkAvesLocations = ({
 }) => {
   const {
     t,
+    locale,
+    watch,
     control,
     errors,
+    setValue,
     handleSubmit,
-    loading,
-    setLoading,
     hasErrors,
     setHasErrors,
   } = useReactHookForm({ schema });
   const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
-
+  const watchCages = watch('addCages');
+  const watchProductionPhase = watch('productionPhase');
   const { data: animalType } = GetOneAnimalTypeAPI({
     animalTypeId: animalTypeId,
   });
 
-  // Create data
-  const { mutateAsync: saveMutation } = CreateBulkLocationsAPI({
-    onSuccess: () => {
-      setHasErrors(false);
-      setLoading(false);
-    },
-    onError: (error?: any) => {
-      setHasErrors(true);
-      setHasErrors(error.response.data.message);
-    },
-  });
+  useEffect(() => {
+    if (location) {
+      const fields = [
+        'code',
+        'nest',
+        'productionPhase',
+        'squareMeter',
+        'manger',
+        'through',
+      ];
+      fields?.forEach((field: any) => setValue(field, location[field]));
+    }
+  }, [location, setValue]);
+
+  // Update data
+  const { isPending: loading, mutateAsync: saveMutation } =
+    UpdateOneLoctionAPI();
 
   const onSubmit: SubmitHandler<LocationModel> = async (
     payload: LocationModel,
   ) => {
-    setLoading(true);
     setHasErrors(undefined);
     try {
       await saveMutation({
         ...payload,
-        animalTypeId: animalTypeId,
+        locationId: location.id,
       });
       setHasErrors(false);
-      setLoading(false);
       AlertSuccessNotification({
-        text: 'Locations created successfully',
+        text: 'Location updated successfully',
       });
       setShowModal(false);
     } catch (error: any) {
       setHasErrors(true);
-      setLoading(false);
       setHasErrors(error.response.data.message);
       AlertDangerNotification({
         text: `${error.response.data.message}`,
@@ -106,7 +109,6 @@ const CreateBulkAvesLocations = ({
                 <XIcon />
               </span>
             </button>
-
             <form className="mt-6" onSubmit={handleSubmit(onSubmit)}>
               <div className="flex-auto justify-center p-2">
                 {hasErrors && (
@@ -123,47 +125,91 @@ const CreateBulkAvesLocations = ({
                   </div>
                 )}
 
-                <div className="mb-2 flex items-center">
+                <Label>Code</Label>
+                <div className="flex items-center">
                   <TextInput
                     control={control}
                     type="text"
-                    name="number"
-                    placeholder="Give a number"
+                    name="code"
+                    placeholder="Give a code"
                     errors={errors}
                   />
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <FileQuestion />
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>
-                          {t.formatMessage({ id: 'BULK.LOCATIONS.TOOLTIP' })}
-                        </p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
                 </div>
-                <div>
+                <div className="my-2">
                   <Label>
-                    {t.formatMessage({ id: 'NUMBER.NESTS' })}
-                    <span className="text-red-600">*</span>
+                    {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
                   </Label>
-                  <TextInput
+                  <SelectInput
                     control={control}
-                    type="number"
-                    name="nest"
-                    placeholder="Number of nests"
                     errors={errors}
+                    valueType="key"
+                    name="productionPhase"
+                    placeholder="Select a production phase"
+                    dataItem={avesProductionPhases.filter(
+                      (i) => i?.lang === locale,
+                    )}
                   />
                 </div>
+                {!['Canard', 'Pisciculture'].includes(animalType?.name) &&
+                location?.addCages === 'NO' ? (
+                  <div className="my-2">
+                    <Label>Ajouter des cages?</Label>
+                    <SelectInput
+                      control={control}
+                      errors={errors}
+                      valueType="text"
+                      name="addCages"
+                      placeholder="Add cages?"
+                      dataItem={[
+                        { id: 1, name: 'YES' },
+                        { id: 2, name: 'NO' },
+                      ]}
+                    />
+                  </div>
+                ) : (
+                  ''
+                )}
                 <div className="my-2 items-center space-x-1">
-                  <div className="items-center flex space-x-9 my-2">
-                    <div>
-                      <Label>
-                        {t.formatMessage({ id: 'SURFACE.AREA' })}
-                        <span className="text-red-600">*</span>
-                      </Label>
+                  {animalType?.name !== 'Pisciculture' ? (
+                    <div className="items-center flex space-x-9 my-2">
+                      <div className="w-60">
+                        <Label>{t.formatMessage({ id: 'SURFACE.AREA' })}</Label>
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="squareMeter"
+                          placeholder="Square meters"
+                          errors={errors}
+                        />
+                      </div>
+                      <div>
+                        <Label>
+                          {t.formatMessage({ id: 'NUMBER.MANGERS' })}
+                        </Label>
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="manger"
+                          placeholder="Number of mangers"
+                          errors={errors}
+                        />
+                      </div>
+                      <div>
+                        <Label>
+                          {t.formatMessage({ id: 'NUMBER.THROUGHS' })}
+                        </Label>
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="through"
+                          placeholder="Number of throughs"
+                          errors={errors}
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="w-full">
+                      <Label>{t.formatMessage({ id: 'SURFACE.AREA' })}</Label>
                       <TextInput
                         control={control}
                         type="number"
@@ -172,33 +218,39 @@ const CreateBulkAvesLocations = ({
                         errors={errors}
                       />
                     </div>
+                  )}
+
+                  {watchProductionPhase === 'LAYING' &&
+                  animalType?.name !== 'Pisciculture' &&
+                  watchCages === 'NO' ? (
                     <div>
                       <Label>
-                        {t.formatMessage({ id: 'NUMBER.MANGERS' })}
+                        {t.formatMessage({ id: 'NUMBER.NESTS' })}
                         <span className="text-red-600">*</span>
                       </Label>
                       <TextInput
                         control={control}
                         type="number"
-                        name="manger"
-                        placeholder="Number of mangers"
+                        name="nest"
+                        placeholder="Number of nests"
                         errors={errors}
                       />
                     </div>
+                  ) : (
                     <div>
                       <Label>
-                        {t.formatMessage({ id: 'NUMBER.THROUGHS' })}
+                        Nombre de cages
                         <span className="text-red-600">*</span>
                       </Label>
                       <TextInput
                         control={control}
                         type="number"
-                        name="through"
-                        placeholder="Number of throughs"
+                        name="cages"
+                        placeholder="Number of cages"
                         errors={errors}
                       />
                     </div>
-                  </div>
+                  )}
                 </div>
                 <div className="mt-4 flex items-center space-x-3">
                   <ButtonInput
@@ -228,4 +280,4 @@ const CreateBulkAvesLocations = ({
   );
 };
 
-export { CreateBulkAvesLocations };
+export { UpdateAvesLocations };

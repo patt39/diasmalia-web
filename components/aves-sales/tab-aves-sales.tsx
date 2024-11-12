@@ -3,7 +3,6 @@ import { useInputState } from '@/components/hooks';
 import { GetOneAnimalTypeAPI } from '@/api-site/animal-type';
 import { GetAnimalStatisticsAPI } from '@/api-site/animals';
 import { exportSalesAPI, GetSalesAPI } from '@/api-site/sales';
-import { GetOneUserMeAPI } from '@/api-site/user';
 import { SearchInput } from '@/components/ui-setting';
 import { Button } from '@/components/ui/button';
 import { CardContent, CardHeader } from '@/components/ui/card';
@@ -39,8 +38,7 @@ const TabAvesSales = ({ animalTypeId }: { animalTypeId: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [periode, setPeriode] = useState('');
   const [pageItem, setPageItem] = useState(1);
-  const { t, search, handleSetSearch } = useInputState();
-  const { data: user } = GetOneUserMeAPI();
+  const { t, search, handleSetSearch, userStorage } = useInputState();
 
   const { data: animalType } = GetOneAnimalTypeAPI({
     animalTypeId: animalTypeId,
@@ -49,6 +47,7 @@ const TabAvesSales = ({ animalTypeId }: { animalTypeId: string }) => {
   const { data: animalStatistics } = GetAnimalStatisticsAPI({
     periode,
     animalTypeId: animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   const {
@@ -64,6 +63,7 @@ const TabAvesSales = ({ animalTypeId }: { animalTypeId: string }) => {
     sort: 'desc',
     sortBy: 'createdAt',
     animalTypeId: animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   const handleExport = async () => {
@@ -109,7 +109,7 @@ const TabAvesSales = ({ animalTypeId }: { animalTypeId: string }) => {
                           maximumFractionDigits: 2,
                         },
                       ) || 0}
-                      {user?.profile?.currency?.symbol}
+                      {userStorage?.profile?.currency?.symbol}
                     </p>
                   </TooltipContent>
                 </Tooltip>
@@ -133,7 +133,7 @@ const TabAvesSales = ({ animalTypeId }: { animalTypeId: string }) => {
                       {animalStatistics?.sumSaleEggs?.price?.toLocaleString(
                         'en-US',
                       ) || 0}
-                      {user?.profile?.currency?.symbol}
+                      {userStorage?.profile?.currency?.symbol}
                     </p>
                   </TooltipContent>
                 </Tooltip>
@@ -157,7 +157,7 @@ const TabAvesSales = ({ animalTypeId }: { animalTypeId: string }) => {
                       {animalStatistics?.sumSaleChickens?.price?.toLocaleString(
                         'en-US',
                       ) || 0}
-                      {user?.profile?.currency?.symbol}
+                      {userStorage?.profile?.currency?.symbol}
                     </p>
                   ) : (
                     <p>
@@ -165,7 +165,7 @@ const TabAvesSales = ({ animalTypeId }: { animalTypeId: string }) => {
                       {animalStatistics?.sumSaleChickens?.price?.toLocaleString(
                         'en-US',
                       ) || 0}
-                      {user?.profile?.currency?.symbol}
+                      {userStorage?.profile?.currency?.symbol}
                     </p>
                   )}
                 </TooltipContent>

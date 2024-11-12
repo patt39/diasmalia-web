@@ -1,14 +1,8 @@
+import { logoutUsersAPI } from '@/api-site/user';
 import { ThemeToggle } from '@/components/ui-setting';
+import { AvatarComponent } from '@/components/ui-setting/ant';
 import { LangToggle } from '@/components/ui-setting/lang-toggle';
 import { Button } from '@/components/ui/button';
-import { useRouter } from 'next/router';
-import { useIntl } from 'react-intl';
-// import { ThemeToggle } from '../ui-setting';
-// import { AvatarComponent } from '../ui-setting/ant';
-// import { LangToggle } from '../ui-setting/lang-toggle';
-// import { Button } from '../ui/button';
-import { logoutUsersAPI } from '@/api-site/user';
-import { AvatarComponent } from '@/components/ui-setting/ant';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,11 +18,14 @@ import {
   ClipboardList,
   FolderArchive,
   FolderDot,
+  Fuel,
   LogOut,
   UserPen,
   Wallet,
 } from 'lucide-react';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
+import { useIntl } from 'react-intl';
 
 export type NavbarProps = {
   title: string;
@@ -140,16 +137,6 @@ const HorizontalNavDashboard = ({ user, showDrawer }: Props) => {
                               <UserPen className="h-3.5 w-3.5  hover:shadow-xxl  hover:text-orange-600" />
                             </DropdownMenuShortcut>
                           </DropdownMenuItem>
-                          {/* <DropdownMenuItem
-                            onClick={() => push(`/animal-types`)}
-                          >
-                            <span className="cursor-pointer  hover:text-amber-600">
-                              {t.formatMessage({ id: 'FARMS' })}
-                            </span>
-                            <DropdownMenuShortcut>
-                              <Tractor className="h-3.5 w-3.5  hover:shadow-xxl  hover:text-amber-600" />
-                            </DropdownMenuShortcut>
-                          </DropdownMenuItem> */}
                           {user?.role === 'ADMIN' ? (
                             <DropdownMenuItem
                               onClick={() => push(`/tasks/${user?.id}`)}
@@ -184,6 +171,7 @@ const HorizontalNavDashboard = ({ user, showDrawer }: Props) => {
                                   <FolderArchive className="h-3.5 w-3.5  hover:shadow-xxl  hover:text-green-600" />
                                 </DropdownMenuShortcut>
                               </DropdownMenuItem>
+                              <DropdownMenuSeparator />
                               <DropdownMenuItem
                                 onClick={() => push(`/finances`)}
                               >
@@ -194,24 +182,21 @@ const HorizontalNavDashboard = ({ user, showDrawer }: Props) => {
                                   <Wallet className="h-3.5 w-3.5  hover:shadow-xxl  hover:text-emerald-600" />
                                 </DropdownMenuShortcut>
                               </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() => push(`/billing`)}
+                              >
+                                <span className="cursor-pointer  hover:text-emerald-600">
+                                  {t.formatMessage({ id: 'MENU.SUBSCRIPTION' })}
+                                </span>
+                                <DropdownMenuShortcut>
+                                  <Fuel className="h-3.5 w-3.5  hover:shadow-xxl  hover:text-emerald-600" />
+                                </DropdownMenuShortcut>
+                              </DropdownMenuItem>
                             </>
                           ) : (
                             ''
                           )}
                         </DropdownMenuGroup>
-                        {/* <DropdownMenuSeparator />
-                        <DropdownMenuGroup>
-                          <DropdownMenuItem
-                            onClick={() => push(`/contributors`)}
-                          >
-                            <span className="cursor-pointer  hover:text-teal-600">
-                              {t.formatMessage({ id: 'MENU.CONTRIBUTOR' })}
-                            </span>
-                            <DropdownMenuShortcut>
-                              <Users className="h-3.5 w-3.5  hover:shadow-xxl  hover:text-teal-600" />
-                            </DropdownMenuShortcut>
-                          </DropdownMenuItem>
-                        </DropdownMenuGroup> */}
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => logoutUserItem()}>
                           <span className="cursor-pointer  hover:text-cyan-600">

@@ -26,12 +26,13 @@ const FarrowingsWeaningsAnalytics = ({
 }: {
   animalTypeId: string;
 }) => {
-  const { t, locale } = useInputState();
+  const { t, locale, userStorage } = useInputState();
   const [periode, setPeriode] = useState('');
   const [year, setYear] = useState<String>(`${dateTimeNowUtc().getFullYear()}`);
   const [months, setMonths] = useState<String>('');
   const { data: animalStatistics } = GetAnimalStatisticsAPI({
     animalTypeId: animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   const { data: dataBirthsAnalyticsDay } = GetBirthAnalyticAPI({
@@ -39,15 +40,18 @@ const FarrowingsWeaningsAnalytics = ({
     months: String(months),
     periode: String(periode),
     animalTypeId: animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   const { data: dataBirthsAnalyticsMonth } = GetBirthAnalyticAPI({
     year: String(year),
     animalTypeId: animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   const { data: dataBirthsAnalyticsYear } = GetBirthAnalyticAPI({
     animalTypeId: animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   const chartConfig = {

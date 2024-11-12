@@ -10,6 +10,7 @@ import {
 export const GetAnimalStatisticsAPI = (payload: {
   animalTypeId?: string;
   periode?: string;
+  organizationId?: string;
 }) => {
   const { animalTypeId, periode } = payload;
   const { data, isError, isLoading, status, isPending, refetch } = useQuery({
@@ -35,6 +36,7 @@ export const GetAnimalStatisticsAPI = (payload: {
 
 export const GetAnimalDeadSoldStatisticsAPI = (payload: {
   animalTypeId?: string;
+  organizationId?: string;
 }) => {
   const { animalTypeId } = payload;
   const { data, isError, isLoading, status, isPending, refetch } = useQuery({

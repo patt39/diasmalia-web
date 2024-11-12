@@ -1,6 +1,7 @@
 import { CreateOrUpdateOneEggHarvestingAPI } from '@/api-site/eggharvesting';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
+import { eggSize } from '@/i18n/default-exports';
 import { EggHarvestingsModel } from '@/types/egg-harvesting';
 import {
   AlertDangerNotification,
@@ -32,6 +33,7 @@ const CreateOrUpdateEggHarvestings = ({
 }) => {
   const {
     t,
+    locale,
     errors,
     control,
     setValue,
@@ -117,9 +119,8 @@ const CreateOrUpdateEggHarvestings = ({
                     control={control}
                     type="text"
                     name="code"
-                    defaultValue={`${eggHarvesting?.animal?.code}`}
-                    placeholder="Give a code"
                     errors={errors}
+                    disabled
                   />
                 </div>
                 <div className="mb-2">
@@ -131,7 +132,7 @@ const CreateOrUpdateEggHarvestings = ({
                     control={control}
                     type="number"
                     name="quantity"
-                    placeholder="Give a quantity"
+                    placeholder="quantity"
                     errors={errors}
                   />
                 </div>
@@ -141,17 +142,12 @@ const CreateOrUpdateEggHarvestings = ({
                     <span className="text-red-600">*</span>
                   </Label>
                   <SelectInput
-                    firstOptionName="Choose a size"
                     control={control}
                     errors={errors}
-                    placeholder="Select a size"
+                    placeholder="select size"
                     valueType="text"
                     name="size"
-                    dataItem={[
-                      { id: 1, name: 'SMALL' },
-                      { id: 1, name: 'MEDIUM' },
-                      { id: 1, name: 'BIG' },
-                    ]}
+                    dataItem={eggSize.filter((i) => i?.lang === locale)}
                   />
                 </div>
                 <div className="mt-4 flex items-center space-x-4">

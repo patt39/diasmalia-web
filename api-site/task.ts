@@ -115,6 +115,7 @@ export const GetTasksAPI = (
   payload: {
     take: number;
     sortBy: string;
+    type?: string;
     periode?: string;
     pageItem?: number;
     frequency?: string;
@@ -126,6 +127,7 @@ export const GetTasksAPI = (
   const {
     take,
     sort,
+    type,
     sortBy,
     search,
     pageItem,
@@ -144,6 +146,7 @@ export const GetTasksAPI = (
         queryParams: {
           take,
           sort,
+          type,
           search,
           sortBy,
           periode,

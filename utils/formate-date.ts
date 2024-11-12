@@ -34,7 +34,7 @@ export const getMonthNow = (date: Date) => {
   return dayjs(date).format('MM') as unknown as Date;
 };
 export const formatDDMMYYDate = (date: Date) =>
-  DateTime.fromISO(String(date)).toFormat('dd/MM/yyyy h:mm:ss a');
+  DateTime.fromISO(String(date)).toFormat('dd/MM/yyyy h:mm');
 
 export const formatDateDDMMYY = (date: Date) =>
   DateTime.fromISO(String(date)).toFormat('dd-MM-yyyy');

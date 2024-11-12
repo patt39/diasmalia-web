@@ -7,26 +7,6 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 
-export const GetFinanceStatisticsAPI = () => {
-  const { data, isError, isLoading, status, isPending, refetch } = useQuery({
-    queryKey: ['statistic'],
-    queryFn: async () =>
-      await makeApiCall({
-        action: 'getFinanceStatistics',
-      }),
-    refetchOnWindowFocus: false,
-  });
-
-  return {
-    data: data?.data as any,
-    isError,
-    isLoading,
-    status,
-    isPending,
-    refetch,
-  };
-};
-
 export const GetFinancesAnalyticAPI = (payload: {
   periode?: string;
   days?: string;

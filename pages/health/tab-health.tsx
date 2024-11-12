@@ -1,19 +1,7 @@
 import { useInputState } from '@/components/hooks';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader } from '@/components/ui/card';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
-  BriefcaseMedical,
-  Eye,
-  MoreHorizontal,
-  ShieldPlus,
-  Stethoscope,
-} from 'lucide-react';
+import { BriefcaseMedical, ShieldPlus, Stethoscope } from 'lucide-react';
 import { useState } from 'react';
 import { CreateHealth } from './create-health';
 import { ViewEquipment } from './view-equipment';
@@ -49,124 +37,48 @@ const Health = () => {
           <div className="px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl">
             <div className="grid grid-cols-1 gap-5 sm:mt-12 sm:grid-cols-2 xl:grid-cols-3 sm:gap-8 xl:gap-12">
               <>
-                <div className="relative overflow-hidden transition-allduration-200 bg-gray-100 rounded-xl hover:bg-gray-200">
+                <div
+                  className="relative overflow-hidden transition-allduration-200 bg-gray-100 rounded-xl hover:bg-gray-200 cursor-pointer"
+                  onClick={() => setIsView(true)}
+                >
                   <div className="p-6 lg:px-8 lg:py-8">
-                    <div className="flex items-center justify-center space-x-6 mt-4">
+                    <div className="flex items-center justify-center space-x-6">
                       <div>
-                        <h2 className="my-8 items-center flex text-xl font-bold text-green-600 h-10">
+                        <h2 className="my-8 items-center flex text-xl font-bold text-green-600 h-20">
                           <BriefcaseMedical className="h-6 w-6 hover:shadow-xxl" />
                           {t.formatMessage({ id: 'MEDICATION' })}
                         </h2>
                       </div>
                     </div>
-                    <div className="grid grid-cols-1 mt-6 sm:mt-2 px-20 sm:grid-cols-2 xl:grid-cols-3 sm:gap-8 xl:gap-12">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            aria-haspopup="true"
-                            size="icon"
-                            variant="ghost"
-                            className="ml-40"
-                          >
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent
-                          align="end"
-                          className="dark:border-gray-800"
-                        >
-                          <DropdownMenuItem onClick={() => setIsView(true)}>
-                            <Eye className="size-4 text-gray-600 hover:text-indigo-600" />
-                            <span className="ml-2 cursor-pointer hover:text-indigo-600">
-                              {t.formatMessage({
-                                id: 'TABANIMAL.VIEW',
-                              })}
-                            </span>
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
                   </div>
                 </div>
-                <div className="relative overflow-hidden transition-allduration-200 bg-gray-100 rounded-xl hover:bg-gray-200">
+                <div
+                  className="relative overflow-hidden transition-allduration-200 bg-gray-100 rounded-xl hover:bg-gray-200 cursor-pointer"
+                  onClick={() => setIsViewEquipment(true)}
+                >
                   <div className="p-6 lg:px-8 lg:py-8">
-                    <div className="flex items-center justify-center space-x-6 mt-4">
+                    <div className="flex items-center justify-center space-x-6">
                       <div>
-                        <h2 className="my-8 text-xl items-center flex font-bold text-blue-600 h-10">
+                        <h2 className="my-8 text-xl items-center flex font-bold text-blue-600 h-20">
                           <Stethoscope className="h-6 w-6 hover:shadow-xxl" />
                           {t.formatMessage({ id: 'EQUIPMENT' })}
                         </h2>
                       </div>
                     </div>
-                    <div className="grid grid-cols-1 mt-6 sm:mt-2 px-20 sm:grid-cols-2 xl:grid-cols-3 sm:gap-8 xl:gap-12">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            aria-haspopup="true"
-                            size="icon"
-                            variant="ghost"
-                            className="ml-40"
-                          >
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent
-                          align="end"
-                          className="dark:border-gray-800"
-                        >
-                          <DropdownMenuItem
-                            onClick={() => setIsViewEquipment(true)}
-                          >
-                            <Eye className="size-4 text-gray-600 hover:text-indigo-600" />
-                            <span className="ml-2 cursor-pointer hover:text-indigo-600">
-                              {t.formatMessage({
-                                id: 'TABANIMAL.VIEW',
-                              })}
-                            </span>
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
                   </div>
                 </div>
-                <div className="relative overflow-hidden transition-allduration-200 bg-gray-100 rounded-xl hover:bg-gray-200">
+                <div
+                  className="relative overflow-hidden transition-allduration-200 bg-gray-100 rounded-xl hover:bg-gray-200 cursor-pointer"
+                  onClick={() => setIsViewHygiene(true)}
+                >
                   <div className="p-6 lg:px-8 lg:py-8">
-                    <div className="flex items-center justify-center space-x-6 mt-4">
+                    <div className="flex items-center justify-center space-x-6">
                       <div>
-                        <h2 className="my-8 items-center flex text-xl font-bold text-primary h-10">
+                        <h2 className="my-8 items-center flex text-xl font-bold text-primary h-20">
                           <ShieldPlus className="h-6 w-6 hover:shadow-xxl" />
                           {t.formatMessage({ id: 'HYGIENE' })}
                         </h2>
                       </div>
-                    </div>
-                    <div className="grid grid-cols-1 mt-6 sm:mt-2 px-20 sm:grid-cols-2 xl:grid-cols-3 sm:gap-8 xl:gap-12">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            aria-haspopup="true"
-                            size="icon"
-                            variant="ghost"
-                            className="ml-40"
-                          >
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent
-                          align="end"
-                          className="dark:border-gray-800"
-                        >
-                          <DropdownMenuItem
-                            onClick={() => setIsViewHygiene(true)}
-                          >
-                            <Eye className="size-4 text-gray-600 hover:text-indigo-600" />
-                            <span className="ml-2 cursor-pointer hover:text-indigo-600">
-                              {t.formatMessage({
-                                id: 'TABANIMAL.VIEW',
-                              })}
-                            </span>
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
                     </div>
                   </div>
                 </div>

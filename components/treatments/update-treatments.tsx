@@ -1,13 +1,13 @@
-import { GetAnimalsAPI } from '@/api-site/animals';
 import { GetHealthsAPI } from '@/api-site/health';
 import { UpdateOneTreatmentAPI } from '@/api-site/treatment';
 import { useReactHookForm } from '@/components/hooks';
-import { ButtonInput, ButtonLoadMore } from '@/components/ui-setting';
+import { ButtonInput } from '@/components/ui-setting';
 import {
   SelectInput,
   TextAreaInput,
   TextInput,
 } from '@/components/ui-setting/shadcn';
+import { treatmentMethods } from '@/i18n/default-exports';
 import { TreatmentsPostModel } from '@/types/treatments';
 import {
   AlertDangerNotification,
@@ -17,12 +17,10 @@ import { XIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { Controller, SubmitHandler } from 'react-hook-form';
-import { useInView } from 'react-intersection-observer';
 import * as yup from 'yup';
 import { LoadingFile } from '../ui-setting/ant';
 import { ErrorFile } from '../ui-setting/ant/error-file';
 import { Button } from '../ui/button';
-import { Checkbox } from '../ui/checkbox';
 import { Label } from '../ui/label';
 import {
   Select,
@@ -40,28 +38,25 @@ import {
 } from '../ui/tooltip';
 
 const schema = yup.object({
-  animals: yup.array().optional(),
-  dose: yup.number().optional(),
-  name: yup.string().required('name is required'),
-  note: yup.string().required('note is a required field'),
-  healthId: yup.string().required('medication is required'),
-  diagnosis: yup.string().required('diagnostic is required'),
-  method: yup.string().required('method is required'),
+  name: yup.string().optional(),
+  note: yup.string().optional(),
+  healthId: yup.string().optional(),
+  diagnosis: yup.string().optional(),
+  method: yup.string().optional(),
 });
 
 const UpdateTreatments = ({
   showModal,
   setShowModal,
   treatment,
-  location,
 }: {
   showModal: boolean;
   setShowModal: any;
   treatment?: any;
-  location?: any;
 }) => {
   const {
     t,
+    locale,
     watch,
     control,
     setValue,
@@ -71,7 +66,6 @@ const UpdateTreatments = ({
     setHasErrors,
   } = useReactHookForm({ schema });
   const { query } = useRouter();
-  const { ref, inView } = useInView();
   const animalTypeId = String(query?.animalTypeId);
   const selectedAnimals = watch('animals', '');
   const countSelectedAnimals = selectedAnimals.length;
@@ -79,13 +73,12 @@ const UpdateTreatments = ({
   useEffect(() => {
     if (treatment) {
       const fields = [
-        'animals',
         'note',
-        'diagnosis',
         'dose',
         'name',
-        'healthId',
         'method',
+        'healthId',
+        'diagnosis',
       ];
       fields?.forEach((field: any) => setValue(field, treatment[field]));
     }
@@ -106,7 +99,7 @@ const UpdateTreatments = ({
       });
       setHasErrors(false);
       AlertSuccessNotification({
-        text: 'Treatment saved successfully',
+        text: 'Treatment updated successfully',
       });
       setShowModal(false);
     } catch (error: any) {
@@ -130,44 +123,6 @@ const UpdateTreatments = ({
     category: 'MEDICATION',
     animalTypeId: animalTypeId,
   });
-
-  const {
-    isLoading: isLoadingAnimals,
-    isError: isErrorAnimals,
-    data: dataAnimals,
-    isFetchingNextPage,
-    hasNextPage,
-    fetchNextPage,
-  } = GetAnimalsAPI({
-    take: 5,
-    sort: 'desc',
-    status: 'ACTIVE',
-    sortBy: 'createdAt',
-    locationId: location?.id,
-    animalTypeId: animalTypeId,
-  });
-
-  useEffect(() => {
-    let fetching = false;
-    if (inView) {
-      fetchNextPage();
-    }
-    const onScroll = async (event: any) => {
-      const { scrollHeight, scrollTop, clientHeight } =
-        event.target.scrollingElement;
-
-      if (!fetching && scrollHeight - scrollTop <= clientHeight * 1.5) {
-        fetching = true;
-        if (hasNextPage) await fetchNextPage();
-        fetching = false;
-      }
-    };
-
-    document.addEventListener('scroll', onScroll);
-    return () => {
-      document.removeEventListener('scroll', onScroll);
-    };
-  }, [fetchNextPage, hasNextPage, inView]);
 
   return (
     <>
@@ -219,85 +174,6 @@ const UpdateTreatments = ({
                     </div>
                   </div>
                 )}
-                <div className="flex items-center space-x-4 w-full">
-                  <div className="mb-2 w-full mt-2">
-                    <Label>
-                      Sélectionner les animaux à soigner
-                      <span className="text-red-600">*</span>
-                    </Label>
-                    <Select>
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select animals" />
-                      </SelectTrigger>
-                      <SelectContent className="dark:border-gray-800">
-                        <SelectGroup>
-                          {isLoadingAnimals ? (
-                            <LoadingFile />
-                          ) : isErrorAnimals ? (
-                            <ErrorFile
-                              title="404"
-                              description="Error finding data please try again..."
-                            />
-                          ) : Number(dataAnimals?.pages[0]?.data?.total) <=
-                            0 ? (
-                            <ErrorFile description="Don't have active animals created yet please do" />
-                          ) : (
-                            dataAnimals?.pages
-                              .flatMap((page: any) => page?.data?.value)
-                              .map((item) => (
-                                <>
-                                  <Controller
-                                    key={item?.code}
-                                    control={control}
-                                    name="animals"
-                                    render={({ field: { ...field } }) => (
-                                      <>
-                                        <div
-                                          className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow"
-                                          key={item?.code}
-                                        >
-                                          <Checkbox
-                                            checked={field?.value?.includes(
-                                              item?.code,
-                                            )}
-                                            onCheckedChange={(checked) => {
-                                              return checked
-                                                ? field.onChange([
-                                                    ...(field.value || []),
-                                                    item?.code,
-                                                  ])
-                                                : field?.onChange(
-                                                    field?.value?.filter(
-                                                      (value: any) =>
-                                                        value !== item?.code,
-                                                    ),
-                                                  );
-                                            }}
-                                          />
-                                          <div className="space-y-1 leading-none">
-                                            <Label>{item?.code}</Label>
-                                          </div>
-                                        </div>
-                                      </>
-                                    )}
-                                  />
-                                </>
-                              ))
-                          )}
-                          {hasNextPage && (
-                            <div className="mx-auto mt-4 justify-center text-center">
-                              <ButtonLoadMore
-                                ref={ref}
-                                isFetchingNextPage={isFetchingNextPage}
-                                onClick={() => fetchNextPage()}
-                              />
-                            </div>
-                          )}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
                 <div className="mb-2 items-center space-x-1">
                   <Label>
                     Treatement<span className="text-red-600">*</span>
@@ -306,7 +182,6 @@ const UpdateTreatments = ({
                     control={control}
                     type="text"
                     name="name"
-                    placeholder="Give treatment name"
                     errors={errors}
                   />
                 </div>
@@ -318,88 +193,87 @@ const UpdateTreatments = ({
                     control={control}
                     type="text"
                     name="diagnosis"
-                    placeholder="Give a diagnosis"
                     errors={errors}
                   />
                 </div>
-                <div className="mb-4">
-                  <Label>
-                    Medication<span className="text-red-600">*</span>
-                  </Label>
-                  <Controller
-                    control={control}
-                    name="healthId"
-                    render={({ field: { value, onChange } }) => (
-                      <Select
-                        onValueChange={onChange}
-                        name={'healthId'}
-                        value={value}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select medication" />
-                        </SelectTrigger>
-                        <SelectContent className="dark:border-gray-800">
-                          <SelectGroup>
-                            {isLoadingTreatments ? (
-                              <LoadingFile />
-                            ) : isErrorTreatments ? (
-                              <ErrorFile
-                                title="404"
-                                description="Error finding data please try again..."
-                              />
-                            ) : Number(dataTreatments?.pages[0]?.data?.total) <=
-                              0 ? (
-                              <ErrorFile description="Don't have active animals yet" />
-                            ) : (
-                              dataTreatments?.pages
-                                .flatMap((page: any) => page?.data?.value)
-                                .map((item: any, index: any) => (
-                                  <>
-                                    <SelectItem key={index} value={item?.id}>
-                                      {item?.name}
-                                    </SelectItem>
-                                  </>
-                                ))
-                            )}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    )}
-                  />
-                </div>
-                <div className="mb-4 flex items-center space-x-2">
-                  <Label>Dose:</Label>
-                  <TextInput
-                    control={control}
-                    type="number"
-                    name="dose"
-                    placeholder="Give a dose"
-                    errors={errors}
-                  />
-                  <Label>
-                    Voie:<span className="text-red-600">*</span>
-                  </Label>
-                  <SelectInput
-                    firstOptionName="Give a method"
-                    control={control}
-                    errors={errors}
-                    placeholder="Select method"
-                    valueType="text"
-                    name="method"
-                    dataItem={[
-                      { id: 1, name: 'EYE' },
-                      { id: 2, name: 'ORAL' },
-                      { id: 1, name: 'NASAL' },
-                      { id: 2, name: 'INJECTION' },
-                    ]}
-                  />
+                <div className="mb-4 flex items-center space-x-4">
+                  <div className="w-80">
+                    <Label>
+                      Medication<span className="text-red-600">*</span>
+                    </Label>
+                    <Controller
+                      control={control}
+                      name="healthId"
+                      render={({ field: { value, onChange } }) => (
+                        <Select
+                          onValueChange={onChange}
+                          name={'healthId'}
+                          value={value}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="select medication" />
+                          </SelectTrigger>
+                          <SelectContent className="dark:border-gray-800">
+                            <SelectGroup>
+                              {isLoadingTreatments ? (
+                                <LoadingFile />
+                              ) : isErrorTreatments ? (
+                                <ErrorFile
+                                  title="404"
+                                  description="Error finding data please try again..."
+                                />
+                              ) : Number(
+                                  dataTreatments?.pages[0]?.data?.total,
+                                ) <= 0 ? (
+                                <ErrorFile description="Don't have active animals yet" />
+                              ) : (
+                                dataTreatments?.pages
+                                  .flatMap((page: any) => page?.data?.value)
+                                  .map((item: any, index: any) => (
+                                    <>
+                                      <SelectItem key={index} value={item?.id}>
+                                        {item?.name}
+                                      </SelectItem>
+                                    </>
+                                  ))
+                              )}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                      )}
+                    />
+                  </div>
+                  <div className="w-60">
+                    <Label>
+                      Voie<span className="text-red-600">*</span>
+                    </Label>
+                    <SelectInput
+                      control={control}
+                      errors={errors}
+                      valueType="text"
+                      name="method"
+                      dataItem={treatmentMethods.filter(
+                        (i) => i?.lang === locale,
+                      )}
+                    />
+                  </div>
+                  <div className="w-40">
+                    <Label>
+                      Dose<span className="text-red-600">*</span>
+                    </Label>
+                    <TextInput
+                      control={control}
+                      type="number"
+                      name="dose"
+                      errors={errors}
+                    />
+                  </div>
                 </div>
                 <div className="mb-4">
                   <TextAreaInput
                     control={control}
-                    label="Feedback"
+                    label="Observation"
                     name="note"
-                    placeholder="Give details about animal state"
                     errors={errors}
                   />
                 </div>

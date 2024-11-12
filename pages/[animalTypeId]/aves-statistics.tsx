@@ -1,5 +1,6 @@
 import { GetOneAnimalTypeAPI } from '@/api-site/animal-type';
 import { GetAnimalStatisticsAPI } from '@/api-site/animals';
+import { useInputState } from '@/components/hooks';
 import {
   Card,
   CardDescription,
@@ -8,12 +9,11 @@ import {
 } from '@/components/ui/card';
 import { formatWeight } from '@/utils';
 import { useRouter } from 'next/router';
-import { useIntl } from 'react-intl';
 
 const AvesStatistics = () => {
-  const t = useIntl();
   const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
+  const { t, userStorage } = useInputState();
 
   const { data: animalType } = GetOneAnimalTypeAPI({
     animalTypeId: animalTypeId,
@@ -21,6 +21,7 @@ const AvesStatistics = () => {
 
   const { data: animalStatistics } = GetAnimalStatisticsAPI({
     animalTypeId: animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   const layingPercentage =
@@ -255,19 +256,35 @@ const AvesStatistics = () => {
               </CardTitle>
             </CardHeader>
           </Card>
-          <Card
-            x-chunk="dashboard-05-chunk-2"
-            className=" dark:border-gray-800"
-          >
-            <CardHeader className="pb-2">
-              <CardDescription>
-                {t.formatMessage({ id: 'ANIMAL.SUM.SOLD' })}
-              </CardDescription>
-              <CardTitle className="text-3xl">
-                {animalStatistics?.sumSaleChickens?.number ?? 0}
-              </CardTitle>
-            </CardHeader>
-          </Card>
+          {animalType?.name === 'Pisciculture' ? (
+            <Card
+              x-chunk="dashboard-05-chunk-2"
+              className=" dark:border-gray-800"
+            >
+              <CardHeader className="pb-2">
+                <CardDescription>
+                  {t.formatMessage({ id: 'FISH.SUM.SOLD' })}
+                </CardDescription>
+                <CardTitle className="text-3xl">
+                  {animalStatistics?.sumSaleChickens?.number ?? 0}
+                </CardTitle>
+              </CardHeader>
+            </Card>
+          ) : (
+            <Card
+              x-chunk="dashboard-05-chunk-2"
+              className=" dark:border-gray-800"
+            >
+              <CardHeader className="pb-2">
+                <CardDescription>
+                  {t.formatMessage({ id: 'ANIMAL.SUM.SOLD' })}
+                </CardDescription>
+                <CardTitle className="text-3xl">
+                  {animalStatistics?.sumSaleChickens?.number ?? 0}
+                </CardTitle>
+              </CardHeader>
+            </Card>
+          )}
           <Card
             x-chunk="dashboard-05-chunk-2"
             className=" dark:border-gray-800"

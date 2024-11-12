@@ -1,7 +1,7 @@
-import { CreateOrUpdateOneFarrowingAPI } from '@/api-site/farrowings';
+import { PutInCagesAPI } from '@/api-site/cages';
 import { useReactHookForm } from '@/components/hooks';
-import { ButtonInput } from '@/components/ui-setting';
-import { FarrowingsModel } from '@/types/farrowing';
+import { TextInput } from '@/components/ui-setting/shadcn';
+import { CagesModel } from '@/types/animal';
 import {
   AlertDangerNotification,
   AlertSuccessNotification,
@@ -10,44 +10,34 @@ import { XIcon } from 'lucide-react';
 import { useEffect } from 'react';
 import { SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
-import { TextAreaInput, TextInput } from '../ui-setting/shadcn';
+import { ButtonInput } from '../ui-setting';
 import { Label } from '../ui/label';
 
 const schema = yup.object({
-  dead: yup.number().optional(),
-  codeFemale: yup.string().optional(),
-  litter: yup.number().required('litter is a required field'),
-  weight: yup.number().required('weight is a required field'),
-  note: yup.string().required('note is a required field'),
+  code: yup.string().required(),
+  number: yup.number().required('number is required'),
+  dimension: yup.number().required('dimension is required'),
+  numberPerCage: yup.number().required('animals per cage is required'),
 });
 
-const CreateOrUpdateFarrowings = ({
+const PutInCages = ({
   showModal,
   setShowModal,
-  farrowing,
   animal,
 }: {
   showModal: boolean;
   setShowModal: any;
-  farrowing?: any;
   animal?: any;
 }) => {
   const {
     t,
     control,
-    setValue,
     handleSubmit,
     errors,
     hasErrors,
     setHasErrors,
+    setValue,
   } = useReactHookForm({ schema });
-
-  useEffect(() => {
-    if (farrowing) {
-      const fields = ['dead', 'litter', 'note', 'weight'];
-      fields?.forEach((field: any) => setValue(field, farrowing[field]));
-    }
-  }, [farrowing, setValue]);
 
   useEffect(() => {
     if (animal) {
@@ -56,22 +46,18 @@ const CreateOrUpdateFarrowings = ({
     }
   }, [animal, setValue]);
 
-  // Create or Update data
-  const { isPending: loading, mutateAsync: saveMutation } =
-    CreateOrUpdateOneFarrowingAPI();
+  // Create
+  const { isPending: loading, mutateAsync: saveMutation } = PutInCagesAPI();
 
-  const onSubmit: SubmitHandler<FarrowingsModel> = async (
-    payload: FarrowingsModel,
-  ) => {
+  const onSubmit: SubmitHandler<CagesModel> = async (payload: CagesModel) => {
     setHasErrors(undefined);
     try {
       await saveMutation({
         ...payload,
-        farrowingId: farrowing?.id,
       });
       setHasErrors(false);
       AlertSuccessNotification({
-        text: 'Farrowing saved successfully',
+        text: 'Cages created successfully',
       });
       setShowModal(false);
     } catch (error: any) {
@@ -97,7 +83,7 @@ const CreateOrUpdateFarrowings = ({
                 <XIcon />
               </span>
             </button>
-            <form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
+            <form className="mt-6" onSubmit={handleSubmit(onSubmit)}>
               <div className="flex-auto justify-center p-2">
                 {hasErrors && (
                   <div className="bg-white py-6 dark:bg-[#121212]">
@@ -113,68 +99,49 @@ const CreateOrUpdateFarrowings = ({
                   </div>
                 )}
 
-                {!farrowing?.id ? (
-                  <div className="mb-2 items-center">
-                    <Label>Animal code</Label>
-                    <TextInput
-                      control={control}
-                      type="text"
-                      name="codeFemale"
-                      defaultValue={`${animal?.animal?.code}`}
-                      errors={errors}
-                    />
-                  </div>
-                ) : null}
-                <div className="mb-2 flex items-center space-x-10">
-                  <div>
-                    <Label>
-                      {t.formatMessage({ id: 'TABFARROWING.LITTER' })}
-                      <span className="text-red-600">*</span>
-                    </Label>
-                    <TextInput
-                      control={control}
-                      type="number"
-                      name="litter"
-                      placeholder="Litter"
-                      errors={errors}
-                    />
-                  </div>
-                  <div>
-                    <Label>
-                      {t.formatMessage({ id: 'ANIMALTYPE.DEATHS' })}
-                    </Label>
-                    <TextInput
-                      control={control}
-                      type="number"
-                      name="dead"
-                      defaultValue="0"
-                      placeholder="number of deads"
-                      errors={errors}
-                    />
-                  </div>
-                  <div>
-                    <Label>
-                      {t.formatMessage({ id: 'VIEW.WEIGHT' })}(g)
-                      <span className="text-red-600">*</span>
-                    </Label>
-                    <TextInput
-                      control={control}
-                      type="number"
-                      name="weight"
-                      placeholder="Unit weight"
-                      errors={errors}
-                    />
-                  </div>
-                </div>
-                <Label>Observation </Label>
-                <div className="mb-4">
-                  <TextAreaInput
+                <div className="mb-2 items-center">
+                  <Label>Code de la bande</Label>
+                  <TextInput
                     control={control}
-                    name="note"
-                    placeholder="Give details about farrowing"
+                    type="text"
+                    name="code"
                     errors={errors}
+                    disabled
                   />
                 </div>
+                <div className="flex items-center space-x-4">
+                  <div className="w-60">
+                    <Label>Dimension</Label>
+                    <TextInput
+                      control={control}
+                      type="number"
+                      name="dimension"
+                      placeholder="dimension"
+                      errors={errors}
+                    />
+                  </div>
+                  <div className="w-60">
+                    <Label>Nombre de cages</Label>
+                    <TextInput
+                      control={control}
+                      type="number"
+                      name="number"
+                      placeholder="number of cages"
+                      errors={errors}
+                    />
+                  </div>
+                  <div className="w-60">
+                    <Label>Nombre animaux par cage</Label>
+                    <TextInput
+                      control={control}
+                      type="number"
+                      name="numberPerCage"
+                      placeholder="animals per cage"
+                      errors={errors}
+                    />
+                  </div>
+                </div>
+
                 <div className="mt-4 flex items-center space-x-4">
                   <ButtonInput
                     type="button"
@@ -203,4 +170,4 @@ const CreateOrUpdateFarrowings = ({
   );
 };
 
-export { CreateOrUpdateFarrowings };
+export { PutInCages };

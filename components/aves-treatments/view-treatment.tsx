@@ -1,12 +1,9 @@
 import { GetOneTreatmentAPI } from '@/api-site/treatment';
-import { useReactHookForm } from '@/components/hooks';
 import { XIcon } from 'lucide-react';
-import * as yup from 'yup';
+import { useIntl } from 'react-intl';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Textarea } from '../ui/textarea';
-
-const schema = yup.object({});
 
 const ViewAvesTreatment = ({
   showModal,
@@ -17,8 +14,7 @@ const ViewAvesTreatment = ({
   setShowModal: any;
   treatment?: any;
 }) => {
-  const { t } = useReactHookForm({ schema });
-
+  const t = useIntl();
   const { data: getOneTreatment } = GetOneTreatmentAPI({
     treatmentId: treatment?.id,
   });
@@ -40,22 +36,12 @@ const ViewAvesTreatment = ({
             <form className="mt-2">
               <div className="flex-auto justify-center p-2">
                 <div className="mb-2">
-                  <Label>Code</Label>
-                  <Input disabled value={getOneTreatment.animal.code} />
-                </div>
-                <div className="mb-2">
                   <Label>{t.formatMessage({ id: 'TREATMENT.NAME' })}</Label>
                   <Input disabled type="text" value={getOneTreatment?.name} />
                 </div>
                 <div className="mb-2">
                   <Label>Diagnostic</Label>
                   <Input disabled value={getOneTreatment?.diagnosis} />
-                </div>
-                <div className="mb-2 flex items-center space-x-4">
-                  <Label>Medication:</Label>
-                  <Input disabled value={getOneTreatment?.medication} />
-                  <Label>Doses:</Label>
-                  <Input disabled value={getOneTreatment?.dose} />
                 </div>
                 <div className="mb-2 disabled">
                   <Label htmlFor="text">Observation</Label>

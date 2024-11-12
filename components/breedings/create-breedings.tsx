@@ -42,7 +42,7 @@ const CreateBreedings = ({
   setShowModal: any;
   breeding?: any;
 }) => {
-  const { t, control, handleSubmit, errors, loading, hasErrors, setHasErrors } =
+  const { t, control, handleSubmit, errors, hasErrors, setHasErrors } =
     useReactHookForm({ schema });
   const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
@@ -50,7 +50,8 @@ const CreateBreedings = ({
   const { ref, inView } = useInView();
 
   // Create
-  const { mutateAsync: saveMutation } = CreateOrUpdateOneBreedingAPI();
+  const { isPending: loading, mutateAsync: saveMutation } =
+    CreateOrUpdateOneBreedingAPI();
 
   const onSubmit: SubmitHandler<BreedingsModel> = async (
     payload: BreedingsModel,
@@ -173,7 +174,7 @@ const CreateBreedings = ({
                           value={value}
                         >
                           <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select a male code" />
+                            <SelectValue placeholder="select male" />
                           </SelectTrigger>
                           <SelectContent className="dark:border-gray-800">
                             <SelectGroup>
@@ -224,7 +225,7 @@ const CreateBreedings = ({
                           value={value}
                         >
                           <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select a female code" />
+                            <SelectValue placeholder="select female" />
                           </SelectTrigger>
                           <SelectContent className="dark:border-gray-800">
                             <SelectGroup>
@@ -276,10 +277,9 @@ const CreateBreedings = ({
                     <span className="text-red-600">*</span>
                   </Label>
                   <SelectInput
-                    firstOptionName="Choose a method"
                     control={control}
                     errors={errors}
-                    placeholder="Select breeding method"
+                    placeholder="select breeding method"
                     valueType="text"
                     name="method"
                     dataItem={[
@@ -290,13 +290,12 @@ const CreateBreedings = ({
                 </div>
                 <div className="mb-4">
                   <Label>
-                    Description
+                    Observation
                     <span className="text-red-600">*</span>
                   </Label>
                   <TextAreaInput
                     control={control}
                     name="note"
-                    placeholder="Note"
                     errors={errors}
                   />
                 </div>

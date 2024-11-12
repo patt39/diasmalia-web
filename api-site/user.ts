@@ -67,30 +67,6 @@ export const GetUserByOrganizationAPI = (payload: {
   };
 };
 
-// export const ChangeOrganizationAPI = async (payload: {
-//   organizationId: string;
-// }) => {
-//   const { organizationId } = payload;
-//   const { data, isError, isLoading, status, isPending, refetch } = useQuery({
-//     queryKey: ['change-organization', organizationId],
-//     queryFn: async () =>
-//       await makeApiCall({
-//         action: 'changeOrganization',
-//         urlParams: { organizationId },
-//       }),
-//     refetchOnWindowFocus: false,
-//   });
-
-//   return {
-//     data: data?.data as any,
-//     isError,
-//     isLoading,
-//     status,
-//     isPending,
-//     refetch,
-//   };
-// };
-
 export const ChangeOrganizationAPI = ({
   onSuccess,
   onError,

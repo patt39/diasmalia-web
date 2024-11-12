@@ -7,6 +7,7 @@ import {
   TextAreaInput,
   TextInput,
 } from '@/components/ui-setting/shadcn';
+import { sellingMethods } from '@/i18n/default-exports';
 import { SalesModel } from '@/types/sale';
 import {
   AlertDangerNotification,
@@ -45,6 +46,7 @@ const UpdateAvesSales = ({
 }) => {
   const {
     t,
+    locale,
     watch,
     control,
     setValue,
@@ -93,7 +95,7 @@ const UpdateAvesSales = ({
       });
       setHasErrors(false);
       AlertSuccessNotification({
-        text: 'Sale saved successfully',
+        text: 'Sale updated successfully',
       });
       setShowModal(false);
     } catch (error: any) {
@@ -141,7 +143,6 @@ const UpdateAvesSales = ({
                       control={control}
                       type="number"
                       name="price"
-                      placeholder="Give a price"
                       errors={errors}
                     />
                   </div>
@@ -154,7 +155,6 @@ const UpdateAvesSales = ({
                           control={control}
                           type="number"
                           name="price"
-                          placeholder="Give a price"
                           errors={errors}
                         />
                       </div>
@@ -166,7 +166,6 @@ const UpdateAvesSales = ({
                             control={control}
                             type="number"
                             name="price"
-                            placeholder="Give a price"
                             errors={errors}
                           />
                         </div>
@@ -181,7 +180,6 @@ const UpdateAvesSales = ({
                     control={control}
                     type="text"
                     name="soldTo"
-                    placeholder="Customer name"
                     errors={errors}
                   />
                 </div>
@@ -191,7 +189,6 @@ const UpdateAvesSales = ({
                     control={control}
                     type="text"
                     name="email"
-                    placeholder="Customer email"
                     errors={errors}
                   />
                 </div>
@@ -201,7 +198,6 @@ const UpdateAvesSales = ({
                     control={control}
                     type="number"
                     name="phone"
-                    placeholder="Customer phone number"
                     errors={errors}
                   />
                 </div>
@@ -211,36 +207,25 @@ const UpdateAvesSales = ({
                     control={control}
                     type="text"
                     name="address"
-                    placeholder="Customer address"
                     errors={errors}
                   />
                 </div>
                 <Label>{t.formatMessage({ id: 'SALE.METHOD' })}</Label>
                 <div className="mb-4 flex items-center">
                   <SelectInput
-                    firstOptionName="Choose a sale method"
                     control={control}
                     errors={errors}
-                    placeholder="Select the selling method"
                     valueType="text"
                     name="method"
-                    dataItem={[
-                      { id: 1, name: 'FARM' },
-                      { id: 2, name: 'MARKET' },
-                      { id: 3, name: 'AUCTION' },
-                      { id: 4, name: 'CONTRACT' },
-                      { id: 5, name: 'SOCIALMEDIA' },
-                      { id: 6, name: 'OTHER' },
-                    ]}
+                    dataItem={sellingMethods.filter((i) => i?.lang === locale)}
                   />
                 </div>
                 {watchSaleCanale === 'OTHER' ? (
                   <div className="mb-4">
                     <TextAreaInput
                       control={control}
-                      label="Details of sale"
+                      label="Détail de la vente"
                       name="note"
-                      placeholder="Give details about animals and client"
                       errors={errors}
                     />
                   </div>

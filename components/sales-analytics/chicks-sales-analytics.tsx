@@ -24,24 +24,28 @@ import {
 const ChickSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
   const [year, setYear] = useState<String>(`${dateTimeNowUtc().getFullYear()}`);
   const [months, setMonths] = useState<String>(`${getMonthNow(new Date())}`);
-  const { t, locale } = useInputState();
+  const { t, locale, userStorage } = useInputState();
   const { data: animalStatistics } = GetAnimalStatisticsAPI({
     animalTypeId: animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   const { data: dataSalesChicksAnalyticsDay } = ChickSalesAnalyticAPI({
     year: String(year),
     months: String(months),
     animalTypeId: animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   const { data: dataSalesChicksAnalyticsMonth } = ChickSalesAnalyticAPI({
     year: String(year),
     animalTypeId: animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   const { data: dataSalesChicksAnalyticsYear } = ChickSalesAnalyticAPI({
     animalTypeId: animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   const chartConfig = {

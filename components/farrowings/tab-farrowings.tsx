@@ -28,12 +28,12 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
-import { CreateOrUpdateFarrowings } from './create-or-update-farrowings';
+import { CreateFarrowings } from './create-farrowings';
 import { ListFarrowings } from './list-farrowings';
 
 const TabFarrowings = ({ animalTypeId }: { animalTypeId: string }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const { t, search, handleSetSearch } = useInputState();
+  const { t, search, handleSetSearch, userStorage } = useInputState();
   const [pageItem, setPageItem] = useState(1);
   const [periode, setPeriode] = useState('');
 
@@ -50,6 +50,7 @@ const TabFarrowings = ({ animalTypeId }: { animalTypeId: string }) => {
     sort: 'desc',
     sortBy: 'createdAt',
     animalTypeId: animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   return (
@@ -172,7 +173,7 @@ const TabFarrowings = ({ animalTypeId }: { animalTypeId: string }) => {
           />
         </CardContent>
       </main>
-      <CreateOrUpdateFarrowings
+      <CreateFarrowings
         farrowing={animalTypeId}
         showModal={isOpen}
         setShowModal={setIsOpen}

@@ -35,7 +35,7 @@ import { ListEggHarvestings } from './list-egg-harvestings';
 const TabEggHarvestings = ({ animalTypeId }: { animalTypeId: string }) => {
   const [periode, setPeriode] = useState('');
   const [pageItem, setPageItem] = useState(1);
-  const { t, search, handleSetSearch } = useInputState();
+  const { t, search, handleSetSearch, userStorage } = useInputState();
 
   const {
     isLoading: isLoadingEggHavestings,
@@ -50,6 +50,7 @@ const TabEggHarvestings = ({ animalTypeId }: { animalTypeId: string }) => {
     sort: 'desc',
     sortBy: 'createdAt',
     animalTypeId: animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   return (

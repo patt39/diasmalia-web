@@ -162,7 +162,7 @@ const UpdateTask = ({
                     <SelectInput
                       control={control}
                       errors={errors}
-                      placeholder="Select frequency"
+                      placeholder="select frequency"
                       valueType="text"
                       name="frequency"
                       dataItem={taskFrequency.filter((i) => i?.lang === locale)}
@@ -246,7 +246,7 @@ const UpdateTask = ({
                             value={value}
                           >
                             <SelectTrigger className="w-full space-x-1">
-                              <SelectValue placeholder="Select collaborator" />
+                              <SelectValue placeholder="select collaborator" />
                             </SelectTrigger>
                             <SelectContent className="dark:border-gray-800">
                               <SelectGroup>
@@ -289,7 +289,7 @@ const UpdateTask = ({
                       <DateInput
                         control={control}
                         errors={errors}
-                        placeholder="Due date"
+                        placeholder="due date"
                         name="dueDate"
                       />
                     </div>
@@ -310,7 +310,7 @@ const UpdateTask = ({
                           value={value}
                         >
                           <SelectTrigger className="w-full space-x-1">
-                            <SelectValue placeholder="Select collaborator" />
+                            <SelectValue placeholder="select collaborator" />
                           </SelectTrigger>
                           <SelectContent className="dark:border-gray-800">
                             <SelectGroup>

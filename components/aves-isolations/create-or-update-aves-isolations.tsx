@@ -40,7 +40,6 @@ const CreateOrUpdateAvesIsolations = ({
     setValue,
     handleSubmit,
     errors,
-    setLoading,
     hasErrors,
     setHasErrors,
   } = useReactHookForm({ schema });
@@ -121,7 +120,7 @@ const CreateOrUpdateAvesIsolations = ({
                     </div>
                   </div>
                 )}
-                <div className="mb-4">
+                <div className="mb-2">
                   {!isolation?.id ? (
                     <div className="items-center">
                       <Label>{t.formatMessage({ id: 'ANIMAL.CODE' })}</Label>
@@ -129,8 +128,8 @@ const CreateOrUpdateAvesIsolations = ({
                         control={control}
                         type="text"
                         name="code"
-                        placeholder="Give a code"
                         errors={errors}
+                        disabled
                       />
                     </div>
                   ) : (
@@ -139,7 +138,7 @@ const CreateOrUpdateAvesIsolations = ({
                   {['Poulet de chair', 'Pisciculture', 'Pondeuses'].includes(
                     animalType?.name,
                   ) ? (
-                    <div className="mt-4">
+                    <div className="mt-2">
                       <Label>
                         {t.formatMessage({ id: 'NUMBER.ANIMALS' })}
                         <span className="text-red-600">*</span>
@@ -148,36 +147,40 @@ const CreateOrUpdateAvesIsolations = ({
                         control={control}
                         type="number"
                         name="number"
-                        placeholder="Give a number"
+                        placeholder="number"
                         errors={errors}
                       />
                     </div>
                   ) : (
-                    <div className="my-4 flex items-center space-x-1">
-                      <Label>
-                        {t.formatMessage({ id: 'ANIMAL.MALES' })}:
-                        <span className="text-red-600">*</span>
-                      </Label>
-                      <TextInput
-                        control={control}
-                        type="number"
-                        name="male"
-                        defaultValue="0"
-                        placeholder="Number of males"
-                        errors={errors}
-                      />
-                      <Label>
-                        {t.formatMessage({ id: 'ANIMAL.FEMALES' })}:
-                        <span className="text-red-600">*</span>
-                      </Label>
-                      <TextInput
-                        control={control}
-                        type="number"
-                        name="female"
-                        defaultValue="0"
-                        placeholder="Number of females"
-                        errors={errors}
-                      />
+                    <div className="my-2 flex items-center space-x-4">
+                      <div className="w-80">
+                        <Label>
+                          {t.formatMessage({ id: 'ANIMAL.MALES' })}
+                          <span className="text-red-600">*</span>
+                        </Label>
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="male"
+                          defaultValue="0"
+                          placeholder="number of males"
+                          errors={errors}
+                        />
+                      </div>
+                      <div className="w-80">
+                        <Label>
+                          {t.formatMessage({ id: 'ANIMAL.FEMALES' })}
+                          <span className="text-red-600">*</span>
+                        </Label>
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="female"
+                          defaultValue="0"
+                          placeholder="number of females"
+                          errors={errors}
+                        />
+                      </div>
                     </div>
                   )}
                 </div>
@@ -185,11 +188,11 @@ const CreateOrUpdateAvesIsolations = ({
                   Motif
                   <span className="text-red-600">*</span>
                 </Label>
-                <div className="mb-4">
+                <div className="mb-2">
                   <TextAreaInput
                     control={control}
                     name="note"
-                    placeholder="Reason"
+                    placeholder="reason"
                     errors={errors}
                   />
                 </div>

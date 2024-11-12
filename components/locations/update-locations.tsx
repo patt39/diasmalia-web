@@ -2,6 +2,7 @@ import { GetOneAnimalTypeAPI } from '@/api-site/animal-type';
 import { UpdateOneLoctionAPI } from '@/api-site/locations';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
+import { productionPhases } from '@/i18n/default-exports';
 import { LocationModel } from '@/types/location';
 import {
   AlertDangerNotification,
@@ -34,6 +35,7 @@ const UpdateLocations = ({
 }) => {
   const {
     t,
+    locale,
     control,
     errors,
     setValue,
@@ -123,7 +125,6 @@ const UpdateLocations = ({
                     control={control}
                     type="text"
                     name="code"
-                    placeholder="Give a code"
                     errors={errors}
                   />
                 </div>
@@ -132,74 +133,51 @@ const UpdateLocations = ({
                     {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
                   </Label>
                   <SelectInput
-                    firstOptionName="Choose a production type"
                     control={control}
                     errors={errors}
-                    placeholder="Select a production phase"
-                    valueType="text"
+                    valueType="key"
                     name="productionPhase"
-                    dataItem={[
-                      { id: 1, name: 'GROWTH' },
-                      { id: 2, name: 'FATTENING' },
-                      { id: 3, name: 'GESTATION' },
-                      { id: 4, name: 'REPRODUCTION' },
-                    ]}
+                    dataItem={productionPhases.filter(
+                      (i) => i?.lang === locale,
+                    )}
                   />
                 </div>
                 <div className="my-2 items-center space-x-1">
-                  {animalType?.name === 'Pisciculture' ? (
-                    <>
-                      <Label>Volume</Label>
-                      <TextInput
-                        control={control}
-                        type="number"
-                        name="squareMeter"
-                        placeholder="Square meters"
-                        errors={errors}
-                      />
-                    </>
-                  ) : (
-                    <>
-                      <div className="items-center flex space-x-9 my-2">
-                        <div>
-                          <Label>
-                            {t.formatMessage({ id: 'SURFACE.AREA' })}
-                          </Label>
-                          <TextInput
-                            control={control}
-                            type="number"
-                            name="squareMeter"
-                            placeholder="Square meters"
-                            errors={errors}
-                          />
-                        </div>
-                        <div>
-                          <Label>
-                            {t.formatMessage({ id: 'NUMBER.MANGERS' })}
-                          </Label>
-                          <TextInput
-                            control={control}
-                            type="number"
-                            name="manger"
-                            placeholder="Number of mangers"
-                            errors={errors}
-                          />
-                        </div>
-                        <div>
-                          <Label>
-                            {t.formatMessage({ id: 'NUMBER.THROUGHS' })}
-                          </Label>
-                          <TextInput
-                            control={control}
-                            type="number"
-                            name="through"
-                            placeholder="Number of throughs"
-                            errors={errors}
-                          />
-                        </div>
+                  <>
+                    <div className="items-center flex space-x-9 my-2">
+                      <div>
+                        <Label>{t.formatMessage({ id: 'SURFACE.AREA' })}</Label>
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="squareMeter"
+                          errors={errors}
+                        />
                       </div>
-                    </>
-                  )}
+                      <div>
+                        <Label>
+                          {t.formatMessage({ id: 'NUMBER.MANGERS' })}
+                        </Label>
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="manger"
+                          errors={errors}
+                        />
+                      </div>
+                      <div>
+                        <Label>
+                          {t.formatMessage({ id: 'NUMBER.THROUGHS' })}
+                        </Label>
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="through"
+                          errors={errors}
+                        />
+                      </div>
+                    </div>
+                  </>
                 </div>
                 <div className="mt-4 flex items-center space-x-3">
                   <ButtonInput

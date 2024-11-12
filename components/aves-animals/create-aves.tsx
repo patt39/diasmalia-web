@@ -40,7 +40,7 @@ const schema = yup.object({
   code: yup.string().optional(),
   male: yup.number().optional(),
   female: yup.number().optional(),
-  addCages: yup.string().optional(),
+  type: yup.string().optional(),
   strain: yup.string().optional(),
   supplier: yup.string().optional(),
   quantity: yup.number().optional(),
@@ -71,9 +71,9 @@ const CreateAvesAnimals = ({
   } = useReactHookForm({ schema });
   const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
-  const watchCages = watch('addCages', '');
   const { ref, inView } = useInView();
   const watchProductionPhase = watch('productionPhase', '');
+  const watchType = watch('type', '');
 
   const { data: animalType } = GetOneAnimalTypeAPI({
     animalTypeId: animalTypeId,
@@ -105,57 +105,15 @@ const CreateAvesAnimals = ({
   };
 
   const {
-    isLoading: isLoadingLocationsCages,
-    isError: isErrorLocationsCages,
-    data: dataLocationsCages,
+    isLoading: isLoadingLocation,
+    isError: isErrorLocation,
+    data: dataLocation,
   } = GetLocationsAPI({
     take: 10,
     sort: 'desc',
     status: true,
-    addCages: 'YES',
     sortBy: 'createdAt',
-    animalTypeId: animalTypeId,
-  });
-
-  const {
-    isLoading: isLoadingLocations,
-    isError: isErrorLocations,
-    data: dataLocations,
-  } = GetLocationsAPI({
-    take: 10,
-    sort: 'desc',
-    status: true,
-    addCages: 'NO',
-    sortBy: 'createdAt',
-    productionPhase: 'LAYING',
-    animalTypeId: animalTypeId,
-  });
-
-  const {
-    isLoading: isLoadingLocationsGrowth,
-    isError: isErrorLocationsGrowth,
-    data: dataLocationsGrowth,
-  } = GetLocationsAPI({
-    take: 10,
-    sort: 'desc',
-    status: true,
-    addCages: 'NO',
-    sortBy: 'createdAt',
-    productionPhase: 'GROWTH',
-    animalTypeId: animalTypeId,
-  });
-
-  const {
-    isLoading: isLoadingLocationsLaying,
-    isError: isErrorLocationsLaying,
-    data: dataLocationsLaying,
-  } = GetLocationsAPI({
-    take: 10,
-    sort: 'desc',
-    status: true,
-    addCages: 'NO',
-    sortBy: 'createdAt',
-    productionPhase: 'LAYING',
+    productionPhase: watchProductionPhase,
     animalTypeId: animalTypeId,
   });
 
@@ -230,7 +188,7 @@ const CreateAvesAnimals = ({
                     control={control}
                     type="text"
                     name="code"
-                    placeholder="Give a code"
+                    placeholder="code"
                     errors={errors}
                   />
                   <TooltipProvider>
@@ -244,9 +202,7 @@ const CreateAvesAnimals = ({
                     </Tooltip>
                   </TooltipProvider>
                 </div>
-                {['Poulet de chair', 'Pisciculture'].includes(
-                  animalType?.name,
-                ) ? (
+                {['Poulet de chair'].includes(animalType?.name) ? (
                   <>
                     <div className="my-2">
                       <Label>
@@ -256,8 +212,8 @@ const CreateAvesAnimals = ({
                       <SelectInput
                         control={control}
                         errors={errors}
-                        placeholder="Select a production phase"
-                        valueType="text"
+                        placeholder="select production phase"
+                        valueType="key"
                         name="productionPhase"
                         dataItem={avesProductionPhases.filter(
                           (i) => i?.lang === locale,
@@ -271,7 +227,7 @@ const CreateAvesAnimals = ({
                           control={control}
                           type="text"
                           name="supplier"
-                          placeholder="Supplier"
+                          placeholder="supplier"
                           errors={errors}
                         />
                       </div>
@@ -281,12 +237,33 @@ const CreateAvesAnimals = ({
                           control={control}
                           type="text"
                           name="strain"
-                          placeholder="Strain"
+                          placeholder="strain"
                           errors={errors}
                         />
                       </div>
                     </div>
                     {watchProductionPhase === 'GROWTH' ? (
+                      <div className="my-2">
+                        <Label>
+                          Parenteaux?
+                          <span className="text-red-600">*</span>
+                        </Label>
+                        <SelectInput
+                          control={control}
+                          errors={errors}
+                          placeholder="parents?"
+                          valueType="text"
+                          name="type"
+                          dataItem={[
+                            { id: 1, name: 'YES' },
+                            { id: 2, name: 'NO' },
+                          ]}
+                        />
+                      </div>
+                    ) : (
+                      ''
+                    )}
+                    {watchProductionPhase === 'GROWTH' && watchType === 'NO' ? (
                       <div className="my-2 flex items-center space-x-4">
                         <div>
                           <Label>
@@ -297,7 +274,7 @@ const CreateAvesAnimals = ({
                             control={control}
                             type="number"
                             name="quantity"
-                            placeholder="Number of animals"
+                            placeholder="number of animals"
                             errors={errors}
                           />
                         </div>
@@ -310,7 +287,7 @@ const CreateAvesAnimals = ({
                             control={control}
                             type="number"
                             name="weight"
-                            placeholder="Give weight"
+                            placeholder="weight"
                             errors={errors}
                           />
                         </div>
@@ -322,39 +299,13 @@ const CreateAvesAnimals = ({
                           <DateInput
                             control={control}
                             errors={errors}
-                            placeholder="Starting date"
+                            placeholder="starting date"
                             name="birthday"
                           />
                         </div>
                       </div>
                     ) : (
                       <>
-                        {animalType?.name === 'Poulets de chair' ? (
-                          <div className="my-2 flex space-x-4">
-                            <div className="w-96">
-                              <Label>Fournisseur</Label>
-                              <TextInput
-                                control={control}
-                                type="text"
-                                name="quantity"
-                                placeholder="Supplier"
-                                errors={errors}
-                              />
-                            </div>
-                            <div className="w-60">
-                              <Label>Souche</Label>
-                              <TextInput
-                                control={control}
-                                type="text"
-                                name="quantity"
-                                placeholder="Strain"
-                                errors={errors}
-                              />
-                            </div>
-                          </div>
-                        ) : (
-                          ''
-                        )}
                         <div className="my-2 flex items-center space-x-4">
                           <div className="w-60">
                             <Label>
@@ -365,7 +316,7 @@ const CreateAvesAnimals = ({
                               control={control}
                               type="number"
                               name="male"
-                              placeholder="Number of males"
+                              placeholder="number of males"
                               errors={errors}
                             />
                           </div>
@@ -378,7 +329,7 @@ const CreateAvesAnimals = ({
                               control={control}
                               type="number"
                               name="female"
-                              placeholder="Number of females"
+                              placeholder="number of females"
                               errors={errors}
                             />
                           </div>
@@ -391,7 +342,7 @@ const CreateAvesAnimals = ({
                               control={control}
                               type="number"
                               name="weight"
-                              placeholder="Give weight"
+                              placeholder="weight"
                               errors={errors}
                             />
                           </div>
@@ -404,7 +355,7 @@ const CreateAvesAnimals = ({
                           <DateInput
                             control={control}
                             errors={errors}
-                            placeholder="Starting date"
+                            placeholder="starting date"
                             name="birthday"
                           />
                         </div>
@@ -413,9 +364,7 @@ const CreateAvesAnimals = ({
                   </>
                 ) : (
                   <>
-                    {['Pondeuses', 'Poulets de chair'].includes(
-                      animalType?.name,
-                    ) ? (
+                    {['Pondeuses'].includes(animalType?.name) ? (
                       <div className="my-2 flex space-x-4">
                         <div className="w-96">
                           <Label>Fournisseur</Label>
@@ -423,7 +372,7 @@ const CreateAvesAnimals = ({
                             control={control}
                             type="text"
                             name="supplier"
-                            placeholder="Supplier"
+                            placeholder="supplier"
                             errors={errors}
                           />
                         </div>
@@ -433,7 +382,7 @@ const CreateAvesAnimals = ({
                             control={control}
                             type="text"
                             name="strain"
-                            placeholder="Strain"
+                            placeholder="strain"
                             errors={errors}
                           />
                         </div>
@@ -448,7 +397,7 @@ const CreateAvesAnimals = ({
                       <SelectInput
                         control={control}
                         errors={errors}
-                        placeholder="Select a production phase"
+                        placeholder="select production phase"
                         valueType="key"
                         name="productionPhase"
                         dataItem={avesProductionPhases.filter(
@@ -456,7 +405,9 @@ const CreateAvesAnimals = ({
                         )}
                       />
                     </div>
-                    {['Carnard', 'Dinde'].includes(animalType?.name) ? (
+                    {['Carnard', 'Dinde', 'Pisciculture'].includes(
+                      animalType?.name,
+                    ) ? (
                       <>
                         <Label>
                           Sélectionner la race
@@ -472,7 +423,7 @@ const CreateAvesAnimals = ({
                               value={value}
                             >
                               <SelectTrigger>
-                                <SelectValue placeholder="Select a breed" />
+                                <SelectValue placeholder="select breed" />
                               </SelectTrigger>
                               <SelectContent className="dark:border-gray-800">
                                 <SelectGroup>
@@ -521,30 +472,10 @@ const CreateAvesAnimals = ({
                       ''
                     )}
 
-                    {animalType?.name === 'Pondeuses' &&
-                    watchProductionPhase === 'LAYING' ? (
-                      <div className="my-2">
-                        <Label>
-                          Mettre en cages?
-                          <span className="text-red-600">*</span>
-                        </Label>
-                        <SelectInput
-                          control={control}
-                          errors={errors}
-                          placeholder="Put in cages?"
-                          valueType="text"
-                          name="addCages"
-                          dataItem={[
-                            { id: 1, name: 'YES' },
-                            { id: 2, name: 'NO' },
-                          ]}
-                        />
-                      </div>
-                    ) : (
-                      ''
-                    )}
                     <div className="my-2 flex items-center space-x-10">
-                      {animalType?.name !== 'Pondeuses' ? (
+                      {!['Pondeuses', 'Pisciculture'].includes(
+                        animalType?.name,
+                      ) ? (
                         <>
                           <div>
                             <Label>
@@ -555,7 +486,7 @@ const CreateAvesAnimals = ({
                               control={control}
                               type="number"
                               name="male"
-                              placeholder="Number of males"
+                              placeholder="number of males"
                               errors={errors}
                             />
                           </div>
@@ -568,7 +499,7 @@ const CreateAvesAnimals = ({
                               control={control}
                               type="number"
                               name="female"
-                              placeholder="Number of females"
+                              placeholder="number of females"
                               errors={errors}
                             />
                           </div>
@@ -581,7 +512,92 @@ const CreateAvesAnimals = ({
                               control={control}
                               type="number"
                               name="weight"
-                              placeholder="Give weight"
+                              placeholder="weight"
+                              errors={errors}
+                            />
+                          </div>
+                        </>
+                      ) : animalType?.name === 'Pisciculture' &&
+                        watchProductionPhase === 'GROWTH' ? (
+                        <div className="my-2 flex space-x-4">
+                          <div>
+                            <Label>
+                              {t.formatMessage({ id: 'NUMBER.ANIMALS' })}
+                              <span className="text-red-600">*</span>
+                            </Label>
+                            <TextInput
+                              control={control}
+                              type="number"
+                              name="quantity"
+                              placeholder="number of animals"
+                              errors={errors}
+                            />
+                          </div>
+                          <div>
+                            <Label>
+                              {t.formatMessage({ id: 'TABANIMAL.WEIGHT' })}
+                              (g)<span className="text-red-600">*</span>
+                            </Label>
+                            <TextInput
+                              control={control}
+                              type="number"
+                              name="weight"
+                              placeholder="weight"
+                              errors={errors}
+                            />
+                          </div>
+                          <div>
+                            <Label>
+                              {t.formatMessage({ id: 'LAUNCHING.DATE' })}
+                              <span className="text-red-600">*</span>
+                            </Label>
+                            <DateInput
+                              control={control}
+                              errors={errors}
+                              placeholder="starting date"
+                              name="birthday"
+                            />
+                          </div>
+                        </div>
+                      ) : animalType?.name === 'Pisciculture' &&
+                        watchProductionPhase === 'LAYING' ? (
+                        <>
+                          <div>
+                            <Label>
+                              {t.formatMessage({ id: 'ANIMAL.MALES' })}
+                              <span className="text-red-600">*</span>
+                            </Label>
+                            <TextInput
+                              control={control}
+                              type="number"
+                              name="male"
+                              placeholder="number of males"
+                              errors={errors}
+                            />
+                          </div>
+                          <div>
+                            <Label>
+                              {t.formatMessage({ id: 'ANIMAL.FEMALES' })}
+                              <span className="text-red-600">*</span>
+                            </Label>
+                            <TextInput
+                              control={control}
+                              type="number"
+                              name="female"
+                              placeholder="number of females"
+                              errors={errors}
+                            />
+                          </div>
+                          <div>
+                            <Label>
+                              {t.formatMessage({ id: 'TABANIMAL.WEIGHT' })}(g)
+                              <span className="text-red-600">*</span>
+                            </Label>
+                            <TextInput
+                              control={control}
+                              type="number"
+                              name="weight"
+                              placeholder="weight"
                               errors={errors}
                             />
                           </div>
@@ -597,7 +613,7 @@ const CreateAvesAnimals = ({
                               control={control}
                               type="number"
                               name="quantity"
-                              placeholder="Number of animals"
+                              placeholder="number of animals"
                               errors={errors}
                             />
                           </div>
@@ -610,11 +626,11 @@ const CreateAvesAnimals = ({
                               control={control}
                               type="number"
                               name="weight"
-                              placeholder="Give weight"
+                              placeholder="weight"
                               errors={errors}
                             />
                           </div>
-                          <div className="">
+                          <div>
                             <Label>
                               {t.formatMessage({ id: 'LAUNCHING.DATE' })}
                               <span className="text-red-600">*</span>
@@ -622,7 +638,7 @@ const CreateAvesAnimals = ({
                             <DateInput
                               control={control}
                               errors={errors}
-                              placeholder="Starting date"
+                              placeholder="starting date"
                               name="birthday"
                             />
                           </div>
@@ -630,167 +646,6 @@ const CreateAvesAnimals = ({
                       )}
                     </div>
                   </>
-                )}
-                {animalType?.name === 'Pondeuses' &&
-                watchProductionPhase === 'LAYING' &&
-                watchCages === 'YES' ? (
-                  <div className="w-full">
-                    <Label>
-                      {t.formatMessage({ id: 'LOCATION.CODE' })}
-                      <span className="text-red-600">*</span>
-                    </Label>
-                    <Controller
-                      control={control}
-                      name="locationCode"
-                      render={({ field: { value, onChange } }) => (
-                        <Select
-                          onValueChange={onChange}
-                          name={'locationCode'}
-                          value={value}
-                        >
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select a location code" />
-                          </SelectTrigger>
-                          <SelectContent className="dark:border-gray-800">
-                            <SelectGroup>
-                              <SelectLabel>Location codes</SelectLabel>
-                              {isLoadingLocationsCages ? (
-                                <LoadingFile />
-                              ) : isErrorLocationsCages ? (
-                                <ErrorFile
-                                  title="404"
-                                  description="Error finding data please try again..."
-                                />
-                              ) : Number(
-                                  dataLocationsCages?.pages[0]?.data?.total,
-                                ) <= 0 ? (
-                                <ErrorFile description="Don't have location codes" />
-                              ) : (
-                                dataLocationsCages?.pages
-                                  .flatMap((page: any) => page?.data?.value)
-                                  .map((item, index) => (
-                                    <>
-                                      <SelectItem
-                                        key={index}
-                                        value={item?.code}
-                                      >
-                                        {item?.code}
-                                      </SelectItem>
-                                    </>
-                                  ))
-                              )}
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
-                  </div>
-                ) : watchProductionPhase === 'LAYING' && watchCages === 'NO' ? (
-                  <div className="w-full">
-                    <Label>
-                      {t.formatMessage({ id: 'LOCATION.CODE' })}
-                      <span className="text-red-600">*</span>
-                    </Label>
-                    <Controller
-                      control={control}
-                      name="locationCode"
-                      render={({ field: { value, onChange } }) => (
-                        <Select
-                          onValueChange={onChange}
-                          name={'locationCode'}
-                          value={value}
-                        >
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select a location code" />
-                          </SelectTrigger>
-                          <SelectContent className="dark:border-gray-800">
-                            <SelectGroup>
-                              <SelectLabel>Location codes</SelectLabel>
-                              {isLoadingLocations ? (
-                                <LoadingFile />
-                              ) : isErrorLocations ? (
-                                <ErrorFile
-                                  title="404"
-                                  description="Error finding data please try again..."
-                                />
-                              ) : Number(
-                                  dataLocations?.pages[0]?.data?.total,
-                                ) <= 0 ? (
-                                <ErrorFile description="Don't have location codes" />
-                              ) : (
-                                dataLocations?.pages
-                                  .flatMap((page: any) => page?.data?.value)
-                                  .map((item, index) => (
-                                    <>
-                                      <SelectItem
-                                        key={index}
-                                        value={item?.code}
-                                      >
-                                        {item?.code}
-                                      </SelectItem>
-                                    </>
-                                  ))
-                              )}
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
-                  </div>
-                ) : watchProductionPhase === 'GROWTH' ? (
-                  <div className="w-full">
-                    <Label>
-                      {t.formatMessage({ id: 'LOCATION.CODE' })}
-                      <span className="text-red-600">*</span>
-                    </Label>
-                    <Controller
-                      control={control}
-                      name="locationCode"
-                      render={({ field: { value, onChange } }) => (
-                        <Select
-                          onValueChange={onChange}
-                          name={'locationCode'}
-                          value={value}
-                        >
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select a location code" />
-                          </SelectTrigger>
-                          <SelectContent className="dark:border-gray-800">
-                            <SelectGroup>
-                              <SelectLabel>Location codes</SelectLabel>
-                              {isLoadingLocationsGrowth ? (
-                                <LoadingFile />
-                              ) : isErrorLocationsGrowth ? (
-                                <ErrorFile
-                                  title="404"
-                                  description="Error finding data please try again..."
-                                />
-                              ) : Number(
-                                  dataLocationsGrowth?.pages[0]?.data?.total,
-                                ) <= 0 ? (
-                                <ErrorFile description="Don't have location codes" />
-                              ) : (
-                                dataLocationsGrowth?.pages
-                                  .flatMap((page: any) => page?.data?.value)
-                                  .map((item, index) => (
-                                    <>
-                                      <SelectItem
-                                        key={index}
-                                        value={item?.code}
-                                      >
-                                        {item?.code}
-                                      </SelectItem>
-                                    </>
-                                  ))
-                              )}
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
-                  </div>
-                ) : (
-                  ''
                 )}
                 {!['Poulet de chair', 'Pisciculture', 'Pondeuses'].includes(
                   animalType?.name,
@@ -803,15 +658,14 @@ const CreateAvesAnimals = ({
                     <DateInput
                       control={control}
                       errors={errors}
-                      placeholder="Starting date"
+                      placeholder="starting date"
                       name="birthday"
                     />
                   </div>
                 ) : (
                   ''
                 )}
-                {watchProductionPhase === 'GROWTH' &&
-                animalType?.name !== 'Pondeuses' ? (
+                {watchProductionPhase === 'GROWTH' ? (
                   <div className="w-full">
                     <Label>
                       {t.formatMessage({ id: 'LOCATION.CODE' })}
@@ -827,25 +681,24 @@ const CreateAvesAnimals = ({
                           value={value}
                         >
                           <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select a location code" />
+                            <SelectValue placeholder="select location code" />
                           </SelectTrigger>
                           <SelectContent className="dark:border-gray-800">
                             <SelectGroup>
                               <SelectLabel>Location codes</SelectLabel>
-                              {isLoadingLocationsGrowth ? (
+                              {isLoadingLocation ? (
                                 <LoadingFile />
-                              ) : isErrorLocationsGrowth ? (
+                              ) : isErrorLocation ? (
                                 <ErrorFile
                                   title="404"
                                   description="Error finding data please try again..."
                                 />
                               ) : Number(
-                                  dataLocationsGrowth?.pages[0]?.data?.total <=
-                                    0,
+                                  dataLocation?.pages[0]?.data?.total <= 0,
                                 ) ? (
                                 <ErrorFile description="Don't have location codes" />
                               ) : (
-                                dataLocationsGrowth?.pages
+                                dataLocation?.pages
                                   .flatMap((page: any) => page?.data?.value)
                                   .map((item, index) => (
                                     <>
@@ -864,8 +717,7 @@ const CreateAvesAnimals = ({
                       )}
                     />
                   </div>
-                ) : watchProductionPhase === 'LAYING' &&
-                  animalType?.name !== 'Pondeuses' ? (
+                ) : ['LAYING', 'FATTENING'].includes(watchProductionPhase) ? (
                   <div className="w-full">
                     <Label>
                       {t.formatMessage({ id: 'LOCATION.CODE' })}
@@ -881,24 +733,23 @@ const CreateAvesAnimals = ({
                           value={value}
                         >
                           <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select a location code" />
+                            <SelectValue placeholder="select location code" />
                           </SelectTrigger>
                           <SelectContent className="dark:border-gray-800">
                             <SelectGroup>
                               <SelectLabel>Location codes</SelectLabel>
-                              {isLoadingLocationsLaying ? (
+                              {isLoadingLocation ? (
                                 <LoadingFile />
-                              ) : isErrorLocationsLaying ? (
+                              ) : isErrorLocation ? (
                                 <ErrorFile
                                   title="404"
                                   description="Error finding data please try again..."
                                 />
-                              ) : Number(
-                                  dataLocationsLaying?.pages[0]?.data?.total,
-                                ) <= 0 ? (
+                              ) : Number(dataLocation?.pages[0]?.data?.total) <=
+                                0 ? (
                                 <ErrorFile description="Don't have location codes" />
                               ) : (
-                                dataLocationsLaying?.pages
+                                dataLocation?.pages
                                   .flatMap((page: any) => page?.data?.value)
                                   .map((item, index) => (
                                     <>

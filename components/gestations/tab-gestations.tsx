@@ -35,7 +35,7 @@ const TabGestations = ({ animalTypeId }: { animalTypeId: string }) => {
   const { ref, inView } = useInView();
   const [isOpen, setIsOpen] = useState(false);
   const [periode, setPeriode] = useState('');
-  const { t, search, handleSetSearch } = useInputState();
+  const { t, search, handleSetSearch, userStorage } = useInputState();
 
   const {
     isLoading: isLoadingGestations,
@@ -51,6 +51,7 @@ const TabGestations = ({ animalTypeId }: { animalTypeId: string }) => {
     sort: 'desc',
     sortBy: 'createdAt',
     animalTypeId: animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   useEffect(() => {

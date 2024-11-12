@@ -28,7 +28,7 @@ import { ListTreatments } from './list-treatments';
 const TabTreatments = ({ animalTypeId }: { animalTypeId: string }) => {
   const [periode, setPeriode] = useState('');
   const { ref, inView } = useInView();
-  const { t, search, handleSetSearch } = useInputState();
+  const { t, search, handleSetSearch, userStorage } = useInputState();
 
   const {
     isLoading: isLoadingTreatments,
@@ -44,6 +44,7 @@ const TabTreatments = ({ animalTypeId }: { animalTypeId: string }) => {
     sort: 'desc',
     sortBy: 'createdAt',
     animalTypeId: animalTypeId,
+    organizationId: userStorage.organizationId,
   });
 
   useEffect(() => {

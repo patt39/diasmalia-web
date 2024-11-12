@@ -22,7 +22,7 @@ import { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 export function AnimalTreatments() {
-  const { t } = useInputState();
+  const { t, userStorage } = useInputState();
   const { ref, inView } = useInView();
   const { query, back } = useRouter();
   const animalId = String(query?.animalId);
@@ -44,6 +44,7 @@ export function AnimalTreatments() {
     sortBy: 'createdAt',
     animalId: animalId,
     animalTypeId: getOneAnimal?.animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   useEffect(() => {
@@ -130,15 +131,30 @@ export function AnimalTreatments() {
                       <AccordionItem value="item-1">
                         <AccordionTrigger>{item?.name}</AccordionTrigger>
                         <AccordionContent>
-                          <div>Date: {formatDateDDMMYY(item?.createdAt)} </div>
+                          <div>
+                            Date administration:{' '}
+                            {formatDateDDMMYY(item?.createdAt)}{' '}
+                          </div>
+                          <div>Diagnostic: {item?.diagnosis} </div>
                           <div>
                             Medication: {item?.health?.name?.toLowerCase()}{' '}
                           </div>
-                          <div> Dose: {item?.dose} </div>
+                          {item?.dose !== null ? (
+                            <div> Dose: {item?.dose ?? 0} </div>
+                          ) : (
+                            ''
+                          )}
                           <div>
                             {t.formatMessage({ id: 'SALE.METHOD' })}:{' '}
                             {item?.method.toLowerCase()}
                           </div>
+                          {item?.note !== null ? (
+                            <div>
+                              Observation: {item?.note ?? 'Observation'}{' '}
+                            </div>
+                          ) : (
+                            ''
+                          )}
                         </AccordionContent>
                       </AccordionItem>
                     </Accordion>

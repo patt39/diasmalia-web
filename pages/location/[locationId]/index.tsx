@@ -26,7 +26,7 @@ import { useInView } from 'react-intersection-observer';
 import { LocationList } from './location-list';
 
 export function ViewLocation() {
-  const { t, search, handleSetSearch } = useInputState();
+  const { t, search, handleSetSearch, userStorage } = useInputState();
   const { ref, inView } = useInView();
 
   const { query, back } = useRouter();
@@ -46,9 +46,11 @@ export function ViewLocation() {
     search,
     take: 10,
     sort: 'desc',
+    status: 'ACTIVE',
     sortBy: 'createdAt',
     locationId: locationId,
     animalTypeId: getOneLocation?.animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   useEffect(() => {
