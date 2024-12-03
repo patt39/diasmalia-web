@@ -244,11 +244,13 @@ const TabSales = ({ animalTypeId }: { animalTypeId: string }) => {
           />
         </CardContent>
       </main>
-      <CreateOrUpdateSales
-        sale={animalTypeId}
-        showModal={isOpen}
-        setShowModal={setIsOpen}
-      />
+      {isOpen ? (
+        <CreateOrUpdateSales
+          sale={animalTypeId}
+          showModal={isOpen}
+          setShowModal={setIsOpen}
+        />
+      ) : null}
     </>
   );
 };

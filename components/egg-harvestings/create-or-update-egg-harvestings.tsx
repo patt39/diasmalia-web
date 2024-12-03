@@ -145,7 +145,7 @@ const CreateOrUpdateEggHarvestings = ({
                     control={control}
                     errors={errors}
                     placeholder="select size"
-                    valueType="text"
+                    valueType="key"
                     name="size"
                     dataItem={eggSize.filter((i) => i?.lang === locale)}
                   />

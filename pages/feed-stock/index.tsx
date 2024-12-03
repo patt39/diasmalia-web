@@ -4,15 +4,19 @@ import { GetAnimalStatisticsAPI } from '@/api-site/animals';
 import { GetAssignedTypesAPI } from '@/api-site/assigned-type';
 import { useInputState } from '@/components/hooks';
 import { DashboardFooter } from '@/components/layouts/dashboard/footer';
+import { ButtonInput } from '@/components/ui-setting';
 import {
   Card,
   CardDescription,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { MoveLeftIcon } from 'lucide-react';
+import { useRouter } from 'next/router';
 import { TabFeedStock } from './tab-feed-stock';
 
 export function FeedStock() {
+  const { back } = useRouter();
   const { t, userStorage } = useInputState();
   const { data: dataAssignedTypes } = GetAssignedTypesAPI({
     take: 20,
@@ -31,7 +35,7 @@ export function FeedStock() {
         title={`${userStorage?.user?.profile?.firstName} ${userStorage?.user?.profile?.lastName} - Feed stock`}
       >
         <div className="flex min-h-screen w-full flex-col">
-          <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+          <main className="flex flex-1 flex-col md:gap-4 md:p-8">
             <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
               <Card
                 className="sm:col-span-2 dark:border-gray-800"
@@ -73,6 +77,21 @@ export function FeedStock() {
                 </CardHeader>
               </Card>
             </div>
+            <h2>
+              <ButtonInput
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => {
+                  back();
+                }}
+                icon={<MoveLeftIcon className="size-4" />}
+              >
+                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                  {t.formatMessage({ id: 'UTIL.COME_BACK' })}
+                </span>
+              </ButtonInput>
+            </h2>
             {dataAssignedTypes ? <TabFeedStock /> : null}
           </main>
           <DashboardFooter />

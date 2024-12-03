@@ -93,16 +93,25 @@ const ProjectsList = ({ item, index }: { item: any; index: number }) => {
               <span className="relative flex size-4"></span>
             </div>
           )}
-          <div
-            className="items-center justify-center space-x-6 mt-8"
-            onClick={() => handleChangeOrganization()}
-          >
-            <div className="text-lg font-semibold text-black text-center">
-              {item?.organization?.name?.length > 40
-                ? item?.organization?.name?.substring(0, 40) + '...'
-                : item?.organization?.name}
-            </div>
-          </div>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div
+                  className="items-center justify-center space-x-6 mt-8"
+                  onClick={() => handleChangeOrganization()}
+                >
+                  <div className="text-lg font-semibold text-black text-center">
+                    {item?.organization?.name?.length > 40
+                      ? item?.organization?.name?.substring(0, 40) + '...'
+                      : item?.organization?.name}
+                  </div>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{t.formatMessage({ id: 'CLICK.TOSEE' })} </p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
           <div className="grid grid-cols-1 mb-2 sm:mt-2 px-20 sm:grid-cols-2 xl:grid-cols-3 sm:gap-8 xl:gap-12">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -129,9 +138,7 @@ const ProjectsList = ({ item, index }: { item: any; index: number }) => {
                       {t.formatMessage({ id: 'TABANIMAL.DELETE' })}
                     </span>
                   </DropdownMenuItem>
-                ) : (
-                  ''
-                )}
+                ) : null}
               </DropdownMenuContent>
               <ActionModalDialog
                 loading={loading}

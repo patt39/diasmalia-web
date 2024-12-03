@@ -114,9 +114,7 @@ const SelectAnimalType = () => {
                 title="404"
                 description="Error find data please try again..."
               />
-            ) : Number(dataAnimalTypes?.pages[0]?.data?.total) <= 0 ? (
-              ''
-            ) : (
+            ) : Number(dataAnimalTypes?.pages[0]?.data?.total) <= 0 ? null : (
               dataAnimalTypes?.pages
                 .flatMap((page: any) => page?.data?.value)
                 .map((item, index) => (

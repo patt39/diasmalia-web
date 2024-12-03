@@ -59,13 +59,13 @@ export const filterImageAndFile = (options: {
   const { imageList, fileList } = options;
 
   imageList
-    ?.filter((file: any) => file?.status === 'success')
+    ?.filter((file: any) => file?.status === 'done')
     .forEach((file: any) => {
       newImageLists.push(file);
     });
 
   fileList
-    ?.filter((file: any) => file?.status === 'success')
+    ?.filter((file: any) => file?.status === 'done')
     .forEach((file: any) => {
       newFileLists.push(file);
     });

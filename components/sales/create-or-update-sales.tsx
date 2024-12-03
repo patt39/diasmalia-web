@@ -70,7 +70,6 @@ const CreateOrUpdateSales = ({
     setValue,
     handleSubmit,
     errors,
-    loading,
     hasErrors,
     setHasErrors,
   } = useReactHookForm({ schema });
@@ -98,7 +97,8 @@ const CreateOrUpdateSales = ({
   }, [sale, setValue]);
 
   // Create or Update data
-  const { mutateAsync: saveMutation } = CreateOrUpdateOneSaleAPI();
+  const { isPending: loading, mutateAsync: saveMutation } =
+    CreateOrUpdateOneSaleAPI();
 
   const onSubmit: SubmitHandler<SalesModel> = async (payload: SalesModel) => {
     setHasErrors(undefined);
@@ -268,7 +268,10 @@ const CreateOrUpdateSales = ({
                                             }}
                                           />
                                           <div className="space-y-1 leading-none">
-                                            <Label>{item?.code}</Label>
+                                            <Label>
+                                              {item?.code}{' '}
+                                              {item?.productionPhase}
+                                            </Label>
                                           </div>
                                         </div>
                                       </>
@@ -359,7 +362,7 @@ const CreateOrUpdateSales = ({
                     control={control}
                     errors={errors}
                     placeholder="selling method"
-                    valueType="key"
+                    valueType="text"
                     name="method"
                     dataItem={sellingMethods.filter((i) => i?.lang === locale)}
                   />

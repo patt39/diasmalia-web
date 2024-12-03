@@ -163,39 +163,43 @@ const UpdateAvesAnimals = ({
                     </div>
                   </div>
                 )}
-                <div className="items-center">
-                  <Label>{t.formatMessage({ id: 'ANIMAL.CODE' })}</Label>
-                  <TextInput
-                    control={control}
-                    type="text"
-                    name="code"
-                    errors={errors}
-                  />
-                </div>
+                {animal?._count?.feedings == 0 ? (
+                  <div className="mb-2 items-center">
+                    <Label>{t.formatMessage({ id: 'ANIMAL.CODE' })}</Label>
+                    <TextInput
+                      control={control}
+                      type="text"
+                      name="code"
+                      errors={errors}
+                    />
+                  </div>
+                ) : null}
                 {['Poulet de chair', 'Pisciculture', 'Pondeuses'].includes(
                   animalType?.name,
                 ) ? (
                   <>
-                    <div className="my-2 flex space-x-4">
-                      <div className="w-96">
-                        <Label>Fournisseur</Label>
-                        <TextInput
-                          control={control}
-                          type="text"
-                          name="supplier"
-                          errors={errors}
-                        />
+                    {animalType?.name !== 'Pisciculture' ? (
+                      <div className="my-2 flex space-x-4">
+                        <div className="w-96">
+                          <Label>Fournisseur</Label>
+                          <TextInput
+                            control={control}
+                            type="text"
+                            name="supplier"
+                            errors={errors}
+                          />
+                        </div>
+                        <div className="w-60">
+                          <Label>Souche</Label>
+                          <TextInput
+                            control={control}
+                            type="text"
+                            name="strain"
+                            errors={errors}
+                          />
+                        </div>
                       </div>
-                      <div className="w-60">
-                        <Label>Souche</Label>
-                        <TextInput
-                          control={control}
-                          type="text"
-                          name="strain"
-                          errors={errors}
-                        />
-                      </div>
-                    </div>
+                    ) : null}
                     <Label>
                       Sélectionner la race
                       <span className="text-red-600">*</span>
@@ -504,9 +508,7 @@ const UpdateAvesAnimals = ({
                           name="birthday"
                         />
                       </div>
-                    ) : (
-                      ''
-                    )}
+                    ) : null}
                   </>
                 )}
 

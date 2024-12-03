@@ -2,7 +2,7 @@ import { GetFaqsAPI } from '@/api-site/faq';
 import { LayoutDashboard } from '@/components/layouts/dashboard';
 
 import { DashboardFooter } from '@/components/layouts/dashboard/footer';
-import { ButtonLoadMore } from '@/components/ui-setting';
+import { ButtonInput, ButtonLoadMore } from '@/components/ui-setting';
 import { LoadingFile } from '@/components/ui-setting/ant';
 import { ErrorFile } from '@/components/ui-setting/ant/error-file';
 import {
@@ -12,13 +12,16 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { PrivateComponent } from '@/components/util/private-component';
+import { MoveLeftIcon } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useIntl } from 'react-intl';
 
 export function Faq() {
   const t = useIntl();
+  const { back } = useRouter();
   const { ref, inView } = useInView();
 
   const {
@@ -59,6 +62,21 @@ export function Faq() {
   return (
     <>
       <LayoutDashboard title={'Faq'}>
+        <div className="mt-8 ml-8">
+          <ButtonInput
+            type="button"
+            size="sm"
+            variant="outline"
+            onClick={() => {
+              back();
+            }}
+            icon={<MoveLeftIcon className="size-4" />}
+          >
+            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+              {t.formatMessage({ id: 'UTIL.COME_BACK' })}
+            </span>
+          </ButtonInput>
+        </div>
         <div className="flex min-h-screen w-full flex-col">
           <div className="flex flex-col items-center gap-1 text-center">
             <h4 className="mt-8 text-2xl font-bold tracking-tight text-center">

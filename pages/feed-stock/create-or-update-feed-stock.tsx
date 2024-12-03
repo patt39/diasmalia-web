@@ -26,9 +26,8 @@ import { Controller, SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
 
 const schema = yup.object({
-  number: yup.number().optional(),
-  bagWeight: yup.number().optional(),
-  weight: yup.number().optional(),
+  number: yup.number().required('number of bags is required'),
+  bagWeight: yup.number().required('bag weight is required'),
   feedCategory: yup.string().required('feedCategory is required'),
   animalTypeId: yup.string().required('animalTypeId is required'),
 });
@@ -181,9 +180,7 @@ const CreateOrUpdateFeedStock = ({
                       />
                     </div>
                   </>
-                ) : (
-                  ''
-                )}
+                ) : null}
                 <div className="mb-2">
                   <Label>
                     {t.formatMessage({ id: 'FEED.TYPE' })}
@@ -198,7 +195,9 @@ const CreateOrUpdateFeedStock = ({
                     dataItem={feedCategories.filter((i) => i?.lang === locale)}
                   />
                 </div>
-                {!['FORAGES', 'SILAGES'].includes(watchCategory) ? (
+                {!['FORAGES', 'SILAGES', 'FOURAGES', 'ENSILAGES'].includes(
+                  watchCategory,
+                ) ? (
                   <>
                     <div className="mb-2">
                       <Label>

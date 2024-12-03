@@ -42,7 +42,8 @@ import { PrivateComponent } from '@/components/util/private-component';
 import { ContributorModel } from '@/types/user';
 import { AlertDangerNotification, AlertSuccessNotification } from '@/utils';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { ListFilter } from 'lucide-react';
+import { ListFilter, MoveLeftIcon } from 'lucide-react';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import * as yup from 'yup';
@@ -53,6 +54,7 @@ export function Contributors() {
   const schema = yup.object({
     email: yup.string().required('email is required'),
   });
+  const { back } = useRouter();
   const { t, search, handleSetSearch, userStorage } = useInputState();
   const [role, setRole] = useState('');
   const [isAddContributor, setIsAddContributor] = useState(false);
@@ -111,7 +113,7 @@ export function Contributors() {
         title={`${userStorage?.user?.profile?.firstName} ${userStorage?.user?.profile?.lastName} - Collaborators`}
       >
         <div className="flex min-h-screen w-full flex-col">
-          <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+          <main className="flex flex-1 flex-col md:gap-4 md:p-8">
             {userStorage?.role === 'SUPERADMIN' ? (
               <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
                 <Card
@@ -174,9 +176,22 @@ export function Contributors() {
                   </CardFooter>
                 </Card>
               </div>
-            ) : (
-              ''
-            )}
+            ) : null}
+            <h2>
+              <ButtonInput
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => {
+                  back();
+                }}
+                icon={<MoveLeftIcon className="size-4" />}
+              >
+                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                  {t.formatMessage({ id: 'UTIL.COME_BACK' })}
+                </span>
+              </ButtonInput>
+            </h2>
             <Card
               x-chunk="dashboard-06-chunk-0"
               className="dark:border-gray-800"

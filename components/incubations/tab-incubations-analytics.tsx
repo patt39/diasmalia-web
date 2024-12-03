@@ -157,6 +157,7 @@ const TabIncubationsAnalytics = ({
                   />
                   <ChartTooltip
                     cursor={false}
+                    labelClassName="w-40"
                     content={<ChartTooltipContent indicator="dashed" />}
                   />
                   <Bar
@@ -174,9 +175,7 @@ const TabIncubationsAnalytics = ({
             </CardContent>
           </Card>
         </>
-      ) : (
-        ''
-      )}
+      ) : null}
     </>
   );
 };

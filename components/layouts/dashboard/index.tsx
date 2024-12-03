@@ -55,7 +55,7 @@ const LayoutDashboard = ({ children, title }: IProps) => {
 
         <div className="flex flex-1 dark:bg-black/15">
           {user?.id ? (
-            <div className="hidden md:flex md:w-56 md:flex-col">
+            <div className="hidden md:w-56 md:block">
               <div className="fixed flex max-h-screen flex-col pt-5">
                 <VerticalNavDashboard user={user} />
               </div>

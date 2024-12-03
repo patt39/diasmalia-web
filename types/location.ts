@@ -16,6 +16,15 @@ export type LocationModel = {
   productionPhase: string;
 };
 
+export type BuildingModel = {
+  createdAt: Date;
+  id: string;
+  code: string;
+  squareMeter: number;
+  userCreatedId: string;
+  productionPhase: string;
+};
+
 export type LocationChangeModel = {
   animals: {
     code: string;

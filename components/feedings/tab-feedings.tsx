@@ -188,11 +188,13 @@ const TabFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
           />
         </CardContent>
       </main>
-      <CreateFeedings
-        feeding={animalTypeId}
-        showModal={isOpen}
-        setShowModal={setIsOpen}
-      />
+      {isOpen ? (
+        <CreateFeedings
+          feeding={animalTypeId}
+          showModal={isOpen}
+          setShowModal={setIsOpen}
+        />
+      ) : null}
     </>
   );
 };

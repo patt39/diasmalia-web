@@ -4,12 +4,13 @@ import {
   Calendar,
   CreditCard,
   ListFilter,
+  MoveLeftIcon,
 } from 'lucide-react';
 
 import { GetFinancesAnalyticAPI, GetFinancesAPI } from '@/api-site/finances';
 import { useInputState } from '@/components/hooks';
 import { DashboardFooter } from '@/components/layouts/dashboard/footer';
-import { ButtonLoadMore } from '@/components/ui-setting';
+import { ButtonInput, ButtonLoadMore } from '@/components/ui-setting';
 import { LoadingFile } from '@/components/ui-setting/ant';
 import { ErrorFile } from '@/components/ui-setting/ant/error-file';
 import { Button } from '@/components/ui/button';
@@ -54,6 +55,7 @@ import {
 } from '@/components/ui/tooltip';
 import { PrivateComponent } from '@/components/util/private-component';
 import { dateTimeNowUtc, formatMMDate, getMonthNow } from '@/utils';
+import { useRouter } from 'next/router';
 import { Fragment, useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { CartesianGrid, Line, LineChart, XAxis } from 'recharts';
@@ -61,6 +63,7 @@ import { CreateOrUpdateFinances } from './create-or-update-finances';
 import { ListFinances } from './list-finances';
 
 export function Finances() {
+  const { back } = useRouter();
   const [type, setType] = useState('');
   const { ref, inView } = useInView();
   const [periode, setPeriode] = useState('');
@@ -140,7 +143,7 @@ export function Finances() {
         title={`${userStorage?.profile?.firstName} ${userStorage?.profile?.lastName} - Finances`}
       >
         <div className="flex min-h-screen w-full flex-col">
-          <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+          <main className="flex flex-1 flex-col gap-4 p-4 md:gap-4 md:p-8">
             <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
               <Card
                 className="sm:col-span-2 dark:border-gray-800"
@@ -187,6 +190,21 @@ export function Finances() {
                 </CardContent>
               </Card>
             </div>
+            <h2 className="mr-8">
+              <ButtonInput
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => {
+                  back();
+                }}
+                icon={<MoveLeftIcon className="size-4" />}
+              >
+                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                  {t.formatMessage({ id: 'UTIL.COME_BACK' })}
+                </span>
+              </ButtonInput>
+            </h2>
             <Card className=" dark:border-gray-800">
               <CardHeader>
                 <div className="flex items-center">
@@ -264,9 +282,7 @@ export function Finances() {
                           )}
                         </DropdownMenuContent>
                       </DropdownMenu>
-                    ) : (
-                      ''
-                    )}
+                    ) : null}
                   </div>
                 </div>
               </CardHeader>
@@ -417,7 +433,6 @@ export function Finances() {
                       </DropdownMenuSub>
                     </DropdownMenuContent>
                   </DropdownMenu>
-
                   <Button onClick={() => setIsOpen(true)}>
                     {t.formatMessage({ id: 'FINANCE.ADD' })}
                   </Button>

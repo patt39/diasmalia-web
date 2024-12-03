@@ -226,11 +226,13 @@ const TabAvesIsolations = ({ animalTypeId }: { animalTypeId: string }) => {
           )}
         </CardContent>
       </main>
-      <CreateOrUpdateAvesIsolations
-        isolation={animalTypeId}
-        showModal={isOpen}
-        setShowModal={setIsOpen}
-      />
+      {isOpen ? (
+        <CreateOrUpdateAvesIsolations
+          isolation={animalTypeId}
+          showModal={isOpen}
+          setShowModal={setIsOpen}
+        />
+      ) : null}
     </>
   );
 };

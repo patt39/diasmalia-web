@@ -150,16 +150,20 @@ const CagesList = ({ item, index }: { item: any; index: number }) => {
                 onClick={() => deleteItem(item)}
               />
             </DropdownMenu>
-            <UpdateCages
-              cage={item}
-              showModal={isEdit}
-              setShowModal={setIsEdit}
-            />
-            <CageEggHarvestings
-              cage={item}
-              showModal={isEggHarvesting}
-              setShowModal={setIsEggHarvesting}
-            />
+            {isEdit ? (
+              <UpdateCages
+                cage={item}
+                showModal={isEdit}
+                setShowModal={setIsEdit}
+              />
+            ) : null}
+            {isEggHarvesting ? (
+              <CageEggHarvestings
+                cage={item}
+                showModal={isEggHarvesting}
+                setShowModal={setIsEggHarvesting}
+              />
+            ) : null}
           </div>
         </div>
       </div>

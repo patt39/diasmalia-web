@@ -1,44 +1,126 @@
 //import { UploadFolderType } from '@/types/upload';
+import { ImagesModel } from '@/types/profile';
+import { PaginationRequest } from '@/utils';
 import { makeApiCall } from '@/utils/end-point';
-import { useQuery } from '@tanstack/react-query';
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query';
+import { RcFile } from 'antd/es/upload';
 
-export const GetUploadsAPI = (payload: {
-  organizationId?: string;
-  model: string;
-  uploadableId: string;
-  uploadType?: 'image' | 'file';
-}) => {
-  const { data, isError, isLoading, status, isPending, refetch } = useQuery({
-    queryKey: ['uploads', { ...payload }],
-    queryFn: async () =>
+export const CreateOrUpdateOnePostGalleryAPI = ({
+  onSuccess,
+  onError,
+}: {
+  onSuccess?: () => void;
+  onError?: (error: any) => void;
+} = {}) => {
+  const queryKey = ['images'];
+  const queryClient = useQueryClient();
+  const result = useMutation({
+    mutationKey: queryKey,
+    mutationFn: async (payload: ImagesModel): Promise<any> => {
+      const { newImageLists } = payload;
+      let data = new FormData();
+      data.append('description', `${payload.description ?? ''}`);
+      newImageLists?.length > 0 &&
+        newImageLists?.forEach((file: any) => {
+          data.append('attachmentImages', file?.originFileObj as RcFile);
+        });
+
       await makeApiCall({
-        action: 'getUploads',
-        queryParams: payload,
-      }),
-    refetchOnWindowFocus: false,
+        action: 'addImage',
+        body: data,
+      });
+    },
+    onError: async (error) => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onError) {
+        onError(error);
+      }
+    },
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
   });
 
-  return { data: data?.data, isError, isLoading, status, isPending, refetch };
+  return result;
 };
 
-// export const viewOneFileUploadAPI = ({
-//   fileName,
-//   folder,
-// }: {
-//   fileName: string;
-//   folder: UploadFolderType;
-// }) =>
-//   fileName
-//     ? `${process.env.NEXT_PUBLIC_AWS_CLOUD_FRONT_URL}/${folder}/${fileName}`
-//     : null;
+export const GetImagesAPI = (
+  payload: {
+    take: number;
+    userCreatedId?: string;
+    organizationId?: string;
+  } & PaginationRequest,
+) => {
+  const { take, sort, sortBy, organizationId, userCreatedId } = payload;
+  return useInfiniteQuery({
+    queryKey: ['images', 'infinite', { ...payload }],
+    getNextPageParam: (lastPage: any) => lastPage.data.next_page,
+    queryFn: async ({ pageParam = 1 }) =>
+      await makeApiCall({
+        action: 'getImages',
+        queryParams: {
+          take,
+          sort,
+          sortBy,
+          userCreatedId,
+          organizationId,
+          page: pageParam,
+        },
+      }),
+    initialPageParam: 1,
+  });
+};
 
-// export const downloadOneFileUploadAPI = ({
-//   fileName,
-//   folder,
-// }: {
-//   fileName: string;
-//   folder: UploadFolderType;
-// }) =>
-//   fileName && folder
-//     ? `${process.env.NEXT_PUBLIC_HOST_SERVER}/uploads/download/${folder}/${fileName}`
-//     : null;
+export const DeleteOneImageAPI = ({
+  onSuccess,
+  onError,
+}: {
+  onSuccess?: () => void;
+  onError?: (error: any) => void;
+} = {}) => {
+  const queryKey = ['images'];
+  const queryClient = useQueryClient();
+  const result = useMutation({
+    mutationKey: queryKey,
+    mutationFn: async (payload: { imageId: string }) => {
+      const { imageId } = payload;
+      return await makeApiCall({
+        action: 'deleteOneImage',
+        urlParams: { imageId },
+      });
+    },
+    onError: async (error) => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onError) {
+        onError(error);
+      }
+    },
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+  });
+
+  return result;
+};

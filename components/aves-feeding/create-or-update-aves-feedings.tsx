@@ -19,10 +19,12 @@ import {
   AlertSuccessNotification,
 } from '@/utils/alert-notification';
 import { XIcon } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { Controller, SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
+import { Button } from '../ui/button';
 import { Label } from '../ui/label';
 
 const schema = yup.object({
@@ -145,9 +147,7 @@ const CreateOrUpdateAvesFeedings = ({
                       disabled
                     />
                   </div>
-                ) : (
-                  ''
-                )}
+                ) : null}
                 <div className="mb-2">
                   <Label>
                     {t.formatMessage({ id: 'SELECT.FEEDTYPE' })}
@@ -188,6 +188,11 @@ const CreateOrUpdateAvesFeedings = ({
                                   </>
                                 ))
                             )}
+                            <Button variant="link">
+                              <Link href="/feed-stock">
+                                {t.formatMessage({ id: 'ADD.FEED' })}
+                              </Link>
+                            </Button>
                           </SelectGroup>
                         </SelectContent>
                       </Select>

@@ -126,7 +126,7 @@ export const EggsAnalyticAPI = (payload: {
   });
 };
 
-export const AnimalsAnalyticAPI = (payload: {
+export const SalesAnalyticAPI = (payload: {
   periode?: string;
   days?: string;
   months?: string;
@@ -136,10 +136,10 @@ export const AnimalsAnalyticAPI = (payload: {
 }) => {
   const { year, months, days, animalTypeId, organizationId } = payload;
   return useQuery({
-    queryKey: ['animals-analytics', { ...payload }],
+    queryKey: ['sales-analytics', { ...payload }],
     queryFn: async () =>
       await makeApiCall({
-        action: 'getAnimalsAnalytics',
+        action: 'getSalesAnalytics',
         queryParams: {
           year,
           days,
@@ -182,7 +182,7 @@ export const GetOneSaleAnimalTypeAPI = (payload: { animalTypeId: string }) => {
   };
 };
 
-export const CreateOrUpdateOneSaleAPI = ({
+export const CreateSaleAPI = ({
   onSuccess,
   onError,
 }: {
@@ -193,18 +193,11 @@ export const CreateOrUpdateOneSaleAPI = ({
   const queryClient = useQueryClient();
   const result = useMutation({
     mutationKey: queryKey,
-    mutationFn: async (payload: SalesModel & { saleId: string }) => {
-      const { saleId } = payload;
-      return saleId
-        ? await makeApiCall({
-            action: 'updateOneSale',
-            body: payload,
-            urlParams: { saleId },
-          })
-        : await makeApiCall({
-            action: 'createOneSale',
-            body: { ...payload },
-          });
+    mutationFn: async (payload: SalesModel) => {
+      await makeApiCall({
+        action: 'createOneSale',
+        body: { ...payload },
+      });
     },
     onError: async (error) => {
       await queryClient.invalidateQueries({ queryKey });
@@ -229,7 +222,47 @@ export const CreateOrUpdateOneSaleAPI = ({
   return result;
 };
 
-export const CreateOrUpdateAvesSaleAPI = ({
+export const CreateAvesSaleAPI = ({
+  onSuccess,
+  onError,
+}: {
+  onSuccess?: () => void;
+  onError?: (error: any) => void;
+} = {}) => {
+  const queryKey = ['sales'];
+  const queryClient = useQueryClient();
+  const result = useMutation({
+    mutationKey: queryKey,
+    mutationFn: async (payload: SalesModel) => {
+      await makeApiCall({
+        action: 'createOneAvesSale',
+        body: { ...payload },
+      });
+    },
+    onError: async (error) => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onError) {
+        onError(error);
+      }
+    },
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+  });
+
+  return result;
+};
+
+export const UpdateSaleAPI = ({
   onSuccess,
   onError,
 }: {
@@ -242,16 +275,10 @@ export const CreateOrUpdateAvesSaleAPI = ({
     mutationKey: queryKey,
     mutationFn: async (payload: SalesModel & { saleId: string }) => {
       const { saleId } = payload;
-      return saleId
-        ? await makeApiCall({
-            action: 'updateOneAvesSale',
-            body: payload,
-            urlParams: { saleId },
-          })
-        : await makeApiCall({
-            action: 'createOneAvesSale',
-            body: { ...payload },
-          });
+      return await makeApiCall({
+        action: 'updateSale',
+        urlParams: { saleId },
+      });
     },
     onError: async (error) => {
       await queryClient.invalidateQueries({ queryKey });

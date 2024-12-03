@@ -168,9 +168,7 @@ const UpdateTask = ({
                       dataItem={taskFrequency.filter((i) => i?.lang === locale)}
                     />
                   </div>
-                ) : (
-                  ''
-                )}
+                ) : null}
                 {task?.type && watchType === 'SPECIFIC' ? (
                   <div className="w-full mb-2">
                     <Label>Période</Label>
@@ -182,9 +180,7 @@ const UpdateTask = ({
                       dataItem={taskPeriode.filter((i) => i?.lang === locale)}
                     />
                   </div>
-                ) : (
-                  ''
-                )}
+                ) : null}
                 <div className="w-full my-2">
                   <Label>{t.formatMessage({ id: 'ANIMALTYPE' })}</Label>
                   <Controller
@@ -294,9 +290,7 @@ const UpdateTask = ({
                       />
                     </div>
                   </div>
-                ) : (
-                  ''
-                )}
+                ) : null}
                 {task?.type && watchType === 'GENERIC' ? (
                   <div className="my-2">
                     <Label>{t.formatMessage({ id: 'ASSIGNE.TO' })}</Label>
@@ -343,9 +337,7 @@ const UpdateTask = ({
                       )}
                     />
                   </div>
-                ) : (
-                  ''
-                )}
+                ) : null}
                 <div className="mb-4">
                   <Label> {t.formatMessage({ id: 'TASKS.TITLE' })}</Label>
                   <TextInput

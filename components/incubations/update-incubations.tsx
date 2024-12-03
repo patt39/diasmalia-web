@@ -17,8 +17,8 @@ import { Label } from '../ui/label';
 const schema = yup.object({
   code: yup.string().optional(),
   quantityEnd: yup.number().optional(),
-  quantityStart: yup.number().required('quantity is required'),
-  dueDate: yup.date().required('dueDate is required field'),
+  quantityStart: yup.number().optional(),
+  dueDate: yup.date().optional(),
 });
 
 const UpdateIncubations = ({
@@ -51,10 +51,13 @@ const UpdateIncubations = ({
   const { isPending: loading, mutateAsync: saveMutation } =
     UpdateOneIncubationAPI();
 
-  const onSubmit: SubmitHandler<IncubationsModel> = async () => {
+  const onSubmit: SubmitHandler<IncubationsModel> = async (
+    payload: IncubationsModel,
+  ) => {
     setHasErrors(undefined);
     try {
       await saveMutation({
+        ...payload,
         incubationId: incubation?.id,
       });
       setHasErrors(false);

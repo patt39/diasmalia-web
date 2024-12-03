@@ -100,9 +100,7 @@ const ListTreatments = ({ item, index }: { item: any; index: number }) => {
                     {t.formatMessage({ id: 'TABANIMAL.DELETE' })}
                   </span>
                 </DropdownMenuItem>
-              ) : (
-                ''
-              )}
+              ) : null}
             </DropdownMenuContent>
             <ActionModalDialog
               loading={loading}
@@ -113,16 +111,20 @@ const ListTreatments = ({ item, index }: { item: any; index: number }) => {
           </DropdownMenu>
         </TableCell>
       </TableRow>
-      <UpdateTreatments
-        treatment={item}
-        showModal={isEdit}
-        setShowModal={setIsEdit}
-      />
-      <ViewTreatment
-        treatment={item}
-        showModal={isView}
-        setShowModal={setIsView}
-      />
+      {isEdit ? (
+        <UpdateTreatments
+          treatment={item}
+          showModal={isEdit}
+          setShowModal={setIsEdit}
+        />
+      ) : null}
+      {isView ? (
+        <ViewTreatment
+          treatment={item}
+          showModal={isView}
+          setShowModal={setIsView}
+        />
+      ) : null}
     </>
   );
 };

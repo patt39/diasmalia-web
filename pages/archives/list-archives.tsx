@@ -27,26 +27,21 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 const ListArchives = ({ item, index }: { item: any; index: number }) => {
-  const { t, isOpen, loading, setIsOpen, setLoading } = useInputState();
+  const { t, isOpen, setIsOpen } = useInputState();
   const [isView, setIsView] = useState(false);
 
-  const { mutateAsync: deleteMutation } = DeleteOneAnimalAPI({
-    onSuccess: () => {},
-    onError: (error?: any) => {},
-  });
+  const { isPending: loading, mutateAsync: deleteMutation } =
+    DeleteOneAnimalAPI();
 
   const deleteItem = async (item: any) => {
-    setLoading(true);
     setIsOpen(true);
     try {
       await deleteMutation({ animalId: item?.id });
       AlertSuccessNotification({
         text: 'Bande deleted successfully',
       });
-      setLoading(false);
       setIsOpen(false);
     } catch (error: any) {
-      setLoading(false);
       setIsOpen(true);
       AlertDangerNotification({
         text: `${error.response.data.message}`,
@@ -60,13 +55,13 @@ const ListArchives = ({ item, index }: { item: any; index: number }) => {
         key={index}
         className="relative overflow-hidden transition-allduration-200 bg-gray-200 rounded-xl hover:bg-gray-400"
       >
-        <div className="p-6 lg:px-10 lg:py-8">
+        <div className="p-6 lg:px-10 lg:py-6">
           <div className="ml-2 mb-6">
             <Badge variant="default">{item?.animalType?.name}</Badge>
           </div>
           <div className="flex justify-center space-x-6">
             <div>
-              <h2 className="text-sm font-medium text-gray-500 h-4">
+              <h2 className="text-sm font-medium text-gray-500">
                 {t.formatMessage({ id: 'TABANIMAL.WEIGHT' })}:{' '}
                 {formatWeight(item?.weight)}
               </h2>

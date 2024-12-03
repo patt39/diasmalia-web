@@ -53,7 +53,7 @@ export function UserTasks() {
         title={`${userStorage?.profile?.firstName} ${userStorage?.profile?.lastName} - Tasks`}
       >
         <CardHeader>
-          <div className="flex items-center">
+          <div className="flex items-center ml-2">
             <ButtonInput
               type="button"
               size="sm"
@@ -70,7 +70,7 @@ export function UserTasks() {
           </div>
         </CardHeader>
         <div className="flex min-h-screen w-full flex-col">
-          <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+          <main className="flex flex-1 flex-col md:gap-4 md:p-8">
             <Card
               x-chunk="dashboard-06-chunk-0"
               className="dark:border-gray-800"
@@ -94,6 +94,9 @@ export function UserTasks() {
                       </TableHead>
                       <TableHead className="md:table-cell">
                         {t.formatMessage({ id: 'ASSIGNE.TO' })}
+                      </TableHead>
+                      <TableHead className="md:table-cell">
+                        {t.formatMessage({ id: 'TABWEANING.STATUS' })}
                       </TableHead>
                       <TableHead>
                         <span>Actions</span>

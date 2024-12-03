@@ -1,6 +1,4 @@
-import { GetOneAnimalAPI } from '@/api-site/animals';
 import { CreateOneCheckAPI } from '@/api-site/breedings';
-import { GetLocationsAPI } from '@/api-site/locations';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
 import { SelectInput } from '@/components/ui-setting/shadcn';
@@ -12,26 +10,14 @@ import {
 } from '@/utils/alert-notification';
 import { Label } from '@radix-ui/react-label';
 import { XIcon } from 'lucide-react';
-import { useRouter } from 'next/router';
-import { Controller, SubmitHandler } from 'react-hook-form';
+import { SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
-import { DateInput, LoadingFile } from '../ui-setting/ant';
-import { ErrorFile } from '../ui-setting/ant/error-file';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '../ui/select';
+import { DateInput } from '../ui-setting/ant';
 
 const schema = yup.object({
   farrowingDate: yup.date().optional(),
   method: yup.string().required('method is required'),
   result: yup.string().required('result is required'),
-  locationCode: yup.string().required('Location code is required'),
 });
 
 const CheckPregnancy = ({
@@ -53,13 +39,7 @@ const CheckPregnancy = ({
     hasErrors,
     setHasErrors,
   } = useReactHookForm({ schema });
-  const { query } = useRouter();
-  const animalTypeId = String(query?.animalTypeId);
   const watchResult = watch('result');
-
-  const { data: getOneAnimal } = GetOneAnimalAPI({
-    animalId: breeding?.animalFemaleId,
-  });
 
   // Create data
   const { isPending: loading, mutateAsync: saveMutation } = CreateOneCheckAPI();
@@ -86,18 +66,6 @@ const CheckPregnancy = ({
       });
     }
   };
-
-  const {
-    isLoading: isLoadingLocations,
-    isError: isErrorLocations,
-    data: dataLocations,
-  } = GetLocationsAPI({
-    take: 10,
-    sort: 'desc',
-    sortBy: 'createdAt',
-    productionPhase: 'GESTATION',
-    animalTypeId: animalTypeId,
-  });
 
   return (
     <>
@@ -172,65 +140,8 @@ const CheckPregnancy = ({
                         name="farrowingDate"
                       />
                     </div>
-                    {getOneAnimal?.location?._count?.animals > 1 ? (
-                      <div className="mt-2">
-                        <Label>
-                          Sélectionner un emplacement
-                          <span className="text-red-600">*</span>
-                        </Label>
-                        <Controller
-                          control={control}
-                          name="locationCode"
-                          render={({ field: { value, onChange } }) => (
-                            <Select
-                              onValueChange={onChange}
-                              name={'locationCode'}
-                              value={value}
-                            >
-                              <SelectTrigger className="w-full">
-                                <SelectValue placeholder="select location code" />
-                              </SelectTrigger>
-                              <SelectContent className="dark:border-gray-800">
-                                <SelectGroup>
-                                  <SelectLabel>Location codes</SelectLabel>
-                                  {isLoadingLocations ? (
-                                    <LoadingFile />
-                                  ) : isErrorLocations ? (
-                                    <ErrorFile
-                                      title="404"
-                                      description="Error finding data please try again..."
-                                    />
-                                  ) : Number(
-                                      dataLocations?.pages[0]?.data?.total,
-                                    ) <= 0 ? (
-                                    <ErrorFile description="Don't have location codes" />
-                                  ) : (
-                                    dataLocations?.pages
-                                      .flatMap((page: any) => page?.data?.value)
-                                      .map((item, index) => (
-                                        <>
-                                          <SelectItem
-                                            key={index}
-                                            value={item?.code}
-                                          >
-                                            {item?.code}
-                                          </SelectItem>
-                                        </>
-                                      ))
-                                  )}
-                                </SelectGroup>
-                              </SelectContent>
-                            </Select>
-                          )}
-                        />
-                      </div>
-                    ) : (
-                      ''
-                    )}
                   </>
-                ) : (
-                  ''
-                )}
+                ) : null}
                 <div className="mt-4 flex items-center space-x-4">
                   <ButtonInput
                     type="button"

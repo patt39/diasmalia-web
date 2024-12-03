@@ -468,9 +468,7 @@ const CreateAvesAnimals = ({
                           )}
                         />
                       </>
-                    ) : (
-                      ''
-                    )}
+                    ) : null}
 
                     <div className="my-2 flex items-center space-x-10">
                       {!['Pondeuses', 'Pisciculture'].includes(
@@ -662,9 +660,7 @@ const CreateAvesAnimals = ({
                       name="birthday"
                     />
                   </div>
-                ) : (
-                  ''
-                )}
+                ) : null}
                 {watchProductionPhase === 'GROWTH' ? (
                   <div className="w-full">
                     <Label>
@@ -768,9 +764,7 @@ const CreateAvesAnimals = ({
                       )}
                     />
                   </div>
-                ) : (
-                  ''
-                )}
+                ) : null}
                 <div className="mt-4 flex items-center space-x-4">
                   <ButtonInput
                     type="button"

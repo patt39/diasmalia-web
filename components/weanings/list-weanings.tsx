@@ -110,9 +110,7 @@ const ListWeanings = ({ item, index }: { item: any; index: number }) => {
                     {t.formatMessage({ id: 'OFFSPRINGS.CARE' })}
                   </span>
                 </DropdownMenuItem>
-              ) : (
-                ''
-              )}
+              ) : null}
               {item?.animal?.location?._count?.animals !==
                 Number(item?.farrowing?.litter + 1) &&
               item?.animalType?.name !== 'Cuniculture' ? (
@@ -122,9 +120,7 @@ const ListWeanings = ({ item, index }: { item: any; index: number }) => {
                     {t.formatMessage({ id: 'OFFSPRING.IDENTIFICATION' })}
                   </span>
                 </DropdownMenuItem>
-              ) : (
-                ''
-              )}
+              ) : null}
               <DropdownMenuItem onClick={() => setIsOpen(true)}>
                 <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
                 <span className="ml-2 cursor-pointer hover:text-red-600">
@@ -133,37 +129,47 @@ const ListWeanings = ({ item, index }: { item: any; index: number }) => {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-          <ActionModalDialog
-            loading={loading}
-            isOpen={isOpen}
-            setIsOpen={setIsOpen}
-            onClick={() => deleteItem(item)}
-          />
+          {isOpen ? (
+            <ActionModalDialog
+              loading={loading}
+              isOpen={isOpen}
+              setIsOpen={setIsOpen}
+              onClick={() => deleteItem(item)}
+            />
+          ) : null}
         </TableCell>
       </TableRow>
-      <CreateOrUpdateWeanings
-        weaning={item}
-        showModal={isEdit}
-        setShowModal={setIsEdit}
-      />
-      <CreateBulkAnimals
-        farrowing={item}
-        animal={item?.animalTypeId}
-        showModal={isIdentification}
-        setShowModal={setIsIdentification}
-      />
-      <CreateTreatments
-        animal={item}
-        farrowing={item}
-        showModal={isTreatment}
-        setShowModal={setIsTreatment}
-      />
-      <BulkCreateTreatments
-        location={item}
-        farrowing={item}
-        showModal={isGrowthTreatment}
-        setShowModal={setIsGrowthTreatment}
-      />
+      {isEdit ? (
+        <CreateOrUpdateWeanings
+          weaning={item}
+          showModal={isEdit}
+          setShowModal={setIsEdit}
+        />
+      ) : null}
+      {isIdentification ? (
+        <CreateBulkAnimals
+          farrowing={item}
+          location={item?.animalTypeId}
+          showModal={isIdentification}
+          setShowModal={setIsIdentification}
+        />
+      ) : null}
+      {isTreatment ? (
+        <CreateTreatments
+          animal={item}
+          farrowing={item}
+          showModal={isTreatment}
+          setShowModal={setIsTreatment}
+        />
+      ) : null}
+      {isGrowthTreatment ? (
+        <BulkCreateTreatments
+          location={item}
+          farrowing={item}
+          showModal={isGrowthTreatment}
+          setShowModal={setIsGrowthTreatment}
+        />
+      ) : null}
     </>
   );
 };

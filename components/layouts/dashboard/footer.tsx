@@ -9,33 +9,26 @@ const DashboardFooter = () => {
             <ul className="flex flex-wrap gap-4 text-xs">
               <li>
                 <Link
-                  href="#"
+                  href="/terms_conditions"
                   className="text-gray-500 transition hover:opacity-75"
                 >
                   Terms & Conditions
                 </Link>
               </li>
-
               <li>
                 <Link
-                  href="#"
+                  href="/policy_privacy"
                   className="text-gray-500 transition hover:opacity-75"
                 >
                   Privacy Policy
                 </Link>
               </li>
-
-              <li>
-                <Link
-                  href="#"
-                  className="text-gray-500 transition hover:opacity-75"
-                ></Link>
-              </li>
             </ul>
-
             <p className="mt-8 text-xs text-gray-500 sm:mt-0">
               &copy; {new Date().getFullYear()}.{' '}
-              {process.env.NEXT_PUBLIC_NAME_SITE}. All rights reserved.
+              <Link href="/">
+                {process.env.NEXT_PUBLIC_NAME_SITE}. All rights reserved.
+              </Link>
             </p>
           </div>
         </div>

@@ -7,36 +7,31 @@ import {
   AlertDangerNotification,
   AlertSuccessNotification,
 } from '@/utils/alert-notification';
-import { FileQuestion, XIcon } from 'lucide-react';
+import { XIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
 import { SelectInput, TextInput } from '../ui-setting/shadcn';
 import { Label } from '../ui/label';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '../ui/tooltip';
 
 const schema = yup.object({
-  manger: yup.number().required(),
-  through: yup.number().required(),
-  productionPhase: yup.string().required(),
+  manger: yup.number().required('manger required'),
+  through: yup.number().required('through is required'),
   number: yup.number().required('number is required field'),
+  buildingCode: yup.string().required('building code is required'),
   squareMeter: yup.number().required('squareMeter is required field'),
 });
 
 const CreateBulkLocations = ({
   showModal,
   setShowModal,
+  building,
 }: {
   showModal: boolean;
   setShowModal: any;
-  location?: any;
+  building?: any;
 }) => {
-  const { t, locale, control, errors, handleSubmit, hasErrors, setHasErrors } =
+  const { t, control, errors, handleSubmit, hasErrors, setHasErrors, locale } =
     useReactHookForm({ schema });
   const { query } = useRouter();
   const animalTypeId = String(query?.animalTypeId);
@@ -98,43 +93,50 @@ const CreateBulkLocations = ({
                     </div>
                   </div>
                 )}
-
-                <div className="flex items-center">
-                  <TextInput
-                    control={control}
-                    type="text"
-                    name="number"
-                    placeholder="Give a number"
-                    errors={errors}
-                  />
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <FileQuestion />
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>
-                          {t.formatMessage({ id: 'BULK.LOCATIONS.TOOLTIP' })}
-                        </p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+                <div className="flex space-x-4">
+                  <div className="w-80">
+                    <Label>Batiment</Label>
+                    <TextInput
+                      control={control}
+                      type="text"
+                      name="buildingCode"
+                      defaultValue={`${building?.code}`}
+                      errors={errors}
+                      disabled
+                    />
+                  </div>
+                  <div className="w-80">
+                    <Label>
+                      Nombre
+                      <span className="text-red-600">*</span>
+                    </Label>
+                    <TextInput
+                      control={control}
+                      type="text"
+                      name="number"
+                      placeholder="number"
+                      errors={errors}
+                    />
+                  </div>
                 </div>
-                <div className="my-2">
-                  <Label>
-                    {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
-                  </Label>
-                  <SelectInput
-                    control={control}
-                    errors={errors}
-                    placeholder="select production phase"
-                    valueType="key"
-                    name="productionPhase"
-                    dataItem={productionPhases.filter(
-                      (i) => i?.lang === locale,
-                    )}
-                  />
-                </div>
+                {['POLYVALENT'].includes(building?.productionPhase) ? (
+                  <div>
+                    <Label>
+                      {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
+                      <span className="text-red-600">*</span>
+                    </Label>
+                    <SelectInput
+                      control={control}
+                      errors={errors}
+                      placeholder="select production phase"
+                      valueType="key"
+                      name="productionPhase"
+                      dataItem={productionPhases.filter(
+                        (i) => i?.lang === locale,
+                      )}
+                    />
+                  </div>
+                ) : null}
                 <div className="my-2 items-center space-x-1">
                   <div className="items-center flex space-x-9 my-2">
                     <div>

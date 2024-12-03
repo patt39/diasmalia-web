@@ -90,9 +90,7 @@ const TabAvesLocations = ({ animalTypeId }: { animalTypeId: string }) => {
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-            ) : (
-              ''
-            )}
+            ) : null}
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -122,9 +120,7 @@ const TabAvesLocations = ({ animalTypeId }: { animalTypeId: string }) => {
                   {t.formatMessage({ id: 'ANIMALTYPE.LOCATION.AVES.CREATE' })}
                 </span>
               </Button>
-            ) : (
-              ''
-            )}
+            ) : null}
           </div>
         </div>
       </CardHeader>
@@ -165,11 +161,13 @@ const TabAvesLocations = ({ animalTypeId }: { animalTypeId: string }) => {
           </div>
         </div>
       </section>
-      <CreateAvesLocations
-        location={animalTypeId}
-        showModal={isOpen}
-        setShowModal={setIsOpen}
-      />
+      {isOpen ? (
+        <CreateAvesLocations
+          location={animalTypeId}
+          showModal={isOpen}
+          setShowModal={setIsOpen}
+        />
+      ) : null}
     </>
   );
 };

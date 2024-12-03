@@ -76,6 +76,33 @@ export const productionPhases = [
   { id: 'GESTATION', name: 'GESTATION', lang: 'fr' },
 ];
 
+export const buildingProductionPhases = [
+  { id: 'GROWTH', name: 'POST WEANING', lang: 'en' },
+  { id: 'GROWTH', name: 'POST SEVRAGE', lang: 'fr' },
+  { id: 'FATTENING', name: 'FATTENING', lang: 'en' },
+  { id: 'FATTENING', name: 'ENGRAISSEMENT', lang: 'fr' },
+  { id: 'REPRODUCTION', name: 'REPRODUCTION', lang: 'en' },
+  { id: 'REPRODUCTION', name: 'REPRODUCTION', lang: 'fr' },
+  { id: 'GESTATION', name: 'MATERNITY', lang: 'en' },
+  { id: 'GESTATION', name: 'MATERNITÉ', lang: 'fr' },
+  { id: 'POLYVALENT', name: 'POLYVALENT', lang: 'en' },
+  { id: 'POLYVALENT', name: 'POLYVALENT', lang: 'fr' },
+];
+
+export const reproductionProductionPhases = [
+  { id: 'REPRODUCTION', name: 'REPRODUCTION', lang: 'en' },
+  { id: 'REPRODUCTION', name: 'REPRODUCTION', lang: 'fr' },
+  { id: 'GESTATION', name: 'GESTATION', lang: 'en' },
+  { id: 'GESTATION', name: 'GESTATION', lang: 'fr' },
+];
+
+export const growthProductionPhases = [
+  { id: 'REPRODUCTION', name: 'REPRODUCTION', lang: 'en' },
+  { id: 'REPRODUCTION', name: 'REPRODUCTION', lang: 'fr' },
+  { id: 'GROWTH', name: 'GROWTH', lang: 'en' },
+  { id: 'GROWTH', name: 'CROISSANCE', lang: 'fr' },
+];
+
 export const avesProductionPhases = [
   { id: 'GROWTH', name: 'GROWTH', lang: 'en' },
   { id: 'GROWTH', name: 'CROISSANCE', lang: 'fr' },
@@ -94,25 +121,11 @@ export const saleType = [
   { id: 'CHICKENS', name: 'POULETS', lang: 'fr' },
 ];
 
-export const healthType = [
-  { id: 'MEDICATION', name: 'MEDICATION', lang: 'en' },
-  { id: 'MEDICATION', name: 'MEDICAMENTS', lang: 'fr' },
-  { id: 'HYGIENE', name: 'HYGIENE PRODUCTS', lang: 'en' },
-  { id: 'HYGIENE', name: 'PRODUITS HYGIÈNE', lang: 'fr' },
-  { id: 'EQUIPMENT', name: 'MEDICAL EQUIPMENTS', lang: 'en' },
-  { id: 'EQUIPMENT', name: 'ÉQUIPEMENTS DE SOIN', lang: 'fr' },
-];
-
 export const saleTypeNoChicks = [
   { id: 'EGGS', name: 'EGGS', lang: 'en' },
   { id: 'EGGS', name: 'OEUFS', lang: 'fr' },
   { id: 'CHICKENS', name: 'CHICKENS', lang: 'en' },
   { id: 'CHICKENS', name: 'POULETS', lang: 'fr' },
-];
-
-export const offspringsProductionPhase = [
-  { id: 'GROWTH', name: 'GROWTH', lang: 'en' },
-  { id: 'GROWTH', name: 'CROISSANCE', lang: 'fr' },
 ];
 
 export const financeType = [
@@ -159,6 +172,20 @@ export const fishLocationType = [
   { id: 'YES', name: 'BAC', lang: 'fr' },
   { id: 'NO', name: 'POND', lang: 'en' },
   { id: 'NO', name: 'ÉTANG', lang: 'fr' },
+];
+
+export const specificTaskStatus = [
+  { id: 'TODO', name: 'Todo', lang: 'en' },
+  { id: 'TODO', name: 'A faire', lang: 'fr' },
+  { id: 'DONE', name: 'Done', lang: 'en' },
+  { id: 'DONE', name: 'Fait', lang: 'fr' },
+];
+
+export const genericTaskStatus = [
+  { id: 'TODO', name: 'Todo', lang: 'en' },
+  { id: 'TODO', name: 'A faire', lang: 'fr' },
+  { id: 'INPROGRESS', name: 'In progress', lang: 'en' },
+  { id: 'INPROGRESS', name: 'En cour', lang: 'fr' },
 ];
 
 export const taskFrequency = [

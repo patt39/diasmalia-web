@@ -14,6 +14,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import {
   AlertDangerNotification,
   AlertSuccessNotification,
   formatDateDifference,
@@ -22,7 +28,6 @@ import {
 import {
   Anvil,
   Calendar,
-  Eye,
   History,
   Hospital,
   MoreHorizontal,
@@ -34,7 +39,7 @@ import {
 import Link from 'next/link';
 import { useState } from 'react';
 const LocationList = ({ item, index }: { item: any; index: number }) => {
-  const { t, isOpen, setIsOpen } = useInputState();
+  const { t, isOpen, setIsOpen, userStorage } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
   const [isView, setIsView] = useState(false);
   const [isFarrowing, setIsFarrowing] = useState(false);
@@ -80,51 +85,65 @@ const LocationList = ({ item, index }: { item: any; index: number }) => {
               </Badge>
             )}
           </div>
-          <div className="flex items-center justify-center space-x-4">
-            <div>
-              <h2 className="text-sm flex items-center font-medium text-gray-500">
-                <Anvil className="h-3.5 w-3.5  hover:shadow-xxl" />
-                {t.formatMessage({ id: 'TABANIMAL.WEIGHT' })}:{' '}
-                {formatWeight(item?.weight)}
-              </h2>
-              <h2 className="mt-2 text-sm flex items-center font-medium text-gray-500 h-4">
-                <Calendar className="h-3.5 w-3.5  hover:shadow-xxl" />
-                Age: {formatDateDifference(item?.birthday)}
-              </h2>
-            </div>
-            <div className="flex-shrink-0 w-px h-20  bg-gray-200"></div>
-            <div>
-              <h3 className="text-sm font-bold text-gray-900 h-8 sm:text-base lg:text-lg">
-                {(item?.code).toUpperCase()}
-              </h3>
-              <p className="mb-1 text-sm font-medium text-gray-500">
-                {item?.productionPhase === 'GROWTH' ? (
-                  <p className="text-sm font-medium text-gray-500">
-                    {t.formatMessage({ id: 'PRODUCTIONPHASE.GROWTH' })}
-                  </p>
-                ) : item?.productionPhase === 'FATTENING' ? (
-                  <p className="text-sm font-medium text-gray-500">
-                    {t.formatMessage({ id: 'PRODUCTIONTYPE.FATTENING' })}
-                  </p>
-                ) : item?.productionPhase === 'GESTATION' ? (
-                  <p className="text-sm font-medium text-gray-500">
-                    {item?.productionPhase}
-                  </p>
-                ) : item?.productionPhase === 'REPRODUCTION' ? (
-                  <p className="text-sm font-medium text-gray-500">
-                    {item?.productionPhase}
-                  </p>
-                ) : (
-                  <p className="text-sm font-medium text-gray-500">
-                    {item?.productionPhase}
-                  </p>
-                )}
-              </p>
-              <p className="text-sm font-medium text-gray-500">
-                {item?.gender}
-              </p>
-            </div>
-          </div>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div
+                  className="flex items-center justify-center space-x-4 cursor-pointer"
+                  onClick={() => setIsView(true)}
+                >
+                  <div>
+                    <h2 className="text-sm flex items-center font-medium text-gray-500">
+                      <Anvil className="h-3.5 w-3.5  hover:shadow-xxl" />
+                      {t.formatMessage({ id: 'TABANIMAL.WEIGHT' })}:{' '}
+                      {formatWeight(item?.weight)}
+                    </h2>
+                    <h2 className="mt-2 text-sm flex items-center font-medium text-gray-500 h-4">
+                      <Calendar className="h-3.5 w-3.5  hover:shadow-xxl" />
+                      Age: {formatDateDifference(item?.birthday)}
+                    </h2>
+                  </div>
+                  <div className="flex-shrink-0 w-px h-20  bg-gray-200"></div>
+                  <div>
+                    <h3 className="text-sm font-bold text-gray-900 h-8 sm:text-base lg:text-lg">
+                      {(item?.code).toUpperCase()}
+                    </h3>
+                    <p className="mb-1 text-sm font-medium text-gray-500">
+                      {item?.productionPhase === 'GROWTH' ? (
+                        <p className="text-sm font-medium text-gray-500">
+                          {t.formatMessage({ id: 'PRODUCTIONPHASE.GROWTH' })}
+                        </p>
+                      ) : item?.productionPhase === 'FATTENING' ? (
+                        <p className="text-sm font-medium text-gray-500">
+                          {t.formatMessage({ id: 'PRODUCTIONTYPE.FATTENING' })}
+                        </p>
+                      ) : item?.productionPhase === 'GESTATION' ? (
+                        <p className="text-sm font-medium text-gray-500">
+                          {item?.productionPhase}
+                        </p>
+                      ) : item?.productionPhase === 'REPRODUCTION' ? (
+                        <p className="text-sm font-medium text-gray-500">
+                          {item?.productionPhase}
+                        </p>
+                      ) : (
+                        <p className="text-sm font-medium text-gray-500">
+                          {item?.productionPhase}
+                        </p>
+                      )}
+                    </p>
+                    <p className="text-sm font-medium text-gray-500">
+                      {item?.gender === 'FEMALE'
+                        ? t.formatMessage({ id: 'ANIMAL.GENDER' })
+                        : item?.gender}
+                    </p>
+                  </div>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{t.formatMessage({ id: 'CLICK.TOSEE' })}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
           <div className="grid grid-cols-1 mt-6 sm:mt-2 px-20 sm:grid-cols-2 xl:grid-cols-3 sm:gap-8 xl:gap-12">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -141,12 +160,6 @@ const LocationList = ({ item, index }: { item: any; index: number }) => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="dark:border-gray-800">
-                <DropdownMenuItem onClick={() => setIsView(true)}>
-                  <Eye className="size-4 text-gray-600 hover:text-indigo-600" />
-                  <span className="ml-2 cursor-pointer hover:text-indigo-600">
-                    {t.formatMessage({ id: 'TABANIMAL.VIEW' })}
-                  </span>
-                </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setIsEdit(true)}>
                   <PencilIcon className="size-4 text-gray-600 hover:text-cyan-600" />
                   <span className="ml-2 cursor-pointer hover:text-cyan-600">
@@ -172,9 +185,7 @@ const LocationList = ({ item, index }: { item: any; index: number }) => {
                       </span>
                     </DropdownMenuItem>
                   </Link>
-                ) : (
-                  ''
-                )}
+                ) : null}
                 {item?.status === 'SOLD' ? (
                   <Link href={`/animal/${item?.id}`}>
                     <DropdownMenuItem>
@@ -184,9 +195,7 @@ const LocationList = ({ item, index }: { item: any; index: number }) => {
                       </span>
                     </DropdownMenuItem>
                   </Link>
-                ) : (
-                  ''
-                )}
+                ) : null}
                 {item?.location?._count?.animals == 1 &&
                 ['GESTATION'].includes(item?.productionPhase) ? (
                   <DropdownMenuItem onClick={() => setIsFarrowing(true)}>
@@ -195,15 +204,16 @@ const LocationList = ({ item, index }: { item: any; index: number }) => {
                       {t.formatMessage({ id: 'TABWEANING.FARROWING' })}
                     </span>
                   </DropdownMenuItem>
-                ) : (
-                  ''
-                )}
-                <DropdownMenuItem onClick={() => setIsOpen(true)}>
-                  <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
-                  <span className="ml-2 cursor-pointer hover:text-red-600">
-                    {t.formatMessage({ id: 'TABANIMAL.DELETE' })}
-                  </span>
-                </DropdownMenuItem>
+                ) : null}
+                {userStorage?.role === 'SUPERADMIN' &&
+                item?.status !== 'ACTIVE' ? (
+                  <DropdownMenuItem onClick={() => setIsOpen(true)}>
+                    <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
+                    <span className="ml-2 cursor-pointer hover:text-red-600">
+                      {t.formatMessage({ id: 'TABANIMAL.DELETE' })}
+                    </span>
+                  </DropdownMenuItem>
+                ) : null}
               </DropdownMenuContent>
               <ActionModalDialog
                 loading={loading}
@@ -212,21 +222,27 @@ const LocationList = ({ item, index }: { item: any; index: number }) => {
                 onClick={() => deleteItem(item)}
               />
             </DropdownMenu>
-            <UpdateAnimals
-              animal={item}
-              showModal={isEdit}
-              setShowModal={setIsEdit}
-            />
-            <ViewAnimal
-              animal={item}
-              showModal={isView}
-              setShowModal={setIsView}
-            />
-            <CreateFarrowings
-              animal={item}
-              showModal={isFarrowing}
-              setShowModal={setIsFarrowing}
-            />
+            {isEdit ? (
+              <UpdateAnimals
+                animal={item}
+                showModal={isEdit}
+                setShowModal={setIsEdit}
+              />
+            ) : null}
+            {isView ? (
+              <ViewAnimal
+                animal={item}
+                showModal={isView}
+                setShowModal={setIsView}
+              />
+            ) : null}
+            {isFarrowing ? (
+              <CreateFarrowings
+                animal={item}
+                showModal={isFarrowing}
+                setShowModal={setIsFarrowing}
+              />
+            ) : null}
           </div>
         </div>
       </div>

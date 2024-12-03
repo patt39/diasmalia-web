@@ -114,9 +114,7 @@ const TabAvesSales = ({ animalTypeId }: { animalTypeId: string }) => {
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-            ) : (
-              ''
-            )}
+            ) : null}
             {!['Poulet de chair', 'Pisciculture'].includes(animalType?.name) ? (
               <TooltipProvider>
                 <Tooltip>
@@ -138,9 +136,7 @@ const TabAvesSales = ({ animalTypeId }: { animalTypeId: string }) => {
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-            ) : (
-              ''
-            )}
+            ) : null}
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -263,9 +259,7 @@ const TabAvesSales = ({ animalTypeId }: { animalTypeId: string }) => {
                 <TableHead>{t.formatMessage({ id: 'SALE.CONTACT' })}</TableHead>
                 {!['Pisciculture'].includes(animalType?.name) ? (
                   <TableHead>Details</TableHead>
-                ) : (
-                  ''
-                )}
+                ) : null}
                 <TableHead>
                   {t.formatMessage({ id: 'SALE.QUANTITY' })}
                 </TableHead>
@@ -303,11 +297,13 @@ const TabAvesSales = ({ animalTypeId }: { animalTypeId: string }) => {
           />
         </CardContent>
       </main>
-      <CreateAvesSales
-        sale={animalTypeId}
-        showModal={isOpen}
-        setShowModal={setIsOpen}
-      />
+      {isOpen ? (
+        <CreateAvesSales
+          sale={animalTypeId}
+          showModal={isOpen}
+          setShowModal={setIsOpen}
+        />
+      ) : null}
     </>
   );
 };

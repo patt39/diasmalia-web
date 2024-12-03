@@ -1,6 +1,6 @@
 import { GetOneAnimalTypeAPI } from '@/api-site/animal-type';
 import { CreateOneLocationAPI } from '@/api-site/locations';
-import { useReactHookForm } from '@/components/hooks';
+import { useInputState, useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
 import { avesProductionPhases, fishLocationType } from '@/i18n/default-exports';
 import { LocationModel } from '@/types/location';
@@ -8,8 +8,10 @@ import {
   AlertDangerNotification,
   AlertSuccessNotification,
 } from '@/utils/alert-notification';
+import { generateNumber } from '@/utils/generate-random';
 import { FileQuestion, XIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
+import { useState } from 'react';
 import { SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
 import { SelectInput, TextInput } from '../ui-setting/shadcn';
@@ -57,6 +59,13 @@ const CreateAvesLocations = ({
   const { data: animalType } = GetOneAnimalTypeAPI({
     animalTypeId: animalTypeId,
   });
+  const { userStorage } = useInputState();
+
+  const orgInitials = userStorage?.organization?.name
+    .substring(0, 1)
+    .toUpperCase();
+
+  const [codeGenerated, setGenerateCode] = useState<string>('');
 
   // Create data
   const { isPending: loading, mutateAsync: saveMutation } =
@@ -114,27 +123,54 @@ const CreateAvesLocations = ({
                     </div>
                   </div>
                 )}
-                <div className="flex items-center">
-                  <TextInput
-                    control={control}
-                    type="text"
-                    name="code"
-                    placeholder="code"
-                    errors={errors}
-                  />
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <FileQuestion />
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>
-                          {t.formatMessage({ id: 'CODE.LOCATION.TOOLTIP' })}
-                        </p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+                <Label>
+                  Code
+                  <span className="text-red-600">*</span>
+                </Label>
+                <div className="flex space-x-2 items-center">
+                  <div className="w-full">
+                    {codeGenerated ? (
+                      <TextInput
+                        control={control}
+                        type="text"
+                        name="code"
+                        defaultValue={codeGenerated}
+                        errors={errors}
+                      />
+                    ) : null}
+                    {!codeGenerated ? (
+                      <TextInput
+                        control={control}
+                        type="text"
+                        name="code"
+                        placeholder="code"
+                        errors={errors}
+                      />
+                    ) : null}
+                  </div>
+                  <div>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <h2
+                            className="cursor-pointer"
+                            onClick={() =>
+                              setGenerateCode(
+                                `${orgInitials}${generateNumber(3)}`,
+                              )
+                            }
+                          >
+                            <FileQuestion />
+                          </h2>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>Click to generate code</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
                 </div>
+
                 <div className="my-2">
                   <Label>
                     {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
@@ -181,9 +217,7 @@ const CreateAvesLocations = ({
                       )}
                     />
                   </div>
-                ) : (
-                  ''
-                )}
+                ) : null}
                 <div className="my-2 items-center">
                   {animalType?.name === 'Pisciculture' ? (
                     <>
@@ -256,9 +290,7 @@ const CreateAvesLocations = ({
                             errors={errors}
                           />
                         </div>
-                      ) : (
-                        ''
-                      )}
+                      ) : null}
                       {watchProductionPhase === 'LAYING' &&
                       animalType?.name !== 'Pisciculture' &&
                       watchCages === 'NO' ? (
@@ -289,9 +321,7 @@ const CreateAvesLocations = ({
                             errors={errors}
                           />
                         </div>
-                      ) : (
-                        ''
-                      )}
+                      ) : null}
                     </>
                   )}
                 </div>

@@ -12,6 +12,7 @@ import { TabAvesLocations } from '@/components/aves-locations/tab-aves-locations
 import { TabAvesSales } from '@/components/aves-sales/tab-aves-sales';
 import { TabAvesTreatments } from '@/components/aves-treatments/tab-aves-treatment';
 import { TabBreedings } from '@/components/breedings/tab-breedings';
+import { TabBuildings } from '@/components/buildings/tab-buildings';
 import { TabDeaths } from '@/components/deaths/tab-deaths';
 import { EggHarvestingsAnalytics } from '@/components/egg-harvestings/eggHarvestings-analytics';
 import { TabEggHarvestings } from '@/components/egg-harvestings/tab-egg-harvestings';
@@ -23,15 +24,12 @@ import { TabIncubations } from '@/components/incubations/tab-incubations';
 import { TabIncubationsAnalytics } from '@/components/incubations/tab-incubations-analytics';
 import { TabIsolations } from '@/components/isolations/tab-isolations';
 import { LayoutDashboard } from '@/components/layouts/dashboard';
-import { TabLocations } from '@/components/locations/tab-locations';
 import { MilkingsAnalytics } from '@/components/milkings/milkings-analytics';
 import { TabMilkings } from '@/components/milkings/tab-milkings';
-import { AnimalSalesAnalytics } from '@/components/sales-analytics/animals-sales-analytics';
 import { ChickenSalesAnalytics } from '@/components/sales-analytics/chickens-sales-analytics';
 import { ChickSalesAnalytics } from '@/components/sales-analytics/chicks-sales-analytics';
 import { EggSalesAnalytics } from '@/components/sales-analytics/eggs-sales-analytics';
 import { TabSalesAnalytics } from '@/components/sales-analytics/tab-sales-analytics';
-import { TabSales } from '@/components/sales/tab-sales';
 import { TabTreatments } from '@/components/treatments/tab-treatment';
 import {
   Card,
@@ -79,9 +77,7 @@ export function Index() {
                       <CardTitle>
                         {t.formatMessage({ id: 'DIASMALIA.WELCOME.PIGS' })}
                       </CardTitle>
-                    ) : (
-                      ''
-                    )}
+                    ) : null}
                     <CardDescription className="max-w-lg text-balance leading-relaxed">
                       {t.formatMessage({ id: 'ANIMALTYPE.DESCRIPTION' })}
                     </CardDescription>
@@ -100,9 +96,7 @@ export function Index() {
                       <CardTitle>
                         {t.formatMessage({ id: 'DIASMALIA.WELCOME.RABBITS' })}
                       </CardTitle>
-                    ) : (
-                      ''
-                    )}
+                    ) : null}
                     <CardDescription className="max-w-lg text-balance leading-relaxed">
                       {t.formatMessage({ id: 'ANIMALTYPE.DESCRIPTION' })}
                     </CardDescription>
@@ -121,9 +115,7 @@ export function Index() {
                       <CardTitle>
                         {t.formatMessage({ id: 'DIASMALIA.WELCOME.COW' })}
                       </CardTitle>
-                    ) : (
-                      ''
-                    )}
+                    ) : null}
                     <CardDescription className="max-w-lg text-balance leading-relaxed">
                       {t.formatMessage({ id: 'ANIMALTYPE.DESCRIPTION' })}
                     </CardDescription>
@@ -142,9 +134,7 @@ export function Index() {
                       <CardTitle>
                         {t.formatMessage({ id: 'DIASMALIA.WELCOME.GOAT' })}
                       </CardTitle>
-                    ) : (
-                      ''
-                    )}
+                    ) : null}
                     <CardDescription className="max-w-lg text-balance leading-relaxed">
                       {t.formatMessage({ id: 'ANIMALTYPE.DESCRIPTION' })}
                     </CardDescription>
@@ -163,9 +153,7 @@ export function Index() {
                       <CardTitle>
                         {t.formatMessage({ id: 'DIASMALIA.WELCOME.SHEEP' })}
                       </CardTitle>
-                    ) : (
-                      ''
-                    )}
+                    ) : null}
                     <CardDescription className="max-w-lg text-balance leading-relaxed">
                       {t.formatMessage({ id: 'ANIMALTYPE.DESCRIPTION' })}
                     </CardDescription>
@@ -184,9 +172,7 @@ export function Index() {
                       <CardTitle>
                         {t.formatMessage({ id: 'DIASMALIA.WELCOME.LAYERS' })}
                       </CardTitle>
-                    ) : (
-                      ''
-                    )}
+                    ) : null}
                     <CardDescription className="max-w-lg text-balance leading-relaxed">
                       {t.formatMessage({ id: 'ANIMALTYPE.LAYERS.DESCRIPTION' })}
                     </CardDescription>
@@ -205,9 +191,7 @@ export function Index() {
                       <CardTitle>
                         {t.formatMessage({ id: 'DIASMALIA.WELCOME.DUCKS' })}
                       </CardTitle>
-                    ) : (
-                      ''
-                    )}
+                    ) : null}
                     <CardDescription className="max-w-lg text-balance leading-relaxed">
                       {t.formatMessage({ id: 'ANIMALTYPE.LAYERS.DESCRIPTION' })}
                     </CardDescription>
@@ -226,9 +210,7 @@ export function Index() {
                       <CardTitle>
                         {t.formatMessage({ id: 'DIASMALIA.WELCOME.TURKEY' })}
                       </CardTitle>
-                    ) : (
-                      ''
-                    )}
+                    ) : null}
                     <CardDescription className="max-w-lg text-balance leading-relaxed">
                       {t.formatMessage({ id: 'ANIMALTYPE.LAYERS.DESCRIPTION' })}
                     </CardDescription>
@@ -319,9 +301,7 @@ export function Index() {
                       <CardTitle>
                         {t.formatMessage({ id: 'DIASMALIA.WELCOME.BROILERS' })}
                       </CardTitle>
-                    ) : (
-                      ''
-                    )}
+                    ) : null}
                     <CardDescription className="max-w-lg text-balance leading-relaxed">
                       {t.formatMessage({
                         id: 'ANIMALTYPE.BROILERS.DESCRIPTION',
@@ -342,9 +322,7 @@ export function Index() {
                       <CardTitle>
                         {t.formatMessage({ id: 'DIASMALIA.WELCOME.FISH' })}
                       </CardTitle>
-                    ) : (
-                      ''
-                    )}
+                    ) : null}
                     <CardDescription className="max-w-lg text-balance leading-relaxed">
                       {t.formatMessage({
                         id: 'ANIMALTYPE.FISH.DESCRIPTION',
@@ -354,12 +332,10 @@ export function Index() {
                 </Card>
                 <AvesStatistics />
               </div>
-            ) : (
-              ''
-            )}
+            ) : null}
             {animalType?.tab ? (
               <Tabs defaultValue={animalType?.tab}>
-                <div className="flex items-center">
+                <div className="flex items-center justify-center ">
                   {[
                     'Porciculture',
                     'Bovins',
@@ -368,21 +344,9 @@ export function Index() {
                     'Ovins',
                   ].includes(animalType?.name) ? (
                     <TabsList>
-                      {['Porciculture'].includes(animalType?.name) ? (
-                        <TabsTrigger value="locations">
-                          {t.formatMessage({ id: 'ANIMALTYPE.LOCATIONS.PIGS' })}
-                        </TabsTrigger>
-                      ) : ['Cuniculture'].includes(animalType?.name) ? (
-                        <TabsTrigger value="locations">
-                          {t.formatMessage({
-                            id: 'ANIMALTYPE.LOCATIONS.RABBITS',
-                          })}
-                        </TabsTrigger>
-                      ) : (
-                        <TabsTrigger value="locations">
-                          {t.formatMessage({ id: 'ANIMALTYPE.LOCATIONS' })}
-                        </TabsTrigger>
-                      )}
+                      <TabsTrigger value="locations">
+                        {t.formatMessage({ id: 'BUILDING' })}
+                      </TabsTrigger>
                       {['Porciculture'].includes(animalType?.name) ? (
                         <TabsTrigger value="animals">
                           {t.formatMessage({ id: 'ANIMALTYPE.ANIMALS.PIGS' })}
@@ -421,9 +385,7 @@ export function Index() {
                         <TabsTrigger value="fattenings">
                           {t.formatMessage({ id: 'ANIMALTYPE.FATTENING' })}
                         </TabsTrigger>
-                      ) : (
-                        ''
-                      )}
+                      ) : null}
                       <TabsTrigger value="breedings">
                         {t.formatMessage({ id: 'ANIMALTYPE.BREEDING' })}
                       </TabsTrigger>
@@ -440,9 +402,7 @@ export function Index() {
                         <TabsTrigger value="milkings">
                           {t.formatMessage({ id: 'ANIMALTYPE.MILKINGS' })}
                         </TabsTrigger>
-                      ) : (
-                        ''
-                      )}
+                      ) : null}
                       <TabsTrigger value="deaths">
                         {t.formatMessage({ id: 'ANIMALTYPE.DEATHS' })}
                       </TabsTrigger>
@@ -451,9 +411,6 @@ export function Index() {
                       </TabsTrigger>
                       <TabsTrigger value="treatments">
                         {t.formatMessage({ id: 'ANIMALTYPE.CARE' })}
-                      </TabsTrigger>
-                      <TabsTrigger value="sales">
-                        {t.formatMessage({ id: 'MENU.SALES' })}
                       </TabsTrigger>
                       <TabsTrigger value="analytics">Statistiques</TabsTrigger>
                     </TabsList>
@@ -478,9 +435,7 @@ export function Index() {
                       <TabsTrigger value="egg-harvestings">
                         {t.formatMessage({ id: 'ANIMALTYPE.EGGHAVESTING' })}
                       </TabsTrigger>
-                      {animalType?.name === 'Pondeuses' ? (
-                        ''
-                      ) : (
+                      {animalType?.name === 'Pondeuses' ? null : (
                         <TabsTrigger value="incubations">
                           {t.formatMessage({ id: 'ANIMALTYPE.INCUBATION' })}
                         </TabsTrigger>
@@ -497,13 +452,9 @@ export function Index() {
                       <TabsTrigger value="aves-sales">
                         {t.formatMessage({ id: 'MENU.SALES' })}
                       </TabsTrigger>
-                      {animalType?._count?.sales !== 0 ? (
-                        <TabsTrigger value="sales-analytics">
-                          {t.formatMessage({ id: 'SALES.ANALYTICS' })}
-                        </TabsTrigger>
-                      ) : (
-                        ''
-                      )}
+                      <TabsTrigger value="sales-analytics">
+                        {t.formatMessage({ id: 'SALES.ANALYTICS' })}
+                      </TabsTrigger>
                     </TabsList>
                   ) : (
                     <TabsList>
@@ -533,9 +484,7 @@ export function Index() {
                             {t.formatMessage({ id: 'ANIMALTYPE.INCUBATION' })}
                           </TabsTrigger>
                         </>
-                      ) : (
-                        ''
-                      )}
+                      ) : null}
                       <TabsTrigger value="aves-deaths">
                         {t.formatMessage({ id: 'ANIMALTYPE.DEATHS' })}
                       </TabsTrigger>
@@ -553,9 +502,7 @@ export function Index() {
                         <TabsTrigger value="sales-analytics">
                           {t.formatMessage({ id: 'SALES.ANALYTICS' })}
                         </TabsTrigger>
-                      ) : (
-                        ''
-                      )}
+                      ) : null}
                     </TabsList>
                   )}
                 </div>
@@ -564,7 +511,7 @@ export function Index() {
                     x-chunk="dashboard-06-chunk-0"
                     className="dark:border-gray-800"
                   >
-                    <TabLocations animalTypeId={animalTypeId} />
+                    <TabBuildings animalTypeId={animalTypeId} />
                   </Card>
                 </TabsContent>
                 <TabsContent value="aves-locations">
@@ -608,9 +555,7 @@ export function Index() {
                       <FeedingsAnalytics animalTypeId={animalTypeId} />
                     </Card>
                   </TabsContent>
-                ) : (
-                  ''
-                )}
+                ) : null}
                 <TabsContent value="aves-feedings">
                   <Card
                     x-chunk="dashboard-06-chunk-0"
@@ -628,9 +573,7 @@ export function Index() {
                       <FeedingsAnalytics animalTypeId={animalTypeId} />
                     </Card>
                   </TabsContent>
-                ) : (
-                  ''
-                )}
+                ) : null}
                 <TabsContent value="fattenings">
                   <Card
                     x-chunk="dashboard-06-chunk-0"
@@ -720,9 +663,7 @@ export function Index() {
                       <AvesDeathsAnalytics animalTypeId={animalTypeId} />
                     </Card>
                   </TabsContent>
-                ) : (
-                  ''
-                )}
+                ) : null}
                 <TabsContent value="egg-harvestings">
                   <Card
                     x-chunk="dashboard-06-chunk-0"
@@ -740,9 +681,7 @@ export function Index() {
                       <EggHarvestingsAnalytics animalTypeId={animalTypeId} />
                     </Card>
                   </TabsContent>
-                ) : (
-                  ''
-                )}
+                ) : null}
                 <TabsContent value="incubations">
                   <Card
                     x-chunk="dashboard-06-chunk-0"
@@ -760,9 +699,7 @@ export function Index() {
                       <TabIncubationsAnalytics animalTypeId={animalTypeId} />
                     </Card>
                   </TabsContent>
-                ) : (
-                  ''
-                )}
+                ) : null}
                 <TabsContent value="isolations">
                   <Card
                     x-chunk="dashboard-06-chunk-0"
@@ -801,22 +738,6 @@ export function Index() {
                     className="dark:border-gray-800"
                   >
                     <TabAvesSales animalTypeId={animalTypeId} />
-                  </Card>
-                </TabsContent>
-                <TabsContent value="sales">
-                  <Card
-                    x-chunk="dashboard-06-chunk-0"
-                    className="dark:border-gray-800"
-                  >
-                    <TabSales animalTypeId={animalTypeId} />
-                  </Card>
-                </TabsContent>
-                <TabsContent value="sales">
-                  <Card
-                    x-chunk="dashboard-06-chunk-0"
-                    className="dark:border-gray-800"
-                  >
-                    <AnimalSalesAnalytics animalTypeId={animalTypeId} />
                   </Card>
                 </TabsContent>
                 <TabsContent value="analytics">
@@ -868,9 +789,7 @@ export function Index() {
                       <ChickSalesAnalytics animalTypeId={animalTypeId} />
                     </Card>
                   </TabsContent>
-                ) : (
-                  ''
-                )}
+                ) : null}
                 <TabsContent value="sales-analytics">
                   <Card
                     x-chunk="dashboard-06-chunk-0"

@@ -25,7 +25,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { TooltipProvider } from '@radix-ui/react-tooltip';
-import { ListFilter, Replace, ReplaceAll } from 'lucide-react';
+import { ListFilter } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { CreateAnimals } from './create-animal';
@@ -253,42 +253,7 @@ const TabAnimals = ({ animalTypeId }: { animalTypeId: string }) => {
                   </DropdownMenuSub>
                 </DropdownMenuContent>
               </DropdownMenu>
-            ) : (
-              ''
-            )}
-            {userStorage?.role === 'SUPERADMIN' ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="h-8 gap-1">
-                    <ListFilter className="h-3.5 w-3.5" />
-                    <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                      {t.formatMessage({ id: 'CREATION.TYPE' })}
-                    </span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  align="end"
-                  className="dark:border-gray-800"
-                >
-                  <DropdownMenuCheckboxItem
-                    className="cursor-pointer"
-                    onClick={() => setIsOpen(true)}
-                  >
-                    <Replace className="h-4 w-4  hover:shadow-xxl mr-1" />
-                    {t.formatMessage({ id: 'ADD.AN.ANIMAL' })}
-                  </DropdownMenuCheckboxItem>
-                  <DropdownMenuCheckboxItem
-                    className="cursor-pointer"
-                    onClick={() => setIsBulkOpen(true)}
-                  >
-                    <ReplaceAll className="h-4 w-4  hover:shadow-xxl mr-1" />
-                    {t.formatMessage({ id: 'ADD.MANY.ANIMALS' })}
-                  </DropdownMenuCheckboxItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              ''
-            )}
+            ) : null}
           </div>
         </div>
       </CardHeader>
@@ -325,16 +290,20 @@ const TabAnimals = ({ animalTypeId }: { animalTypeId: string }) => {
           </div>
         </div>
       </section>
-      <CreateAnimals
-        animal={animalTypeId}
-        showModal={isOpen}
-        setShowModal={setIsOpen}
-      />
-      <CreateBulkAnimals
-        animal={animalTypeId}
-        showModal={isBulkOpen}
-        setShowModal={setIsBulkOpen}
-      />
+      {isOpen ? (
+        <CreateAnimals
+          animal={animalTypeId}
+          showModal={isOpen}
+          setShowModal={setIsOpen}
+        />
+      ) : null}
+      {isBulkOpen ? (
+        <CreateBulkAnimals
+          location={animalTypeId}
+          showModal={isBulkOpen}
+          setShowModal={setIsBulkOpen}
+        />
+      ) : null}
     </>
   );
 };

@@ -23,7 +23,6 @@ const ListAnimalType = ({ item, index }: { item: any; index: number }) => {
   const deleteItem = async (item: any) => {
     setIsOpen(true);
     try {
-      console.log(item);
       await deleteMutation({ assignTypeId: item.id });
       AlertSuccessNotification({
         text: 'Animal type deleted successfully',
@@ -52,10 +51,6 @@ const ListAnimalType = ({ item, index }: { item: any; index: number }) => {
               src={`${item?.animalType?.photo ?? ''}`}
               alt="https://cdn.rareblocks.xyz/collection/celebration/images/blog/2/blog-post-2.jpg"
             />
-
-            {/* <p className="mt-4 text-base text-gray-600">
-              {item?.animalType?.description}
-            </p> */}
           </div>
           <div className="text-lg font-semibold text-black text-center">
             {item?.animalType?.name}

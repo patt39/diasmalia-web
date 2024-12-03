@@ -50,6 +50,30 @@ export const GetOneMaleBreedingAPI = (payload: { animalMaleId: string }) => {
   };
 };
 
+export const GetOneFemaleBreedingAPI = (payload: {
+  animalFemaleId: string;
+}) => {
+  const { animalFemaleId } = payload;
+  const { data, isError, isLoading, status, isPending, refetch } = useQuery({
+    queryKey: ['breeding', animalFemaleId],
+    queryFn: async () =>
+      await makeApiCall({
+        action: 'getOneFemaleBreeding',
+        urlParams: { animalFemaleId },
+      }),
+    refetchOnWindowFocus: false,
+  });
+
+  return {
+    data: data?.data as any,
+    isError,
+    isLoading,
+    status,
+    isPending,
+    refetch,
+  };
+};
+
 export const CreateOrUpdateOneBreedingAPI = ({
   onSuccess,
   onError,

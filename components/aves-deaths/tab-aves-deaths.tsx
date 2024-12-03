@@ -141,16 +141,13 @@ const TabAvesDeaths = ({ animalTypeId }: { animalTypeId: string }) => {
           <Table>
             <TableHeader>
               <TableRow className="dark:border-gray-800">
-                <TableHead>Code</TableHead>
+                <TableHead>Bande</TableHead>
                 <TableHead>
                   {t.formatMessage({ id: 'AVESDEATH.NUMBER' })}
                 </TableHead>
                 <TableHead>Cause</TableHead>
                 <TableHead>
                   {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
-                </TableHead>
-                <TableHead>
-                  {t.formatMessage({ id: 'VIEW.LOCATION' })}
                 </TableHead>
                 <TableHead>Date</TableHead>
                 <TableHead>
@@ -185,11 +182,13 @@ const TabAvesDeaths = ({ animalTypeId }: { animalTypeId: string }) => {
           />
         </CardContent>
       </main>
-      <CreateOrUpdateAvesDeaths
-        death={animalTypeId}
-        showModal={isOpen}
-        setShowModal={setIsOpen}
-      />
+      {isOpen ? (
+        <CreateOrUpdateAvesDeaths
+          death={animalTypeId}
+          showModal={isOpen}
+          setShowModal={setIsOpen}
+        />
+      ) : null}
     </>
   );
 };

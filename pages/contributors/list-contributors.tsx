@@ -176,9 +176,7 @@ const ListContributors = ({ item, index }: { item: any; index: number }) => {
                     </span>
                   </DropdownMenuItem>
                 </>
-              ) : (
-                ''
-              )}
+              ) : null}
               {userStorage?.role === 'SUPERADMIN' ? (
                 <>
                   {userStorage?.userCreatedId !== item?.user?.id ? (
@@ -196,33 +194,35 @@ const ListContributors = ({ item, index }: { item: any; index: number }) => {
                         </span>
                       </DropdownMenuItem>
                     </>
-                  ) : (
-                    ''
-                  )}
+                  ) : null}
                 </>
-              ) : (
-                ''
-              )}
+              ) : null}
             </DropdownMenuContent>
           </DropdownMenu>
         </TableCell>
       </TableRow>
-      <ActionModalDialog
-        loading={loading}
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        onClick={() => deleteItem(item)}
-      />
-      <ViewContributor
-        contributor={item}
-        showModal={isView}
-        setShowModal={setIsView}
-      />
-      <UpdateContributorStatus
-        contributor={item}
-        showModal={isEdit}
-        setShowModal={isSetEdit}
-      />
+      {isOpen ? (
+        <ActionModalDialog
+          loading={loading}
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          onClick={() => deleteItem(item)}
+        />
+      ) : null}
+      {isView ? (
+        <ViewContributor
+          contributor={item}
+          showModal={isView}
+          setShowModal={setIsView}
+        />
+      ) : null}
+      {isEdit ? (
+        <UpdateContributorStatus
+          contributor={item}
+          showModal={isEdit}
+          setShowModal={isSetEdit}
+        />
+      ) : null}
     </>
   );
 };

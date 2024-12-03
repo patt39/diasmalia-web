@@ -102,22 +102,28 @@ const ListIsolations = ({ item, index }: { item: any; index: number }) => {
           </DropdownMenu>
         </TableCell>
       </TableRow>
-      <ActionModalDialog
-        loading={loading}
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        onClick={() => deleteItem(item)}
-      />
-      <CreateOrUpdateIsolations
-        isolation={item}
-        showModal={isEdit}
-        setShowModal={setIsEdit}
-      />
-      <ViewIsolation
-        isolation={item}
-        showModal={isView}
-        setShowModal={setIsView}
-      />
+      {isOpen ? (
+        <ActionModalDialog
+          loading={loading}
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          onClick={() => deleteItem(item)}
+        />
+      ) : null}
+      {isEdit ? (
+        <CreateOrUpdateIsolations
+          isolation={item}
+          showModal={isEdit}
+          setShowModal={setIsEdit}
+        />
+      ) : null}
+      {isView ? (
+        <ViewIsolation
+          isolation={item}
+          showModal={isView}
+          setShowModal={setIsView}
+        />
+      ) : null}
     </>
   );
 };

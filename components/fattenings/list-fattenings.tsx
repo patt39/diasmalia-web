@@ -77,20 +77,24 @@ const ListFattenings = ({ item, index }: { item: any; index: number }) => {
                 </span>
               </DropdownMenuItem>
             </DropdownMenuContent>
-            <ActionModalDialog
-              loading={loading}
-              isOpen={isOpen}
-              setIsOpen={setIsOpen}
-              onClick={() => deleteItem(item)}
-            />
+            {isOpen ? (
+              <ActionModalDialog
+                loading={loading}
+                isOpen={isOpen}
+                setIsOpen={setIsOpen}
+                onClick={() => deleteItem(item)}
+              />
+            ) : null}
           </DropdownMenu>
         </TableCell>
       </TableRow>
-      <CreateOrUpdateFattenings
-        fattening={item}
-        showModal={isEdit}
-        setShowModal={setIsEdit}
-      />
+      {isEdit ? (
+        <CreateOrUpdateFattenings
+          fattening={item}
+          showModal={isEdit}
+          setShowModal={setIsEdit}
+        />
+      ) : null}
     </>
   );
 };

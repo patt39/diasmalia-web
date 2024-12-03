@@ -2,6 +2,8 @@ export type DeathsModel = {
   createdAt: Date;
   id: string;
   note: string;
+  male: number;
+  female: number;
   number: number;
   animalId: string;
   animal: {

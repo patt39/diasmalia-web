@@ -90,25 +90,31 @@ const ListAvesTreatments = ({ item, index }: { item: any; index: number }) => {
                 </span>
               </DropdownMenuItem>
             </DropdownMenuContent>
-            <ActionModalDialog
-              loading={loading}
-              isOpen={isOpen}
-              setIsOpen={setIsOpen}
-              onClick={() => deleteItem(item)}
-            />
+            {isOpen ? (
+              <ActionModalDialog
+                loading={loading}
+                isOpen={isOpen}
+                setIsOpen={setIsOpen}
+                onClick={() => deleteItem(item)}
+              />
+            ) : null}
           </DropdownMenu>
         </TableCell>
       </TableRow>
-      <UpdateAvestreatments
-        treatment={item}
-        showModal={isEdit}
-        setShowModal={setIsEdit}
-      />
-      <ViewAvesTreatment
-        treatment={item}
-        showModal={isView}
-        setShowModal={setIsView}
-      />
+      {isEdit ? (
+        <UpdateAvestreatments
+          treatment={item}
+          showModal={isEdit}
+          setShowModal={setIsEdit}
+        />
+      ) : null}
+      {isView ? (
+        <ViewAvesTreatment
+          treatment={item}
+          showModal={isView}
+          setShowModal={setIsView}
+        />
+      ) : null}
     </>
   );
 };

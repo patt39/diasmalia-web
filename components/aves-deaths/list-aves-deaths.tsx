@@ -14,17 +14,16 @@ import {
   AlertSuccessNotification,
   formatDateDDMMYY,
 } from '@/utils';
-import { Eye, MoreHorizontal, PencilIcon, TrashIcon } from 'lucide-react';
+import { MoreHorizontal, PencilIcon, TrashIcon } from 'lucide-react';
 import { useState } from 'react';
 import { ActionModalDialog } from '../ui-setting/shadcn';
 import { TableCell, TableRow } from '../ui/table';
 import { CreateOrUpdateAvesDeaths } from './create-or-update-aves-deaths';
-import { ViewAvesDeath } from './view-death';
 
 const ListAvesDeaths = ({ item, index }: { item: any; index: number }) => {
   const [isEdit, setIsEdit] = useState(false);
   const [isView, setIsView] = useState(false);
-  const { t, isOpen, setIsOpen } = useInputState();
+  const { t, isOpen, setIsOpen, userStorage } = useInputState();
 
   const { isPending: loading, mutateAsync: deleteMutation } =
     DeleteOneDeathAPI();
@@ -66,7 +65,6 @@ const ListAvesDeaths = ({ item, index }: { item: any; index: number }) => {
             </p>
           )}
         </TableCell>
-        <TableCell>{item?.animal?.location?.code.toUpperCase()}</TableCell>
         <TableCell>{formatDateDDMMYY(item?.createdAt as Date)}</TableCell>
         <TableCell>
           <DropdownMenu>
@@ -80,45 +78,40 @@ const ListAvesDeaths = ({ item, index }: { item: any; index: number }) => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="dark:border-gray-800">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => setIsView(true)}>
-                <Eye className="size-4 text-gray-600 hover:text-indigo-600" />
-                <span className="ml-2 cursor-pointer hover:text-indigo-600">
-                  {t.formatMessage({ id: 'TABANIMAL.VIEW' })}
-                </span>
-              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setIsEdit(true)}>
                 <PencilIcon className="size-4 text-gray-600 hover:text-indigo-600" />
                 <span className="ml-2 cursor-pointer hover:text-indigo-600">
                   {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
                 </span>
               </DropdownMenuItem>
-              {item?.animal?.quantity === 0 ||
-              item?.animal?.deletedAt !== null ? (
+              {item?.animal?.quantity === 0 &&
+              userStorage?.role === 'SUPERADMIN' ? (
                 <DropdownMenuItem onClick={() => setIsOpen(true)}>
                   <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
                   <span className="ml-2 cursor-pointer hover:text-red-600">
                     {t.formatMessage({ id: 'TABANIMAL.DELETE' })}
                   </span>
                 </DropdownMenuItem>
-              ) : (
-                ''
-              )}
+              ) : null}
             </DropdownMenuContent>
           </DropdownMenu>
         </TableCell>
       </TableRow>
-      <ActionModalDialog
-        loading={loading}
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        onClick={() => deleteItem(item)}
-      />
-      <CreateOrUpdateAvesDeaths
-        death={item}
-        showModal={isEdit}
-        setShowModal={setIsEdit}
-      />
-      <ViewAvesDeath death={item} showModal={isView} setShowModal={setIsView} />
+      {isOpen ? (
+        <ActionModalDialog
+          loading={loading}
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          onClick={() => deleteItem(item)}
+        />
+      ) : null}
+      {isEdit ? (
+        <CreateOrUpdateAvesDeaths
+          death={item}
+          showModal={isEdit}
+          setShowModal={setIsEdit}
+        />
+      ) : null}
     </>
   );
 };

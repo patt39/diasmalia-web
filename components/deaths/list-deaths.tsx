@@ -114,12 +114,16 @@ const ListDeaths = ({ item, index }: { item: any; index: number }) => {
           </DropdownMenu>
         </TableCell>
       </TableRow>
-      <CreateOrUpdateDeaths
-        death={item}
-        showModal={isEdit}
-        setShowModal={setIsEdit}
-      />
-      <ViewDeath death={item} showModal={isView} setShowModal={setIsView} />
+      {isEdit ? (
+        <CreateOrUpdateDeaths
+          death={item}
+          showModal={isEdit}
+          setShowModal={setIsEdit}
+        />
+      ) : null}
+      {isView ? (
+        <ViewDeath death={item} showModal={isView} setShowModal={setIsView} />
+      ) : null}
     </>
   );
 };

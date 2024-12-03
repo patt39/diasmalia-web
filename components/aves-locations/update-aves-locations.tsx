@@ -166,9 +166,7 @@ const UpdateAvesLocations = ({
                       ]}
                     />
                   </div>
-                ) : (
-                  ''
-                )}
+                ) : null}
                 <div className="my-2 items-center space-x-1">
                   {animalType?.name !== 'Pisciculture' ? (
                     <div className="items-center flex space-x-9 my-2">

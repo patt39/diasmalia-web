@@ -11,6 +11,7 @@ import { LoadingFile } from '@/components/ui-setting/ant';
 import { ErrorFile } from '@/components/ui-setting/ant/error-file';
 import { CardHeader } from '@/components/ui/card';
 
+import { CreateBulkAnimals } from '@/components/animals/create-bulk-animal';
 import { Button } from '@/components/ui/button';
 import {
   Tooltip,
@@ -21,13 +22,14 @@ import {
 import { PrivateComponent } from '@/components/util/private-component';
 import { MoveLeftIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { LocationList } from './location-list';
 
 export function ViewLocation() {
   const { t, search, handleSetSearch, userStorage } = useInputState();
   const { ref, inView } = useInView();
+  const [isBulkOpen, setIsBulkOpen] = useState<boolean>(false);
 
   const { query, back } = useRouter();
   const locationId = String(query?.locationId);
@@ -93,7 +95,14 @@ export function ViewLocation() {
                 {t.formatMessage({ id: 'UTIL.COME_BACK' })}
               </span>
             </ButtonInput>
-            <h4 className="text-xl text-zinc-950 ml-96 font-bold items-center">
+            <h4 className="text-xl text-zinc-950 font-bold text-center ml-auto">
+              {getOneLocation?.animalType?.name === 'Porciculture'
+                ? t.formatMessage({ id: 'LOGE' })
+                : getOneLocation?.animalType?.name === 'Cuniculture'
+                  ? t.formatMessage({ id: 'HUTCHE' })
+                  : getOneLocation?.animalType?.name === 'Bovins'
+                    ? t.formatMessage({ id: 'STABLE' })
+                    : t.formatMessage({ id: 'PEN' })}{' '}
               {getOneLocation?.code.toUpperCase()}
             </h4>
             <div className="ml-auto flex items-center gap-2">
@@ -172,6 +181,13 @@ export function ViewLocation() {
           </div>
         </section>
       </LayoutDashboard>
+      {isBulkOpen ? (
+        <CreateBulkAnimals
+          location={getOneLocation}
+          showModal={isBulkOpen}
+          setShowModal={setIsBulkOpen}
+        />
+      ) : null}
     </>
   );
 }

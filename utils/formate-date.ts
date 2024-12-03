@@ -33,6 +33,10 @@ export const formateFromNow = (date: Date, locale: string) => {
 export const getMonthNow = (date: Date) => {
   return dayjs(date).format('MM') as unknown as Date;
 };
+
+export const getDayOfMonth = (date: Date) => {
+  return dayjs(date).date();
+};
 export const formatDDMMYYDate = (date: Date) =>
   DateTime.fromISO(String(date)).toFormat('dd/MM/yyyy h:mm');
 

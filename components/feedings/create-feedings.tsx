@@ -1,8 +1,13 @@
 import { GetAnimalsAPI } from '@/api-site/animals';
+import { GetOneBuildingAPI } from '@/api-site/buildings';
 import { GetFeedStockAPI } from '@/api-site/feed-stock';
 import { CreateOneFeedingAPI } from '@/api-site/feedings';
 import { useInputState, useReactHookForm } from '@/components/hooks';
-import { ButtonInput, ButtonLoadMore } from '@/components/ui-setting';
+import {
+  ButtonInput,
+  ButtonLoadMore,
+  SearchInput,
+} from '@/components/ui-setting';
 import { LoadingFile } from '@/components/ui-setting/ant';
 import { ErrorFile } from '@/components/ui-setting/ant/error-file';
 import {
@@ -19,6 +24,7 @@ import {
   AlertSuccessNotification,
 } from '@/utils/alert-notification';
 import { XIcon } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { Controller, SubmitHandler } from 'react-hook-form';
@@ -48,7 +54,6 @@ const CreateFeedings = ({
 }: {
   showModal: boolean;
   setShowModal: any;
-  feeding?: any;
   location?: any;
 }) => {
   const { t, watch, control, errors, handleSubmit, hasErrors, setHasErrors } =
@@ -56,9 +61,13 @@ const CreateFeedings = ({
   const { query } = useRouter();
   const { ref, inView } = useInView();
   const { userStorage } = useInputState();
-  const animalTypeId = String(query?.animalTypeId);
+  const { search, handleSetSearch } = useInputState();
   const selectedAnimals = watch('animals', []);
   const countSelectedAnimals = selectedAnimals?.length;
+  const buildingId = String(query?.buildingId);
+  const { data: getOneBuilding } = GetOneBuildingAPI({
+    buildingId: buildingId,
+  });
 
   // Create
   const { isPending: loading, mutateAsync: saveMutation } =
@@ -94,12 +103,13 @@ const CreateFeedings = ({
     hasNextPage,
     fetchNextPage,
   } = GetAnimalsAPI({
+    search,
     take: 10,
     sort: 'desc',
     status: 'ACTIVE',
     sortBy: 'createdAt',
     locationId: location?.id,
-    animalTypeId: animalTypeId,
+    animalTypeId: getOneBuilding?.animalTypeId,
     organizationId: userStorage?.organizationId,
   });
 
@@ -111,7 +121,8 @@ const CreateFeedings = ({
     take: 10,
     sort: 'desc',
     sortBy: 'createdAt',
-    animalTypeId: animalTypeId,
+    animalTypeId: getOneBuilding?.animalTypeId,
+    organizationId: userStorage?.organizationId,
   });
 
   useEffect(() => {
@@ -197,6 +208,12 @@ const CreateFeedings = ({
                       <SelectValue placeholder="select animals" />
                     </SelectTrigger>
                     <SelectContent className="dark:border-gray-800">
+                      <div className="mr-auto items-center gap-2">
+                        <SearchInput
+                          placeholder="Search by code"
+                          onChange={handleSetSearch}
+                        />
+                      </div>
                       <SelectGroup>
                         {isLoadingAnimals ? (
                           <LoadingFile />
@@ -303,6 +320,11 @@ const CreateFeedings = ({
                                   </>
                                 ))
                             )}
+                            <Button variant="link">
+                              <Link href="/feed-stock">
+                                {t.formatMessage({ id: 'ADD.FEED' })}
+                              </Link>
+                            </Button>
                           </SelectGroup>
                         </SelectContent>
                       </Select>

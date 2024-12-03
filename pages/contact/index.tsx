@@ -9,6 +9,8 @@ import { PrivateComponent } from '@/components/util/private-component';
 import { ContactsModel } from '@/types/contact';
 import { AlertDangerNotification, AlertSuccessNotification } from '@/utils';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { MoveLeftIcon } from 'lucide-react';
+import { useRouter } from 'next/router';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import * as yup from 'yup';
 
@@ -33,7 +35,7 @@ export function Contact() {
   });
 
   const { t } = useInputState();
-
+  const { back } = useRouter();
   const { isPending: loading, mutateAsync: saveMutation } = SendContactAPI();
 
   const onSubmit: SubmitHandler<ContactsModel> = async (
@@ -60,8 +62,23 @@ export function Contact() {
   return (
     <>
       <LayoutDashboard title={'Contact-us'}>
+        <div className="mt-8 ml-8">
+          <ButtonInput
+            type="button"
+            size="sm"
+            variant="outline"
+            onClick={() => {
+              back();
+            }}
+            icon={<MoveLeftIcon className="size-4" />}
+          >
+            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+              {t.formatMessage({ id: 'UTIL.COME_BACK' })}
+            </span>
+          </ButtonInput>
+        </div>
         <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-          <section className="py-10 sm:py-16 lg:py-24">
+          <section className="sm:py-3 lg:py-10">
             <div className="px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl">
               <div className="max-w-2xl mx-auto text-center">
                 <h2 className="font-bold tracking-tight text-center sm:text-4xl lg:text-4xl">
@@ -175,7 +192,7 @@ export function Contact() {
                             control={control}
                             label="Message"
                             name="description"
-                            placeholder="We are listening ..."
+                            placeholder="We are listening..."
                             errors={errors}
                           />
                         </div>

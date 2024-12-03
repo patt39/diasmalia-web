@@ -20,7 +20,6 @@ import {
   Anvil,
   Backpack,
   Calendar,
-  ListChecks,
   MoreHorizontal,
   PencilIcon,
   TrashIcon,
@@ -31,7 +30,7 @@ import { CreateOrUpdateFeedComposition } from './create-or-update-feed-compositi
 import { CreateOrUpdateFeedStock } from './create-or-update-feed-stock';
 
 const ListFeedStock = ({ item, index }: { item: any; index: number }) => {
-  const { t, isOpen, setIsOpen } = useInputState();
+  const { t, isOpen, setIsOpen, userStorage } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
   const [isComposition, setIsComposition] = useState(false);
 
@@ -144,34 +143,40 @@ const ListFeedStock = ({ item, index }: { item: any; index: number }) => {
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
-              ) : (
-                ''
-              )}
+              ) : null}
             </div>
           </div>
-          <div className="flex items-center justify-center space-x-6 mt-2 cursor-pointer">
-            <div onClick={() => setIsComposition(true)}>
-              {item?.number !== 0 ? (
-                <h2 className="mb-2 items-center flex text-base font-bold text-gray-500 h-4">
-                  <Backpack className="h-3.5 w-3.5 hover:shadow-xxl" />{' '}
-                  {t.formatMessage({ id: 'BAGS' })}: {item?.number}
-                </h2>
-              ) : (
-                ''
-              )}
-              <h2 className="mb-2 flex items-center text-base font-bold text-gray-500 h-4 space-x-2">
-                <Anvil className="h-3.5 w-3.5  hover:shadow-xxl" />
-                {t.formatMessage({ id: 'TABANIMAL.WEIGHT' })}: {item?.weight}kg
-              </h2>
-              <h2 className="mb-2 flex items-center text-base font-normal text-gray-500 h-4 space-x-2">
-                <Calendar className="h-3.5 w-3.5  hover:shadow-xxl" />
-                Date: {formatDateDDMMYY(item?.updatedAt as Date)}
-              </h2>
-              <h2 className="flex items-center text-base font-normal text-gray-500 h-4 space-x-2">
-                {item?.animalType?.name}
-              </h2>
-            </div>
-          </div>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div className="flex items-center justify-center space-x-6 mt-2 cursor-pointer">
+                  <div onClick={() => setIsComposition(true)}>
+                    {item?.number !== 0 ? (
+                      <h2 className="mb-2 items-center flex text-base font-bold text-gray-500 h-4">
+                        <Backpack className="h-3.5 w-3.5 hover:shadow-xxl" />{' '}
+                        {t.formatMessage({ id: 'BAGS' })}: {item?.number}
+                      </h2>
+                    ) : null}
+                    <h2 className="mb-2 flex items-center text-base font-bold text-gray-500 h-4 space-x-2">
+                      <Anvil className="h-3.5 w-3.5  hover:shadow-xxl" />
+                      {t.formatMessage({ id: 'TABANIMAL.WEIGHT' })}:{' '}
+                      {item?.weight}kg
+                    </h2>
+                    <h2 className="mb-2 flex items-center text-base font-normal text-gray-500 h-4 space-x-2">
+                      <Calendar className="h-3.5 w-3.5  hover:shadow-xxl" />
+                      Date: {formatDateDDMMYY(item?.updatedAt as Date)}
+                    </h2>
+                    <h2 className="flex items-center text-base font-normal text-gray-500 h-4 space-x-2">
+                      {item?.animalType?.name}
+                    </h2>
+                  </div>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{t.formatMessage({ id: 'CLICK.TO.ADD.COMPOSITION' })} </p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
           <div className="grid grid-cols-1 mt-6 sm:mt-2 px-20 sm:grid-cols-2 xl:grid-cols-3 sm:gap-8 xl:gap-12">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -191,18 +196,14 @@ const ListFeedStock = ({ item, index }: { item: any; index: number }) => {
                     {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
                   </span>
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setIsComposition(true)}>
-                  <ListChecks className="size-4 text-gray-600 hover:text-cyan-600" />
-                  <span className="ml-2 cursor-pointer hover:text-cyan-600">
-                    Composition
-                  </span>
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setIsOpen(true)}>
-                  <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
-                  <span className="ml-2 cursor-pointer hover:text-red-600">
-                    {t.formatMessage({ id: 'TABANIMAL.DELETE' })}
-                  </span>
-                </DropdownMenuItem>
+                {userStorage?.role === 'SUPERADMIN' ? (
+                  <DropdownMenuItem onClick={() => setIsOpen(true)}>
+                    <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
+                    <span className="ml-2 cursor-pointer hover:text-red-600">
+                      {t.formatMessage({ id: 'TABANIMAL.DELETE' })}
+                    </span>
+                  </DropdownMenuItem>
+                ) : null}
               </DropdownMenuContent>
               <ActionModalDialog
                 loading={loading}

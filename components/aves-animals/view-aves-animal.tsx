@@ -1,11 +1,8 @@
 import { GetOneAnimalAPI } from '@/api-site/animals';
-import { formatDateDDMMYY } from '@/utils';
 import { XIcon } from 'lucide-react';
 import { formatWeight } from '../../utils/formate-date';
 import { useInputState } from '../hooks';
 import { Card, CardDescription, CardHeader, CardTitle } from '../ui/card';
-import { Input } from '../ui/input';
-import { Label } from '../ui/label';
 
 const ViewAvesAnimal = ({
   showModal,
@@ -26,10 +23,10 @@ const ViewAvesAnimal = ({
   );
 
   const layingPercentageLayers =
-    Number(getOneAnimal?.eggHarvestedCount / getOneAnimal?.quantity) * 100;
+    Number(getOneAnimal?.totalEggsHarvested / getOneAnimal?.quantity) * 100;
 
   const layingPercentage =
-    Number(getOneAnimal?.eggHarvestedCount / getOneAnimal?.female) * 100;
+    Number(getOneAnimal?.totalEggsHarvested / getOneAnimal?.female) * 100;
 
   return (
     <>
@@ -46,51 +43,8 @@ const ViewAvesAnimal = ({
               </span>
             </button>
             <form className="my-4">
-              <div className="my-2 flex justify-center p-2 space-x-4">
-                <div className="items-center">
-                  <Label className="ml-12">
-                    {t.formatMessage({ id: 'VIEW.LOCATION' })}
-                  </Label>
-                  <Input
-                    disabled
-                    value={getOneAnimal?.location?.code.toUpperCase() || 'N/A'}
-                  />
-                </div>
-                <div className="items-center">
-                  <Label className="ml-8">
-                    {t.formatMessage({ id: 'LAUNCHING.DATE' })}
-                  </Label>
-                  <Input
-                    disabled
-                    value={formatDateDDMMYY(getOneAnimal?.birthday) || 'N/A'}
-                  />
-                </div>
-              </div>
-              {['Poulet de chair', 'Pondeuses', 'Pisciculture'].includes(
-                getOneAnimal?.animalType?.name,
-              ) ? (
-                <div className="mb-4 flex space-x-4">
-                  <div className="w-96">
-                    <Input disabled value={getOneAnimal?.supplier || 'N/A'} />
-                  </div>
-                  {getOneAnimal?.animalType?.name !== 'Pisciculture' ? (
-                    <div className="w-60">
-                      <Input disabled value={getOneAnimal?.strain || 'N/A'} />
-                    </div>
-                  ) : (
-                    <div className="w-60">
-                      <Input
-                        disabled
-                        value={getOneAnimal?.breed?.name || 'N/A'}
-                      />
-                    </div>
-                  )}
-                </div>
-              ) : (
-                ''
-              )}
               <>
-                <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-3 mb-8">
+                <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-3 mt-8">
                   {[
                     'Poulet de chair',
                     'Pisciculture',
@@ -148,9 +102,7 @@ const ViewAvesAnimal = ({
                                 </CardHeader>
                               </Card>
                             </>
-                          ) : (
-                            ''
-                          )}
+                          ) : null}
                           <Card
                             x-chunk="dashboard-05-chunk-1"
                             className=" dark:border-gray-800"
@@ -180,7 +132,6 @@ const ViewAvesAnimal = ({
                           </CardHeader>
                         </Card>
                       )}
-
                       <Card
                         x-chunk="dashboard-05-chunk-1"
                         className=" dark:border-gray-800"
@@ -228,7 +179,8 @@ const ViewAvesAnimal = ({
                           </CardTitle>
                         </CardHeader>
                       </Card>
-                      {getOneAnimal?.quantity === 0 ? (
+                      {getOneAnimal?.quantity === 0 ||
+                      getOneAnimal?.status === 'ARCHIVED' ? (
                         <Card
                           className="sm:col-span-2 dark:border-gray-800"
                           x-chunk="dashboard-05-chunk-0"
@@ -257,12 +209,10 @@ const ViewAvesAnimal = ({
                           >
                             <CardHeader className="pb-2">
                               <CardDescription>
-                                {t.formatMessage({
-                                  id: 'ANIMAL.TREATMENTS',
-                                })}
+                                {t.formatMessage({ id: 'ANIMAL.TREATMENTS' })}
                               </CardDescription>
                               <CardTitle className="text-4xl">
-                                {getOneAnimal?._count?.treatments}
+                                {getOneAnimal?._count?.treatments ?? 0}
                               </CardTitle>
                             </CardHeader>
                           </Card>
@@ -329,9 +279,7 @@ const ViewAvesAnimal = ({
                                 </CardHeader>
                               </Card>
                             </>
-                          ) : (
-                            ''
-                          )}
+                          ) : null}
                           <Card
                             x-chunk="dashboard-05-chunk-1"
                             className=" dark:border-gray-800"
@@ -357,7 +305,7 @@ const ViewAvesAnimal = ({
                                 {t.formatMessage({ id: 'ANIMAL.FEED' })}
                               </CardDescription>
                               <CardTitle className="text-4xl">
-                                {formatWeight(getOneAnimal?.feedingsCount ?? 0)}
+                                {getOneAnimal?.feedingsCount ?? 0}kg
                               </CardTitle>
                             </CardHeader>
                           </Card>
@@ -367,12 +315,10 @@ const ViewAvesAnimal = ({
                           >
                             <CardHeader className="pb-2">
                               <CardDescription>
-                                {t.formatMessage({
-                                  id: 'ANIMAL.TREATMENTS',
-                                })}
+                                {t.formatMessage({ id: 'ANIMAL.TREATMENTS' })}
                               </CardDescription>
                               <CardTitle className="text-4xl">
-                                {getOneAnimal?._count?.treatments}
+                                {getOneAnimal?._count?.treatments ?? 0}
                               </CardTitle>
                             </CardHeader>
                           </Card>
@@ -403,7 +349,7 @@ const ViewAvesAnimal = ({
                                 {t.formatMessage({ id: 'ANIMAL.FEED' })}
                               </CardDescription>
                               <CardTitle className="text-4xl">
-                                {formatWeight(getOneAnimal?.feedingsCount ?? 0)}
+                                {getOneAnimal?.feedingsCount ?? 0}kg
                               </CardTitle>
                             </CardHeader>
                           </Card>
@@ -462,7 +408,7 @@ const ViewAvesAnimal = ({
                                 {t.formatMessage({ id: 'ANIMAL.EGGHAVESTED' })}
                               </CardDescription>
                               <CardTitle className="text-4xl">
-                                {getOneAnimal?.eggHarvestedCount ?? 0}
+                                {getOneAnimal?.totalEggsHarvested ?? 0}
                               </CardTitle>
                             </CardHeader>
                           </Card>
@@ -525,7 +471,7 @@ const ViewAvesAnimal = ({
                                     })}
                                   </CardDescription>
                                   <CardTitle className="text-4xl">
-                                    {getOneAnimal?._count?.treatments}
+                                    {getOneAnimal?._count?.treatments ?? 0}
                                   </CardTitle>
                                 </CardHeader>
                               </Card>

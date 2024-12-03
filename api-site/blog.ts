@@ -79,9 +79,11 @@ export const CreateOrUpdateBlogAPI = ({
 export const GetBlogsAPI = (
   payload: {
     take?: number;
+    type?: string;
+    status?: string;
   } & PaginationRequest,
 ) => {
-  const { take, sort, sortBy } = payload;
+  const { take, sort, sortBy, type, status } = payload;
   return useInfiniteQuery({
     queryKey: ['blogs', 'infinite', { ...payload }],
     getNextPageParam: (lastPage: any) => lastPage.data.next_page,
@@ -91,6 +93,8 @@ export const GetBlogsAPI = (
         queryParams: {
           take,
           sort,
+          type,
+          status,
           sortBy,
           page: pageParam,
         },

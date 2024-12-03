@@ -45,7 +45,6 @@ export function AnimalType() {
                 {t.formatMessage({ id: 'UTIL.COME_BACK' })}
               </span>
             </ButtonInput>
-
             <div className="ml-auto flex items-center gap-2">
               <ButtonInput
                 type="button"
@@ -74,9 +73,8 @@ export function AnimalType() {
                 <LoadingFile />
               ) : isErrorAssignedTypes ? (
                 <ErrorFile description="Error finding data please try again..." />
-              ) : Number(dataAssignedTypes?.pages[0]?.data?.total) <= 0 ? (
-                ''
-              ) : (
+              ) : Number(dataAssignedTypes?.pages[0]?.data?.total) <=
+                0 ? null : (
                 dataAssignedTypes?.pages
                   .flatMap((page: any) => page?.data?.value)
                   .map((item, index) => (

@@ -1,4 +1,5 @@
 import { GetAnimalsAPI } from '@/api-site/animals';
+import { GetOneBuildingAPI } from '@/api-site/buildings';
 import { CreateOrUpdateOneFatteningAPI } from '@/api-site/fattenings';
 import { GetLocationsAPI } from '@/api-site/locations';
 import { useReactHookForm } from '@/components/hooks';
@@ -65,9 +66,12 @@ const CreateOrUpdateFattenings = ({
   } = useReactHookForm({ schema });
   const { query } = useRouter();
   const { ref, inView } = useInView();
-  const animalTypeId = String(query?.animalTypeId);
   const selectedAnimals = watch('animals', '');
   const countSelectedAnimals = selectedAnimals.length;
+  const buildingId = String(query?.buildingId);
+  const { data: getOneBuilding } = GetOneBuildingAPI({
+    buildingId: buildingId,
+  });
 
   useEffect(() => {
     if (fattening) {
@@ -116,7 +120,7 @@ const CreateOrUpdateFattenings = ({
     status: 'ACTIVE',
     sortBy: 'createdAt',
     locationId: location?.id,
-    animalTypeId: animalTypeId,
+    animalTypeId: getOneBuilding?.animalTypeId,
   });
 
   const {
@@ -128,7 +132,7 @@ const CreateOrUpdateFattenings = ({
     sort: 'desc',
     sortBy: 'createdAt',
     productionPhase: 'FATTENING',
-    animalTypeId: animalTypeId,
+    animalTypeId: getOneBuilding?.animalTypeId,
   });
 
   useEffect(() => {

@@ -80,7 +80,9 @@ export const UpdateOneIncubationAPI = ({
   const queryClient = useQueryClient();
   const result = useMutation({
     mutationKey: queryKey,
-    mutationFn: async (payload: any & { incubationId: string }) => {
+    mutationFn: async (
+      payload: IncubationsModel & { incubationId: string },
+    ) => {
       const { incubationId } = payload;
       return await makeApiCall({
         action: 'updateOneIncubation',

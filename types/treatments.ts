@@ -46,3 +46,11 @@ export type TreatmentsPostModel = {
     name: string;
   };
 };
+
+export type HealthsModel = {
+  createdAt: Date;
+  id: string;
+  image: any;
+  name: string;
+  description: string;
+};

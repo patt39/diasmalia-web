@@ -145,12 +145,16 @@ const ListSales = ({ item, index }: { item: any; index: number }) => {
           </DropdownMenu>
         </TableCell>
       </TableRow>
-      <CreateOrUpdateSales
-        sale={item}
-        showModal={isEdit}
-        setShowModal={setIsEdit}
-      />
-      <ViewSale sale={item} showModal={isView} setShowModal={setIsView} />
+      {isEdit ? (
+        <CreateOrUpdateSales
+          sale={item}
+          showModal={isEdit}
+          setShowModal={setIsEdit}
+        />
+      ) : null}
+      {isView ? (
+        <ViewSale sale={item} showModal={isView} setShowModal={setIsView} />
+      ) : null}
     </>
   );
 };

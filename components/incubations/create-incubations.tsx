@@ -96,6 +96,7 @@ const CreateIncubations = ({
                     name="code"
                     defaultValue={`${incubation?.animal?.code}`}
                     errors={errors}
+                    disabled
                   />
                 </div>
                 <div className="flex items-center my-2 space-x-10">

@@ -1,6 +1,5 @@
 import { CreateBulkAnimalsAPI, GetAnimalsAPI } from '@/api-site/animals';
 import { GetBreedsAPI } from '@/api-site/breed';
-import { GetLocationsAPI } from '@/api-site/locations';
 import { useInputState, useReactHookForm } from '@/components/hooks';
 import {
   ButtonInput,
@@ -9,16 +8,15 @@ import {
 } from '@/components/ui-setting';
 import { SelectInput, TextInput } from '@/components/ui-setting/shadcn';
 import {
-  offspringsProductionPhase,
   productionPhases,
+  reproductionProductionPhases,
 } from '@/i18n/default-exports';
 import { AnimalModel } from '@/types/animal';
 import {
   AlertDangerNotification,
   AlertSuccessNotification,
 } from '@/utils/alert-notification';
-import { FileQuestion, XIcon } from 'lucide-react';
-import { useRouter } from 'next/router';
+import { XIcon } from 'lucide-react';
 import { useEffect } from 'react';
 import { Controller, SubmitHandler } from 'react-hook-form';
 import { useInView } from 'react-intersection-observer';
@@ -35,12 +33,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '../ui/select';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '../ui/tooltip';
 
 const schema = yup.object({
   birthday: yup.string().optional(),
@@ -58,28 +50,18 @@ const CreateBulkAnimals = ({
   showModal,
   setShowModal,
   weaning,
+  location,
   farrowing,
 }: {
   showModal: boolean;
   setShowModal: any;
-  animal?: any;
+  location?: any;
   weaning?: any;
   farrowing?: any;
 }) => {
-  const {
-    t,
-    locale,
-    control,
-    handleSubmit,
-    errors,
-    hasErrors,
-    setHasErrors,
-    watch,
-  } = useReactHookForm({ schema });
-  const { query } = useRouter();
-  const animalTypeId = String(query?.animalTypeId);
+  const { t, locale, control, handleSubmit, errors, hasErrors, setHasErrors } =
+    useReactHookForm({ schema });
   const { ref, inView } = useInView();
-  const watchProductionPhase = watch('productionPhase', '');
   const { search, handleSetSearch } = useInputState();
 
   // Create
@@ -106,19 +88,6 @@ const CreateBulkAnimals = ({
   };
 
   const {
-    isLoading: isLoadingLocations,
-    isError: isErrorLocations,
-    data: dataLocations,
-  } = GetLocationsAPI({
-    take: 10,
-    status: true,
-    sort: 'desc',
-    sortBy: 'createdAt',
-    productionPhase: watchProductionPhase,
-    animalTypeId: animalTypeId,
-  });
-
-  const {
     isLoading: isLoadingBreeds,
     isError: isErrorBreeds,
     data: dataBreeds,
@@ -126,7 +95,7 @@ const CreateBulkAnimals = ({
     take: 10,
     sort: 'desc',
     sortBy: 'createdAt',
-    animalTypeId: animalTypeId,
+    animalTypeId: location?.animalTypeId,
   });
 
   const {
@@ -144,7 +113,7 @@ const CreateBulkAnimals = ({
     status: 'ACTIVE',
     sortBy: 'createdAt',
     productionPhase: 'REPRODUCTION',
-    animalTypeId: animalTypeId,
+    animalTypeId: location?.animalTypeId,
   });
 
   const {
@@ -159,21 +128,7 @@ const CreateBulkAnimals = ({
     status: 'ACTIVE',
     sortBy: 'createdAt',
     productionPhase: 'REPRODUCTION',
-    animalTypeId: animalTypeId,
-  });
-
-  const {
-    isLoading: isLoadingGrowthLocations,
-    isError: isErrorGrowthLocations,
-    data: dataGrowthLocations,
-  } = GetLocationsAPI({
-    search,
-    take: 10,
-    status: true,
-    sort: 'desc',
-    sortBy: 'createdAt',
-    productionPhase: 'GROWTH',
-    animalTypeId: animalTypeId,
+    animalTypeId: location?.animalTypeId,
   });
 
   useEffect(() => {
@@ -228,26 +183,18 @@ const CreateBulkAnimals = ({
                   </div>
                 )}
                 <div className="my-2 flex items-center">
-                  <div className="flex items-center mt-4">
+                  <div className="items-center">
+                    <Label>
+                      <Label>Nombre</Label>
+                      <span className="text-red-600">*</span>
+                    </Label>
                     <TextInput
                       control={control}
                       type="number"
                       name="number"
-                      placeholder="Give a number"
+                      placeholder="number"
                       errors={errors}
                     />
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <FileQuestion />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>
-                            {t.formatMessage({ id: 'BULK.ANIMALS.TOOLTIP' })}
-                          </p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
                   </div>
                   <div className="px-4">
                     <Label>
@@ -293,9 +240,10 @@ const CreateBulkAnimals = ({
                   )}
                 </div>
                 <div className="flex items-center space-x-4">
-                  <div className="w-80">
+                  <div className="w-56">
                     <Label>
                       {t.formatMessage({ id: 'ANIMALTYPE.GENDER' })}
+                      <span className="text-red-600">*</span>
                     </Label>
                     <SelectInput
                       control={control}
@@ -315,15 +263,13 @@ const CreateBulkAnimals = ({
                         {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
                         <span className="text-red-600">*</span>
                       </Label>
-                      <SelectInput
+                      <TextInput
                         control={control}
-                        errors={errors}
-                        placeholder="select production phase"
-                        valueType="key"
+                        type="text"
                         name="productionPhase"
-                        dataItem={offspringsProductionPhase.filter(
-                          (i) => i?.lang === locale,
-                        )}
+                        defaultValue="GROWTH"
+                        errors={errors}
+                        disabled
                       />
                     </div>
                   ) : weaning?.id ? (
@@ -332,15 +278,75 @@ const CreateBulkAnimals = ({
                         {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
                         <span className="text-red-600">*</span>
                       </Label>
+                      <TextInput
+                        control={control}
+                        type="text"
+                        name="productionPhase"
+                        defaultValue="GROWTH"
+                        errors={errors}
+                        disabled
+                      />
+                    </div>
+                  ) : ['GROWTH'].includes(location?.productionPhase) ? (
+                    <div className="w-80">
+                      <Label>
+                        {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
+                        <span className="text-red-600">*</span>
+                      </Label>
+                      <TextInput
+                        control={control}
+                        type="text"
+                        name="productionPhase"
+                        defaultValue="GROWTH"
+                        errors={errors}
+                        disabled
+                      />
+                    </div>
+                  ) : ['FATTENING'].includes(location?.productionPhase) ? (
+                    <div className="w-96">
+                      <Label>
+                        {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
+                        <span className="text-red-600">*</span>
+                      </Label>
+                      <TextInput
+                        control={control}
+                        type="text"
+                        name="productionPhase"
+                        defaultValue="FATTENING"
+                        errors={errors}
+                        disabled
+                      />
+                    </div>
+                  ) : ['REPRODUCTION'].includes(location?.productionPhase) ? (
+                    <div className="w-80">
+                      <Label>
+                        {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
+                        <span className="text-red-600">*</span>
+                      </Label>
                       <SelectInput
                         control={control}
                         errors={errors}
-                        placeholder="select production phase"
                         valueType="key"
                         name="productionPhase"
-                        dataItem={offspringsProductionPhase.filter(
+                        placeholder="select production phase"
+                        dataItem={reproductionProductionPhases.filter(
                           (i) => i?.lang === locale,
                         )}
+                      />
+                    </div>
+                  ) : ['GESTATION'].includes(location?.productionPhase) ? (
+                    <div className="w-80">
+                      <Label>
+                        {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
+                        <span className="text-red-600">*</span>
+                      </Label>
+                      <TextInput
+                        control={control}
+                        type="text"
+                        name="productionPhase"
+                        defaultValue="GESTATION"
+                        errors={errors}
+                        disabled
                       />
                     </div>
                   ) : (
@@ -352,60 +358,333 @@ const CreateBulkAnimals = ({
                       <SelectInput
                         control={control}
                         errors={errors}
-                        placeholder="select production phase"
-                        valueType="text"
+                        valueType="key"
                         name="productionPhase"
+                        placeholder="select production phase"
                         dataItem={productionPhases.filter(
                           (i) => i?.lang === locale,
                         )}
                       />
                     </div>
                   )}
+                  {farrowing?.id ? (
+                    <div className="w-60">
+                      <Label>{t.formatMessage({ id: 'VIEW.LOCATION' })}</Label>
+                      <TextInput
+                        control={control}
+                        type="text"
+                        name="locationCode"
+                        defaultValue={`${farrowing?.animal?.location?.code}`}
+                        errors={errors}
+                        disabled
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-60">
+                      <Label>{t.formatMessage({ id: 'VIEW.LOCATION' })}</Label>
+                      <TextInput
+                        control={control}
+                        type="text"
+                        name="locationCode"
+                        defaultValue={`${location?.code}`}
+                        errors={errors}
+                        disabled
+                      />
+                    </div>
+                  )}
+                </div>
+                <div className="flex space-x-4">
+                  {!farrowing?.id ? (
+                    <>
+                      <div className="my-2 w-80">
+                        <Label>{t.formatMessage({ id: 'VIEW.MOTHER' })}</Label>
+                        <Controller
+                          control={control}
+                          name="codeMother"
+                          render={({ field: { value, onChange } }) => (
+                            <Select
+                              onValueChange={onChange}
+                              name={'codeMother'}
+                              value={value}
+                            >
+                              <SelectTrigger className="w-full">
+                                <SelectValue placeholder="select female code" />
+                              </SelectTrigger>
+                              <SelectContent className="dark:border-gray-800">
+                                <div className="mr-auto items-center gap-2">
+                                  <SearchInput
+                                    placeholder="Search by code"
+                                    onChange={handleSetSearch}
+                                  />
+                                </div>
+                                <SelectGroup>
+                                  <SelectLabel>Codes</SelectLabel>
+                                  {isLoadingFemales ? (
+                                    <LoadingFile />
+                                  ) : isErrorFemales ? (
+                                    <ErrorFile
+                                      title="404"
+                                      description="Error finding data please try again..."
+                                    />
+                                  ) : Number(
+                                      dataFemales?.pages[0]?.data?.total,
+                                    ) <= 0 ? (
+                                    <ErrorFile description="Don't have active female animals yet" />
+                                  ) : (
+                                    dataFemales?.pages
+                                      .flatMap((page: any) => page?.data?.value)
+                                      .map((item, index) => (
+                                        <>
+                                          <SelectItem
+                                            key={index}
+                                            value={item?.code}
+                                          >
+                                            {item?.code}
+                                          </SelectItem>
+                                        </>
+                                      ))
+                                  )}
+                                  {hasNextPage && (
+                                    <div className="mx-auto mt-4 justify-center text-center">
+                                      <ButtonLoadMore
+                                        ref={ref}
+                                        isFetchingNextPage={isFetchingNextPage}
+                                        onClick={() => fetchNextPage()}
+                                      />
+                                    </div>
+                                  )}
+                                </SelectGroup>
+                              </SelectContent>
+                            </Select>
+                          )}
+                        />
+                      </div>
+                      <div className="my-2 w-80">
+                        <Label>{t.formatMessage({ id: 'VIEW.FATHER' })}</Label>
+                        <Controller
+                          control={control}
+                          name="codeFather"
+                          render={({ field: { value, onChange } }) => (
+                            <Select
+                              onValueChange={onChange}
+                              name={'codeFather'}
+                              value={value}
+                            >
+                              <SelectTrigger className="w-full">
+                                <SelectValue placeholder="select male code" />
+                              </SelectTrigger>
+                              <SelectContent className="dark:border-gray-800">
+                                <div className="mr-auto items-center gap-2">
+                                  <SearchInput
+                                    placeholder="Search by code"
+                                    onChange={handleSetSearch}
+                                  />
+                                </div>
+                                <SelectGroup>
+                                  <SelectLabel>Codes</SelectLabel>
+                                  {isLoadingMales ? (
+                                    <LoadingFile />
+                                  ) : isErrorMales ? (
+                                    <ErrorFile
+                                      title="404"
+                                      description="Error finding data please try again..."
+                                    />
+                                  ) : Number(
+                                      dataMales?.pages[0]?.data?.total,
+                                    ) <= 0 ? (
+                                    <ErrorFile description="Don't have active male animals yet" />
+                                  ) : (
+                                    dataMales?.pages
+                                      .flatMap((page: any) => page?.data?.value)
+                                      .map((item, index) => (
+                                        <>
+                                          <SelectItem
+                                            key={index}
+                                            value={item?.code}
+                                          >
+                                            {item?.code}
+                                          </SelectItem>
+                                        </>
+                                      ))
+                                  )}
+                                </SelectGroup>
+                              </SelectContent>
+                            </Select>
+                          )}
+                        />
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="my-2 items-center w-40">
+                        <Label>{t.formatMessage({ id: 'VIEW.MOTHER' })}</Label>
+                        <TextInput
+                          control={control}
+                          type="text"
+                          name="codeMother"
+                          defaultValue={`${farrowing?.animal?.code}`}
+                          errors={errors}
+                          disabled
+                        />
+                      </div>
+                      <div className="my-2 w-80">
+                        <Label>{t.formatMessage({ id: 'VIEW.FATHER' })}</Label>
+                        <Controller
+                          control={control}
+                          name="codeFather"
+                          render={({ field: { value, onChange } }) => (
+                            <Select
+                              onValueChange={onChange}
+                              name={'codeFather'}
+                              value={value}
+                            >
+                              <SelectTrigger className="w-full">
+                                <SelectValue placeholder="select male code" />
+                              </SelectTrigger>
+                              <SelectContent className="dark:border-gray-800">
+                                <div className="mr-auto items-center gap-2">
+                                  <SearchInput
+                                    placeholder="Search by code"
+                                    onChange={handleSetSearch}
+                                  />
+                                </div>
+                                <SelectGroup>
+                                  <SelectLabel>Codes</SelectLabel>
+                                  {isLoadingMales ? (
+                                    <LoadingFile />
+                                  ) : isErrorMales ? (
+                                    <ErrorFile
+                                      title="404"
+                                      description="Error finding data please try again..."
+                                    />
+                                  ) : Number(
+                                      dataMales?.pages[0]?.data?.total,
+                                    ) <= 0 ? (
+                                    <ErrorFile description="Don't have active male animals yet" />
+                                  ) : (
+                                    dataMales?.pages
+                                      .flatMap((page: any) => page?.data?.value)
+                                      .map((item, index) => (
+                                        <>
+                                          <SelectItem
+                                            key={index}
+                                            value={item?.code}
+                                          >
+                                            {item?.code}
+                                          </SelectItem>
+                                        </>
+                                      ))
+                                  )}
+                                </SelectGroup>
+                              </SelectContent>
+                            </Select>
+                          )}
+                        />
+                      </div>
+                      <div className="my-2 w-60">
+                        <Label>
+                          {t.formatMessage({ id: 'SELECT.BREED' })}
+                          <span className="text-red-600">*</span>
+                        </Label>
+                        <Controller
+                          control={control}
+                          name="breedName"
+                          render={({ field: { value, onChange } }) => (
+                            <Select
+                              onValueChange={onChange}
+                              name="breedName"
+                              value={value}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="select breed" />
+                              </SelectTrigger>
+                              <SelectContent className="dark:border-gray-800">
+                                <SelectGroup>
+                                  <SelectLabel>Breeds</SelectLabel>
+                                  {isLoadingBreeds ? (
+                                    <LoadingFile />
+                                  ) : isErrorBreeds ? (
+                                    <ErrorFile
+                                      title="404"
+                                      description="Error finding data please try again..."
+                                    />
+                                  ) : Number(
+                                      dataBreeds?.pages[0]?.data?.total,
+                                    ) <= 0 ? (
+                                    <ErrorFile description="Don't have breeds" />
+                                  ) : (
+                                    dataBreeds?.pages
+                                      .flatMap((page: any) => page?.data?.value)
+                                      .map((item, index) => (
+                                        <>
+                                          <SelectItem
+                                            key={index}
+                                            value={item?.name}
+                                          >
+                                            {item?.name}
+                                          </SelectItem>
+                                        </>
+                                      ))
+                                  )}
+                                  {hasNextPage && (
+                                    <div className="mx-auto mt-4 justify-center text-center">
+                                      <ButtonLoadMore
+                                        ref={ref}
+                                        isFetchingNextPage={isFetchingNextPage}
+                                        onClick={() => fetchNextPage()}
+                                      />
+                                    </div>
+                                  )}
+                                </SelectGroup>
+                              </SelectContent>
+                            </Select>
+                          )}
+                        />
+                      </div>
+                    </>
+                  )}
                 </div>
                 {!farrowing?.id ? (
-                  <div className="my-2">
-                    <Label>{t.formatMessage({ id: 'VIEW.MOTHER' })}</Label>
+                  <div className="mb-2">
+                    <Label>
+                      {t.formatMessage({ id: 'SELECT.BREED' })}
+                      <span className="text-red-600">*</span>
+                    </Label>
                     <Controller
                       control={control}
-                      name="codeMother"
+                      name="breedName"
                       render={({ field: { value, onChange } }) => (
                         <Select
                           onValueChange={onChange}
-                          name={'codeMother'}
+                          name="breedName"
                           value={value}
                         >
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="select female code" />
+                          <SelectTrigger>
+                            <SelectValue placeholder="select breed" />
                           </SelectTrigger>
                           <SelectContent className="dark:border-gray-800">
-                            <div className="mr-auto items-center gap-2">
-                              <SearchInput
-                                placeholder="Search by code"
-                                onChange={handleSetSearch}
-                              />
-                            </div>
                             <SelectGroup>
-                              <SelectLabel>Codes</SelectLabel>
-                              {isLoadingFemales ? (
+                              <SelectLabel>Breeds</SelectLabel>
+                              {isLoadingBreeds ? (
                                 <LoadingFile />
-                              ) : isErrorFemales ? (
+                              ) : isErrorBreeds ? (
                                 <ErrorFile
                                   title="404"
                                   description="Error finding data please try again..."
                                 />
-                              ) : Number(dataFemales?.pages[0]?.data?.total) <=
+                              ) : Number(dataBreeds?.pages[0]?.data?.total) <=
                                 0 ? (
-                                <ErrorFile description="Don't have active female animals yet" />
+                                <ErrorFile description="Don't have breeds" />
                               ) : (
-                                dataFemales?.pages
+                                dataBreeds?.pages
                                   .flatMap((page: any) => page?.data?.value)
                                   .map((item, index) => (
                                     <>
                                       <SelectItem
                                         key={index}
-                                        value={item?.code}
+                                        value={item?.name}
                                       >
-                                        {item?.code}
+                                        {item?.name}
                                       </SelectItem>
                                     </>
                                   ))
@@ -424,259 +703,7 @@ const CreateBulkAnimals = ({
                         </Select>
                       )}
                     />
-                  </div>
-                ) : (
-                  <div className="my-2 items-center">
-                    <Label>{t.formatMessage({ id: 'VIEW.MOTHER' })}</Label>
-                    <TextInput
-                      control={control}
-                      type="text"
-                      name="codeMother"
-                      defaultValue={`${farrowing?.animal?.code}`}
-                      errors={errors}
-                    />
-                  </div>
-                )}
-                <div className="my-2">
-                  <Label>{t.formatMessage({ id: 'VIEW.FATHER' })}</Label>
-                  <Controller
-                    control={control}
-                    name="codeFather"
-                    render={({ field: { value, onChange } }) => (
-                      <Select
-                        onValueChange={onChange}
-                        name={'codeFather'}
-                        value={value}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="select male code" />
-                        </SelectTrigger>
-                        <SelectContent className="dark:border-gray-800">
-                          <div className="mr-auto items-center gap-2">
-                            <SearchInput
-                              placeholder="Search by code"
-                              onChange={handleSetSearch}
-                            />
-                          </div>
-                          <SelectGroup>
-                            <SelectLabel>Codes</SelectLabel>
-                            {isLoadingMales ? (
-                              <LoadingFile />
-                            ) : isErrorMales ? (
-                              <ErrorFile
-                                title="404"
-                                description="Error finding data please try again..."
-                              />
-                            ) : Number(dataMales?.pages[0]?.data?.total) <=
-                              0 ? (
-                              <ErrorFile description="Don't have active male animals yet" />
-                            ) : (
-                              dataMales?.pages
-                                .flatMap((page: any) => page?.data?.value)
-                                .map((item, index) => (
-                                  <>
-                                    <SelectItem key={index} value={item?.code}>
-                                      {item?.code}
-                                    </SelectItem>
-                                  </>
-                                ))
-                            )}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    )}
-                  />
-                </div>
-                <div className="my-2">
-                  <Label>
-                    {t.formatMessage({ id: 'SELECT.BREED' })}
-                    <span className="text-red-600">*</span>
-                  </Label>
-                  <Controller
-                    control={control}
-                    name="breedName"
-                    render={({ field: { value, onChange } }) => (
-                      <Select
-                        onValueChange={onChange}
-                        name="breedName"
-                        value={value}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="select breed" />
-                        </SelectTrigger>
-                        <SelectContent className="dark:border-gray-800">
-                          <SelectGroup>
-                            <SelectLabel>Breeds</SelectLabel>
-                            {isLoadingBreeds ? (
-                              <LoadingFile />
-                            ) : isErrorBreeds ? (
-                              <ErrorFile
-                                title="404"
-                                description="Error finding data please try again..."
-                              />
-                            ) : Number(dataBreeds?.pages[0]?.data?.total) <=
-                              0 ? (
-                              <ErrorFile description="Don't have breeds" />
-                            ) : (
-                              dataBreeds?.pages
-                                .flatMap((page: any) => page?.data?.value)
-                                .map((item, index) => (
-                                  <>
-                                    <SelectItem key={index} value={item?.name}>
-                                      {item?.name}
-                                    </SelectItem>
-                                  </>
-                                ))
-                            )}
-                            {hasNextPage && (
-                              <div className="mx-auto mt-4 justify-center text-center">
-                                <ButtonLoadMore
-                                  ref={ref}
-                                  isFetchingNextPage={isFetchingNextPage}
-                                  onClick={() => fetchNextPage()}
-                                />
-                              </div>
-                            )}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    )}
-                  />
-                  {!farrowing?.id && watchProductionPhase ? (
-                    <div className="mt-2">
-                      <Label>
-                        {t.formatMessage({ id: 'VIEW.LOCATION' })}
-                        <span className="text-red-600">*</span>
-                      </Label>
-                      <Controller
-                        control={control}
-                        name="locationCode"
-                        render={({ field: { value, onChange } }) => (
-                          <Select
-                            onValueChange={onChange}
-                            name={'locationCode'}
-                            value={value}
-                          >
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="select location code" />
-                            </SelectTrigger>
-                            <SelectContent className="dark:border-gray-800">
-                              <div className="mr-auto items-center gap-2">
-                                <SearchInput
-                                  placeholder="Search by code"
-                                  onChange={handleSetSearch}
-                                />
-                              </div>
-                              <SelectGroup>
-                                <SelectLabel>Location codes</SelectLabel>
-                                {isLoadingLocations ? (
-                                  <LoadingFile />
-                                ) : isErrorLocations ? (
-                                  <ErrorFile
-                                    title="404"
-                                    description="Error finding data please try again..."
-                                  />
-                                ) : Number(
-                                    dataLocations?.pages[0]?.data?.total,
-                                  ) <= 0 ? (
-                                  <ErrorFile description="Don't have location codes" />
-                                ) : (
-                                  dataLocations?.pages
-                                    .flatMap((page: any) => page?.data?.value)
-                                    .map((item, index) => (
-                                      <>
-                                        <SelectItem
-                                          key={index}
-                                          value={item?.code}
-                                        >
-                                          {item?.code}
-                                        </SelectItem>
-                                      </>
-                                    ))
-                                )}
-                                {hasNextPage && (
-                                  <div className="mx-auto mt-4 justify-center text-center">
-                                    <ButtonLoadMore
-                                      ref={ref}
-                                      isFetchingNextPage={isFetchingNextPage}
-                                      onClick={() => fetchNextPage()}
-                                    />
-                                  </div>
-                                )}
-                              </SelectGroup>
-                            </SelectContent>
-                          </Select>
-                        )}
-                      />
-                    </div>
-                  ) : !weaning?.id ? (
-                    <div className="mt-2">
-                      <Label>
-                        {t.formatMessage({ id: 'VIEW.LOCATION' })}
-                        <span className="text-red-600">*</span>
-                      </Label>
-                      <Controller
-                        control={control}
-                        name="locationCode"
-                        render={({ field: { value, onChange } }) => (
-                          <Select
-                            onValueChange={onChange}
-                            name={'locationCode'}
-                            value={value}
-                          >
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="select location code" />
-                            </SelectTrigger>
-                            <SelectContent className="dark:border-gray-800">
-                              <div className="mr-auto items-center gap-2">
-                                <SearchInput
-                                  placeholder="Search by code"
-                                  onChange={handleSetSearch}
-                                />
-                              </div>
-                              <SelectGroup>
-                                <SelectLabel>Location codes</SelectLabel>
-                                {isLoadingGrowthLocations ? (
-                                  <LoadingFile />
-                                ) : isErrorGrowthLocations ? (
-                                  <ErrorFile
-                                    title="404"
-                                    description="Error finding data please try again..."
-                                  />
-                                ) : Number(
-                                    dataGrowthLocations?.pages[0]?.data?.total,
-                                  ) <= 0 ? (
-                                  <ErrorFile description="Don't have location codes" />
-                                ) : (
-                                  dataGrowthLocations?.pages
-                                    .flatMap((page: any) => page?.data?.value)
-                                    .map((item, index) => (
-                                      <>
-                                        <SelectItem
-                                          key={index}
-                                          value={item?.code}
-                                        >
-                                          {item?.code}
-                                        </SelectItem>
-                                      </>
-                                    ))
-                                )}
-                                {hasNextPage && (
-                                  <div className="mx-auto mt-4 justify-center text-center">
-                                    <ButtonLoadMore
-                                      ref={ref}
-                                      isFetchingNextPage={isFetchingNextPage}
-                                      onClick={() => fetchNextPage()}
-                                    />
-                                  </div>
-                                )}
-                              </SelectGroup>
-                            </SelectContent>
-                          </Select>
-                        )}
-                      />
-                    </div>
-                  ) : farrowing?.id ? (
+                    {/* {farrowing?.id ? (
                     <div className="my-2 items-center">
                       {t.formatMessage({ id: 'VIEW.LOCATION' })}
                       <TextInput
@@ -698,10 +725,9 @@ const CreateBulkAnimals = ({
                         errors={errors}
                       />
                     </div>
-                  ) : (
-                    ''
-                  )}
-                </div>
+                  ) : null} */}
+                  </div>
+                ) : null}
                 <div className="mt-4 flex items-center space-x-4">
                   <ButtonInput
                     type="button"

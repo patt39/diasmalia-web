@@ -46,6 +46,7 @@ const TabAvesAnimals = ({ animalTypeId }: { animalTypeId: string }) => {
     search,
     take: 10,
     sort: 'desc',
+    status: 'ACTIVE',
     sortBy: 'createdAt',
     productionPhase,
     animalTypeId: animalTypeId,
@@ -160,9 +161,7 @@ const TabAvesAnimals = ({ animalTypeId }: { animalTypeId: string }) => {
                   {t.formatMessage({ id: 'ANIMALTYPE.ANIMALS.AVES.CREATE' })}
                 </span>
               </Button>
-            ) : (
-              ''
-            )}
+            ) : null}
           </div>
         </div>
       </CardHeader>
@@ -199,11 +198,13 @@ const TabAvesAnimals = ({ animalTypeId }: { animalTypeId: string }) => {
           </div>
         </div>
       </section>
-      <CreateAvesAnimals
-        animal={animalTypeId}
-        showModal={isOpen}
-        setShowModal={setIsOpen}
-      />
+      {isOpen ? (
+        <CreateAvesAnimals
+          animal={animalTypeId}
+          showModal={isOpen}
+          setShowModal={setIsOpen}
+        />
+      ) : null}
     </>
   );
 };

@@ -43,6 +43,50 @@ export const GetOneUserMeAPI = () => {
   };
 };
 
+export const GetUserAPI = (payload: { userId: string }) => {
+  const { userId } = payload;
+  const { data, isError, isLoading, status, isPending, refetch } = useQuery({
+    queryKey: ['user', userId],
+    queryFn: async () =>
+      await makeApiCall({
+        action: 'findUser',
+        urlParams: { userId },
+      }),
+    refetchOnWindowFocus: false,
+  });
+
+  return {
+    data: data?.data as any,
+    isError,
+    isLoading,
+    status,
+    isPending,
+    refetch,
+  };
+};
+
+export const GetOrganizationAPI = (payload: { userId: string }) => {
+  const { userId } = payload;
+  const { data, isError, isLoading, status, isPending, refetch } = useQuery({
+    queryKey: ['user-organization', userId],
+    queryFn: async () =>
+      await makeApiCall({
+        action: 'findOrganization',
+        urlParams: { userId },
+      }),
+    refetchOnWindowFocus: false,
+  });
+
+  return {
+    data: data?.data as any,
+    isError,
+    isLoading,
+    status,
+    isPending,
+    refetch,
+  };
+};
+
 export const GetUserByOrganizationAPI = (payload: {
   organizationId: string;
 }) => {
@@ -257,6 +301,66 @@ export const CollaborationRejectionAPI = ({
       return await makeApiCall({
         action: 'collaborationRejection',
         urlParams: { token },
+      });
+    },
+    onError: async (error) => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onError) {
+        onError(error);
+      }
+    },
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+  });
+
+  return result;
+};
+
+export const deleteOneUserAPI = async (options: { userId: string }) => {
+  const { userId } = options;
+  return await makeApiCall({
+    action: 'deleteOneUser',
+    urlParams: { userId },
+  });
+};
+
+export const updateUpdatePasswordAPI = async (body: {
+  password: string;
+  passwordConfirm: string;
+}): Promise<any> => {
+  await makeApiCall({
+    action: 'updateUpdatePassword',
+    body: body,
+  });
+};
+
+export const UpdateOrganizationAPI = ({
+  onSuccess,
+  onError,
+}: {
+  onSuccess?: () => void;
+  onError?: (error: any) => void;
+} = {}) => {
+  const queryKey = ['organizations'];
+  const queryClient = useQueryClient();
+  const result = useMutation({
+    mutationKey: queryKey,
+    mutationFn: async (payload: any & { organizationId: string }) => {
+      const { organizationId } = payload;
+      return await makeApiCall({
+        action: 'updateOrganization',
+        body: { ...payload },
+        urlParams: { organizationId },
       });
     },
     onError: async (error) => {

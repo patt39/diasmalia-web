@@ -6,19 +6,43 @@ import {
   AlertDangerNotification,
   AlertSuccessNotification,
 } from '@/utils/alert-notification';
+import { UploadOutlined } from '@ant-design/icons';
+import { Avatar, GetProp, Upload, UploadProps } from 'antd';
 import { XIcon } from 'lucide-react';
-import { useEffect } from 'react';
-import { SubmitHandler } from 'react-hook-form';
+import { useEffect, useState } from 'react';
+import { Controller, SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
 import { TextAreaInput, TextInput } from '../ui-setting/shadcn';
 import { Label } from '../ui/label';
+
+type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
+const getBase64 = (img: FileType, callback: (url: string) => void) => {
+  const reader = new FileReader();
+  reader.addEventListener('load', () => callback(reader.result as string));
+  reader.readAsDataURL(img);
+};
+const beforeUpload = (file: FileType) => {
+  const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+  if (!isJpgOrPng) {
+    AlertDangerNotification({
+      text: 'You can only upload JPG/PNG file!',
+    });
+  }
+  const isLt2M = file.size / 1024 / 1024 < 2;
+  if (!isLt2M) {
+    AlertDangerNotification({
+      text: 'Image must smaller than 2MB!',
+    });
+  }
+  return isJpgOrPng && isLt2M;
+};
 
 const schema = yup.object({
   dead: yup.number().optional(),
   code: yup.string().optional(),
   codeFemale: yup.string().optional(),
-  litter: yup.number().optional(),
-  weight: yup.number().optional(),
+  litter: yup.string().optional(),
+  weight: yup.string().optional(),
   note: yup.string().optional(),
 });
 
@@ -40,6 +64,8 @@ const UpdateFarrowings = ({
     hasErrors,
     setHasErrors,
   } = useReactHookForm({ schema });
+  const [image, setImage] = useState<any>();
+  const [imageUrl, setImageUrl] = useState<string>(farrowing?.image);
 
   useEffect(() => {
     if (farrowing) {
@@ -59,6 +85,7 @@ const UpdateFarrowings = ({
     try {
       await saveMutation({
         ...payload,
+        image,
         farrowingId: farrowing?.id,
       });
       setHasErrors(false);
@@ -71,6 +98,16 @@ const UpdateFarrowings = ({
       setHasErrors(error.response.data.message);
       AlertDangerNotification({
         text: `${error.response.data.message}`,
+      });
+    }
+  };
+
+  const handleChange: UploadProps['onChange'] = (info) => {
+    const { file } = info;
+    if (['done', 'error'].includes(String(file?.status))) {
+      getBase64(file?.originFileObj as FileType, (url) => {
+        setImageUrl(url as any);
+        setImage(file?.originFileObj);
       });
     }
   };
@@ -104,8 +141,43 @@ const UpdateFarrowings = ({
                     </div>
                   </div>
                 )}
-
-                <div className="mb-2 flex items-center space-x-10">
+                <div className="mt-4">
+                  <Controller
+                    name="image"
+                    control={control}
+                    render={({}) => (
+                      <>
+                        <div className="mx-auto justify-center text-center">
+                          <Upload
+                            name="attachment"
+                            listType="picture-card"
+                            showUploadList={false}
+                            onChange={handleChange}
+                            beforeUpload={beforeUpload}
+                            accept=".png,.jpg,.jpeg,.gif"
+                            maxCount={1}
+                          >
+                            {imageUrl ? (
+                              <Avatar
+                                size={100}
+                                shape="square"
+                                src={imageUrl}
+                              />
+                            ) : (
+                              <div className="text-center text-black dark:text-white">
+                                <UploadOutlined />
+                                <div style={{ marginTop: 8 }}>
+                                  Ajouter une photo
+                                </div>
+                              </div>
+                            )}
+                          </Upload>
+                        </div>
+                      </>
+                    )}
+                  />
+                </div>
+                <div className="my-2 flex items-center space-x-10">
                   <div>
                     <Label>
                       {t.formatMessage({ id: 'TABFARROWING.LITTER' })}
@@ -139,7 +211,7 @@ const UpdateFarrowings = ({
                     </Label>
                     <TextInput
                       control={control}
-                      type="number"
+                      type="text"
                       name="weight"
                       placeholder="unit weight"
                       errors={errors}

@@ -217,11 +217,13 @@ const TabAvesTreatments = ({ animalTypeId }: { animalTypeId: string }) => {
           )}
         </CardContent>
       </main>
-      <CreateBulkAvestreatments
-        treatment={animalTypeId}
-        showModal={isOpen}
-        setShowModal={setIsOpen}
-      />
+      {isOpen ? (
+        <CreateBulkAvestreatments
+          treatment={animalTypeId}
+          showModal={isOpen}
+          setShowModal={setIsOpen}
+        />
+      ) : null}
     </>
   );
 };

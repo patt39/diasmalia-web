@@ -1,7 +1,10 @@
 export type FarrowingsModel = {
   createdAt: string;
   id: string;
-  litter: number;
+  image: any;
+  death: string;
+  weight: string;
+  litter: string;
   note: string;
   animal: {
     select: {

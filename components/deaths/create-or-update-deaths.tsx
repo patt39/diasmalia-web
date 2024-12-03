@@ -1,4 +1,5 @@
 import { GetAnimalsAPI } from '@/api-site/animals';
+import { GetOneBuildingAPI } from '@/api-site/buildings';
 import { CreateOrUpdateOneDeathAPI } from '@/api-site/deaths';
 import { useInputState, useReactHookForm } from '@/components/hooks';
 import {
@@ -66,9 +67,12 @@ const CreateOrUpdateDeaths = ({
   const { query } = useRouter();
   const { ref, inView } = useInView();
   const { search, handleSetSearch } = useInputState();
-  const animalTypeId = String(query?.animalTypeId);
   const selectedAnimals = watch('animals', '');
   const countSelectedAnimals = selectedAnimals.length;
+  const buildingId = String(query?.buildingId);
+  const { data: getOneBuilding } = GetOneBuildingAPI({
+    buildingId: buildingId,
+  });
 
   useEffect(() => {
     if (death) {
@@ -115,7 +119,7 @@ const CreateOrUpdateDeaths = ({
     sort: 'desc',
     status: 'ACTIVE',
     sortBy: 'createdAt',
-    animalTypeId: animalTypeId,
+    animalTypeId: getOneBuilding?.animalTypeId,
   });
 
   const {
@@ -129,7 +133,7 @@ const CreateOrUpdateDeaths = ({
     status: 'ACTIVE',
     sortBy: 'createdAt',
     locationId: location?.id,
-    animalTypeId: animalTypeId,
+    animalTypeId: getOneBuilding?.animalTypeId,
   });
 
   useEffect(() => {

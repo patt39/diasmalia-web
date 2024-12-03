@@ -69,9 +69,7 @@ const ViewAvesSale = ({
                       <Textarea defaultValue={getOneSale?.note} disabled />
                     </div>
                   </>
-                ) : (
-                  ''
-                )}
+                ) : null}
               </div>
             </form>
           </div>

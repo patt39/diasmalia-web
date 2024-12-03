@@ -10,12 +10,14 @@ import {
   AlertSuccessNotification,
 } from '@/utils/alert-notification';
 import { XIcon } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { Controller, SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
 import { LoadingFile } from '../ui-setting/ant';
 import { ErrorFile } from '../ui-setting/ant/error-file';
+import { Button } from '../ui/button';
 import { Label } from '../ui/label';
 import {
   Select,
@@ -29,9 +31,9 @@ import {
 const schema = yup.object({
   code: yup.string().optional(),
   note: yup.string().optional(),
-  dose: yup.number().optional(),
   diagnosis: yup.string().optional(),
   healthId: yup.string().optional(),
+  dose: yup.string().required('dose is required'),
   name: yup.string().required('name is required'),
   method: yup.string().required('method is required'),
 });
@@ -211,6 +213,11 @@ const CreateAvestreatments = ({
                                     </>
                                   ))
                               )}
+                              <Button variant="link">
+                                <Link href="/health">
+                                  Ajouter un medicament
+                                </Link>
+                              </Button>
                             </SelectGroup>
                           </SelectContent>
                         </Select>
@@ -238,9 +245,9 @@ const CreateAvestreatments = ({
                     </Label>
                     <TextInput
                       control={control}
-                      type="number"
+                      type="text"
                       name="dose"
-                      placeholder="doses"
+                      placeholder="ex 0,2ml"
                       errors={errors}
                     />
                   </div>

@@ -1,10 +1,12 @@
 import { cn } from '@/lib/utils';
 import {
+  BriefcaseMedical,
   ClipboardList,
   Dice6Icon,
   Fence,
+  HandHelping,
+  HeartHandshakeIcon,
   HomeIcon,
-  Hospital,
   MailQuestion,
   MessageCircleQuestion,
   ShieldCheck,
@@ -14,7 +16,6 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useRouter } from 'next/router';
 import { ReactNode, useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -34,7 +35,6 @@ interface Props {
 
 const VerticalNavDashboard = ({ user }: Props) => {
   const t = useIntl();
-  const router = useRouter();
   const pathname = usePathname();
   const [navigationItems] = useState<NavbarProps[]>([
     {
@@ -58,7 +58,7 @@ const VerticalNavDashboard = ({ user }: Props) => {
     {
       title: `${t.formatMessage({ id: 'MENU.HEALTH' })}`,
       href: '/health',
-      icon: <Hospital className={classIcon} />,
+      icon: <BriefcaseMedical className={classIcon} />,
     },
     {
       title: `${t.formatMessage({ id: 'MENU.FEEDSTOCK' })}`,
@@ -80,6 +80,11 @@ const VerticalNavDashboard = ({ user }: Props) => {
       href: '/tasks',
       icon: <ClipboardList className={classIcon} />,
     },
+    {
+      title: `${t.formatMessage({ id: 'MENU.SALES' })}`,
+      href: '/sales',
+      icon: <HeartHandshakeIcon className={classIcon} />,
+    },
   ]);
   // const [transactionItems] = useState<NavbarProps[]>([
   //   {
@@ -96,13 +101,18 @@ const VerticalNavDashboard = ({ user }: Props) => {
     },
     {
       title: `${t.formatMessage({ id: 'MENU.BLOG' })}`,
-      href: '/blog',
+      href: '/blog/users',
       icon: <Webhook className={classIcon} />,
     },
     {
       title: `${t.formatMessage({ id: 'MENU.CONTACT' })}`,
       href: '/contact',
       icon: <MailQuestion className={classIcon} />,
+    },
+    {
+      title: `Suggestions`,
+      href: '/suggestions',
+      icon: <HandHelping className={classIcon} />,
     },
   ]);
 
@@ -158,15 +168,13 @@ const VerticalNavDashboard = ({ user }: Props) => {
                     {item?.title}
                     {item?.title ===
                     t.formatMessage({ id: 'MENU.BIOSECURITY' }) ? (
-                      <div className="ml-auto">
+                      <div className="ml-4">
                         <span className="relative flex size-3">
                           <span className="absolute inline-flex size-full animate-ping rounded-full bg-green-400 opacity-75"></span>
                           <span className="relative inline-flex size-3 rounded-full bg-green-500"></span>
                         </span>
                       </div>
-                    ) : (
-                      ''
-                    )}
+                    ) : null}
                   </Link>
                 );
               })}
@@ -223,6 +231,14 @@ const VerticalNavDashboard = ({ user }: Props) => {
                     {item?.icon}
 
                     {item?.title}
+                    {item?.title === 'Suggestions' ? (
+                      <div className="ml-2">
+                        <span className="relative flex size-3">
+                          <span className="absolute inline-flex size-full animate-ping rounded-full bg-green-400 opacity-75"></span>
+                          <span className="relative inline-flex size-3 rounded-full bg-green-500"></span>
+                        </span>
+                      </div>
+                    ) : null}
                   </Link>
                 );
               })}

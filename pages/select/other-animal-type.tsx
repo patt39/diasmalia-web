@@ -12,6 +12,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { PrivateComponent } from '@/components/util/private-component';
 import { AssignedTypeFormModel } from '@/types/assigned-type';
 import { AlertDangerNotification } from '@/utils';
+import { MoveLeftIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { Controller, SubmitHandler } from 'react-hook-form';
@@ -22,7 +23,7 @@ const schema = yup.object({ animalTypeIds: yup.array().optional() });
 
 const SelectAnimalType = () => {
   const { ref, inView } = useInView();
-  const { push } = useRouter();
+  const { push, back } = useRouter();
   const {
     t,
     handleSubmit,
@@ -93,6 +94,21 @@ const SelectAnimalType = () => {
 
   return (
     <LayoutDashboard title="Select farms">
+      <div className="mt-4 ml-8 flex items-center">
+        <ButtonInput
+          type="button"
+          size="sm"
+          variant="outline"
+          onClick={() => {
+            back();
+          }}
+          icon={<MoveLeftIcon className="size-4" />}
+        >
+          <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+            {t.formatMessage({ id: 'UTIL.COME_BACK' })}
+          </span>
+        </ButtonInput>
+      </div>
       <div className="m-auto mt-10 w-full max-w-4xl rounded-lg p-6 py-6 bg-white shadow-md dark:bg-black md:mt-16">
         <div className="mt-2 mx-auto flex justify-center">
           <h6 className="text-center text-xl font-bold">

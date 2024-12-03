@@ -1,5 +1,6 @@
 import { GetOneAnimalAPI } from '@/api-site/animals';
 import { GetOneMaleBreedingAPI } from '@/api-site/breedings';
+import { GetOneDeathAnimalAPI } from '@/api-site/deaths';
 import { GetOneFarrowingByAnimalIdAPI } from '@/api-site/farrowings';
 import { GetOneFatteningAPI } from '@/api-site/fattenings';
 import { GetGestationByAnimalIdAPI } from '@/api-site/gestation';
@@ -13,6 +14,7 @@ import { formatWeight } from '../../utils/formate-date';
 import { Card, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
+import { Textarea } from '../ui/textarea';
 
 const ViewAnimal = ({
   showModal,
@@ -25,6 +27,9 @@ const ViewAnimal = ({
 }) => {
   const t = useIntl();
   const { data: getOneAnimal } = GetOneAnimalAPI({
+    animalId: animal?.id,
+  });
+  const { data: getOneDeathAnimal } = GetOneDeathAnimalAPI({
     animalId: animal?.id,
   });
   const { data: getOneFattening } = GetOneFatteningAPI({
@@ -335,29 +340,63 @@ const ViewAnimal = ({
                       value={formatWeight(getOneAnimal?.weight)}
                     />
                   </div>
-                  <div>
-                    <Label>{t.formatMessage({ id: 'VIEW.BIRTHDATE' })}</Label>
-                    <Input
-                      disabled
-                      value={formatDateDDMMYY(getOneAnimal?.birthday) || 'N/A'}
-                    />
-                  </div>
+                  {getOneAnimal?.status === 'ACTIVE' ? (
+                    <div>
+                      <Label>{t.formatMessage({ id: 'VIEW.BIRTHDATE' })}</Label>
+                      <Input
+                        disabled
+                        value={
+                          formatDateDDMMYY(getOneAnimal?.birthday) || 'N/A'
+                        }
+                      />
+                    </div>
+                  ) : getOneAnimal?.status === 'DEAD' ? (
+                    <div>
+                      <Label>{t.formatMessage({ id: 'VIEW.DEATH' })}</Label>
+                      <Input
+                        disabled
+                        value={
+                          formatDateDDMMYY(getOneDeathAnimal?.createdAt) ||
+                          'N/A'
+                        }
+                      />
+                    </div>
+                  ) : (
+                    <div>
+                      <Label>{t.formatMessage({ id: 'VIEW.SOLD' })}</Label>
+                      <Input
+                        disabled
+                        value={
+                          formatDateDDMMYY(getOneSaleAnimalType?.createdAt) ||
+                          'N/A'
+                        }
+                      />
+                    </div>
+                  )}
                 </div>
                 <div className="mb-2 items-center grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
                   <div>
                     <Label>{t.formatMessage({ id: 'VIEW.LOCATION' })}</Label>
                     <Input
                       disabled
-                      value={getOneAnimal?.location?.code || 'N/A'}
+                      value={
+                        getOneAnimal?.location?.code?.toUpperCase() || 'N/A'
+                      }
                     />
                   </div>
                   <div>
                     <Label>{t.formatMessage({ id: 'VIEW.MOTHER' })}</Label>
-                    <Input disabled value={getOneAnimal?.codeMother || 'N/A'} />
+                    <Input
+                      disabled
+                      value={getOneAnimal?.codeMother?.toUpperCase() || 'N/A'}
+                    />
                   </div>
                   <div>
                     <Label>{t.formatMessage({ id: 'VIEW.FATHER' })}</Label>
-                    <Input disabled value={getOneAnimal?.codeFather || 'N/A'} />
+                    <Input
+                      disabled
+                      value={getOneAnimal?.codeFather?.toUpperCase() || 'N/A'}
+                    />
                   </div>
                 </div>
                 {getOneAnimal?.status === 'ACTIVE' ? (
@@ -501,7 +540,7 @@ const ViewAnimal = ({
                           <Input
                             disabled
                             defaultValue={
-                              formatDateDDMMYY(getAnimalTreatment?.createdAt) ||
+                              formatDateDDMMYY(getAnimalTreatment?.createdAt) ??
                               'RAS'
                             }
                           />
@@ -509,36 +548,12 @@ const ViewAnimal = ({
                       )}
                     </div>
                   </div>
-                ) : getOneAnimal?.status === 'SOLD' ? (
-                  <div className="mb-2 flex items-center space-x-10">
-                    <div>
-                      <Label>Client</Label>
-                      <Input
-                        disabled
-                        value={getOneSaleAnimalType?.soldTo || 'N/A'}
-                      />
-                    </div>
-                    <div>
-                      <Label>Phone</Label>
-                      <Input
-                        disabled
-                        value={getOneSaleAnimalType?.phone || 'N/A'}
-                      />
-                    </div>
-                    <div>
-                      <Label>{t.formatMessage({ id: 'SOLD.DATE' })}</Label>
-                      <Input
-                        disabled
-                        value={
-                          formatDateDDMMYY(getOneSaleAnimalType?.createdAt) ||
-                          'N/A'
-                        }
-                      />
-                    </div>
+                ) : getOneAnimal?.status === 'DEAD' ? (
+                  <div className="mb-4">
+                    <Label>Cause</Label>
+                    <Textarea defaultValue={getOneDeathAnimal?.note} disabled />
                   </div>
-                ) : (
-                  ''
-                )}
+                ) : null}
               </div>
             </form>
           </div>

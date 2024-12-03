@@ -1,8 +1,13 @@
 import { GetAnimalsAPI } from '@/api-site/animals';
+import { GetOneBuildingAPI } from '@/api-site/buildings';
 import { GetHealthsAPI } from '@/api-site/health';
 import { CreateOneTreatmentAPI } from '@/api-site/treatment';
-import { useReactHookForm } from '@/components/hooks';
-import { ButtonInput, ButtonLoadMore } from '@/components/ui-setting';
+import { useInputState, useReactHookForm } from '@/components/hooks';
+import {
+  ButtonInput,
+  ButtonLoadMore,
+  SearchInput,
+} from '@/components/ui-setting';
 import { SelectInput, TextInput } from '@/components/ui-setting/shadcn';
 import { treatmentMethods } from '@/i18n/default-exports';
 import { TreatmentsPostModel } from '@/types/treatments';
@@ -11,6 +16,7 @@ import {
   AlertSuccessNotification,
 } from '@/utils/alert-notification';
 import { XIcon } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { Controller, SubmitHandler } from 'react-hook-form';
@@ -37,7 +43,7 @@ import {
 } from '../ui/tooltip';
 
 const schema = yup.object({
-  dose: yup.number().optional(),
+  dose: yup.string().optional(),
   animals: yup.array().optional(),
   name: yup.string().required('name is required'),
   healthId: yup.string().required('medication is required'),
@@ -71,9 +77,14 @@ const BulkCreateTreatments = ({
   } = useReactHookForm({ schema });
   const { query } = useRouter();
   const { ref, inView } = useInView();
-  const animalTypeId = String(query?.animalTypeId);
+  const buildingId = String(query?.buildingId);
   const selectedAnimals = watch('animals', []);
   const countSelectedAnimals = selectedAnimals.length;
+  const { search, handleSetSearch } = useInputState();
+
+  const { data: getOneBuilding } = GetOneBuildingAPI({
+    buildingId: buildingId,
+  });
 
   // Create
   const { isPending: loading, mutateAsync: saveMutation } =
@@ -118,7 +129,7 @@ const BulkCreateTreatments = ({
     status: true,
     sortBy: 'createdAt',
     category: 'MEDICATION',
-    animalTypeId: animalTypeId,
+    animalTypeId: getOneBuilding?.animalTypeId,
   });
 
   const {
@@ -129,12 +140,13 @@ const BulkCreateTreatments = ({
     hasNextPage,
     fetchNextPage,
   } = GetAnimalsAPI({
+    search,
     take: 5,
     sort: 'desc',
     status: 'ACTIVE',
     sortBy: 'createdAt',
     locationId: location?.id,
-    animalTypeId: animalTypeId,
+    animalTypeId: getOneBuilding?.animalTypeId,
   });
 
   const {
@@ -142,13 +154,13 @@ const BulkCreateTreatments = ({
     isError: isErrorGrowthAnimals,
     data: dataGrowthAnimals,
   } = GetAnimalsAPI({
-    take: 30,
+    take: 10,
     sort: 'desc',
     status: 'ACTIVE',
     sortBy: 'createdAt',
     productionPhase: 'GROWTH',
     locationId: farrowing?.animal?.location?.id,
-    animalTypeId: animalTypeId,
+    animalTypeId: getOneBuilding?.animalTypeId,
   });
 
   useEffect(() => {
@@ -223,7 +235,7 @@ const BulkCreateTreatments = ({
                     </div>
                   </div>
                 )}
-                {!farrowing?.id ? (
+                {location?.id && location?.productionPhase === 'LACTATION' ? (
                   <div className="flex items-center space-x-4 w-full">
                     <div className="mb-2 w-full mt-2">
                       <Label>
@@ -236,18 +248,19 @@ const BulkCreateTreatments = ({
                         </SelectTrigger>
                         <SelectContent className="dark:border-gray-800">
                           <SelectGroup>
-                            {isLoadingAnimals ? (
+                            {isLoadingGrowthAnimals ? (
                               <LoadingFile />
-                            ) : isErrorAnimals ? (
+                            ) : isErrorGrowthAnimals ? (
                               <ErrorFile
                                 title="404"
                                 description="Error finding data please try again..."
                               />
-                            ) : Number(dataAnimals?.pages[0]?.data?.total) <=
-                              0 ? (
+                            ) : Number(
+                                dataGrowthAnimals?.pages[0]?.data?.total,
+                              ) <= 0 ? (
                               <ErrorFile description="Don't have active animals created yet please do" />
                             ) : (
-                              dataAnimals?.pages
+                              dataGrowthAnimals?.pages
                                 .flatMap((page: any) => page?.data?.value)
                                 .map((item) => (
                                   <>
@@ -385,6 +398,92 @@ const BulkCreateTreatments = ({
                       </Select>
                     </div>
                   </div>
+                ) : location?.id ? (
+                  <div className="flex items-center space-x-4 w-full">
+                    <div className="mb-2 w-full mt-2">
+                      <Label>
+                        Sélectionner les animaux à soigner
+                        <span className="text-red-600">*</span>
+                      </Label>
+                      <Select>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="select animals" />
+                        </SelectTrigger>
+                        <SelectContent className="dark:border-gray-800">
+                          <div className="mr-auto items-center gap-2">
+                            <SearchInput
+                              placeholder="Search by code"
+                              onChange={handleSetSearch}
+                            />
+                          </div>
+                          <SelectGroup>
+                            {isLoadingAnimals ? (
+                              <LoadingFile />
+                            ) : isErrorAnimals ? (
+                              <ErrorFile
+                                title="404"
+                                description="Error finding data please try again..."
+                              />
+                            ) : Number(dataAnimals?.pages[0]?.data?.total) <=
+                              0 ? (
+                              <ErrorFile description="Don't have active animals created yet please do" />
+                            ) : (
+                              dataAnimals?.pages
+                                .flatMap((page: any) => page?.data?.value)
+                                .map((item) => (
+                                  <>
+                                    <Controller
+                                      key={item?.code}
+                                      control={control}
+                                      name="animals"
+                                      render={({ field: { ...field } }) => (
+                                        <>
+                                          <div
+                                            className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow"
+                                            key={item?.code}
+                                          >
+                                            <Checkbox
+                                              checked={field?.value?.includes(
+                                                item?.code,
+                                              )}
+                                              onCheckedChange={(checked) => {
+                                                return checked
+                                                  ? field.onChange([
+                                                      ...(field.value || []),
+                                                      item?.code,
+                                                    ])
+                                                  : field?.onChange(
+                                                      field?.value?.filter(
+                                                        (value: any) =>
+                                                          value !== item?.code,
+                                                      ),
+                                                    );
+                                              }}
+                                            />
+                                            <div className="space-y-1 leading-none">
+                                              <Label>{item?.code}</Label>
+                                            </div>
+                                          </div>
+                                        </>
+                                      )}
+                                    />
+                                  </>
+                                ))
+                            )}
+                            {hasNextPage && (
+                              <div className="mx-auto mt-4 justify-center text-center">
+                                <ButtonLoadMore
+                                  ref={ref}
+                                  isFetchingNextPage={isFetchingNextPage}
+                                  onClick={() => fetchNextPage()}
+                                />
+                              </div>
+                            )}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
                 ) : (
                   <div className="my-2 items-center">
                     <Label>{t.formatMessage({ id: 'VIEW.MOTHER' })}</Label>
@@ -461,6 +560,11 @@ const BulkCreateTreatments = ({
                                     </>
                                   ))
                               )}
+                              <Button variant="link">
+                                <Link href="/health">
+                                  {t.formatMessage({ id: 'ADD.MEDICATION' })}
+                                </Link>
+                              </Button>
                             </SelectGroup>
                           </SelectContent>
                         </Select>
@@ -488,9 +592,9 @@ const BulkCreateTreatments = ({
                     </Label>
                     <TextInput
                       control={control}
-                      type="number"
+                      type="text"
                       name="dose"
-                      placeholder="doses"
+                      placeholder="ex 0,2ml"
                       errors={errors}
                     />
                   </div>

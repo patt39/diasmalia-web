@@ -199,11 +199,13 @@ const TabGestations = ({ animalTypeId }: { animalTypeId: string }) => {
           )}
         </CardContent>
       </main>
-      <UpdateGestations
-        gestation={animalTypeId}
-        showModal={isOpen}
-        setShowModal={setIsOpen}
-      />
+      {isOpen ? (
+        <UpdateGestations
+          gestation={animalTypeId}
+          showModal={isOpen}
+          setShowModal={setIsOpen}
+        />
+      ) : null}
     </>
   );
 };

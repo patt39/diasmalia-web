@@ -46,6 +46,7 @@ import {
   formatDateDDMMYY,
   formatDDMMYYDate,
   formatMMDate,
+  getDayOfMonth,
   getMonthNow,
 } from '@/utils';
 import {
@@ -134,9 +135,6 @@ export function Dashboard() {
     months: String(months),
     organizationId: userStorage?.organizationId,
   });
-
-  const today = new Date();
-  const formattedDate = `${today.getDate()}-${today.getMonth() + 1}-${today.getFullYear()}`;
 
   const { data: dataFinancesAnalyticsMonth } = GetFinancesAnalyticAPI({
     year: String(year),
@@ -287,9 +285,7 @@ export function Dashboard() {
                             )}
                           </DropdownMenuContent>
                         </DropdownMenu>
-                      ) : (
-                        ''
-                      )}
+                      ) : null}
                     </div>
                   </div>
                 </CardHeader>
@@ -337,9 +333,7 @@ export function Dashboard() {
                   </ChartContainer>
                 </CardContent>
               </Card>
-            ) : (
-              ''
-            )}
+            ) : null}
             <div className="grid gap-4 md:gap-8 lg:grid-cols-2 xl:grid-cols-3">
               <Card className="xl:col-span-2 dark:border-gray-800">
                 <CardHeader className="flex flex-row items-center">
@@ -465,9 +459,15 @@ export function Dashboard() {
                                   </div>
                                 </TableCell>
                                 <TableCell>
-                                  {formatDateDDMMYY(item?.dueDate) ===
-                                  formattedDate ? (
-                                    <span className="relative inline-flex animate-pulse text-red-600">
+                                  {getDayOfMonth(item?.dueDate) -
+                                    new Date().getDate() ==
+                                  2 ? (
+                                    <span className="relative inline-flex animate-pulse text-orange-600">
+                                      Dans 2 jours
+                                    </span>
+                                  ) : getDayOfMonth(item?.dueDate) ==
+                                    new Date().getDate() ? (
+                                    <span className="relative inline-flex animate-bounce text-red-600">
                                       Aujourdhui
                                     </span>
                                   ) : (
@@ -568,9 +568,7 @@ export function Dashboard() {
                                       })}{' '}
                                       {userStorage?.profile?.currency?.symbol}
                                     </TableCell>
-                                  ) : (
-                                    ''
-                                  )}
+                                  ) : null}
                                 </TableRow>
                               </>
                             ))
@@ -580,10 +578,16 @@ export function Dashboard() {
                   </CardContent>
                 </Card>
                 <Card className="dark:border-gray-800">
-                  <CardHeader>
+                  <CardHeader className="flex flex-row items-center">
                     <CardTitle className="text-lg font-bold">
                       {t.formatMessage({ id: 'SALE.TITLE' })}
                     </CardTitle>
+                    <Button asChild size="xsm" className="ml-auto gap-1">
+                      <Link href={`/sales`}>
+                        {t.formatMessage({ id: 'ACTIVITY.ALL' })}
+                        <ArrowUpRight className="h-4 w-4" />
+                      </Link>
+                    </Button>
                   </CardHeader>
                   <CardContent className="grid gap-8">
                     {isLoadingSales ? (
@@ -624,9 +628,7 @@ export function Dashboard() {
                   </CardContent>
                 </Card>
               </div>
-            ) : (
-              ''
-            )}
+            ) : null}
           </main>
           <DashboardFooter />
         </div>

@@ -4,7 +4,6 @@ import { ButtonInput } from '..';
 import {
   AlertDialog,
   AlertDialogContent,
-  AlertDialogDescription,
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
@@ -43,9 +42,6 @@ const ActionModalConfirmeDialog = ({
             <AlertDialogTitle>
               {t.formatMessage({ id: 'ALERT.TITLE' })}
             </AlertDialogTitle>
-            <AlertDialogDescription>
-              Etes vous sur de vouloir confirmer{' '}
-            </AlertDialogDescription>
           </AlertDialogHeader>
           <div className="flex items-center space-x-4">
             <ButtonInput

@@ -84,12 +84,20 @@ const ListFinances = ({ item, index }: { item: any; index: number }) => {
           </DropdownMenu>
         </TableCell>
       </TableRow>
-      <CreateOrUpdateFinances
-        finance={item}
-        showModal={isEdit}
-        setShowModal={setIsEdit}
-      />
-      <ViewFinance finance={item} showModal={isView} setShowModal={setIsView} />
+      {isEdit ? (
+        <CreateOrUpdateFinances
+          finance={item}
+          showModal={isEdit}
+          setShowModal={setIsEdit}
+        />
+      ) : null}
+      {isView ? (
+        <ViewFinance
+          finance={item}
+          showModal={isView}
+          setShowModal={setIsView}
+        />
+      ) : null}
     </>
   );
 };

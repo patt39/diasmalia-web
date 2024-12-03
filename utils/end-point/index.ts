@@ -90,10 +90,37 @@ export const apiEndpoints: ClientApiMethods = {
   getAnimalTypes: GET(`${baseUrl}/animal-type`),
   getOneAnimalType: GET(`${baseUrl}/animal-type/view/:animalTypeId`),
 
+  /****************** Profile route */
+  updateOneProfile: PUT(`${baseUrl}/profiles/:profileId/edit`),
+  updateUpdatePassword: PUT(`${baseUrl}/users/update-password`),
+  getOneProfile: GET(`${baseUrl}/profiles/:profileId/show`),
+
+  /****************** Currency or Countries route */
+  getAllCurrencies: GET(`${baseUrl}/currencies`),
+  getAllCounties: GET(`${baseUrl}/countries`),
+
+  /****************** Materials route */
+  getMaterials: GET(`${baseUrl}/materials`),
+  getAssignedMaterials: GET(`${baseUrl}/assigned-material/`),
+  getOneMaterial: GET(`${baseUrl}/assigned-material/:materialId/view`),
+  addMaterial: POST(`${baseUrl}/assigned-material/:materialId/create`),
+  createMaterial: POST(
+    `${baseUrl}/assigned-material/:materialId/:buildingId/create`,
+  ),
+  createAvesMaterial: POST(
+    `${baseUrl}/assigned-material/:materialId/:locationId/aves-location`,
+  ),
+  changeMaterialStatus: PUT(
+    `${baseUrl}/assigned-material/:assignMaterialId/change-status`,
+  ),
+
   /****************** Health route */
   getHealths: GET(`${baseUrl}/health`),
+  getOneHealth: GET(`${baseUrl}/health/:healthId/view`),
   createOneHealth: POST(`${baseUrl}/health/create`),
+  updateOneHealth: PUT(`${baseUrl}/health/:healthId/edit`),
   changeNameStatus: PUT(`${baseUrl}/health/:healthId/change-status`),
+  deleteOneHealth: DELETE(`${baseUrl}/health/:healthId/delete`),
 
   /****************** Feed stock route */
   getFeedStocks: GET(`${baseUrl}/feed-stock`),
@@ -123,22 +150,27 @@ export const apiEndpoints: ClientApiMethods = {
   exportSales: GET(`${baseUrl}/sales/export`),
   getOneSale: GET(`${baseUrl}/sales/:saleId/view`),
   createOneSale: POST(`${baseUrl}/sales/bulk/create`),
-  updateOneSale: PUT(`${baseUrl}/sales/:saleId/edit`),
+  updateSale: PUT(`${baseUrl}/sales/:saleId/edit`),
   createOneAvesSale: POST(`${baseUrl}/sales/create/aves`),
-  updateOneAvesSale: PUT(`${baseUrl}/sales/:saleId/edit`),
   deleteOneSale: DELETE(`${baseUrl}/sales/:saleId/delete`),
   downloadSalePdf: GET(`${baseUrl}/sales/:saleId/download`),
   getEggsAnalytics: GET(`${baseUrl}/analytics/sales/eggs`),
+  getSalesAnalytics: GET(`${baseUrl}/analytics/sales`),
   getchicksAnalytics: GET(`${baseUrl}/analytics/sales/chicks`),
   getchickensAnalytics: GET(`${baseUrl}/analytics/sales/chickens`),
-  getAnimalsAnalytics: GET(`${baseUrl}/analytics/sales/animals`),
   getBestSaleChannel: GET(`${baseUrl}/sales/:animalTypeId/best-channel`),
   getOneSaleAnimalType: GET(`${baseUrl}/sales/:animalTypeId/view/animalType`),
 
   /****************** User route */
+  getImages: GET(`${baseUrl}/images`),
+  findUser: GET(`${baseUrl}/users/:userId/show`),
+  addImage: POST(`${baseUrl}/images/create`),
   ipLocation: GET(`${baseUrl}/ip-location`),
   getOneUserMe: GET(`${baseUrl}/users/me`),
   verifyToken: GET(`${baseUrl}/verify/:token`),
+  updateOrganization: PUT(`${baseUrl}/organization/:organizationId/edit`),
+  findOrganization: GET(`${baseUrl}/organization/:userId/view/organization`),
+  deleteOneImage: DELETE(`${baseUrl}/images/:imageId/delete`),
 
   /****************** AssignedType route */
   createAssignedType: POST(`${baseUrl}/assigned-type/multiple/create`),
@@ -189,6 +221,13 @@ export const apiEndpoints: ClientApiMethods = {
   changeLocation: PUT(`${baseUrl}/locations/:locationId/change-location`),
   deleteOneLocation: DELETE(`${baseUrl}/locations/:locationId/delete`),
 
+  /****************** Locations route */
+  getBuildings: GET(`${baseUrl}/buildings`),
+  getOneBuilding: GET(`${baseUrl}/buildings/:buildingId/view`),
+  createOneBuilding: POST(`${baseUrl}/buildings/:animalTypeId/create`),
+  updateOneBuilding: PUT(`${baseUrl}/buildings/:buildingId/edit`),
+  deleteOneBuilding: DELETE(`${baseUrl}/buildings/:buildingId/delete`),
+
   /****************** Cages route */
   getAnimalCages: GET(`${baseUrl}/cages`),
   putInCages: POST(`${baseUrl}/cages/create`),
@@ -200,11 +239,12 @@ export const apiEndpoints: ClientApiMethods = {
   getAnimals: GET(`${baseUrl}/animals`),
   createOneAnimal: POST(`${baseUrl}/animals/create`),
   getOneAnimal: GET(`${baseUrl}/animals/:animalId/view`),
-  createBulkAnimal: POST(`${baseUrl}/animals/create/bulk`),
-  createBulkAves: POST(`${baseUrl}/animals/create/:animalTypeId/bulk/aves`),
   updateOneAnimal: PUT(`${baseUrl}/animals/:animalId/edit`),
   updateOneAves: PUT(`${baseUrl}/animals/:animalId/edit`),
+  createBulkAnimal: POST(`${baseUrl}/animals/create/bulk`),
+  animalsIdentification: POST(`${baseUrl}/animals/identification`),
   createOneAvesAnimal: POST(`${baseUrl}/animals/:animalTypeId/create`),
+  createBulkAves: POST(`${baseUrl}/animals/create/:animalTypeId/bulk/aves`),
   getAnimalByAnimalType: GET(`${baseUrl}/animals/:animalTypeId/view/animal`),
   getAnimalStatistics: GET(`${baseUrl}/animals/:animalTypeId/statistics`),
   getAnimalDeadSoldStatistics: GET(
@@ -212,6 +252,7 @@ export const apiEndpoints: ClientApiMethods = {
   ),
   deleteOneAnimal: DELETE(`${baseUrl}/animals/:animalId/delete`),
   archiveOneAnimal: PUT(`${baseUrl}/animals/:animalId/archive/aves`),
+  changeProductionStatus: PUT(`${baseUrl}/animals/:animalId/change-status`),
 
   /****************** Feedings route */
   getFeedings: GET(`${baseUrl}/feedings`),
@@ -233,6 +274,7 @@ export const apiEndpoints: ClientApiMethods = {
   getDeaths: GET(`${baseUrl}/deaths`),
   getDeathAnalytics: GET(`${baseUrl}/analytics/deaths`),
   getOneDeath: GET(`${baseUrl}/deaths/:deathId/view`),
+  getOneDeathAnimal: GET(`${baseUrl}/deaths/:animalId/show`),
   createOneDeath: POST(`${baseUrl}/deaths/bulk/create`),
   updateOneDeath: PUT(`${baseUrl}/deaths/:deathId/edit`),
   createOneAvesDeath: POST(`${baseUrl}/deaths/create/aves`),
@@ -248,6 +290,9 @@ export const apiEndpoints: ClientApiMethods = {
   deleteOneBreeding: DELETE(`${baseUrl}/breedings/:breedingId/delete`),
   createOneCheck: POST(`${baseUrl}/check-pregnancies/:breedingId/check`),
   getOneMaleBreeding: GET(`${baseUrl}/breedings/:animalMaleId/view/breeding`),
+  getOneFemaleBreeding: GET(
+    `${baseUrl}/breedings/:animalFemaleId/view/female-breeding`,
+  ),
   updateOneCheck: PUT(`${baseUrl}/check-pregnancies/:checkPregnancyId/recheck`),
 
   /****************** Egg-harvestings route */

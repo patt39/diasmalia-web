@@ -1,38 +1,51 @@
-import { GetAssignedTypesAPI } from '@/api-site/assigned-type';
 import { CreateHealthAPI } from '@/api-site/health';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
-import { LoadingFile } from '@/components/ui-setting/ant';
-import { ErrorFile } from '@/components/ui-setting/ant/error-file';
-import { SelectInput, TextInput } from '@/components/ui-setting/shadcn';
+import { TextAreaInput, TextInput } from '@/components/ui-setting/shadcn';
 import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { healthType } from '@/i18n/default-exports';
-import { HealthsModel } from '@/types/health';
+import { HealthsModel } from '@/types/treatments';
 import {
   AlertDangerNotification,
   AlertSuccessNotification,
 } from '@/utils/alert-notification';
+import { UploadOutlined } from '@ant-design/icons';
+import { Avatar, GetProp, Upload, UploadProps } from 'antd';
 import { XIcon } from 'lucide-react';
+import { useState } from 'react';
 import { Controller, SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
 
+type FileType = Parameters<GetProp<UploadProps, 'beforeUpload'>>[0];
+const getBase64 = (img: FileType, callback: (url: string) => void) => {
+  const reader = new FileReader();
+  reader.addEventListener('load', () => callback(reader.result as string));
+  reader.readAsDataURL(img);
+};
+const beforeUpload = (file: FileType) => {
+  const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+  if (!isJpgOrPng) {
+    AlertDangerNotification({
+      text: 'You can only upload JPG/PNG file!',
+    });
+  }
+  const isLt2M = file.size / 1024 / 1024 < 2;
+  if (!isLt2M) {
+    AlertDangerNotification({
+      text: 'Image must smaller than 2MB!',
+    });
+  }
+  return isJpgOrPng && isLt2M;
+};
+
 const schema = yup.object({
-  animalTypeId: yup.string().optional(),
   name: yup.string().required('name is a required field'),
-  category: yup.string().required('category is required'),
+  description: yup.string().required('description is required'),
 });
 
 const CreateHealth = ({
   showModal,
   setShowModal,
+  health,
 }: {
   showModal: boolean;
   setShowModal: any;
@@ -40,15 +53,15 @@ const CreateHealth = ({
 }) => {
   const {
     t,
-    watch,
     control,
     handleSubmit,
     errors,
     hasErrors,
     setHasErrors,
-    locale,
+    setValue,
   } = useReactHookForm({ schema });
-  const watchHealthType = watch('category', '');
+  const [imageUrl, setImageUrl] = useState<string>(health?.image);
+  const [image, setImage] = useState<any>();
 
   // Create
   const { isPending: loading, mutateAsync: saveMutation } = CreateHealthAPI();
@@ -60,6 +73,7 @@ const CreateHealth = ({
     try {
       await saveMutation({
         ...payload,
+        image,
       });
       setHasErrors(false);
       AlertSuccessNotification({
@@ -75,15 +89,15 @@ const CreateHealth = ({
     }
   };
 
-  const {
-    isLoading: isLoadingAssignedTypes,
-    isError: isErrorAssignedTypes,
-    data: dataAssignedTypes,
-  } = GetAssignedTypesAPI({
-    take: 20,
-    sort: 'desc',
-    sortBy: 'createdAt',
-  });
+  const handleChange: UploadProps['onChange'] = (info) => {
+    const { file } = info;
+    if (['done', 'error'].includes(String(file?.status))) {
+      getBase64(file?.originFileObj as FileType, (url) => {
+        setImageUrl(url as any);
+        setImage(file?.originFileObj);
+      });
+    }
+  };
 
   return (
     <>
@@ -114,74 +128,7 @@ const CreateHealth = ({
                     </div>
                   </div>
                 )}
-                <div className="mb-2">
-                  <Label>
-                    {t.formatMessage({ id: 'MEDICATION.CATEGORY' })}
-                    <span className="text-red-600">*</span>
-                  </Label>
-                  <SelectInput
-                    control={control}
-                    errors={errors}
-                    placeholder="select type"
-                    valueType="key"
-                    name="category"
-                    dataItem={healthType.filter((i) => i?.lang === locale)}
-                  />
-                </div>
-                {watchHealthType === 'MEDICATION' ? (
-                  <div className="my-2 items-center">
-                    <Label>
-                      {t.formatMessage({ id: 'SELECT.ANIMALTYPE' })}
-                      <span className="text-red-600">*</span>
-                    </Label>
-                    <Controller
-                      control={control}
-                      name="animalTypeId"
-                      render={({ field: { value, onChange } }) => (
-                        <Select
-                          onValueChange={onChange}
-                          name={'animalTypeId'}
-                          value={value}
-                        >
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select animal type" />
-                          </SelectTrigger>
-                          <SelectContent className="dark:border-gray-800">
-                            <SelectGroup>
-                              {isLoadingAssignedTypes ? (
-                                <LoadingFile />
-                              ) : isErrorAssignedTypes ? (
-                                <ErrorFile
-                                  title="404"
-                                  description="Error finding data please try again..."
-                                />
-                              ) : Number(
-                                  dataAssignedTypes?.pages[0]?.data?.total,
-                                ) <= 0 ? (
-                                <ErrorFile description="Don't have medication yet" />
-                              ) : (
-                                dataAssignedTypes?.pages
-                                  .flatMap((page: any) => page?.data?.value)
-                                  .map((item, index) => (
-                                    <>
-                                      <SelectItem
-                                        key={index}
-                                        value={item?.animalType?.id}
-                                      >
-                                        {item?.animalType?.name}
-                                      </SelectItem>
-                                    </>
-                                  ))
-                              )}
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
-                  </div>
-                ) : (
-                  ''
-                )}
+
                 <div className="mb-2">
                   <Label>
                     {t.formatMessage({ id: 'NAME' })}
@@ -191,7 +138,50 @@ const CreateHealth = ({
                     control={control}
                     type="text"
                     name="name"
-                    placeholder="name"
+                    placeholder="medication name"
+                    errors={errors}
+                  />
+                </div>
+                <div className="mt-4">
+                  <Controller
+                    name="image"
+                    control={control}
+                    render={({}) => (
+                      <>
+                        <div className="mx-auto justify-center text-center">
+                          <Upload
+                            name="attachment"
+                            listType="picture-card"
+                            showUploadList={false}
+                            onChange={handleChange}
+                            beforeUpload={beforeUpload}
+                            accept=".png,.jpg,.jpeg,.gif"
+                            maxCount={1}
+                          >
+                            {imageUrl ? (
+                              <Avatar
+                                size={100}
+                                shape="square"
+                                src={imageUrl}
+                              />
+                            ) : (
+                              <div className="text-center text-black dark:text-white">
+                                <UploadOutlined />
+                                <div style={{ marginTop: 8 }}>Upload image</div>
+                              </div>
+                            )}
+                          </Upload>
+                        </div>
+                      </>
+                    )}
+                  />
+                </div>
+                <div className="mb-4">
+                  <TextAreaInput
+                    control={control}
+                    label="Description et posologie"
+                    name="description"
+                    placeholder="description and posology"
                     errors={errors}
                   />
                 </div>

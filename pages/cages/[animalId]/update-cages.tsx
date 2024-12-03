@@ -150,9 +150,7 @@ const UpdateCages = ({
                       errors={errors}
                     />
                   </div>
-                ) : (
-                  ''
-                )}
+                ) : null}
                 {cage?.death !== 0 ? (
                   <div className="w-full">
                     <Label>Nombre de mort</Label>
@@ -164,10 +162,7 @@ const UpdateCages = ({
                       errors={errors}
                     />
                   </div>
-                ) : (
-                  ''
-                )}
-
+                ) : null}
                 <div className="mt-4 flex items-center space-x-4">
                   <ButtonInput
                     type="button"

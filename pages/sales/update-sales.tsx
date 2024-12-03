@@ -1,5 +1,4 @@
-import { GetOneAnimalTypeAPI } from '@/api-site/animal-type';
-import { CreateOrUpdateAvesSaleAPI } from '@/api-site/sales';
+import { UpdateSaleAPI } from '@/api-site/sales';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
 import {
@@ -14,15 +13,13 @@ import {
   AlertSuccessNotification,
 } from '@/utils/alert-notification';
 import { XIcon } from 'lucide-react';
-import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
-import { Label } from '../ui/label';
+import { Label } from '../../components/ui/label';
 
 const schema = yup.object({
   code: yup.string().optional(),
-  note: yup.string().optional(),
   phone: yup.string().optional(),
   email: yup.string().optional(),
   address: yup.string().optional(),
@@ -31,11 +28,11 @@ const schema = yup.object({
   female: yup.number().optional(),
   number: yup.number().optional(),
   detail: yup.string().optional(),
-  price: yup.number().required('price is required'),
-  method: yup.string().required('method is required'),
+  price: yup.number().optional(),
+  method: yup.string().optional(),
 });
 
-const UpdateAvesSales = ({
+const UpdateSales = ({
   showModal,
   setShowModal,
   sale,
@@ -56,13 +53,7 @@ const UpdateAvesSales = ({
     setHasErrors,
   } = useReactHookForm({ schema });
 
-  const watchDetail = watch('detail');
   const watchSaleCanale = watch('method');
-  const { query } = useRouter();
-  const animalTypeId = String(query?.animalTypeId);
-  const { data: animalType } = GetOneAnimalTypeAPI({
-    animalTypeId: animalTypeId,
-  });
 
   useEffect(() => {
     if (sale) {
@@ -83,8 +74,7 @@ const UpdateAvesSales = ({
   }, [sale, setValue]);
 
   // Update data
-  const { isPending: loading, mutateAsync: saveMutation } =
-    CreateOrUpdateAvesSaleAPI();
+  const { isPending: loading, mutateAsync: saveMutation } = UpdateSaleAPI();
 
   const onSubmit: SubmitHandler<SalesModel> = async (payload: SalesModel) => {
     setHasErrors(undefined);
@@ -136,8 +126,19 @@ const UpdateAvesSales = ({
                     </div>
                   </div>
                 )}
-                {['Pisciculture'].includes(animalType?.name) ? (
-                  <div className="mb-2 items-center space-x-1">
+                <div className="flex space-x-4">
+                  <div className="w-80">
+                    <Label>
+                      {t.formatMessage({ id: 'TABINCUBATION.QTYSTART' })}
+                    </Label>
+                    <TextInput
+                      control={control}
+                      type="number"
+                      name="number"
+                      errors={errors}
+                    />
+                  </div>
+                  <div className="w-80">
                     <Label>{t.formatMessage({ id: 'SALE.PRICE' })}</Label>
                     <TextInput
                       control={control}
@@ -146,34 +147,7 @@ const UpdateAvesSales = ({
                       errors={errors}
                     />
                   </div>
-                ) : (
-                  <div className="my-2 items-center">
-                    {watchDetail === 'EGGS' ? (
-                      <div className="my-2">
-                        <Label>{t.formatMessage({ id: 'SALE.PRICE' })}</Label>
-                        <TextInput
-                          control={control}
-                          type="number"
-                          name="price"
-                          errors={errors}
-                        />
-                      </div>
-                    ) : (
-                      <>
-                        <div>
-                          <Label>{t.formatMessage({ id: 'SALE.PRICE' })}</Label>
-                          <TextInput
-                            control={control}
-                            type="number"
-                            name="price"
-                            errors={errors}
-                          />
-                        </div>
-                      </>
-                    )}
-                  </div>
-                )}
-
+                </div>
                 <div className="my-2 items-center">
                   <Label>{t.formatMessage({ id: 'SALE.CUSTOMER' })}</Label>
                   <TextInput
@@ -211,11 +185,11 @@ const UpdateAvesSales = ({
                   />
                 </div>
                 <Label>{t.formatMessage({ id: 'SALE.METHOD' })}</Label>
-                <div className="mb-4 flex items-center">
+                <div className="mb-4 items-center">
                   <SelectInput
                     control={control}
                     errors={errors}
-                    valueType="text"
+                    valueType="key"
                     name="method"
                     dataItem={sellingMethods.filter((i) => i?.lang === locale)}
                   />
@@ -229,9 +203,7 @@ const UpdateAvesSales = ({
                       errors={errors}
                     />
                   </div>
-                ) : (
-                  ''
-                )}
+                ) : null}
                 <div className="mt-4 flex items-center space-x-4">
                   <ButtonInput
                     type="button"
@@ -260,4 +232,4 @@ const UpdateAvesSales = ({
   );
 };
 
-export { UpdateAvesSales };
+export { UpdateSales };

@@ -86,9 +86,7 @@ const ListAvesIsolations = ({ item, index }: { item: any; index: number }) => {
                     })}
                   </span>
                 </DropdownMenuItem>
-              ) : (
-                ''
-              )}
+              ) : null}
               <DropdownMenuItem onClick={() => setIsEdit(true)}>
                 <PencilIcon className="size-4 text-gray-600 hover:text-indigo-600" />
                 <span className="ml-2 cursor-pointer hover:text-indigo-600">
@@ -113,22 +111,28 @@ const ListAvesIsolations = ({ item, index }: { item: any; index: number }) => {
           </DropdownMenu>
         </TableCell>
       </TableRow>
-      <CreateOrUpdateAvesIsolations
-        isolation={item}
-        showModal={isEdit}
-        setShowModal={setIsEdit}
-      />
-      <ViewAvesIsolation
-        isolation={item}
-        showModal={isView}
-        setShowModal={setIsView}
-      />
-      <CreateOrUpdateAvesDeaths
-        animal={item}
-        death={item?.animalTypeId}
-        showModal={isDeath}
-        setShowModal={setIsDeath}
-      />
+      {isEdit ? (
+        <CreateOrUpdateAvesIsolations
+          isolation={item}
+          showModal={isEdit}
+          setShowModal={setIsEdit}
+        />
+      ) : null}
+      {isView ? (
+        <ViewAvesIsolation
+          isolation={item}
+          showModal={isView}
+          setShowModal={setIsView}
+        />
+      ) : null}
+      {isDeath ? (
+        <CreateOrUpdateAvesDeaths
+          animal={item}
+          death={item?.animalTypeId}
+          showModal={isDeath}
+          setShowModal={setIsDeath}
+        />
+      ) : null}
     </>
   );
 };

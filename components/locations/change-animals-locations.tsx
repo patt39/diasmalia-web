@@ -1,4 +1,5 @@
 import { GetAnimalsAPI } from '@/api-site/animals';
+import { GetOneBuildingAPI } from '@/api-site/buildings';
 import { ChangeAnimalsLoctionAPI, GetLocationsAPI } from '@/api-site/locations';
 import { useInputState, useReactHookForm } from '@/components/hooks';
 import {
@@ -56,10 +57,13 @@ const AnimalsChangeLocations = ({
     useReactHookForm({ schema });
   const { query } = useRouter();
   const { ref, inView } = useInView();
-  const animalTypeId = String(query?.animalTypeId);
   const selectedAnimals = watch('animals', []);
   const countSelectedAnimals = selectedAnimals.length;
   const { search, handleSetSearch } = useInputState();
+  const buildingId = String(query?.buildingId);
+  const { data: getOneBuilding } = GetOneBuildingAPI({
+    buildingId: buildingId,
+  });
 
   const {
     isLoading: isLoadingAnimals,
@@ -74,7 +78,7 @@ const AnimalsChangeLocations = ({
     status: 'ACTIVE',
     sortBy: 'createdAt',
     locationId: location?.id,
-    animalTypeId: animalTypeId,
+    animalTypeId: getOneBuilding?.animalTypeId,
   });
 
   const {
@@ -86,7 +90,7 @@ const AnimalsChangeLocations = ({
     take: 10,
     sort: 'desc',
     sortBy: 'createdAt',
-    animalTypeId: animalTypeId,
+    animalTypeId: getOneBuilding?.animalTypeId,
   });
 
   // Create data
@@ -267,7 +271,7 @@ const AnimalsChangeLocations = ({
                     </Select>
                   </div>
                 </div>
-                <div className="">
+                <div>
                   <Label>
                     {t.formatMessage({ id: 'VIEW.LOCATION' })}
                     <span className="text-red-600">*</span>

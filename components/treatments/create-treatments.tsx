@@ -1,3 +1,5 @@
+import { GetAnimalsAPI } from '@/api-site/animals';
+import { GetOneBuildingAPI } from '@/api-site/buildings';
 import { GetHealthsAPI } from '@/api-site/health';
 import { CreateOneFemaleTreatmentAPI } from '@/api-site/treatment';
 import { useReactHookForm } from '@/components/hooks';
@@ -10,12 +12,13 @@ import {
   AlertSuccessNotification,
 } from '@/utils/alert-notification';
 import { XIcon } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
 import { Controller, SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
 import { LoadingFile } from '../ui-setting/ant';
 import { ErrorFile } from '../ui-setting/ant/error-file';
+import { Button } from '../ui/button';
 import { Label } from '../ui/label';
 import {
   Select,
@@ -27,7 +30,7 @@ import {
 } from '../ui/select';
 
 const schema = yup.object({
-  dose: yup.number().optional(),
+  dose: yup.string().optional(),
   code: yup.string().optional(),
   name: yup.string().required('name is required'),
   healthId: yup.string().required('medication is required'),
@@ -38,33 +41,21 @@ const schema = yup.object({
 const CreateTreatments = ({
   showModal,
   setShowModal,
-  farrowing,
-  animal,
+  location,
 }: {
   showModal: boolean;
   setShowModal: any;
   farrowing?: any;
+  location?: any;
   animal?: any;
 }) => {
-  const {
-    t,
-    control,
-    handleSubmit,
-    errors,
-    hasErrors,
-    setHasErrors,
-    locale,
-    setValue,
-  } = useReactHookForm({ schema });
+  const { t, control, handleSubmit, errors, hasErrors, setHasErrors, locale } =
+    useReactHookForm({ schema });
   const { query } = useRouter();
-  const animalTypeId = String(query?.animalTypeId);
-
-  useEffect(() => {
-    if (animal) {
-      const fields = ['code'];
-      fields?.forEach((field: any) => setValue(field, animal[field]));
-    }
-  }, [animal, setValue]);
+  const buildingId = String(query?.buildingId);
+  const { data: getOneBuilding } = GetOneBuildingAPI({
+    buildingId: buildingId,
+  });
 
   // Create
   const { isPending: loading, mutateAsync: saveMutation } =
@@ -102,7 +93,17 @@ const CreateTreatments = ({
     status: true,
     sortBy: 'createdAt',
     category: 'MEDICATION',
-    animalTypeId: animalTypeId,
+    animalTypeId: getOneBuilding?.animalTypeId,
+  });
+
+  const { data: dataAnimal } = GetAnimalsAPI({
+    take: 5,
+    sort: 'desc',
+    status: 'ACTIVE',
+    sortBy: 'createdAt',
+    productionPhase: 'LACTATION',
+    locationId: location?.id,
+    animalTypeId: getOneBuilding?.animalTypeId,
   });
 
   return (
@@ -142,8 +143,9 @@ const CreateTreatments = ({
                     control={control}
                     type="text"
                     name="code"
-                    defaultValue={`${farrowing?.animal?.code}`}
+                    defaultValue={`${dataAnimal?.pages[0]?.data?.value?.[0]?.code}`}
                     errors={errors}
+                    disabled
                   />
                 </div>
                 <div className="mb-2 items-center space-x-1">
@@ -211,6 +213,11 @@ const CreateTreatments = ({
                                     </>
                                   ))
                               )}
+                              <Button variant="link">
+                                <Link href="/health">
+                                  {t.formatMessage({ id: 'ADD.MEDICATION' })}
+                                </Link>
+                              </Button>
                             </SelectGroup>
                           </SelectContent>
                         </Select>
@@ -238,7 +245,7 @@ const CreateTreatments = ({
                     </Label>
                     <TextInput
                       control={control}
-                      type="number"
+                      type="text"
                       name="dose"
                       placeholder="doses"
                       errors={errors}

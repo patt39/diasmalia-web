@@ -55,3 +55,15 @@ export type ContributorStatusModel = {
   id: string;
   role: string;
 };
+
+export type UserUpdatePasswordFormModel = {
+  oldPassword: string;
+  password: string;
+  passwordConfirm: string;
+};
+
+export type OrganizationModel = {
+  name: string;
+  description: string;
+  website: string;
+};

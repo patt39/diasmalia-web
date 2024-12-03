@@ -81,7 +81,7 @@ const ActivityLogs = () => {
                   .flatMap((page: any) => page?.data?.value)
                   .map((item, index) => (
                     <>
-                      <TableRow>
+                      <TableRow key={index}>
                         <TableCell>
                           <div className="font-medium">
                             {formatDDMMYYDate(item?.createdAt as Date)}

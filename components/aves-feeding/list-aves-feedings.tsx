@@ -91,24 +91,26 @@ const ListAvesFeedings = ({ item, index }: { item: any; index: number }) => {
                     {t.formatMessage({ id: 'TABANIMAL.DELETE' })}
                   </span>
                 </DropdownMenuItem>
-              ) : (
-                ''
-              )}
+              ) : null}
             </DropdownMenuContent>
           </DropdownMenu>
         </TableCell>
       </TableRow>
-      <ActionModalDialog
-        loading={loading}
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
-        onClick={() => deleteItem(item)}
-      />
-      <CreateOrUpdateAvesFeedings
-        feeding={item}
-        showModal={isEdit}
-        setShowModal={setIsEdit}
-      />
+      {isOpen ? (
+        <ActionModalDialog
+          loading={loading}
+          isOpen={isOpen}
+          setIsOpen={setIsOpen}
+          onClick={() => deleteItem(item)}
+        />
+      ) : null}
+      {isEdit ? (
+        <CreateOrUpdateAvesFeedings
+          feeding={item}
+          showModal={isEdit}
+          setShowModal={setIsEdit}
+        />
+      ) : null}
     </>
   );
 };

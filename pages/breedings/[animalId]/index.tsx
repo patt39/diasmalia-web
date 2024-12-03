@@ -20,8 +20,9 @@ import { MoveLeftIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
+import { formatWeight } from '../../../utils/formate-date';
 
-export function Faq() {
+export function Breeding() {
   const { t, userStorage } = useInputState();
   const { ref, inView } = useInView();
   const { query, back } = useRouter();
@@ -151,13 +152,26 @@ export function Faq() {
                                   : {item?.weaning?.farrowing?.litter}
                                 </div>
                                 <div>
+                                  {t.formatMessage({
+                                    id: 'ANIMALTYPE.DEATHS',
+                                  })}
+                                  : {item?.weaning?.farrowing?.dead}
+                                </div>
+                                <div>
+                                  {t.formatMessage({
+                                    id: 'VIEW.WEIGHT',
+                                  })}
+                                  :{' '}
+                                  {formatWeight(
+                                    item?.weaning?.farrowing?.weight,
+                                  )}
+                                </div>
+                                <div>
                                   Note: {item?.weaning?.farrowing?.note}
                                 </div>
                               </div>
                             </>
-                          ) : (
-                            ''
-                          )}
+                          ) : null}
                           {item?.weaning !== null ? (
                             <>
                               <h4 className="my-2 text-sm font-bold tracking-tight">
@@ -169,17 +183,20 @@ export function Faq() {
                                   {formatDateDDMMYY(item?.weaning?.createdAt)}{' '}
                                 </div>
                                 <div>
-                                  {' '}
                                   {t.formatMessage({
                                     id: 'TABFARROWING.LITTER',
                                   })}
                                   : {item?.weaning?.litter}{' '}
                                 </div>
+                                <div>
+                                  {t.formatMessage({
+                                    id: 'VIEW.WEIGHT',
+                                  })}
+                                  : {formatWeight(item?.weaning?.weight)}
+                                </div>
                               </div>
                             </>
-                          ) : (
-                            ''
-                          )}
+                          ) : null}
                         </AccordionContent>
                       </AccordionItem>
                     </Accordion>
@@ -202,4 +219,4 @@ export function Faq() {
     </>
   );
 }
-export default PrivateComponent(Faq);
+export default PrivateComponent(Breeding);

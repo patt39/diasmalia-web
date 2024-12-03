@@ -109,26 +109,34 @@ const ListGestations = ({ item, index }: { item: any; index: number }) => {
           </DropdownMenu>
         </TableCell>
       </TableRow>
-      <UpdateGestations
-        gestation={item}
-        showModal={isEdit}
-        setShowModal={setIsEdit}
-      />
-      <ReCheckPregnancy
-        gestation={item}
-        showModal={isCheck}
-        setShowModal={setIsCheck}
-      />
-      <ViewGestation
-        gestation={item}
-        showModal={isView}
-        setShowModal={setIsView}
-      />
-      <CreateFarrowings
-        farrowing={item}
-        showModal={isFarrowing}
-        setShowModal={setIsFarrowing}
-      />
+      {isEdit ? (
+        <UpdateGestations
+          gestation={item}
+          showModal={isEdit}
+          setShowModal={setIsEdit}
+        />
+      ) : null}
+      {isCheck ? (
+        <ReCheckPregnancy
+          gestation={item}
+          showModal={isCheck}
+          setShowModal={setIsCheck}
+        />
+      ) : null}
+      {isView ? (
+        <ViewGestation
+          gestation={item}
+          showModal={isView}
+          setShowModal={setIsView}
+        />
+      ) : null}
+      {isFarrowing ? (
+        <CreateFarrowings
+          farrowing={item}
+          showModal={isFarrowing}
+          setShowModal={setIsFarrowing}
+        />
+      ) : null}
     </>
   );
 };

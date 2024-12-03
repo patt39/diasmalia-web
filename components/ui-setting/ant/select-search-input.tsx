@@ -15,6 +15,7 @@ interface Props {
   icon?: React.ReactNode;
   allowClear?: boolean;
   disabled?: boolean;
+  defaultValue?: string;
 }
 
 const SelectSearchInput: React.FC<Props> = ({
@@ -28,6 +29,7 @@ const SelectSearchInput: React.FC<Props> = ({
   icon,
   allowClear,
   disabled,
+  defaultValue,
   firstOptionName = '',
 }) => {
   return (
@@ -40,6 +42,7 @@ const SelectSearchInput: React.FC<Props> = ({
       <Controller
         name={name}
         control={control}
+        defaultValue={defaultValue}
         render={({ field: { ref, ...field } }) => (
           <Select
             allowClear={allowClear}

@@ -69,9 +69,7 @@ const ListBreedings = ({ item, index }: { item: any; index: number }) => {
                     {t.formatMessage({ id: 'BREEDING.CHECK' })}
                   </span>
                 </DropdownMenuItem>
-              ) : (
-                ''
-              )}
+              ) : null}
               <DropdownMenuItem onClick={() => setIsView(true)}>
                 <Eye className="size-4 text-gray-600 hover:text-indigo-600" />
                 <span className="ml-2 cursor-pointer hover:text-indigo-600">
@@ -82,21 +80,27 @@ const ListBreedings = ({ item, index }: { item: any; index: number }) => {
           </DropdownMenu>
         </TableCell>
       </TableRow>
-      <UpdateBreedings
-        breeding={item}
-        showModal={isEdit}
-        setShowModal={setIsEdit}
-      />
-      <CheckPregnancy
-        breeding={item}
-        showModal={isCheck}
-        setShowModal={setIsCheck}
-      />
-      <ViewBreeding
-        breeding={item}
-        showModal={isView}
-        setShowModal={setIsView}
-      />
+      {isEdit ? (
+        <UpdateBreedings
+          breeding={item}
+          showModal={isEdit}
+          setShowModal={setIsEdit}
+        />
+      ) : null}
+      {isCheck ? (
+        <CheckPregnancy
+          breeding={item}
+          showModal={isCheck}
+          setShowModal={setIsCheck}
+        />
+      ) : null}
+      {isView ? (
+        <ViewBreeding
+          breeding={item}
+          showModal={isView}
+          setShowModal={setIsView}
+        />
+      ) : null}
     </>
   );
 };

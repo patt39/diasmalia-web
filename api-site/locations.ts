@@ -204,6 +204,7 @@ export const GetLocationsAPI = (
     sortBy: string;
     status?: boolean;
     addCages?: string;
+    buildingId?: string;
     productionPhase?: string;
     animalTypeId?: string;
     organizationId?: string;
@@ -216,6 +217,7 @@ export const GetLocationsAPI = (
     search,
     status,
     addCages,
+    buildingId,
     productionPhase,
     animalTypeId,
     organizationId,
@@ -233,6 +235,7 @@ export const GetLocationsAPI = (
           sortBy,
           status,
           addCages,
+          buildingId,
           productionPhase,
           animalTypeId,
           page: pageParam,

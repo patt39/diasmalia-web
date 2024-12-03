@@ -1,4 +1,3 @@
-import { GetOneAnimalTypeAPI } from '@/api-site/animal-type';
 import { UpdateOneLoctionAPI } from '@/api-site/locations';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
@@ -9,7 +8,6 @@ import {
   AlertSuccessNotification,
 } from '@/utils/alert-notification';
 import { XIcon } from 'lucide-react';
-import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
@@ -43,11 +41,6 @@ const UpdateLocations = ({
     hasErrors,
     setHasErrors,
   } = useReactHookForm({ schema });
-  const { query } = useRouter();
-  const animalTypeId = String(query?.animalTypeId);
-  const { data: animalType } = GetOneAnimalTypeAPI({
-    animalTypeId: animalTypeId,
-  });
 
   useEffect(() => {
     if (location) {
@@ -120,28 +113,46 @@ const UpdateLocations = ({
                 )}
 
                 <Label>Code</Label>
-                <div className="flex items-center">
-                  <TextInput
-                    control={control}
-                    type="text"
-                    name="code"
-                    errors={errors}
-                  />
-                </div>
-                <div className="my-2">
-                  <Label>
-                    {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
-                  </Label>
-                  <SelectInput
-                    control={control}
-                    errors={errors}
-                    valueType="key"
-                    name="productionPhase"
-                    dataItem={productionPhases.filter(
-                      (i) => i?.lang === locale,
-                    )}
-                  />
-                </div>
+                {location?._count?.animals !== 0 ? (
+                  <div className="flex items-center">
+                    <TextInput
+                      control={control}
+                      type="text"
+                      name="code"
+                      errors={errors}
+                      disabled
+                    />
+                  </div>
+                ) : (
+                  <div className="flex items-center">
+                    <TextInput
+                      control={control}
+                      type="text"
+                      name="code"
+                      errors={errors}
+                    />
+                  </div>
+                )}
+                {['POLYVALENT'].includes(
+                  location?.building?.productionPhase,
+                ) ? (
+                  <div>
+                    <Label>
+                      {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
+                      <span className="text-red-600">*</span>
+                    </Label>
+                    <SelectInput
+                      control={control}
+                      errors={errors}
+                      placeholder="select production phase"
+                      valueType="key"
+                      name="productionPhase"
+                      dataItem={productionPhases.filter(
+                        (i) => i?.lang === locale,
+                      )}
+                    />
+                  </div>
+                ) : null}
                 <div className="my-2 items-center space-x-1">
                   <>
                     <div className="items-center flex space-x-9 my-2">

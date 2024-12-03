@@ -10,6 +10,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { TableCell, TableRow } from '@/components/ui/table';
+import { ViewSale } from '@/pages/sales/view-sale';
 import {
   AlertDangerNotification,
   AlertSuccessNotification,
@@ -23,9 +24,8 @@ import {
   TrashIcon,
 } from 'lucide-react';
 import { useState } from 'react';
+import { UpdateSales } from '../../pages/sales/update-sales';
 import { ActionModalDialog } from '../ui-setting/shadcn';
-import { UpdateAvesSales } from './update-aves-sales';
-import { ViewAvesSale } from './view-sale';
 
 const ListAvesSales = ({ item, index }: { item: any; index: number }) => {
   const { t, isOpen, setIsOpen, userStorage } = useInputState();
@@ -92,9 +92,7 @@ const ListAvesSales = ({ item, index }: { item: any; index: number }) => {
               </TableCell>
             )}
           </>
-        ) : (
-          ''
-        )}
+        ) : null}
         <TableCell className="hidden md:table-cell">{item?.number}</TableCell>
         <TableCell className="hidden md:table-cell">
           {item?.price.toLocaleString('en-US')}{' '}
@@ -113,16 +111,16 @@ const ListAvesSales = ({ item, index }: { item: any; index: number }) => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="dark:border-gray-800">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => setIsEdit(true)}>
-                <PencilIcon className="size-4 text-gray-600 hover:text-indigo-600" />
-                <span className="ml-2 cursor-pointer hover:text-indigo-600">
-                  {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
-                </span>
-              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setIsView(true)}>
                 <Eye className="size-4 text-gray-600 hover:text-indigo-600" />
                 <span className="ml-2 cursor-pointer hover:text-indigo-600">
                   {t.formatMessage({ id: 'TABANIMAL.VIEW' })}
+                </span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setIsEdit(true)}>
+                <PencilIcon className="size-4 text-gray-600 hover:text-indigo-600" />
+                <span className="ml-2 cursor-pointer hover:text-indigo-600">
+                  {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
                 </span>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => handleDownloadPdf()}>
@@ -147,12 +145,12 @@ const ListAvesSales = ({ item, index }: { item: any; index: number }) => {
           </DropdownMenu>
         </TableCell>
       </TableRow>
-      <UpdateAvesSales
-        sale={item}
-        showModal={isEdit}
-        setShowModal={setIsEdit}
-      />
-      <ViewAvesSale sale={item} showModal={isView} setShowModal={setIsView} />
+      {isEdit ? (
+        <UpdateSales sale={item} showModal={isEdit} setShowModal={setIsEdit} />
+      ) : null}
+      {isView ? (
+        <ViewSale sale={item} showModal={isView} setShowModal={setIsView} />
+      ) : null}
     </>
   );
 };

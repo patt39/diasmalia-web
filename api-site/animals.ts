@@ -34,6 +34,47 @@ export const GetAnimalStatisticsAPI = (payload: {
   };
 };
 
+export const ChangeProductionStatusAPI = ({
+  onSuccess,
+  onError,
+}: {
+  onSuccess?: () => void;
+  onError?: (error: any) => void;
+} = {}) => {
+  const queryKey = ['animals'];
+  const queryClient = useQueryClient();
+  const result = useMutation({
+    mutationKey: queryKey,
+    mutationFn: async (payload: { animalId: string }) => {
+      const { animalId } = payload;
+      return await makeApiCall({
+        action: 'changeProductionStatus',
+        urlParams: { animalId },
+      });
+    },
+    onError: async (error) => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onError) {
+        onError(error);
+      }
+    },
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+  });
+
+  return result;
+};
+
 export const GetAnimalDeadSoldStatisticsAPI = (payload: {
   animalTypeId?: string;
   organizationId?: string;
@@ -157,6 +198,46 @@ export const CreateBulkAnimalsAPI = ({
     mutationFn: async (payload: AnimalModel) => {
       await makeApiCall({
         action: 'createBulkAnimal',
+        body: { ...payload },
+      });
+    },
+    onError: async (error) => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onError) {
+        onError(error);
+      }
+    },
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+  });
+
+  return result;
+};
+
+export const AnimalsIdentificationAPI = ({
+  onSuccess,
+  onError,
+}: {
+  onSuccess?: () => void;
+  onError?: (error: any) => void;
+} = {}) => {
+  const queryKey = ['animals'];
+  const queryClient = useQueryClient();
+  const result = useMutation({
+    mutationKey: queryKey,
+    mutationFn: async (payload: AnimalModel) => {
+      await makeApiCall({
+        action: 'animalsIdentification',
         body: { ...payload },
       });
     },

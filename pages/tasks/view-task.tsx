@@ -38,30 +38,7 @@ const ViewTask = ({
               <div className="flex-auto justify-center p-2">
                 <div className="w-full my-2">
                   <Label>Type</Label>
-                  <span className="text-red-600">*</span>
                   <Input type="text" defaultValue={getTask?.type} disabled />
-                </div>
-                {getTask?.type === 'GENERIC' ? (
-                  <div className="w-full mb-2">
-                    <Label>Fréquence</Label>
-                    <Input defaultValue={getTask?.frequency} disabled />
-                  </div>
-                ) : (
-                  ''
-                )}
-
-                {getTask?.type === 'SPECIFIC' ? (
-                  <div className="w-full mb-2">
-                    <Label>{t.formatMessage({ id: 'TODO' })}</Label>
-                    <Input defaultValue={getTask?.periode} disabled />
-                  </div>
-                ) : (
-                  ''
-                )}
-
-                <div className="w-full my-2">
-                  <Label>{t.formatMessage({ id: 'ANIMALTYPE' })}</Label>
-                  <Input defaultValue={getTask?.animalType?.name} disabled />
                 </div>
                 {getTask?.type === 'SPECIFIC' ? (
                   <div className="flex items-center mb-2 space-x-4">
@@ -80,9 +57,7 @@ const ViewTask = ({
                       />
                     </div>
                   </div>
-                ) : (
-                  ''
-                )}
+                ) : null}
                 {getTask?.type === 'GENERIC' ? (
                   <div className="my-2">
                     <Label>{t.formatMessage({ id: 'ASSIGNE.TO' })}</Label>
@@ -91,9 +66,7 @@ const ViewTask = ({
                       disabled
                     />
                   </div>
-                ) : (
-                  ''
-                )}
+                ) : null}
                 <div className="mb-2">
                   <Label> {t.formatMessage({ id: 'TITLE' })}</Label>
                   <Input defaultValue={getTask?.title} disabled />

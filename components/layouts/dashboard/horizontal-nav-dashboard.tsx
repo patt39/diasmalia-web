@@ -1,7 +1,7 @@
 import { logoutUsersAPI } from '@/api-site/user';
 import { ThemeToggle } from '@/components/ui-setting';
-import { AvatarComponent } from '@/components/ui-setting/ant';
 import { LangToggle } from '@/components/ui-setting/lang-toggle';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -13,13 +13,16 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { firstLetterToUpperCase } from '@/utils/utils';
+import {
+  capitalizeOneFirstLetter,
+  firstLetterToUpperCase,
+} from '@/utils/utils';
 import {
   ClipboardList,
   FolderArchive,
   FolderDot,
-  Fuel,
   LogOut,
+  Settings,
   UserPen,
   Wallet,
 } from 'lucide-react';
@@ -108,17 +111,24 @@ const HorizontalNavDashboard = ({ user, showDrawer }: Props) => {
                           type="button"
                           className=" mx-auto flex max-w-xs items-center rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2"
                         >
-                          <AvatarComponent
-                            className="size-9"
-                            profile={user?.profile}
-                          />
+                          <Avatar>
+                            <AvatarImage src={user?.profile?.photo} />
+                            <AvatarFallback>
+                              {capitalizeOneFirstLetter(
+                                user?.profile?.firstName,
+                              )}{' '}
+                              {capitalizeOneFirstLetter(
+                                user?.profile?.lastName,
+                              )}
+                            </AvatarFallback>
+                          </Avatar>
                           <div className="ml-2 hidden min-w-0 flex-1 lg:block">
                             <p className="ml-1 w-auto text-sm font-bold text-gray-900 dark:text-white">
                               {firstLetterToUpperCase(user?.profile?.firstName)}{' '}
                               {firstLetterToUpperCase(user?.profile?.lastName)}
                             </p>
                             <p className="mt-1 text-sm font-medium text-gray-600 sm:table-cell">
-                              <span>{user?.profile?.email}</span>
+                              <span>{user?.email}</span>
                             </p>
                           </div>
                         </button>
@@ -129,9 +139,13 @@ const HorizontalNavDashboard = ({ user, showDrawer }: Props) => {
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuGroup>
-                          <DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() =>
+                              push(`/entreprise/${user?.userId}/show`)
+                            }
+                          >
                             <span className="cursor-pointer  hover:text-orange-600">
-                              {t.formatMessage({ id: 'PROFILE' })}
+                              Entreprise
                             </span>
                             <DropdownMenuShortcut>
                               <UserPen className="h-3.5 w-3.5  hover:shadow-xxl  hover:text-orange-600" />
@@ -148,9 +162,7 @@ const HorizontalNavDashboard = ({ user, showDrawer }: Props) => {
                                 <ClipboardList className="h-3.5 w-3.5  hover:shadow-xxl  hover:text-yellow-600" />
                               </DropdownMenuShortcut>
                             </DropdownMenuItem>
-                          ) : (
-                            ''
-                          )}
+                          ) : null}
                           <DropdownMenuItem onClick={() => push(`/projects`)}>
                             <span className="cursor-pointer  hover:text-lime-600">
                               {t.formatMessage({ id: 'PROJECTS' })}
@@ -183,19 +195,17 @@ const HorizontalNavDashboard = ({ user, showDrawer }: Props) => {
                                 </DropdownMenuShortcut>
                               </DropdownMenuItem>
                               <DropdownMenuItem
-                                onClick={() => push(`/billing`)}
+                                onClick={() => push(`/settings/`)}
                               >
                                 <span className="cursor-pointer  hover:text-emerald-600">
-                                  {t.formatMessage({ id: 'MENU.SUBSCRIPTION' })}
+                                  Paramètres
                                 </span>
                                 <DropdownMenuShortcut>
-                                  <Fuel className="h-3.5 w-3.5  hover:shadow-xxl  hover:text-emerald-600" />
+                                  <Settings className="h-3.5 w-3.5  hover:shadow-xxl  hover:text-emerald-600" />
                                 </DropdownMenuShortcut>
                               </DropdownMenuItem>
                             </>
-                          ) : (
-                            ''
-                          )}
+                          ) : null}
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => logoutUserItem()}>

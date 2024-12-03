@@ -46,9 +46,8 @@ const TabAnimalDeathStatistics = ({
                 </TooltipTrigger>
                 <TooltipContent className="dark:border-gray-800">
                   <p>
-                    {t.formatMessage({ id: 'ANIMALTYPE.TOOLTIP' })}{' '}
                     {animalStatistics?.animalsDead ?? 0}{' '}
-                    {t.formatMessage({ id: 'ANIMAL.DEATH' })}
+                    {t.formatMessage({ id: 'ANIMALTYPE.DEATHS' })}
                   </p>
                 </TooltipContent>
               </Tooltip>
@@ -92,6 +91,45 @@ const TabAnimalDeathStatistics = ({
               </CardDescription>
               <CardTitle className="text-2xl">
                 {animalStatistics?.sumAnimalFatteningDead ?? 0}
+              </CardTitle>
+            </CardHeader>
+          </Card>
+          <Card
+            x-chunk="dashboard-05-chunk-1"
+            className=" dark:border-gray-800"
+          >
+            <CardHeader className="pb-2">
+              <CardDescription>
+                {t.formatMessage({ id: 'ANIMAL.FEMALE.REPRODUCTION' })}
+              </CardDescription>
+              <CardTitle className="text-2xl">
+                {animalStatistics?.sumFemaleReproductionDead ?? 0}
+              </CardTitle>
+            </CardHeader>
+          </Card>
+          <Card
+            x-chunk="dashboard-05-chunk-1"
+            className=" dark:border-gray-800"
+          >
+            <CardHeader className="pb-2">
+              <CardDescription>
+                {t.formatMessage({ id: 'ANIMALTYPE.MALE.REPRODUCTION' })}
+              </CardDescription>
+              <CardTitle className="text-2xl">
+                {animalStatistics?.sumMaleReproductionDead ?? 0}
+              </CardTitle>
+            </CardHeader>
+          </Card>
+          <Card
+            x-chunk="dashboard-05-chunk-1"
+            className=" dark:border-gray-800"
+          >
+            <CardHeader className="pb-2">
+              <CardDescription>
+                {t.formatMessage({ id: 'ANIMAL.FEMALE.GESTATION' })}
+              </CardDescription>
+              <CardTitle className="text-2xl">
+                {animalStatistics?.sumFemaleGestationDead ?? 0}
               </CardTitle>
             </CardHeader>
           </Card>

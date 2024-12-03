@@ -58,9 +58,7 @@ const ListEggHarvestings = ({ item, index }: { item: any; index: number }) => {
             </Badge>
           ) : item?.size === 'MEDIUM' ? (
             <Badge className="text-xs" variant="default">
-              {t.formatMessage({
-                id: 'TABEGGHAVESTING.MEDIUM',
-              })}
+              {t.formatMessage({ id: 'TABEGGHAVESTING.MEDIUM' })}
             </Badge>
           ) : (
             <Badge className="text-xs" variant="secondary">
@@ -96,9 +94,7 @@ const ListEggHarvestings = ({ item, index }: { item: any; index: number }) => {
                     })}
                   </span>
                 </DropdownMenuItem>
-              ) : (
-                ''
-              )}
+              ) : null}
               {item?.animal?.quantity === 0 ? (
                 <DropdownMenuItem onClick={() => setIsOpen(true)}>
                   <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
@@ -106,9 +102,7 @@ const ListEggHarvestings = ({ item, index }: { item: any; index: number }) => {
                     {t.formatMessage({ id: 'TABANIMAL.DELETE' })}
                   </span>
                 </DropdownMenuItem>
-              ) : (
-                ''
-              )}
+              ) : null}
             </DropdownMenuContent>
             <ActionModalDialog
               loading={loading}
@@ -119,16 +113,20 @@ const ListEggHarvestings = ({ item, index }: { item: any; index: number }) => {
           </DropdownMenu>
         </TableCell>
       </TableRow>
-      <CreateOrUpdateEggHarvestings
-        eggHarvesting={item}
-        showModal={isEdit}
-        setShowModal={setIsEdit}
-      />
-      <CreateIncubations
-        incubation={item}
-        showModal={isIncubation}
-        setShowModal={setIsIncubation}
-      />
+      {isEdit ? (
+        <CreateOrUpdateEggHarvestings
+          eggHarvesting={item}
+          showModal={isEdit}
+          setShowModal={setIsEdit}
+        />
+      ) : null}
+      {isIncubation ? (
+        <CreateIncubations
+          incubation={item}
+          showModal={isIncubation}
+          setShowModal={setIsIncubation}
+        />
+      ) : null}
     </>
   );
 };

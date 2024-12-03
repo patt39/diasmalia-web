@@ -222,16 +222,20 @@ const TabLocations = ({ animalTypeId }: { animalTypeId: string }) => {
           </div>
         </div>
       </section>
-      <CreateLocations
-        location={animalTypeId}
-        showModal={isOpen}
-        setShowModal={setIsOpen}
-      />
-      <CreateBulkLocations
-        location={animalTypeId}
-        showModal={isBulkOpen}
-        setShowModal={setIsBulkOpen}
-      />
+      {isOpen ? (
+        <CreateLocations
+          location={animalTypeId}
+          showModal={isOpen}
+          setShowModal={setIsOpen}
+        />
+      ) : null}
+      {isBulkOpen ? (
+        <CreateBulkLocations
+          building={animalTypeId}
+          showModal={isBulkOpen}
+          setShowModal={setIsBulkOpen}
+        />
+      ) : null}
     </>
   );
 };

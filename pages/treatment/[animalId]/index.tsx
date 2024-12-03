@@ -71,9 +71,9 @@ export function AnimalTreatments() {
 
   return (
     <>
-      <LayoutDashboard title={`${getOneAnimal?.code} treatments`}>
+      <LayoutDashboard title={`${getOneAnimal?.code} - treatments`}>
         <CardHeader>
-          <div className="flex items-center">
+          <div>
             <ButtonInput
               type="button"
               size="sm"
@@ -87,6 +87,8 @@ export function AnimalTreatments() {
                 {t.formatMessage({ id: 'UTIL.COME_BACK' })}
               </span>
             </ButtonInput>
+          </div>
+          <div className="flex items-center">
             <div className="ml-60 flex flex-col items-center gap-1 text-center">
               {[
                 'Porciculture',
@@ -141,9 +143,7 @@ export function AnimalTreatments() {
                           </div>
                           {item?.dose !== null ? (
                             <div> Dose: {item?.dose ?? 0} </div>
-                          ) : (
-                            ''
-                          )}
+                          ) : null}
                           <div>
                             {t.formatMessage({ id: 'SALE.METHOD' })}:{' '}
                             {item?.method.toLowerCase()}
@@ -152,9 +152,7 @@ export function AnimalTreatments() {
                             <div>
                               Observation: {item?.note ?? 'Observation'}{' '}
                             </div>
-                          ) : (
-                            ''
-                          )}
+                          ) : null}
                         </AccordionContent>
                       </AccordionItem>
                     </Accordion>

@@ -29,6 +29,28 @@ export const GetOneDeathAPI = (payload: { deathId: string }) => {
   };
 };
 
+export const GetOneDeathAnimalAPI = (payload: { animalId: string }) => {
+  const { animalId } = payload;
+  const { data, isError, isLoading, status, isPending, refetch } = useQuery({
+    queryKey: ['death-animal', animalId],
+    queryFn: async () =>
+      await makeApiCall({
+        action: 'getOneDeathAnimal',
+        urlParams: { animalId },
+      }),
+    refetchOnWindowFocus: false,
+  });
+
+  return {
+    data: data?.data as any,
+    isError,
+    isLoading,
+    status,
+    isPending,
+    refetch,
+  };
+};
+
 export const CreateOrUpdateOneAvesDeathAPI = ({
   onSuccess,
   onError,

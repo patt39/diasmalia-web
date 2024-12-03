@@ -1,10 +1,33 @@
-import { HealthsModel } from '@/types/health';
+import { HealthsModel } from '@/types/treatments';
 import { makeApiCall, PaginationRequest } from '@/utils';
 import {
   useInfiniteQuery,
   useMutation,
+  useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
+
+export const GetOneHealthAPI = (payload: { healthId: string }) => {
+  const { healthId } = payload;
+  const { data, isError, isLoading, status, isPending, refetch } = useQuery({
+    queryKey: ['health', healthId],
+    queryFn: async () =>
+      await makeApiCall({
+        action: 'getOneHealth',
+        urlParams: { healthId },
+      }),
+    refetchOnWindowFocus: false,
+  });
+
+  return {
+    data: data?.data as any,
+    isError,
+    isLoading,
+    status,
+    isPending,
+    refetch,
+  };
+};
 
 export const CreateHealthAPI = ({
   onSuccess,
@@ -17,10 +40,65 @@ export const CreateHealthAPI = ({
   const queryClient = useQueryClient();
   const result = useMutation({
     mutationKey: queryKey,
-    mutationFn: async (payload: HealthsModel) => {
+    mutationFn: async (payload: HealthsModel): Promise<any> => {
+      const { image } = payload;
+      let data = new FormData();
+      data.append('name', `${payload.name ?? ''}`);
+      data.append('description', `${payload.description ?? ''}`);
+      data.append('image', image);
+
       await makeApiCall({
         action: 'createOneHealth',
-        body: { ...payload },
+        body: data,
+      });
+
+      return 'Ok';
+    },
+    onError: async (error) => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onError) {
+        onError(error);
+      }
+    },
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+  });
+
+  return result;
+};
+
+export const UpdateHealthAPI = ({
+  onSuccess,
+  onError,
+}: {
+  onSuccess?: () => void;
+  onError?: (error: any) => void;
+} = {}) => {
+  const queryKey = ['healths'];
+  const queryClient = useQueryClient();
+  const result = useMutation({
+    mutationKey: queryKey,
+    mutationFn: async (payload: HealthsModel & { healthId: string }) => {
+      const { healthId, image } = payload;
+      let data = new FormData();
+      data.append('name', `${payload.name ?? ''}`);
+      data.append('description', `${payload.description ?? ''}`);
+      data.append('image', image);
+
+      return await makeApiCall({
+        action: 'updateOneHealth',
+        body: data,
+        urlParams: { healthId },
       });
     },
     onError: async (error) => {
@@ -106,6 +184,47 @@ export const ChangeTreatmentNameStatusAPI = ({
       const { healthId } = payload;
       return await makeApiCall({
         action: 'changeNameStatus',
+        urlParams: { healthId },
+      });
+    },
+    onError: async (error) => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onError) {
+        onError(error);
+      }
+    },
+    onSettled: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey });
+      if (onSuccess) {
+        onSuccess();
+      }
+    },
+  });
+
+  return result;
+};
+
+export const DeleteOneHealthAPI = ({
+  onSuccess,
+  onError,
+}: {
+  onSuccess?: () => void;
+  onError?: (error: any) => void;
+} = {}) => {
+  const queryKey = ['healths'];
+  const queryClient = useQueryClient();
+  const result = useMutation({
+    mutationKey: queryKey,
+    mutationFn: async (payload: { healthId: string }) => {
+      const { healthId } = payload;
+      return await makeApiCall({
+        action: 'deleteOneHealth',
         urlParams: { healthId },
       });
     },

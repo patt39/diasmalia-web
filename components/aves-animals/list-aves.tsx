@@ -1,5 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
-import { ArchiveOneAnimalAPI, DeleteOneAnimalAPI } from '@/api-site/animals';
+import {
+  ArchiveOneAnimalAPI,
+  ChangeProductionStatusAPI,
+  DeleteOneAnimalAPI,
+} from '@/api-site/animals';
 import { useInputState } from '@/components/hooks';
 import { Button } from '@/components/ui/button';
 import {
@@ -16,6 +20,7 @@ import {
 } from '@/utils';
 import {
   Anvil,
+  Ban,
   Bone,
   Calendar,
   ClipboardPlus,
@@ -26,7 +31,6 @@ import {
   Grid,
   HeartHandshakeIcon,
   Hospital,
-  ListCollapse,
   MoreHorizontal,
   PencilIcon,
   Salad,
@@ -41,6 +45,7 @@ import { CreateAvesSales } from '../aves-sales/create-aves-sales';
 import { CreateAvestreatments } from '../aves-treatments/create-aves-treatments';
 import { CreateOrUpdateEggHarvestings } from '../egg-harvestings/create-or-update-egg-harvestings';
 import { ActionModalDialog } from '../ui-setting/shadcn';
+import { ActionModalConfirmeDialog } from '../ui-setting/shadcn/action-modal-confirme-dialog';
 import { Badge } from '../ui/badge';
 import {
   Tooltip,
@@ -56,6 +61,7 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
   const { t, isOpen, setIsOpen, setLoading, userStorage } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
   const [isView, setIsView] = useState(false);
+  const [isConfirmOpen, setIsConfirmOpen] = useState<boolean>(false);
   const [isFeeding, setIsFeeding] = useState(false);
   const [isTreatment, setIsTreatment] = useState(false);
   const [isHarvesting, setIsHarvesting] = useState(false);
@@ -67,13 +73,9 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
   const { isPending: loading, mutateAsync: deleteMutation } =
     DeleteOneAnimalAPI();
 
-  const { mutateAsync: archiveMutation } = ArchiveOneAnimalAPI({
-    onSuccess: () => {},
-    onError: (error?: any) => {},
-  });
+  const { mutateAsync: archiveMutation } = ArchiveOneAnimalAPI();
 
   const deleteItem = async (item: any) => {
-    setLoading(true);
     setIsOpen(true);
     try {
       await deleteMutation({ animalId: item?.id });
@@ -92,15 +94,31 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
   };
 
   const archiveItem = async (item: any) => {
-    setLoading(true);
     try {
       await archiveMutation({ animalId: item?.id });
       AlertSuccessNotification({
         text: 'Animal archived successfully',
       });
-      setLoading(false);
     } catch (error: any) {
-      setLoading(false);
+      AlertDangerNotification({
+        text: `${error.response.data.message}`,
+      });
+    }
+  };
+
+  const { isPending: loadingConfirme, mutateAsync: saveMutation } =
+    ChangeProductionStatusAPI();
+
+  const changeItem = async (item: any) => {
+    setIsConfirmOpen(true);
+    try {
+      await saveMutation({ animalId: item?.id });
+      AlertSuccessNotification({
+        text: 'Status changed successfully',
+      });
+      setIsConfirmOpen(false);
+    } catch (error: any) {
+      setIsConfirmOpen(true);
       AlertDangerNotification({
         text: `${error.response.data.message}`,
       });
@@ -114,7 +132,7 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
         className="relative overflow-hidden transition-allduration-200 bg-gray-100 rounded-xl hover:bg-gray-200"
       >
         <div className="p-6 lg:px-10 lg:py-8">
-          <div className="flex space-x-32">
+          <div className="flex space-x-40">
             <div className="mb-6">
               {item?.status === 'ACTIVE' ? (
                 <Badge variant="default">
@@ -123,6 +141,10 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
               ) : item?.status === 'SOLD' ? (
                 <Badge variant="secondary">
                   {t.formatMessage({ id: 'STATUS.SOLD' })}
+                </Badge>
+              ) : item?.status === 'STOPPED' ? (
+                <Badge variant="destructive">
+                  {t.formatMessage({ id: 'STATUS.STOPPED' })}
                 </Badge>
               ) : (
                 <Badge variant="destructive">
@@ -150,67 +172,74 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
               </TooltipProvider>
             </div>
           </div>
-          <div
-            className="flex justify-center space-x-4 cursor-pointer"
-            onClick={() => setIsView(true)}
-          >
-            <div>
-              <h2 className="text-sm flex items-center font-medium text-gray-500 h-4">
-                <Anvil className="h-3.5 w-3.5  hover:shadow-xxl" />
-                {t.formatMessage({ id: 'TABANIMAL.WEIGHT' })}:{' '}
-                {formatWeight(item?.weight)}
-              </h2>
-              <h2 className="mt-2 flex items-center text-sm font-medium text-gray-500 h-4">
-                <Calendar className="h-3.5 w-3.5  hover:shadow-xxl" />
-                Age: {formatDateDifference(item?.birthday)}
-              </h2>
-            </div>
-            <div className="flex-shrink-0 w-px h-16  bg-gray-200"></div>
-            <div>
-              <h3 className="text-sm font-bold text-gray-900 h-8 sm:text-base lg:text-lg">
-                {(item?.code).toUpperCase()}
-              </h3>
-              {item?.productionPhase === 'GROWTH' ? (
-                <p className=" text-sm font-medium text-gray-500">
-                  {t.formatMessage({ id: 'PRODUCTIONPHASE.GROWTH' })}
-                </p>
-              ) : item?.productionPhase === 'LAYING' ? (
-                <p className=" text-sm font-medium text-gray-500">
-                  {t.formatMessage({ id: 'PRODUCTIONPHASE.LAYING' })}
-                </p>
-              ) : (
-                <p className=" text-sm font-medium text-gray-500">
-                  {t.formatMessage({ id: 'PRODUCTIONPHASE.FATTENING' })}
-                </p>
-              )}
-              {item?.location?.addCages === 'YES' &&
-              item?.animalType?.name !== 'Pisciculture' ? (
-                <p className="text-xs font-normal text-gray-500">cages</p>
-              ) : item?.location?.addCages === 'YES' &&
-                item?.animalType?.name == 'Pisciculture' ? (
-                <>
-                  <p className="text-xs font-normal text-gray-500">
-                    {t.formatMessage({ id: 'TANK' })}
-                  </p>
-                  <p className="text-xs font-normal text-gray-500">
-                    {item?.breed?.name}
-                  </p>
-                </>
-              ) : item?.location?.addCages === 'NO' &&
-                item?.animalType?.name == 'Pisciculture' ? (
-                <>
-                  <p className="text-xs font-normal text-gray-500">
-                    {t.formatMessage({ id: 'POND' })}
-                  </p>
-                  <p className="text-xs font-normal text-gray-500">
-                    {item?.breed?.name}
-                  </p>
-                </>
-              ) : (
-                ''
-              )}
-            </div>
-          </div>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div
+                  className="flex justify-center space-x-4 cursor-pointer"
+                  onClick={() => setIsView(true)}
+                >
+                  <div>
+                    <h2 className="text-sm flex items-center font-medium text-gray-500 h-8">
+                      <Anvil className="h-3.5 w-3.5  hover:shadow-xxl" />
+                      {t.formatMessage({ id: 'TABANIMAL.WEIGHT' })}:{' '}
+                      {formatWeight(item?.weight)}
+                    </h2>
+                    <h2 className="flex items-center text-sm font-medium text-gray-500">
+                      <Calendar className="h-3.5 w-3.5  hover:shadow-xxl" />
+                      Age: {formatDateDifference(item?.birthday)}
+                    </h2>
+                  </div>
+                  <div className="flex-shrink-0 w-px h-16  bg-gray-200"></div>
+                  <div>
+                    <h3 className="text-sm font-bold text-gray-900 h-8 sm:text-base lg:text-lg">
+                      {(item?.code).toUpperCase()}
+                    </h3>
+                    {item?.productionPhase === 'GROWTH' ? (
+                      <p className="text-sm font-medium text-gray-500">
+                        {t.formatMessage({ id: 'PRODUCTIONPHASE.GROWTH' })}
+                      </p>
+                    ) : item?.productionPhase === 'LAYING' ? (
+                      <p className="text-sm font-medium text-gray-500">
+                        {t.formatMessage({ id: 'PRODUCTIONPHASE.LAYING' })}
+                      </p>
+                    ) : (
+                      <p className="text-sm font-medium text-gray-500">
+                        {t.formatMessage({ id: 'PRODUCTIONPHASE.FATTENING' })}
+                      </p>
+                    )}
+                    {item?.location?.addCages === 'YES' &&
+                    item?.animalType?.name !== 'Pisciculture' ? (
+                      <p className="text-xs font-normal text-gray-500">cages</p>
+                    ) : item?.location?.addCages === 'YES' &&
+                      item?.animalType?.name == 'Pisciculture' ? (
+                      <>
+                        <p className="text-xs font-normal text-gray-500">
+                          {t.formatMessage({ id: 'TANK' })}
+                        </p>
+                        <p className="text-xs font-normal text-gray-500">
+                          {item?.breed?.name}
+                        </p>
+                      </>
+                    ) : item?.location?.addCages === 'NO' &&
+                      item?.animalType?.name == 'Pisciculture' ? (
+                      <>
+                        <p className="text-xs font-normal text-gray-500">
+                          {t.formatMessage({ id: 'POND' })}
+                        </p>
+                        <p className="text-xs font-normal text-gray-500">
+                          {item?.breed?.name}
+                        </p>
+                      </>
+                    ) : null}
+                  </div>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{t.formatMessage({ id: 'CLICK.TOSEE' })} </p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
           <div className="grid grid-cols-1 mt-6 sm:mt-2 px-20 sm:grid-cols-2 xl:grid-cols-3 sm:gap-8 xl:gap-12">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -234,9 +263,7 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
                       {t.formatMessage({ id: 'ANIMALTYPE.CARE' })}
                     </span>
                   </DropdownMenuItem>
-                ) : (
-                  ''
-                )}
+                ) : null}
                 {item?.status == 'ACTIVE' &&
                 item?.quantity !== 0 &&
                 item?._count?.cages !== item?.location?.cages ? (
@@ -246,9 +273,7 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
                       {t.formatMessage({ id: 'ANIMALTYPE.DEATHS' })}
                     </span>
                   </DropdownMenuItem>
-                ) : (
-                  ''
-                )}
+                ) : null}
                 {item?.status == 'ACTIVE' && item?.quantity !== 0 ? (
                   <DropdownMenuItem onClick={() => setIsIsolation(true)}>
                     <Eclipse className="size-4 text-gray-600 hover:text-yellow-600" />
@@ -256,9 +281,7 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
                       {t.formatMessage({ id: 'ANIMALTYPE.ISOLATIONS' })}
                     </span>
                   </DropdownMenuItem>
-                ) : (
-                  ''
-                )}
+                ) : null}
                 {item?.status == 'ACTIVE' && item?.quantity !== 0 ? (
                   <DropdownMenuItem onClick={() => setIsFeeding(true)}>
                     <Salad className="size-4 text-gray-600 hover:text-violet-600" />
@@ -266,9 +289,7 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
                       {t.formatMessage({ id: 'ANIMALTYPE.FEEDINGS' })}
                     </span>
                   </DropdownMenuItem>
-                ) : (
-                  ''
-                )}
+                ) : null}
                 {item?.productionPhase == 'LAYING' &&
                 item?.quantity !== 0 &&
                 item?.status == 'ACTIVE' &&
@@ -322,9 +343,7 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
                       </span>
                     </DropdownMenuItem>
                   </Link>
-                ) : (
-                  ''
-                )}
+                ) : null}
                 <Link href={`/treatment/${item?.id}`}>
                   <DropdownMenuItem>
                     <ClipboardPlus className="size-4 text-gray-600 hover:text-green-600" />
@@ -333,22 +352,15 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
                     </span>
                   </DropdownMenuItem>
                 </Link>
-                <DropdownMenuItem onClick={() => setIsView(true)}>
-                  <ListCollapse className="size-4 text-gray-600 hover:text-emerald-600" />
-                  <span className="ml-2 cursor-pointer hover:text-emerald-600">
-                    {t.formatMessage({ id: 'TABANIMAL.STATISTICS' })}
-                  </span>
-                </DropdownMenuItem>
-                {item?.quantity === 0 && userStorage?.role === 'SUPERADMIN' ? (
+                {(item?.quantity === 0 && userStorage?.role === 'SUPERADMIN') ||
+                item?.status == 'STOPPED' ? (
                   <DropdownMenuItem onClick={() => archiveItem(item)}>
                     <FileArchive className="size-4 text-gray-600 hover:text-fuchsia-600" />
                     <span className="ml-2 cursor-pointer hover:text-fuchsia-600">
                       {t.formatMessage({ id: 'ARCHIVES' })}
                     </span>
                   </DropdownMenuItem>
-                ) : (
-                  ''
-                )}
+                ) : null}
                 {item?.quantity !== 0 &&
                 item?.status == 'ACTIVE' &&
                 userStorage?.role === 'SUPERADMIN' ? (
@@ -358,9 +370,7 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
                       {t.formatMessage({ id: 'MENU.SALES' })}
                     </span>
                   </DropdownMenuItem>
-                ) : (
-                  ''
-                )}
+                ) : null}
                 {item?.quantity !== 0 &&
                 item?.status == 'ACTIVE' &&
                 userStorage?.role === 'SUPERADMIN' ? (
@@ -370,78 +380,110 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
                       {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
                     </span>
                   </DropdownMenuItem>
+                ) : null}
+                {userStorage?.role === 'SUPERADMIN' &&
+                item?.status == 'ACTIVE' ? (
+                  <DropdownMenuItem onClick={() => setIsConfirmOpen(true)}>
+                    <Ban className="size-4 text-gray-600 hover:text-red-600" />
+                    <span className="ml-2 cursor-pointer hover:text-red-600">
+                      Arreter la production
+                    </span>
+                  </DropdownMenuItem>
                 ) : (
-                  ''
-                )}
-                {userStorage?.role === 'SUPERADMIN' ? (
                   <DropdownMenuItem onClick={() => setIsOpen(true)}>
                     <TrashIcon className="size-4 text-gray-600 hover:text-red-600" />
                     <span className="ml-2 cursor-pointer hover:text-red-600">
                       {t.formatMessage({ id: 'TABANIMAL.DELETE' })}
                     </span>
                   </DropdownMenuItem>
-                ) : (
-                  ''
                 )}
               </DropdownMenuContent>
-              <ActionModalDialog
-                loading={loading}
-                isOpen={isOpen}
-                setIsOpen={setIsOpen}
-                onClick={() => deleteItem(item)}
-              />
+              {isOpen ? (
+                <ActionModalDialog
+                  loading={loading}
+                  isOpen={isOpen}
+                  setIsOpen={setIsOpen}
+                  onClick={() => deleteItem(item)}
+                />
+              ) : null}
+              {isConfirmOpen ? (
+                <ActionModalConfirmeDialog
+                  loading={loadingConfirme}
+                  isConfirmOpen={isConfirmOpen}
+                  setIsConfirmOpen={setIsConfirmOpen}
+                  onClick={() => changeItem(item)}
+                />
+              ) : null}
             </DropdownMenu>
-            <UpdateAvesAnimals
-              animal={item}
-              showModal={isEdit}
-              setShowModal={setIsEdit}
-            />
-            <ViewAvesAnimal
-              animal={item}
-              showModal={isView}
-              setShowModal={setIsView}
-            />
-            <CreateOrUpdateAvesFeedings
-              animal={item}
-              feeding={item?.animalTypeId}
-              showModal={isFeeding}
-              setShowModal={setIsFeeding}
-            />
-            <CreateAvestreatments
-              animal={item}
-              treatment={item?.animalTypeId}
-              showModal={isTreatment}
-              setShowModal={setIsTreatment}
-            />
-            <CreateOrUpdateEggHarvestings
-              animal={item}
-              eggHarvesting={item?.animalTypeId}
-              showModal={isHarvesting}
-              setShowModal={setIsHarvesting}
-            />
-            <CreateOrUpdateAvesDeaths
-              animal={item}
-              death={item?.animalTypeId}
-              showModal={isDeath}
-              setShowModal={setIsDeath}
-            />
-            <CreateAvesSales
-              animal={item}
-              sale={item?.animalTypeId}
-              showModal={isSold}
-              setShowModal={setIsSold}
-            />
-            <CreateOrUpdateAvesIsolations
-              animal={item}
-              isolation={item?.animalTypeId}
-              showModal={isIsolation}
-              setShowModal={setIsIsolation}
-            />
-            <PutInCages
-              animal={item}
-              showModal={putIncages}
-              setShowModal={setPutInCages}
-            />
+            {isEdit ? (
+              <UpdateAvesAnimals
+                animal={item}
+                showModal={isEdit}
+                setShowModal={setIsEdit}
+              />
+            ) : null}
+            {isView ? (
+              <ViewAvesAnimal
+                animal={item}
+                showModal={isView}
+                setShowModal={setIsView}
+              />
+            ) : null}
+            {isFeeding ? (
+              <CreateOrUpdateAvesFeedings
+                animal={item}
+                feeding={item?.animalTypeId}
+                showModal={isFeeding}
+                setShowModal={setIsFeeding}
+              />
+            ) : null}
+            {isTreatment ? (
+              <CreateAvestreatments
+                animal={item}
+                treatment={item?.animalTypeId}
+                showModal={isTreatment}
+                setShowModal={setIsTreatment}
+              />
+            ) : null}
+            {isHarvesting ? (
+              <CreateOrUpdateEggHarvestings
+                animal={item}
+                eggHarvesting={item?.animalTypeId}
+                showModal={isHarvesting}
+                setShowModal={setIsHarvesting}
+              />
+            ) : null}
+            {isDeath ? (
+              <CreateOrUpdateAvesDeaths
+                animal={item}
+                death={item?.animalTypeId}
+                showModal={isDeath}
+                setShowModal={setIsDeath}
+              />
+            ) : null}
+            {isSold ? (
+              <CreateAvesSales
+                animal={item}
+                sale={item?.animalTypeId}
+                showModal={isSold}
+                setShowModal={setIsSold}
+              />
+            ) : null}
+            {isIsolation ? (
+              <CreateOrUpdateAvesIsolations
+                animal={item}
+                isolation={item?.animalTypeId}
+                showModal={isIsolation}
+                setShowModal={setIsIsolation}
+              />
+            ) : null}
+            {putIncages ? (
+              <PutInCages
+                animal={item}
+                showModal={putIncages}
+                setShowModal={setPutInCages}
+              />
+            ) : null}
           </div>
         </div>
       </div>

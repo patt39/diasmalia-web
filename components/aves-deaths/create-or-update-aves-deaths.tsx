@@ -173,7 +173,6 @@ const CreateOrUpdateAvesDeaths = ({
                             control={control}
                             type="number"
                             name="male"
-                            defaultValue="0"
                             placeholder="number of males"
                             errors={errors}
                           />
@@ -187,7 +186,6 @@ const CreateOrUpdateAvesDeaths = ({
                             control={control}
                             type="number"
                             name="female"
-                            defaultValue="0"
                             placeholder="number of females"
                             errors={errors}
                           />

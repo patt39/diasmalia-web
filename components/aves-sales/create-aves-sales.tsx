@@ -1,5 +1,5 @@
 import { GetOneAnimalTypeAPI } from '@/api-site/animal-type';
-import { CreateOrUpdateAvesSaleAPI } from '@/api-site/sales';
+import { CreateAvesSaleAPI } from '@/api-site/sales';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
 import {
@@ -34,7 +34,7 @@ const schema = yup.object({
   male: yup.number().optional(),
   female: yup.number().optional(),
   number: yup.number().optional(),
-  detail: yup.string().optional(),
+  detail: yup.string().required('detail is required'),
   price: yup.number().required('price is required'),
   method: yup.string().required('method is required'),
 });
@@ -71,8 +71,7 @@ const CreateAvesSales = ({
   });
 
   // Create
-  const { isPending: loading, mutateAsync: saveMutation } =
-    CreateOrUpdateAvesSaleAPI();
+  const { isPending: loading, mutateAsync: saveMutation } = CreateAvesSaleAPI();
 
   useEffect(() => {
     if (animal) {
@@ -86,7 +85,6 @@ const CreateAvesSales = ({
     try {
       await saveMutation({
         ...payload,
-        saleId: sale?.id,
       });
       setHasErrors(false);
       AlertSuccessNotification({
@@ -131,23 +129,19 @@ const CreateAvesSales = ({
                     </div>
                   </div>
                 )}
-                {!sale?.id ? (
-                  <div className="items-center">
-                    <Label>{t.formatMessage({ id: 'ANIMAL.CODE' })}</Label>
-                    <TextInput
-                      control={control}
-                      type="text"
-                      name="code"
-                      disabled
-                      errors={errors}
-                    />
-                  </div>
-                ) : (
-                  ''
-                )}
-                {['Pisciculture'].includes(animalType?.name) ? (
-                  ''
-                ) : animalType?.name === 'Pondeuses' ? (
+                <div className="items-center">
+                  <Label>{t.formatMessage({ id: 'ANIMAL.CODE' })}</Label>
+                  <TextInput
+                    control={control}
+                    type="text"
+                    name="code"
+                    disabled
+                    errors={errors}
+                  />
+                </div>
+                {['Pisciculture'].includes(
+                  animalType?.name,
+                ) ? null : animalType?.name === 'Pondeuses' ? (
                   <div className="my-2">
                     <Label>
                       Choisissez un détail de vente
@@ -359,7 +353,7 @@ const CreateAvesSales = ({
                 </div>
                 <Label>Canal de vente</Label>
                 <span className="text-red-600">*</span>
-                <div className="mb-4 flex items-center">
+                <div className="mb-4 items-center">
                   <SelectInput
                     control={control}
                     errors={errors}
@@ -379,9 +373,7 @@ const CreateAvesSales = ({
                       errors={errors}
                     />
                   </div>
-                ) : (
-                  ''
-                )}
+                ) : null}
                 <div className="mt-4 flex items-center space-x-4">
                   <ButtonInput
                     type="button"

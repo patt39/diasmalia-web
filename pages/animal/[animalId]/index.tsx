@@ -88,7 +88,7 @@ export function AnimalSaleProfile() {
 
   return (
     <>
-      <div className="relative m-auto w-full max-w-2xl overflow-y-scroll rounded-xl bg-white  p-5 shadow-lg dark:bg-[#121212]">
+      <div className="my-8 relative m-auto w-full max-w-2xl overflow-y-scroll rounded-xl bg-white  p-5 shadow-lg dark:bg-[#121212]">
         <div className="flex min-h-screen w-full flex-col">
           <div className="flex flex-col items-center gap-1 text-center">
             <h4 className="mt-8 text-2xl font-bold tracking-tight text-center">
@@ -98,8 +98,9 @@ export function AnimalSaleProfile() {
           <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
             <>
               {getOneAnimal?.gender === 'FEMALE' &&
-              getOneAnimal?.productionPhase === 'REPRODUCTION' ? (
-                <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-2">
+              ['REPRODUCTION'].includes(getOneAnimal?.productionPhase) &&
+              getOneAnimal?.farrowinglitterCount !== 0 ? (
+                <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
                   <Card
                     x-chunk="dashboard-05-chunk-1"
                     className=" dark:border-gray-800"
@@ -119,17 +120,35 @@ export function AnimalSaleProfile() {
                   >
                     <CardHeader className="pb-2">
                       <CardDescription>
+                        {t.formatMessage({ id: 'PROLIFICITE' })}
+                      </CardDescription>
+                      <CardTitle className="text-4xl flex">
+                        {getOneAnimal?.prolificity.toFixed(1) || 0}
+                        <CardDescription>
+                          <div className="pt-5 text-xs font-normal">
+                            /{t.formatMessage({ id: 'LITTER.PER.FARROWING' })}
+                          </div>
+                        </CardDescription>
+                      </CardTitle>
+                    </CardHeader>
+                  </Card>
+                  <Card
+                    x-chunk="dashboard-05-chunk-1"
+                    className=" dark:border-gray-800"
+                  >
+                    <CardHeader className="pb-2">
+                      <CardDescription>
                         {t.formatMessage({ id: 'VIEW.FEEDINGS' })}
                       </CardDescription>
                       <CardTitle className="text-4xl">
-                        {getOneAnimal?.feedingsCount}kg
+                        {formatWeight(getOneAnimal?.feedingsCount ?? 0)}
                       </CardTitle>
                     </CardHeader>
                   </Card>
                 </div>
               ) : getOneAnimal?.gender === 'MALE' &&
                 getOneAnimal?.productionPhase === 'REPRODUCTION' ? (
-                <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-2">
+                <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
                   <Card
                     x-chunk="dashboard-05-chunk-1"
                     className=" dark:border-gray-800"
@@ -152,7 +171,20 @@ export function AnimalSaleProfile() {
                         {t.formatMessage({ id: 'VIEW.FEEDINGS' })}
                       </CardDescription>
                       <CardTitle className="text-4xl">
-                        {getOneAnimal?.feedingsCount || 0}kg
+                        {formatWeight(getOneAnimal?.feedingsCount ?? 0)}
+                      </CardTitle>
+                    </CardHeader>
+                  </Card>
+                  <Card
+                    x-chunk="dashboard-05-chunk-1"
+                    className=" dark:border-gray-800"
+                  >
+                    <CardHeader className="pb-2">
+                      <CardDescription>
+                        <Label>{t.formatMessage({ id: 'FEED.INDEX' })}</Label>
+                      </CardDescription>
+                      <CardTitle className="text-4xl">
+                        {feedConversionIndex.toFixed(1) || 0}
                       </CardTitle>
                     </CardHeader>
                   </Card>
@@ -167,10 +199,12 @@ export function AnimalSaleProfile() {
                   >
                     <CardHeader className="pb-2">
                       <CardDescription>
-                        {t.formatMessage({ id: 'VIEW.FEEDINGS' })}
+                        <Label>
+                          {t.formatMessage({ id: 'VIEW.FEEDINGS' })}
+                        </Label>
                       </CardDescription>
                       <CardTitle className="text-4xl">
-                        {getOneAnimal?.feedingsCount || 0}kg
+                        {formatWeight(getOneAnimal?.feedingsCount ?? 0)}
                       </CardTitle>
                     </CardHeader>
                   </Card>
@@ -189,7 +223,7 @@ export function AnimalSaleProfile() {
                   </Card>
                 </div>
               ) : getOneAnimal?.productionPhase === 'GESTATION' ? (
-                <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-2">
+                <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
                   <Card
                     x-chunk="dashboard-05-chunk-1"
                     className=" dark:border-gray-800"
@@ -216,9 +250,22 @@ export function AnimalSaleProfile() {
                       </CardTitle>
                     </CardHeader>
                   </Card>
+                  <Card
+                    x-chunk="dashboard-05-chunk-1"
+                    className=" dark:border-gray-800"
+                  >
+                    <CardHeader className="pb-2">
+                      <CardDescription>
+                        {t.formatMessage({ id: 'VIEW.FEEDINGS' })}
+                      </CardDescription>
+                      <CardTitle className="text-4xl">
+                        {formatWeight(getOneAnimal?.feedingsCount ?? 0)}
+                      </CardTitle>
+                    </CardHeader>
+                  </Card>
                 </div>
               ) : (
-                <>
+                <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-3">
                   <Card
                     x-chunk="dashboard-05-chunk-1"
                     className=" dark:border-gray-800"
@@ -245,7 +292,20 @@ export function AnimalSaleProfile() {
                       </CardTitle>
                     </CardHeader>
                   </Card>
-                </>
+                  <Card
+                    x-chunk="dashboard-05-chunk-1"
+                    className=" dark:border-gray-800"
+                  >
+                    <CardHeader className="pb-2">
+                      <CardDescription>
+                        {t.formatMessage({ id: 'VIEW.FEEDINGS' })}
+                      </CardDescription>
+                      <CardTitle className="text-4xl">
+                        {formatWeight(getOneAnimal?.feedingsCount ?? 0)}
+                      </CardTitle>
+                    </CardHeader>
+                  </Card>
+                </div>
               )}
             </>
             <div className="mt-4 flex-auto justify-center p-2">
@@ -288,7 +348,7 @@ export function AnimalSaleProfile() {
               </div>
               <div className="mb-2 flex items-center space-x-10">
                 <div>
-                  <Label> {t.formatMessage({ id: 'VIEW.BREED' })}</Label>
+                  <Label>{t.formatMessage({ id: 'VIEW.BREED' })}</Label>
                   <Input
                     disabled
                     type="text"
@@ -388,7 +448,7 @@ export function AnimalSaleProfile() {
                 </div>
               </div>
               <div className="flex flex-col items-center gap-1 text-center">
-                <h4 className="mt-8 text-xl font-bold tracking-tight text-center">
+                <h4 className="my-8 text-xl font-bold tracking-tight text-center">
                   {t.formatMessage({ id: 'TREATMENT.PAGE' })}
                 </h4>
               </div>
@@ -413,16 +473,25 @@ export function AnimalSaleProfile() {
                           <AccordionTrigger>{item?.name}</AccordionTrigger>
                           <AccordionContent>
                             <div>
-                              Date: {formatDateDDMMYY(item?.createdAt)}{' '}
+                              Date administration:{' '}
+                              {formatDateDDMMYY(item?.createdAt)}{' '}
                             </div>
+                            <div>Diagnostic: {item?.diagnosis} </div>
                             <div>
-                              Medication: {item?.medication.toLowerCase()}{' '}
+                              Medication: {item?.health?.name?.toLowerCase()}{' '}
                             </div>
-                            <div> Dose: {item?.dose} </div>
+                            {item?.dose !== null ? (
+                              <div> Dose: {item?.dose ?? 0} </div>
+                            ) : null}
                             <div>
                               {t.formatMessage({ id: 'SALE.METHOD' })}:{' '}
                               {item?.method.toLowerCase()}
                             </div>
+                            {item?.note !== null ? (
+                              <div>
+                                Observation: {item?.note ?? 'Observation'}{' '}
+                              </div>
+                            ) : null}
                           </AccordionContent>
                         </AccordionItem>
                       </Accordion>

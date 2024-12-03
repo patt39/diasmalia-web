@@ -162,9 +162,7 @@ const AssigneTask = ({
                       dataItem={taskFrequency.filter((i) => i?.lang === locale)}
                     />
                   </div>
-                ) : (
-                  ''
-                )}
+                ) : null}
                 {watchType === 'SPECIFIC' ? (
                   <div className="w-full mb-2">
                     <Label>Période</Label>
@@ -178,15 +176,9 @@ const AssigneTask = ({
                       dataItem={taskPeriode.filter((i) => i?.lang === locale)}
                     />
                   </div>
-                ) : (
-                  ''
-                )}
+                ) : null}
                 <div className="w-full my-2">
-                  <Label>
-                    {t.formatMessage({
-                      id: 'SELECT.ANIMALTYPE',
-                    })}
-                  </Label>
+                  <Label>{t.formatMessage({ id: 'SELECT.ANIMALTYPE' })}</Label>
                   <span className="text-red-600">*</span>
                   <Controller
                     control={control}
@@ -301,10 +293,7 @@ const AssigneTask = ({
                       />
                     </div>
                   </div>
-                ) : (
-                  ''
-                )}
-
+                ) : null}
                 {watchType === 'GENERIC' ? (
                   <div className="w-full my-2">
                     <Label>Sélectionner un collaborateur</Label>
@@ -352,10 +341,7 @@ const AssigneTask = ({
                       )}
                     />
                   </div>
-                ) : (
-                  ''
-                )}
-
+                ) : null}
                 <div className="mb-4">
                   <Label>Titre de la tâche</Label>
                   <span className="text-red-600">*</span>

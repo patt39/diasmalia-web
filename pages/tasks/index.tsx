@@ -6,6 +6,7 @@ import { LayoutDashboard } from '@/components/layouts/dashboard';
 import { GetAssignedTypesAPI } from '@/api-site/assigned-type';
 import { GetTasksAPI } from '@/api-site/task';
 import { DashboardFooter } from '@/components/layouts/dashboard/footer';
+import { ButtonInput } from '@/components/ui-setting';
 import { LoadingFile } from '@/components/ui-setting/ant';
 import { ErrorFile } from '@/components/ui-setting/ant/error-file';
 import { Button } from '@/components/ui/button';
@@ -39,7 +40,8 @@ import {
 } from '@/components/ui/tooltip';
 import { PrivateComponent } from '@/components/util/private-component';
 import { PaginationPage } from '@/utils';
-import { Frame, ListTodo, Users } from 'lucide-react';
+import { Frame, ListTodo, MoveLeftIcon, Users } from 'lucide-react';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { Controller } from 'react-hook-form';
 import * as yup from 'yup';
@@ -55,6 +57,7 @@ export function Contributors() {
   const { t, control, watch, setValue } = useReactHookForm({
     schema,
   });
+  const { back } = useRouter();
   const watchAnimalTypeId = watch('animalTypeId', '');
   const watchContributorId = watch('collaboratorId', '');
   const { data: user } = GetOneUserMeAPI();
@@ -108,7 +111,7 @@ export function Contributors() {
         title={`${user?.profile?.firstName} ${user?.profile?.lastName} - Assigned tasks`}
       >
         <div className="flex min-h-screen w-full flex-col">
-          <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
+          <main className="flex flex-1 flex-col md:gap-4 md:p-8">
             <div className="grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
               <Card
                 className="sm:col-span-2 dark:border-gray-800"
@@ -150,9 +153,24 @@ export function Contributors() {
                 </CardContent>
               </Card>
             </div>
+            <h2>
+              <ButtonInput
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={() => {
+                  back();
+                }}
+                icon={<MoveLeftIcon className="size-4" />}
+              >
+                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                  {t.formatMessage({ id: 'UTIL.COME_BACK' })}
+                </span>
+              </ButtonInput>
+            </h2>
             <Card
               x-chunk="dashboard-06-chunk-0"
-              className="dark:border-gray-800"
+              className="dark:border-gray-800 mt-0"
             >
               <CardHeader>
                 {user?.role === 'SUPERADMIN' ? (
@@ -263,9 +281,7 @@ export function Contributors() {
                           )}
                         />
                       </div>
-                    ) : (
-                      ''
-                    )}
+                    ) : null}
                     {watchAnimalTypeId ? (
                       <div className="ml-4">
                         <Button
@@ -279,9 +295,7 @@ export function Contributors() {
                           {t.formatMessage({ id: 'ACTIVITY.FILTERALL' })}
                         </Button>
                       </div>
-                    ) : (
-                      ''
-                    )}
+                    ) : null}
                     <div className="ml-auto flex items-center gap-2">
                       <TooltipProvider>
                         <Tooltip>
@@ -311,9 +325,7 @@ export function Contributors() {
                       </Button>
                     </div>
                   </div>
-                ) : (
-                  ''
-                )}
+                ) : null}
               </CardHeader>
               <CardContent>
                 <Table>
@@ -328,7 +340,7 @@ export function Contributors() {
                         {t.formatMessage({ id: 'ASSIGNE.TO' })}
                       </TableHead>
                       <TableHead className="md:table-cell">
-                        {t.formatMessage({ id: 'By' })}
+                        {t.formatMessage({ id: 'TABWEANING.STATUS' })}
                       </TableHead>
                       <TableHead>
                         <span>Actions</span>

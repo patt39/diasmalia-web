@@ -4,26 +4,26 @@ export type ImageProfileModel = {
   id: 'aws' | 'provider';
   patch: string;
 };
-export const arrayColors = [
-  { id: '2', name: 'indigo' },
-  { id: '3', name: 'red' },
-  // { id: "4", name: "green" },
-];
 
 export type ProfileFormModel = {
-  username: string;
   lastName: string;
   firstName: string;
   phone: string;
   description: string;
-  birthday: Date;
   currencyId: string;
-  color: string;
-  url: string;
+  occupation: string;
+  address: string;
   countryId: string;
   imageList: any;
-  social: any;
-  attachment: any;
+  city: string;
+  testimonial: string;
+  image: any;
+};
+
+export type ImagesModel = {
+  id: string;
+  imageList?: any;
+  newImageLists?: any;
 };
 
 export type NextStepProfileFormModel = {

@@ -63,11 +63,19 @@ export const CreateOrUpdateOneFarrowingAPI = ({
   const result = useMutation({
     mutationKey: queryKey,
     mutationFn: async (payload: FarrowingsModel & { farrowingId?: string }) => {
-      const { farrowingId } = payload;
+      const { farrowingId, image } = payload;
+      let data = new FormData();
+
+      data.append('death', `${payload.death ?? ''}`);
+      // data.append('weight', `${payload.weight ?? ''}`);
+      // data.append('litter', `${payload.litter ?? ''}`);
+      data.append('note', `${payload.note ?? ''}`);
+      data.append('image', image);
+
       return farrowingId
         ? await makeApiCall({
             action: 'updateOneFarrowing',
-            body: payload,
+            body: data,
             urlParams: { farrowingId },
           })
         : await makeApiCall({
