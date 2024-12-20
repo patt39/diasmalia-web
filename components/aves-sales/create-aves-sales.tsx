@@ -34,7 +34,7 @@ const schema = yup.object({
   male: yup.number().optional(),
   female: yup.number().optional(),
   number: yup.number().optional(),
-  detail: yup.string().required('detail is required'),
+  detail: yup.string().optional(),
   price: yup.number().required('price is required'),
   method: yup.string().required('method is required'),
 });
@@ -42,12 +42,10 @@ const schema = yup.object({
 const CreateAvesSales = ({
   showModal,
   setShowModal,
-  sale,
   animal,
 }: {
   showModal: boolean;
   setShowModal: any;
-  sale?: any;
   animal?: any;
 }) => {
   const {
@@ -139,9 +137,37 @@ const CreateAvesSales = ({
                     errors={errors}
                   />
                 </div>
-                {['Pisciculture'].includes(
+                {['Pisciculture', 'Poulet de chair'].includes(
                   animalType?.name,
-                ) ? null : animalType?.name === 'Pondeuses' ? (
+                ) && animal?.productionPhase === 'GROWTH' ? (
+                  <div className="mb-2 flex items-center space-x-8 mt-2">
+                    <div className="w-80">
+                      <Label>
+                        Nombre<span className="text-red-600">*</span>
+                      </Label>
+                      <TextInput
+                        control={control}
+                        type="number"
+                        name="number"
+                        placeholder="number"
+                        errors={errors}
+                      />
+                    </div>
+                    <div className="w-80">
+                      <Label>
+                        {t.formatMessage({ id: 'SALE.PRICE' })}:
+                        <span className="text-red-600">*</span>
+                      </Label>
+                      <TextInput
+                        control={control}
+                        type="number"
+                        name="price"
+                        placeholder="price"
+                        errors={errors}
+                      />
+                    </div>
+                  </div>
+                ) : animalType?.name === 'Pondeuses' ? (
                   <div className="my-2">
                     <Label>
                       Choisissez un détail de vente
@@ -174,142 +200,158 @@ const CreateAvesSales = ({
                     />
                   </div>
                 )}
-                {['Pisciculture'].includes(animalType?.name) ? (
-                  <div className="mb-2 flex items-center space-x-8 mt-2">
-                    <div className="w-80">
-                      <Label>
-                        Nombre<span className="text-red-600">*</span>
-                      </Label>
-                      <TextInput
-                        control={control}
-                        type="number"
-                        name="number"
-                        placeholder="number"
-                        errors={errors}
-                      />
+                <div className="flex justify-center">
+                  {['EGGS', 'CHICKS', 'CHICKENS'].includes(watchDetail) &&
+                  ['Pondeuses'].includes(animalType?.name) ? (
+                    <div className="flex space-x-8">
+                      <div>
+                        <Label>
+                          Nombre<span className="text-red-600">*</span>
+                        </Label>
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="number"
+                          placeholder="number"
+                          errors={errors}
+                        />
+                      </div>
+                      <div>
+                        <Label>
+                          {t.formatMessage({ id: 'SALE.PRICE' })}
+                          <span className="text-red-600">*</span>
+                        </Label>
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="price"
+                          placeholder="price"
+                          errors={errors}
+                        />
+                      </div>
                     </div>
-                    <div className="w-80">
-                      <Label>
-                        {t.formatMessage({ id: 'SALE.PRICE' })}:
-                        <span className="text-red-600">*</span>
-                      </Label>
-                      <TextInput
-                        control={control}
-                        type="number"
-                        name="price"
-                        placeholder="price"
-                        errors={errors}
-                      />
+                  ) : ['EGGS', 'CHICKS'].includes(watchDetail) ? (
+                    <div className="flex space-x-4">
+                      <div>
+                        <Label>
+                          Nombre<span className="text-red-600">*</span>
+                        </Label>
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="number"
+                          placeholder="number"
+                          errors={errors}
+                        />
+                      </div>
+                      <div>
+                        <Label>
+                          {t.formatMessage({ id: 'SALE.PRICE' })}
+                          <span className="text-red-600">*</span>
+                        </Label>
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="price"
+                          placeholder="price"
+                          errors={errors}
+                        />
+                      </div>
                     </div>
-                  </div>
-                ) : (
-                  <div className="flex justify-center">
-                    {['EGGS', 'CHICKS', 'CHICKENS'].includes(watchDetail) &&
-                    ['Pondeuses', 'Poulet de chair'].includes(
-                      animalType?.name,
-                    ) ? (
-                      <div className="flex space-x-8">
-                        <div>
-                          <Label>
-                            Nombre<span className="text-red-600">*</span>
-                          </Label>
-                          <TextInput
-                            control={control}
-                            type="number"
-                            name="number"
-                            placeholder="number"
-                            errors={errors}
-                          />
-                        </div>
-                        <div>
-                          <Label>
-                            {t.formatMessage({ id: 'SALE.PRICE' })}
-                            <span className="text-red-600">*</span>
-                          </Label>
-                          <TextInput
-                            control={control}
-                            type="number"
-                            name="price"
-                            placeholder="price"
-                            errors={errors}
-                          />
-                        </div>
+                  ) : ['CHICKENS'].includes(watchDetail) &&
+                    !['Pondeuses'].includes(animalType?.name) &&
+                    animal?.productionPhase === 'LAYING' ? (
+                    <div className="flex items-center space-x-8">
+                      <div className="w-40">
+                        <Label>
+                          {t.formatMessage({ id: 'ANIMAL.MALE' })}
+                          <span className="text-red-600">*</span>
+                        </Label>
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="male"
+                          defaultValue="0"
+                          placeholder="number of males"
+                          errors={errors}
+                        />
                       </div>
-                    ) : ['EGGS', 'CHICKS'].includes(watchDetail) ? (
-                      <div className="flex space-x-4">
-                        <div>
-                          <Label>
-                            Nombre<span className="text-red-600">*</span>
-                          </Label>
-                          <TextInput
-                            control={control}
-                            type="number"
-                            name="number"
-                            placeholder="number"
-                            errors={errors}
-                          />
-                        </div>
-                        <div>
-                          <Label>
-                            {t.formatMessage({ id: 'SALE.PRICE' })}
-                            <span className="text-red-600">*</span>
-                          </Label>
-                          <TextInput
-                            control={control}
-                            type="number"
-                            name="price"
-                            placeholder="price"
-                            errors={errors}
-                          />
-                        </div>
+                      <div className="w-40">
+                        <Label>
+                          {t.formatMessage({ id: 'ANIMAL.FEMALE' })}
+                          <span className="text-red-600">*</span>
+                        </Label>
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="female"
+                          defaultValue="0"
+                          placeholder="number of females"
+                          errors={errors}
+                        />
                       </div>
-                    ) : (
-                      <div className="flex items-center space-x-8">
-                        <div className="w-40">
-                          <Label>
-                            {t.formatMessage({ id: 'ANIMAL.MALE' })}
-                            <span className="text-red-600">*</span>
-                          </Label>
-                          <TextInput
-                            control={control}
-                            type="number"
-                            name="male"
-                            defaultValue="0"
-                            placeholder="number of males"
-                            errors={errors}
-                          />
-                        </div>
-                        <div className="w-40">
-                          <Label>
-                            {t.formatMessage({ id: 'ANIMAL.FEMALE' })}
-                            <span className="text-red-600">*</span>
-                          </Label>
-                          <TextInput
-                            control={control}
-                            type="number"
-                            name="female"
-                            defaultValue="0"
-                            placeholder="number of females"
-                            errors={errors}
-                          />
-                        </div>
-                        <div className="w-60">
-                          <Label>
-                            {t.formatMessage({ id: 'SALE.PRICE' })}
-                            <span className="text-red-600">*</span>
-                          </Label>
-                          <TextInput
-                            control={control}
-                            type="number"
-                            name="price"
-                            placeholder="price"
-                            errors={errors}
-                          />
-                        </div>
+                      <div className="w-60">
+                        <Label>
+                          {t.formatMessage({ id: 'SALE.PRICE' })}
+                          <span className="text-red-600">*</span>
+                        </Label>
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="price"
+                          placeholder="price"
+                          errors={errors}
+                        />
                       </div>
-                    )}
-                  </div>
-                )}
+                    </div>
+                  ) : ['CHICKENS'].includes(watchDetail) &&
+                    ['Poulets de chair'].includes(animalType?.name) &&
+                    animal?.productionPhase === 'LAYING' ? (
+                    <div className="flex items-center space-x-8">
+                      <div className="w-40">
+                        <Label>
+                          {t.formatMessage({ id: 'ANIMAL.MALE' })}
+                          <span className="text-red-600">*</span>
+                        </Label>
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="male"
+                          defaultValue="0"
+                          placeholder="number of males"
+                          errors={errors}
+                        />
+                      </div>
+                      <div className="w-40">
+                        <Label>
+                          {t.formatMessage({ id: 'ANIMAL.FEMALE' })}
+                          <span className="text-red-600">*</span>
+                        </Label>
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="female"
+                          defaultValue="0"
+                          placeholder="number of females"
+                          errors={errors}
+                        />
+                      </div>
+                      <div className="w-60">
+                        <Label>
+                          {t.formatMessage({ id: 'SALE.PRICE' })}
+                          <span className="text-red-600">*</span>
+                        </Label>
+                        <TextInput
+                          control={control}
+                          type="number"
+                          name="price"
+                          placeholder="price"
+                          errors={errors}
+                        />
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
 
                 <div className="my-2 items-center">
                   <Label>Nom du client</Label>

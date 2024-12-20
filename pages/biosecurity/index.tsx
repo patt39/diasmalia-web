@@ -175,8 +175,8 @@ export function Biosecurity() {
                   <TableHeader>
                     <TableRow className="dark:border-gray-800">
                       <TableHead></TableHead>
-                      <TableHead>Image</TableHead>
-                      <TableHead>Tool</TableHead>
+                      <TableHead>Photo</TableHead>
+                      <TableHead>Material</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -188,7 +188,7 @@ export function Biosecurity() {
                         description="Error finding data please try again..."
                       />
                     ) : Number(dataMaterials?.pages[0]?.data?.total) <= 0 ? (
-                      <ErrorFile description="Don't have tasks yet" />
+                      <ErrorFile description="Don't have materials added yet please do" />
                     ) : (
                       dataMaterials?.pages
                         .flatMap((page: any) => page?.data?.value)

@@ -100,9 +100,7 @@ const AvesStatistics = () => {
                 </CardHeader>
               </Card>
             </>
-          ) : (
-            ''
-          )}
+          ) : null}
           <Card
             x-chunk="dashboard-05-chunk-2"
             className=" dark:border-gray-800"
@@ -180,9 +178,7 @@ const AvesStatistics = () => {
                 </CardHeader>
               </Card>
             </>
-          ) : (
-            ''
-          )}
+          ) : null}
           {animalType?.name === 'Pondeuses' ? (
             <Card
               x-chunk="dashboard-05-chunk-2"
@@ -197,9 +193,7 @@ const AvesStatistics = () => {
                 </CardTitle>
               </CardHeader>
             </Card>
-          ) : (
-            ''
-          )}
+          ) : null}
           <Card
             x-chunk="dashboard-05-chunk-2"
             className=" dark:border-gray-800"
@@ -222,7 +216,7 @@ const AvesStatistics = () => {
                 {t.formatMessage({ id: 'ANIMAL.FEED' })}
               </CardDescription>
               <CardTitle className="text-3xl">
-                {formatWeight(animalStatistics?.sumFeedings ?? 0)}
+                {animalStatistics?.sumFeedings ?? 0}kg
               </CardTitle>
             </CardHeader>
           </Card>
@@ -307,7 +301,7 @@ const AvesStatistics = () => {
                 {t.formatMessage({ id: 'ANIMAL.FEED' })}
               </CardDescription>
               <CardTitle className="text-3xl">
-                {formatWeight(animalStatistics?.sumFeedings ?? 0)}
+                {animalStatistics?.sumFeedings ?? 0}kg
               </CardTitle>
             </CardHeader>
           </Card>

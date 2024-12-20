@@ -35,7 +35,7 @@ const TabSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                   <CardDescription>
                     {t.formatMessage({ id: 'ANIMAL.SUM.SOLD' })}
                   </CardDescription>
-                  <CardTitle className="text-3xl">
+                  <CardTitle className="text-2xl">
                     {animalStatistics?.sumSaleChickens?.number ?? 0}
                   </CardTitle>
                 </CardHeader>
@@ -48,7 +48,7 @@ const TabSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                   <CardDescription>
                     {t.formatMessage({ id: 'ANIMAL.EGGS.SALE' })}
                   </CardDescription>
-                  <CardTitle className="text-3xl">
+                  <CardTitle className="text-2xl">
                     {animalStatistics?.sumSaleEggs?.number ?? 0}
                   </CardTitle>
                 </CardHeader>
@@ -67,7 +67,7 @@ const TabSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                   <CardDescription>
                     {t.formatMessage({ id: 'ANIMAL.SUM.SOLD' })}
                   </CardDescription>
-                  <CardTitle className="text-3xl">
+                  <CardTitle className="text-2xl">
                     {animalStatistics?.sumSaleChickens?.number ?? 0}
                   </CardTitle>
                 </CardHeader>
@@ -80,7 +80,7 @@ const TabSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                   <CardDescription>
                     {t.formatMessage({ id: 'ANIMAL.EGGS.SALE' })}
                   </CardDescription>
-                  <CardTitle className="text-3xl">
+                  <CardTitle className="text-2xl">
                     {animalStatistics?.sumSaleEggs?.number ?? 0}
                   </CardTitle>
                 </CardHeader>
@@ -93,7 +93,7 @@ const TabSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                   <CardDescription>
                     {t.formatMessage({ id: 'ANIMAL.CHICKS.SOLD' })}
                   </CardDescription>
-                  <CardTitle className="text-3xl">
+                  <CardTitle className="text-2xl">
                     {animalStatistics?.sumSaleChicks?.number ?? 0}
                   </CardTitle>
                 </CardHeader>
@@ -129,7 +129,7 @@ const TabSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                   <CardDescription>
                     {t.formatMessage({ id: 'AMOUNT.SALE.EGGS' })}
                   </CardDescription>
-                  <CardTitle className="text-3xl text-green-600">
+                  <CardTitle className="text-2xl text-green-600">
                     {animalStatistics?.sumSaleEggs?.price?.toLocaleString(
                       'en-US',
                     ) ?? 0}{' '}
@@ -148,7 +148,7 @@ const TabSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                   <CardDescription>
                     {t.formatMessage({ id: 'AMOUNT.SALE.CHICKENS' })}
                   </CardDescription>
-                  <CardTitle className="text-3xl text-green-600">
+                  <CardTitle className="text-2xl text-green-600">
                     {animalStatistics?.sumSaleChickens?.price?.toLocaleString(
                       'en-US',
                     ) ?? 0}{' '}
@@ -164,7 +164,7 @@ const TabSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                   <CardDescription>
                     {t.formatMessage({ id: 'AMOUNT.SALE.EGGS' })}
                   </CardDescription>
-                  <CardTitle className="text-3xl text-green-600">
+                  <CardTitle className="text-2xl text-green-600">
                     {animalStatistics?.sumSaleEggs?.price?.toLocaleString(
                       'en-US',
                     ) ?? 0}{' '}
@@ -180,7 +180,7 @@ const TabSalesAnalytics = ({ animalTypeId }: { animalTypeId: string }) => {
                   <CardDescription>
                     {t.formatMessage({ id: 'AMOUNT.SALE.CHICKS' })}
                   </CardDescription>
-                  <CardTitle className="text-3xl  text-green-600">
+                  <CardTitle className="text-2xl  text-green-600">
                     {animalStatistics?.sumSaleChicks?.price?.toLocaleString(
                       'en-US',
                     ) ?? 0}{' '}

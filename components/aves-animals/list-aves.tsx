@@ -3,6 +3,7 @@ import {
   ArchiveOneAnimalAPI,
   ChangeProductionStatusAPI,
   DeleteOneAnimalAPI,
+  DownloadReportAPI,
 } from '@/api-site/animals';
 import { useInputState } from '@/components/hooks';
 import { Button } from '@/components/ui/button';
@@ -12,6 +13,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { CreateOrUpdateFinances } from '@/pages/finances/create-or-update-finances';
 import {
   AlertDangerNotification,
   AlertSuccessNotification,
@@ -24,6 +26,7 @@ import {
   Bone,
   Calendar,
   ClipboardPlus,
+  Download,
   Eclipse,
   Egg,
   Eye,
@@ -35,6 +38,7 @@ import {
   PencilIcon,
   Salad,
   TrashIcon,
+  WalletCards,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -69,6 +73,7 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
   const [isSold, setIsSold] = useState(false);
   const [isIsolation, setIsIsolation] = useState(false);
   const [putIncages, setPutInCages] = useState(false);
+  const [expenses, setExpenses] = useState(false);
 
   const { isPending: loading, mutateAsync: deleteMutation } =
     DeleteOneAnimalAPI();
@@ -90,6 +95,23 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
       AlertDangerNotification({
         text: `${error.response.data.message}`,
       });
+    }
+  };
+
+  const handleDownloadPdf = async () => {
+    try {
+      const response = await DownloadReportAPI({
+        animalId: item?.id,
+      });
+      const link = document.createElement('a');
+      link.href = response.config.url;
+      link.click();
+      link.remove();
+      AlertSuccessNotification({
+        text: 'Pdf downloaded successfully',
+      });
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -143,7 +165,7 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
                   {t.formatMessage({ id: 'STATUS.SOLD' })}
                 </Badge>
               ) : item?.status === 'STOPPED' ? (
-                <Badge variant="destructive">
+                <Badge variant="secondary">
                   {t.formatMessage({ id: 'STATUS.STOPPED' })}
                 </Badge>
               ) : (
@@ -209,6 +231,7 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
                       </p>
                     )}
                     {item?.location?.addCages === 'YES' &&
+                    item?.location?.cages !== 0 &&
                     item?.animalType?.name !== 'Pisciculture' ? (
                       <p className="text-xs font-normal text-gray-500">cages</p>
                     ) : item?.location?.addCages === 'YES' &&
@@ -264,9 +287,7 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
                     </span>
                   </DropdownMenuItem>
                 ) : null}
-                {item?.status == 'ACTIVE' &&
-                item?.quantity !== 0 &&
-                item?._count?.cages !== item?.location?.cages ? (
+                {item?.status == 'ACTIVE' && item?.quantity !== 0 ? (
                   <DropdownMenuItem onClick={() => setIsDeath(true)}>
                     <Bone className="size-4 text-gray-600 hover:text-amber-600" />
                     <span className="ml-2 cursor-pointer hover:text-amber-600">
@@ -275,20 +296,20 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
                   </DropdownMenuItem>
                 ) : null}
                 {item?.status == 'ACTIVE' && item?.quantity !== 0 ? (
-                  <DropdownMenuItem onClick={() => setIsIsolation(true)}>
-                    <Eclipse className="size-4 text-gray-600 hover:text-yellow-600" />
-                    <span className="ml-2 cursor-pointer hover:text-yellow-600">
-                      {t.formatMessage({ id: 'ANIMALTYPE.ISOLATIONS' })}
-                    </span>
-                  </DropdownMenuItem>
-                ) : null}
-                {item?.status == 'ACTIVE' && item?.quantity !== 0 ? (
-                  <DropdownMenuItem onClick={() => setIsFeeding(true)}>
-                    <Salad className="size-4 text-gray-600 hover:text-violet-600" />
-                    <span className="ml-2 cursor-pointer hover:text-violet-600">
-                      {t.formatMessage({ id: 'ANIMALTYPE.FEEDINGS' })}
-                    </span>
-                  </DropdownMenuItem>
+                  <>
+                    <DropdownMenuItem onClick={() => setIsIsolation(true)}>
+                      <Eclipse className="size-4 text-gray-600 hover:text-yellow-600" />
+                      <span className="ml-2 cursor-pointer hover:text-yellow-600">
+                        {t.formatMessage({ id: 'ANIMALTYPE.ISOLATIONS' })}
+                      </span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setIsFeeding(true)}>
+                      <Salad className="size-4 text-gray-600 hover:text-violet-600" />
+                      <span className="ml-2 cursor-pointer hover:text-violet-600">
+                        {t.formatMessage({ id: 'ANIMALTYPE.FEEDINGS' })}
+                      </span>
+                    </DropdownMenuItem>
+                  </>
                 ) : null}
                 {item?.productionPhase == 'LAYING' &&
                 item?.quantity !== 0 &&
@@ -306,9 +327,7 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
                 ) : item?._count?.cages !== item?.location?.cages &&
                   item?.productionPhase == 'LAYING' &&
                   item?.status == 'ACTIVE' &&
-                  !['Pondeuses', 'Poulet de chair', 'Poulets Brahma'].includes(
-                    item?.animalType?.name,
-                  ) ? (
+                  ['Pondeuses', 'Quails'].includes(item?.animalType?.name) ? (
                   <>
                     <DropdownMenuItem onClick={() => setPutInCages(true)}>
                       <Grid className="size-4 text-gray-600 hover:text-purple-600" />
@@ -344,22 +363,22 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
                     </DropdownMenuItem>
                   </Link>
                 ) : null}
-                <Link href={`/treatment/${item?.id}`}>
-                  <DropdownMenuItem>
-                    <ClipboardPlus className="size-4 text-gray-600 hover:text-green-600" />
-                    <span className="ml-2 cursor-pointer hover:text-green-600">
-                      {t.formatMessage({ id: 'HEALTH' })}
-                    </span>
-                  </DropdownMenuItem>
-                </Link>
                 {(item?.quantity === 0 && userStorage?.role === 'SUPERADMIN') ||
                 item?.status == 'STOPPED' ? (
-                  <DropdownMenuItem onClick={() => archiveItem(item)}>
-                    <FileArchive className="size-4 text-gray-600 hover:text-fuchsia-600" />
-                    <span className="ml-2 cursor-pointer hover:text-fuchsia-600">
-                      {t.formatMessage({ id: 'ARCHIVES' })}
-                    </span>
-                  </DropdownMenuItem>
+                  <>
+                    <DropdownMenuItem onClick={() => archiveItem(item)}>
+                      <FileArchive className="size-4 text-gray-600 hover:text-fuchsia-600" />
+                      <span className="ml-2 cursor-pointer hover:text-fuchsia-600">
+                        {t.formatMessage({ id: 'ARCHIVES' })}
+                      </span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleDownloadPdf()}>
+                      <Download className="size-4 text-gray-600 hover:text-pink-600" />
+                      <span className="ml-2 cursor-pointer hover:text-pink-600">
+                        {t.formatMessage({ id: 'REPORT.DOWNLOAD' })}
+                      </span>
+                    </DropdownMenuItem>
+                  </>
                 ) : null}
                 {item?.quantity !== 0 &&
                 item?.status == 'ACTIVE' &&
@@ -381,12 +400,39 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
                     </span>
                   </DropdownMenuItem>
                 ) : null}
+                <Link href={`/treatment/${item?.id}`}>
+                  <DropdownMenuItem>
+                    <ClipboardPlus className="size-4 text-gray-600 hover:text-green-600" />
+                    <span className="ml-2 cursor-pointer hover:text-green-600">
+                      {t.formatMessage({ id: 'HEALTH' })}
+                    </span>
+                  </DropdownMenuItem>
+                </Link>
+                {item?.quantity !== 0 &&
+                item?.status == 'ACTIVE' &&
+                userStorage?.role === 'SUPERADMIN' ? (
+                  <DropdownMenuItem onClick={() => setExpenses(true)}>
+                    <WalletCards className="size-4 text-gray-600 hover:text-fuchsia-600" />
+                    <span className="ml-2 cursor-pointer hover:text-fuchsia-600">
+                      {t.formatMessage({ id: 'FINANCE.EXPENSES' })}
+                    </span>
+                  </DropdownMenuItem>
+                ) : (
+                  <Link href={`/expenses/${item?.id}`}>
+                    <DropdownMenuItem>
+                      <WalletCards className="size-4 text-gray-600 hover:text-fuchsia-600" />
+                      <span className="ml-2 cursor-pointer hover:text-fuchsia-600">
+                        {t.formatMessage({ id: 'FINANCE.EXPENSES' })}
+                      </span>
+                    </DropdownMenuItem>
+                  </Link>
+                )}
                 {userStorage?.role === 'SUPERADMIN' &&
                 item?.status == 'ACTIVE' ? (
                   <DropdownMenuItem onClick={() => setIsConfirmOpen(true)}>
                     <Ban className="size-4 text-gray-600 hover:text-red-600" />
                     <span className="ml-2 cursor-pointer hover:text-red-600">
-                      Arreter la production
+                      {t.formatMessage({ id: 'STOP.PRODUCTION' })}
                     </span>
                   </DropdownMenuItem>
                 ) : (
@@ -464,7 +510,6 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
             {isSold ? (
               <CreateAvesSales
                 animal={item}
-                sale={item?.animalTypeId}
                 showModal={isSold}
                 setShowModal={setIsSold}
               />
@@ -482,6 +527,13 @@ const ListAvesAnimals = ({ item, index }: { item: any; index: number }) => {
                 animal={item}
                 showModal={putIncages}
                 setShowModal={setPutInCages}
+              />
+            ) : null}
+            {expenses ? (
+              <CreateOrUpdateFinances
+                animal={item}
+                showModal={expenses}
+                setShowModal={setExpenses}
               />
             ) : null}
           </div>

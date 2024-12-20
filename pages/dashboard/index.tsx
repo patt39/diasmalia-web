@@ -385,7 +385,11 @@ export function Dashboard() {
                                     {formatDDMMYYDate(item?.createdAt as Date)}
                                   </div>
                                 </TableCell>
-                                <TableCell>{item?.message}</TableCell>
+                                <TableCell>
+                                  {item?.message?.length > 80
+                                    ? item?.message?.substring(0, 80) + '...'
+                                    : item?.message}
+                                </TableCell>
                               </TableRow>
                             </>
                           ))
@@ -463,12 +467,12 @@ export function Dashboard() {
                                     new Date().getDate() ==
                                   2 ? (
                                     <span className="relative inline-flex animate-pulse text-orange-600">
-                                      Dans 2 jours
+                                      {t.formatMessage({ id: 'INTWODAYS' })}
                                     </span>
                                   ) : getDayOfMonth(item?.dueDate) ==
                                     new Date().getDate() ? (
                                     <span className="relative inline-flex animate-bounce text-red-600">
-                                      Aujourdhui
+                                      {t.formatMessage({ id: 'TODAY' })}
                                     </span>
                                   ) : (
                                     formatDateDDMMYY(item?.dueDate)

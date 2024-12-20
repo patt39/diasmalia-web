@@ -163,7 +163,18 @@ const UpdateAvesAnimals = ({
                     </div>
                   </div>
                 )}
-                {animal?._count?.feedings == 0 ? (
+                {animal?._count?.feedings !== 0 ? (
+                  <div className="mb-2 items-center">
+                    <Label>{t.formatMessage({ id: 'ANIMAL.CODE' })}</Label>
+                    <TextInput
+                      control={control}
+                      type="text"
+                      name="code"
+                      errors={errors}
+                      disabled
+                    />
+                  </div>
+                ) : (
                   <div className="mb-2 items-center">
                     <Label>{t.formatMessage({ id: 'ANIMAL.CODE' })}</Label>
                     <TextInput
@@ -173,7 +184,7 @@ const UpdateAvesAnimals = ({
                       errors={errors}
                     />
                   </div>
-                ) : null}
+                )}
                 {['Poulet de chair', 'Pisciculture', 'Pondeuses'].includes(
                   animalType?.name,
                 ) ? (
@@ -200,56 +211,61 @@ const UpdateAvesAnimals = ({
                         </div>
                       </div>
                     ) : null}
-                    <Label>
-                      Sélectionner la race
-                      <span className="text-red-600">*</span>
-                    </Label>
-                    <Controller
-                      control={control}
-                      name="breedName"
-                      render={({ field: { value, onChange } }) => (
-                        <Select
-                          onValueChange={onChange}
+                    {['Dinde', 'Canard'].includes(animalType?.name) ? (
+                      <>
+                        <Label>
+                          Sélectionner la race
+                          <span className="text-red-600">*</span>
+                        </Label>
+                        <Controller
+                          control={control}
                           name="breedName"
-                          value={value}
-                        >
-                          <SelectTrigger>
-                            <SelectValue
-                              placeholder={`${animal?.breed?.name}`}
-                            />
-                          </SelectTrigger>
-                          <SelectContent className="dark:border-gray-800">
-                            <SelectGroup>
-                              <SelectLabel>Breeds</SelectLabel>
-                              {isLoadingBreeds ? (
-                                <LoadingFile />
-                              ) : isErrorBreeds ? (
-                                <ErrorFile
-                                  title="404"
-                                  description="Error finding data please try again..."
+                          render={({ field: { value, onChange } }) => (
+                            <Select
+                              onValueChange={onChange}
+                              name="breedName"
+                              value={value}
+                            >
+                              <SelectTrigger>
+                                <SelectValue
+                                  placeholder={`${animal?.breed?.name}`}
                                 />
-                              ) : Number(dataBreeds?.pages[0]?.data?.total) <=
-                                0 ? (
-                                <ErrorFile description="Don't have breeds" />
-                              ) : (
-                                dataBreeds?.pages
-                                  .flatMap((page: any) => page?.data?.value)
-                                  .map((item, index) => (
-                                    <>
-                                      <SelectItem
-                                        key={index}
-                                        value={item?.name}
-                                      >
-                                        {item?.name}
-                                      </SelectItem>
-                                    </>
-                                  ))
-                              )}
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
+                              </SelectTrigger>
+                              <SelectContent className="dark:border-gray-800">
+                                <SelectGroup>
+                                  <SelectLabel>Breeds</SelectLabel>
+                                  {isLoadingBreeds ? (
+                                    <LoadingFile />
+                                  ) : isErrorBreeds ? (
+                                    <ErrorFile
+                                      title="404"
+                                      description="Error finding data please try again..."
+                                    />
+                                  ) : Number(
+                                      dataBreeds?.pages[0]?.data?.total,
+                                    ) <= 0 ? (
+                                    <ErrorFile description="Don't have breeds" />
+                                  ) : (
+                                    dataBreeds?.pages
+                                      .flatMap((page: any) => page?.data?.value)
+                                      .map((item, index) => (
+                                        <>
+                                          <SelectItem
+                                            key={index}
+                                            value={item?.name}
+                                          >
+                                            {item?.name}
+                                          </SelectItem>
+                                        </>
+                                      ))
+                                  )}
+                                </SelectGroup>
+                              </SelectContent>
+                            </Select>
+                          )}
+                        />
+                      </>
+                    ) : null}
                     <div className="flex items-center space-x-4">
                       {animal?._count?.feedings !== 0 ? (
                         <div className="my-2">
@@ -511,7 +527,6 @@ const UpdateAvesAnimals = ({
                     ) : null}
                   </>
                 )}
-
                 <div className="mt-4 flex items-center space-x-4">
                   <ButtonInput
                     type="button"

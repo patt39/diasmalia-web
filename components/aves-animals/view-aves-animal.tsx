@@ -1,6 +1,5 @@
 import { GetOneAnimalAPI } from '@/api-site/animals';
 import { XIcon } from 'lucide-react';
-import { formatWeight } from '../../utils/formate-date';
 import { useInputState } from '../hooks';
 import { Card, CardDescription, CardHeader, CardTitle } from '../ui/card';
 
@@ -141,7 +140,7 @@ const ViewAvesAnimal = ({
                             {t.formatMessage({ id: 'ANIMAL.FEED' })}
                           </CardDescription>
                           <CardTitle className="text-4xl">
-                            {formatWeight(getOneAnimal?.feedingsCount ?? 0)}
+                            {getOneAnimal?.feedingsCount ?? 0}kg
                           </CardTitle>
                         </CardHeader>
                       </Card>

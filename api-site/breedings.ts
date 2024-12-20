@@ -6,28 +6,6 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 
-export const GetOneBreedingAPI = (payload: { breedingId: string }) => {
-  const { breedingId } = payload;
-  const { data, isError, isLoading, status, isPending, refetch } = useQuery({
-    queryKey: ['breeding', breedingId],
-    queryFn: async () =>
-      await makeApiCall({
-        action: 'getOneBreeding',
-        urlParams: { breedingId },
-      }),
-    refetchOnWindowFocus: false,
-  });
-
-  return {
-    data: data?.data as any,
-    isError,
-    isLoading,
-    status,
-    isPending,
-    refetch,
-  };
-};
-
 export const GetOneMaleBreedingAPI = (payload: { animalMaleId: string }) => {
   const { animalMaleId } = payload;
   const { data, isError, isLoading, status, isPending, refetch } = useQuery({
@@ -257,7 +235,7 @@ export const GetBreedingHistoryAPI = (
     periode?: string;
     sort?: string;
     sortBy?: string;
-    animalId?: string;
+    animalFemaleId?: string;
     animalTypeId?: string;
     organizationId?: string;
   } & PaginationRequest,
@@ -268,8 +246,8 @@ export const GetBreedingHistoryAPI = (
     search,
     periode,
     sortBy,
-    animalId,
     animalTypeId,
+    animalFemaleId,
     organizationId,
   } = payload;
   return useInfiniteQuery({
@@ -284,8 +262,8 @@ export const GetBreedingHistoryAPI = (
           search,
           sortBy,
           periode,
-          animalId,
           animalTypeId,
+          animalFemaleId,
           page: pageParam,
           organizationId,
         },

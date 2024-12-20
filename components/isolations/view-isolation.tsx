@@ -1,4 +1,3 @@
-import { GetOneIsolationAPI } from '@/api-site/isolations';
 import { XIcon } from 'lucide-react';
 import { Textarea } from '../ui/textarea';
 
@@ -11,10 +10,6 @@ const ViewIsolation = ({
   setShowModal: any;
   isolation?: any;
 }) => {
-  const { data: getOneIsolation } = GetOneIsolationAPI({
-    isolationId: isolation?.id,
-  });
-
   return (
     <>
       {showModal ? (
@@ -32,7 +27,7 @@ const ViewIsolation = ({
             <form className="mt-4">
               <div className="flex-auto justify-center p-2">
                 <div className="mb-4">
-                  <Textarea placeholder={getOneIsolation?.note} />
+                  <Textarea placeholder={isolation?.note} />
                 </div>
               </div>
             </form>

@@ -148,7 +148,6 @@ const UpdateAnimals = ({
     gender: 'FEMALE',
     status: 'ACTIVE',
     sortBy: 'createdAt',
-    productionPhase: 'REPRODUCTION',
     animalTypeId: animal?.animalTypeId,
   });
 

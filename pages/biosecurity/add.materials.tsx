@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { GetMaterialsAPI } from '@/api-site/material';
+import { useInputState } from '@/components/hooks';
 import { ButtonLoadMore } from '@/components/ui-setting';
 import { LoadingFile } from '@/components/ui-setting/ant';
 import { ErrorFile } from '@/components/ui-setting/ant/error-file';
@@ -23,6 +24,7 @@ const AddMaterials = ({
   showModal: boolean;
   setShowModal: any;
 }) => {
+  const { t } = useInputState();
   const { ref, inView } = useInView();
 
   const {
@@ -80,7 +82,7 @@ const AddMaterials = ({
             >
               <CardHeader>
                 <h4 className="text-xl text-zinc-950 text-center  font-mediun">
-                  Sélectionner vos materiels de travail
+                  {t.formatMessage({ id: 'SELECT.MATERIALS' })}
                 </h4>
               </CardHeader>
               <CardContent>
@@ -88,8 +90,8 @@ const AddMaterials = ({
                   <TableHeader>
                     <TableRow className="dark:border-gray-800">
                       <TableHead></TableHead>
-                      <TableHead>Image</TableHead>
-                      <TableHead>Tool</TableHead>
+                      <TableHead>Photo</TableHead>
+                      <TableHead>Material</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>

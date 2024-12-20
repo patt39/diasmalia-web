@@ -168,7 +168,7 @@ const TabFattenings = ({ animalTypeId }: { animalTypeId: string }) => {
                   title="404"
                   description="Error finding data please try again..."
                 />
-              ) : Number(dataFattenings?.data?.total) ||
+              ) : Number(dataFattenings?.data?.total) <= 0 ||
                 Number(dataFattenings?.data?.total_value) <= 0 ? (
                 <ErrorFile description="Don't have animals in fattening yet" />
               ) : (

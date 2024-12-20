@@ -2,31 +2,9 @@ import { makeApiCall, PaginationRequest } from '@/utils';
 import {
   useInfiniteQuery,
   useMutation,
-  useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
 
-export const GetOneMaterialAPI = (payload: { materialId: string }) => {
-  const { materialId } = payload;
-  const { data, isError, isLoading, status, isPending, refetch } = useQuery({
-    queryKey: ['material', materialId],
-    queryFn: async () =>
-      await makeApiCall({
-        action: 'getOneMaterial',
-        urlParams: { materialId },
-      }),
-    refetchOnWindowFocus: false,
-  });
-
-  return {
-    data: data?.data as any,
-    isError,
-    isLoading,
-    status,
-    isPending,
-    refetch,
-  };
-};
 export const GetMaterialsAPI = (
   payload: {
     take?: number;

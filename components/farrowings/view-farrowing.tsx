@@ -1,6 +1,4 @@
-import { GetOneFarrowingAPI } from '@/api-site/farrowings';
 import { XIcon } from 'lucide-react';
-import Image from 'next/image';
 import { Textarea } from '../ui/textarea';
 
 const ViewFarrowing = ({
@@ -12,10 +10,6 @@ const ViewFarrowing = ({
   setShowModal: any;
   farrowing?: any;
 }) => {
-  const { data: getOneFarrowing } = GetOneFarrowingAPI({
-    farrowingId: farrowing.id,
-  });
-
   return (
     <>
       {showModal ? (
@@ -32,17 +26,8 @@ const ViewFarrowing = ({
             </button>
             <form className="mt-6">
               <div className="flex-auto justify-center p-2">
-                <div className="justify-items-center items-center">
-                  <Image
-                    className="lg:w-[300px] lg:h-[250px] lg:my-auto my-auto rounded-sm"
-                    src={getOneFarrowing?.image}
-                    alt="https://diasmalia-buck.s3.eu-central-1.amazonaws.com/photos/desinfection.jpeg20241114-cNrK.jpeg"
-                    width={200}
-                    height={200}
-                  />
-                </div>
                 <div className="my-4 disabled">
-                  <Textarea defaultValue={getOneFarrowing?.note} disabled />
+                  <Textarea defaultValue={farrowing?.note} disabled />
                 </div>
               </div>
             </form>

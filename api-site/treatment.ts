@@ -7,28 +7,6 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 
-export const GetOneTreatmentAPI = (payload: { treatmentId: string }) => {
-  const { treatmentId } = payload;
-  const { data, isError, isLoading, status, isPending, refetch } = useQuery({
-    queryKey: ['treatment', treatmentId],
-    queryFn: async () =>
-      await makeApiCall({
-        action: 'getOneTreatment',
-        urlParams: { treatmentId },
-      }),
-    refetchOnWindowFocus: false,
-  });
-
-  return {
-    data: data?.data as any,
-    isError,
-    isLoading,
-    status,
-    isPending,
-    refetch,
-  };
-};
-
 export const GetOneTreatmentByAnimalIdAPI = (payload: { animalId: string }) => {
   const { animalId } = payload;
   const { data, isError, isLoading, status, isPending, refetch } = useQuery({

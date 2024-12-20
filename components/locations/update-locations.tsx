@@ -1,7 +1,10 @@
 import { UpdateOneLoctionAPI } from '@/api-site/locations';
 import { useReactHookForm } from '@/components/hooks';
 import { ButtonInput } from '@/components/ui-setting';
-import { productionPhases } from '@/i18n/default-exports';
+import {
+  productionPhases,
+  reproductionProductionPhases,
+} from '@/i18n/default-exports';
 import { LocationModel } from '@/types/location';
 import {
   AlertDangerNotification,
@@ -133,9 +136,8 @@ const UpdateLocations = ({
                     />
                   </div>
                 )}
-                {['POLYVALENT'].includes(
-                  location?.building?.productionPhase,
-                ) ? (
+                {['POLYVALENT'].includes(location?.building?.productionPhase) &&
+                location?._count?.animals == 0 ? (
                   <div>
                     <Label>
                       {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
@@ -148,6 +150,25 @@ const UpdateLocations = ({
                       valueType="key"
                       name="productionPhase"
                       dataItem={productionPhases.filter(
+                        (i) => i?.lang === locale,
+                      )}
+                    />
+                  </div>
+                ) : ['REPRODUCTION'].includes(
+                    location?.building?.productionPhase,
+                  ) && location?._count?.animals == 0 ? (
+                  <div>
+                    <Label>
+                      {t.formatMessage({ id: 'TABFEEDING.PRODUCTIONPHASE' })}
+                      <span className="text-red-600">*</span>
+                    </Label>
+                    <SelectInput
+                      control={control}
+                      errors={errors}
+                      placeholder="select production phase"
+                      valueType="key"
+                      name="productionPhase"
+                      dataItem={reproductionProductionPhases.filter(
                         (i) => i?.lang === locale,
                       )}
                     />

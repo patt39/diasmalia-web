@@ -7,28 +7,6 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 
-export const GetOneGestationAPI = (payload: { gestationId: string }) => {
-  const { gestationId } = payload;
-  const { data, isError, isLoading, status, isPending, refetch } = useQuery({
-    queryKey: ['gestation', gestationId],
-    queryFn: async () =>
-      await makeApiCall({
-        action: 'getOneGestation',
-        urlParams: { gestationId },
-      }),
-    refetchOnWindowFocus: false,
-  });
-
-  return {
-    data: data?.data as any,
-    isError,
-    isLoading,
-    status,
-    isPending,
-    refetch,
-  };
-};
-
 export const GetGestationByAnimalIdAPI = (payload: { animalId: string }) => {
   const { animalId } = payload;
   const { data, isError, isLoading, status, isPending, refetch } = useQuery({

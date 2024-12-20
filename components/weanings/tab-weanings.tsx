@@ -141,9 +141,6 @@ const TabWeanings = ({ animalTypeId }: { animalTypeId: string }) => {
                   {t.formatMessage({ id: 'TABWEANING.STATUS' })}
                 </TableHead>
                 <TableHead>Date</TableHead>
-                <TableHead>
-                  <span>Actions</span>
-                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

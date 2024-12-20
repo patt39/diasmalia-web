@@ -279,7 +279,7 @@ const TabAvesSales = ({ animalTypeId }: { animalTypeId: string }) => {
                   description="Error finding data please try again..."
                 />
               ) : Number(dataSales?.data?.total) <= 0 ? (
-                <ErrorFile description="Don't have animals soled yet please add" />
+                <ErrorFile description="Don't have sold animals yet" />
               ) : (
                 dataSales?.data?.value.map((item: any, index: number) => (
                   <>

@@ -49,6 +49,7 @@ const CreateFarrowings = ({
     try {
       await saveMutation({
         ...payload,
+        farrowingId: farrowing?.id,
       });
       setHasErrors(false);
       AlertSuccessNotification({

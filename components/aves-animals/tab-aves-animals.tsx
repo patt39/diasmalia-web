@@ -46,7 +46,6 @@ const TabAvesAnimals = ({ animalTypeId }: { animalTypeId: string }) => {
     search,
     take: 10,
     sort: 'desc',
-    status: 'ACTIVE',
     sortBy: 'createdAt',
     productionPhase,
     animalTypeId: animalTypeId,

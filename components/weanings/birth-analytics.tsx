@@ -27,7 +27,6 @@ const FarrowingsWeaningsAnalytics = ({
   animalTypeId: string;
 }) => {
   const { t, locale, userStorage } = useInputState();
-  const [periode, setPeriode] = useState('');
   const [year, setYear] = useState<String>(`${dateTimeNowUtc().getFullYear()}`);
   const [months, setMonths] = useState<String>('');
   const { data: animalStatistics } = GetAnimalStatisticsAPI({
@@ -38,7 +37,6 @@ const FarrowingsWeaningsAnalytics = ({
   const { data: dataBirthsAnalyticsDay } = GetBirthAnalyticAPI({
     year: String(year),
     months: String(months),
-    periode: String(periode),
     animalTypeId: animalTypeId,
     organizationId: userStorage?.organizationId,
   });
@@ -79,7 +77,9 @@ const FarrowingsWeaningsAnalytics = ({
           <CardHeader>
             <div className="flex items-center">
               <div className="mr-auto items-center gap-2">
-                <CardTitle className="text-xl">Vente animaux</CardTitle>
+                <CardTitle className="text-xl">
+                  {t.formatMessage({ id: 'BIRTH.ANALYSIS' })}
+                </CardTitle>
               </div>
               <div className="ml-auto flex items-center gap-2">
                 <>
@@ -145,7 +145,10 @@ const FarrowingsWeaningsAnalytics = ({
             </div>
           </CardHeader>
           <CardContent>
-            <ChartContainer config={chartConfig}>
+            <ChartContainer
+              config={chartConfig}
+              className="lg:h-[400px] w-full"
+            >
               <LineChart
                 accessibilityLayer
                 data={dataBirthsAnalyticsDay?.data}
@@ -163,7 +166,6 @@ const FarrowingsWeaningsAnalytics = ({
                 />
                 <ChartTooltip
                   cursor={false}
-                  labelClassName="w-40"
                   content={<ChartTooltipContent />}
                 />
                 <Line
@@ -184,9 +186,7 @@ const FarrowingsWeaningsAnalytics = ({
             </ChartContainer>
           </CardContent>
         </Card>
-      ) : (
-        ''
-      )}
+      ) : null}
     </>
   );
 };

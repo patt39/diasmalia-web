@@ -1,4 +1,3 @@
-import { GetOneSaleAPI } from '@/api-site/sales';
 import { XIcon } from 'lucide-react';
 import { useIntl } from 'react-intl';
 import { Input } from '../ui/input';
@@ -15,9 +14,6 @@ const ViewAvesSale = ({
   sale?: any;
 }) => {
   const t = useIntl();
-  const { data: getOneSale } = GetOneSaleAPI({
-    saleId: sale?.id,
-  });
 
   return (
     <>
@@ -37,36 +33,37 @@ const ViewAvesSale = ({
               <div className="flex-auto justify-center p-2">
                 <div className="mb-2 items-center space-x-1">
                   <Label htmlFor="text">Code de la bande</Label>
-                  <Input
-                    defaultValue={getOneSale?.animal?.code || 'N/A'}
-                    disabled
-                  />
+                  <Input defaultValue={sale?.animal?.code} disabled />
                 </div>
                 <div className="mb-2 items-center space-x-1">
                   <Label htmlFor="text">Client</Label>
-                  <Input defaultValue={getOneSale?.soldTo || 'N/A'} disabled />
+                  <Input defaultValue={sale?.soldTo || 'N/A'} disabled />
                 </div>
-                <div className="mb-2 items-center  space-x-1">
-                  <Label htmlFor="text">Email</Label>
-                  <Input defaultValue={getOneSale?.email || 'N/A'} disabled />
+                <div className="flex items-center space-x-4">
+                  <div className="mb-2 w-80">
+                    <Label htmlFor="text">Email</Label>
+                    <Input defaultValue={sale?.email || 'N/A'} disabled />
+                  </div>
+                  <div className="mb-2 w-80">
+                    <Label htmlFor="text">Phone</Label>
+                    <Input defaultValue={sale?.phone || 'N/A'} disabled />
+                  </div>
                 </div>
-                <div className="mb-2 items-center  space-x-1">
-                  <Label htmlFor="text">Phone</Label>
-                  <Input defaultValue={getOneSale?.phone || 'N/A'} disabled />
+                <div className="flex items-center space-x-4">
+                  <div className="mb-2 w-80">
+                    <Label htmlFor="text">Address</Label>
+                    <Input defaultValue={sale?.address || 'N/A'} disabled />
+                  </div>
+                  <div className="mb-2 w-80">
+                    <Label>{t.formatMessage({ id: 'SALE.CHANNEL' })}</Label>
+                    <Input disabled type="text" value={sale?.method} />
+                  </div>
                 </div>
-                <div className="mb-2 items-center  space-x-1">
-                  <Label htmlFor="text">Address</Label>
-                  <Input defaultValue={getOneSale?.address || 'N/A'} disabled />
-                </div>
-                <Label>{t.formatMessage({ id: 'SALE.CHANNEL' })}</Label>
-                <div className="mb-2 flex items-center space-x-4">
-                  <Input disabled type="text" value={getOneSale?.method} />
-                </div>
-                {getOneSale?.note !== null ? (
+                {sale?.note !== null ? (
                   <>
                     <Label>{t.formatMessage({ id: 'SALE.DETAIL' })}</Label>
                     <div className="mb-2">
-                      <Textarea defaultValue={getOneSale?.note} disabled />
+                      <Textarea defaultValue={sale?.note} disabled />
                     </div>
                   </>
                 ) : null}

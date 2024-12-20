@@ -167,7 +167,7 @@ const TabDeaths = ({ animalTypeId }: { animalTypeId: string }) => {
                   description="Error finding data please try again..."
                 />
               ) : Number(dataDeaths?.data?.total) <= 0 ? (
-                <ErrorFile description="Don't have animals created yet please do" />
+                <ErrorFile description="Don't have dead animals" />
               ) : (
                 dataDeaths?.data?.value.map((item: any, index: number) => (
                   <>

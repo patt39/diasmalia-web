@@ -43,29 +43,6 @@ const ViewProject = ({
                     disabled
                   />
                 </div>
-                <div className="flex items-center space-x-2 mb-2">
-                  <div className="w-60">
-                    <Label>
-                      {t.formatMessage({ id: 'AUTH.INPUT.FULLNAME' })}
-                    </Label>
-                    <Input
-                      defaultValue={`${getUser?.profile?.firstName} ${getUser?.profile?.lastName}`}
-                      disabled
-                    />
-                  </div>
-                  <div className="w-60">
-                    <Label>Phone</Label>
-                    <Input defaultValue={getUser?.profile?.phone} disabled />
-                  </div>
-                  <div className="w-40">
-                    <Label>City</Label>
-                    <Input defaultValue={getUser?.profile?.city} disabled />
-                  </div>
-                </div>
-                <div className="w-full mb-2">
-                  <Label>Address</Label>
-                  <Input defaultValue={getUser?.profile?.address} disabled />
-                </div>
                 <div className="mb-4">
                   <Label>Description</Label>
                   <Textarea

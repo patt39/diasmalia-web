@@ -113,7 +113,7 @@ const UpdateCages = ({
                   <TextInput
                     control={control}
                     type="text"
-                    name="code"
+                    name="bande code"
                     errors={errors}
                   />
                 </div>

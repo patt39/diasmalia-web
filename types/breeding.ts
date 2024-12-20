@@ -1,5 +1,5 @@
 export type BreedingsModel = {
-  createdAt: string;
+  createdAt: Date;
   id: string;
   note: string;
   maleCode: string;
@@ -22,7 +22,7 @@ export type BreedingsModel = {
 };
 
 export type CheckPregnancysModel = {
-  createdAt: string;
+  createdAt: Date;
   id: string;
   method: string;
   result: string;

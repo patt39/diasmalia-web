@@ -5,10 +5,11 @@ export const GetActivityLogsAPI = (
   payload: {
     take?: number;
     sortBy: string;
+    userId?: string;
     periode?: string;
   } & PaginationRequest,
 ) => {
-  const { take, sort, sortBy, periode, organizationId } = payload;
+  const { take, sort, sortBy, periode, userId, organizationId } = payload;
   return useInfiniteQuery({
     queryKey: ['activityLogs', 'infinite', { ...payload }],
     getNextPageParam: (lastPage: any) => lastPage.data.next_page,
@@ -18,6 +19,7 @@ export const GetActivityLogsAPI = (
         queryParams: {
           take,
           sort,
+          userId,
           sortBy,
           periode,
           page: pageParam,

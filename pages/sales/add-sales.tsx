@@ -13,6 +13,7 @@ import {
   TextAreaInput,
   TextInput,
 } from '@/components/ui-setting/shadcn';
+import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import {
@@ -41,16 +42,12 @@ import { useInView } from 'react-intersection-observer';
 import * as yup from 'yup';
 
 const schema = yup.object({
-  code: yup.string().optional(),
+  animals: yup.array().optional(),
   note: yup.string().optional(),
   phone: yup.string().optional(),
   email: yup.string().optional(),
   address: yup.string().optional(),
   soldTo: yup.string().optional(),
-  male: yup.number().optional(),
-  female: yup.number().optional(),
-  number: yup.number().optional(),
-  detail: yup.string().required('detail is required'),
   price: yup.number().required('price is required'),
   method: yup.string().required('method is required'),
 });
@@ -76,6 +73,8 @@ const AddSales = ({
   } = useReactHookForm({ schema });
   const watchSaleCanale = watch('method');
   const { ref, inView } = useInView();
+  const selectedAnimals = watch('animals', '');
+  const countSelectedAnimals = selectedAnimals.length;
   const { search, handleSetSearch } = useInputState();
 
   const {
@@ -145,14 +144,35 @@ const AddSales = ({
         <div className="min-w-screen animated fadeIn faster fixed  inset-0  z-50 flex h-screen items-center justify-center bg-cover bg-center bg-no-repeat outline-none focus:outline-none">
           <div className="absolute inset-0 z-0 bg-black opacity-80"></div>
           <div className="relative m-auto max-h-screen w-full max-w-2xl overflow-y-scroll rounded-xl bg-white  p-5 shadow-lg dark:bg-[#121212]">
-            <button
-              className="float-right border-0 bg-transparent text-black"
-              onClick={() => setShowModal(false)}
-            >
-              <span className="opacity-7 block size-6 rounded-full py-0 text-xl  dark:text-white">
-                <XIcon />
-              </span>
-            </button>
+            <div className="flex mb-0">
+              <div className="mr-auto">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="outline">
+                        {countSelectedAnimals || 0}
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent className="dark:border-gray-800">
+                      <p>
+                        {countSelectedAnimals}
+                        {t.formatMessage({ id: 'ANIMAL.SELECTED.COUNT' })}
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+              <div className="justify-end">
+                <button
+                  className="float-right border-0 bg-transparent text-black"
+                  onClick={() => setShowModal(false)}
+                >
+                  <span className="opacity-7 block size-6 rounded-full py-0 text-xl  dark:text-white">
+                    <XIcon />
+                  </span>
+                </button>
+              </div>
+            </div>
             <form className="mt-2" onSubmit={handleSubmit(onSubmit)}>
               <div className="flex-auto justify-center p-2">
                 {hasErrors && (
@@ -170,12 +190,13 @@ const AddSales = ({
                 )}
 
                 <Label>
-                  Select animals<span className="text-red-600">*</span>
+                  Selectionner les animaux à vendre
+                  <span className="text-red-600">*</span>
                 </Label>
-                <div className="flex mb-4 w-full items-center">
+                <div className="flex w-full items-center">
                   <Select>
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder="select animals" />
+                      <SelectValue placeholder="select animals for sale" />
                     </SelectTrigger>
                     <SelectContent className="dark:border-gray-800">
                       <div className="mr-auto items-center gap-2">
@@ -228,9 +249,7 @@ const AddSales = ({
                                           }}
                                         />
                                         <div className="space-y-1 leading-none">
-                                          <Label>
-                                            {item?.code} {item?.productionPhase}
-                                          </Label>
+                                          <Label>{item?.code}</Label>
                                         </div>
                                       </div>
                                     </>
@@ -272,7 +291,7 @@ const AddSales = ({
                     errors={errors}
                   />
                 </div>
-                <div className="flex space-x-4 mt-2">
+                <div className="flex space-x-4">
                   <div className="w-80">
                     <Label>Email</Label>
                     <TextInput
@@ -304,17 +323,33 @@ const AddSales = ({
                     errors={errors}
                   />
                 </div>
-                <Label>Canal de vente</Label>
-                <span className="text-red-600">*</span>
-                <div className="mb-4 items-center">
-                  <SelectInput
-                    control={control}
-                    errors={errors}
-                    placeholder="selling method"
-                    valueType="key"
-                    name="method"
-                    dataItem={sellingMethods.filter((i) => i?.lang === locale)}
-                  />
+                <div className="mb-4 flex items-center space-x-4">
+                  <div className="w-80">
+                    Prix<span className="text-red-600">*</span>
+                    <TextInput
+                      control={control}
+                      type="number"
+                      name="price"
+                      placeholder="price"
+                      errors={errors}
+                    />
+                  </div>
+                  <div className="w-80">
+                    <Label>Canal de vente</Label>
+                    <span className="text-red-600">*</span>
+                    <div className="items-center">
+                      <SelectInput
+                        control={control}
+                        errors={errors}
+                        placeholder="selling method"
+                        valueType="key"
+                        name="method"
+                        dataItem={sellingMethods.filter(
+                          (i) => i?.lang === locale,
+                        )}
+                      />
+                    </div>
+                  </div>
                 </div>
                 {watchSaleCanale === 'OTHER' ? (
                   <div className="mb-4">

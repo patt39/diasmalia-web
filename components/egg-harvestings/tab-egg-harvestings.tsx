@@ -151,7 +151,7 @@ const TabEggHarvestings = ({ animalTypeId }: { animalTypeId: string }) => {
           <Table>
             <TableHeader>
               <TableRow className="dark:border-gray-800">
-                <TableHead>Code</TableHead>
+                <TableHead>Bande</TableHead>
                 <TableHead>
                   {t.formatMessage({ id: 'TABEGGHAVESTING.NUMBER' })}
                 </TableHead>
@@ -173,7 +173,7 @@ const TabEggHarvestings = ({ animalTypeId }: { animalTypeId: string }) => {
                   description="Error finding data please try again..."
                 />
               ) : Number(dataEggHavestings?.data?.total) <= 0 ? (
-                <ErrorFile description="Don't have Eggharvestings created yet please do" />
+                <ErrorFile description="Don't have Eggharvestings created yet" />
               ) : (
                 dataEggHavestings?.data?.value.map(
                   (item: any, index: number) => (

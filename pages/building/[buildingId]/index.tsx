@@ -95,7 +95,7 @@ export function ViewBuilding() {
                 {t.formatMessage({ id: 'UTIL.COME_BACK' })}
               </span>
             </ButtonInput>
-            <h4 className="text-xl text-zinc-950  font-bold ml-auto">
+            <h4 className="text-xl text-zinc-950  font-bold ml-80">
               {t.formatMessage({ id: 'BUILDING' })}{' '}
               {getOneBuilding?.code?.toUpperCase()}
             </h4>

@@ -1,5 +1,5 @@
 export type FatteningsModel = {
-  createdAt: string;
+  createdAt: Date;
   updatedAt: string;
   id: string;
   initialWeight: number;

@@ -1,6 +1,5 @@
 import { GetImagesAPI } from '@/api-site/upload';
 import { GetUserAPI } from '@/api-site/user';
-import { Footer } from '@/components/site/footer';
 import { Header } from '@/components/site/header';
 import {
   Carousel,
@@ -9,12 +8,13 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel';
+import { HtmlParser } from '@/utils/html-parser';
 import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 
 export function ViewEnterprise() {
-  const { query, back } = useRouter();
+  const { query } = useRouter();
   const userId = String(query?.userId);
   const { data: getUser } = GetUserAPI({
     userId: userId,
@@ -36,9 +36,9 @@ export function ViewEnterprise() {
         </title>
       </Head>
       <Header />
-      <section className="py-2 bg-white sm:py-6 lg:py-10">
+      <section className="py-2 bg-white  sm:py-6 lg:py-10">
         <div className="px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl">
-          <Carousel className="w-full max-w-lg ml-96">
+          <Carousel className="w-full max-w-lg mx-auto rounded-sm lg:w-full">
             <CarouselContent>
               {dataImages?.pages
                 .flatMap((page: any) => page?.data?.value)
@@ -47,11 +47,15 @@ export function ViewEnterprise() {
                     <div className="p-1">
                       <div className="mt-8 sm:mt-12 lg:mt-16 aspect-w-16 aspect-h-9 lg:aspect-h-6">
                         <Image
-                          className="mt-4 mx-auto lg:h-[500px] lg:w-[2500px]"
+                          className="mt-4 mx-auto lg:h-[500px] lg:w-[1000px]"
                           src={item?.link}
                           alt=""
                           width={850}
                           height={850}
+                          style={{
+                            height: `100%`,
+                            width: `100%`,
+                          }}
                         />
                       </div>
                     </div>
@@ -61,100 +65,84 @@ export function ViewEnterprise() {
             <CarouselPrevious />
             <CarouselNext />
           </Carousel>
-          {/* <div className="mt-8 sm:mt-12 lg:mt-16 aspect-w-16 aspect-h-9 lg:aspect-h-6">
-            <Image
-              className="mt-4 mx-auto lg:h-[500px] lg:w-[1000px]"
-              src={viewBlog?.image}
-              alt=""
-              width={550}
-              height={550}
-            />
-          </div> */}
           <div className="grid grid-cols-1 mt-8 sm:mt-12 lg:mt-16 lg:grid-cols-12 lg:gap-x-12 gap-y-8">
-            <div className="lg:col-span-2 lg:self-start lg:sticky lg:top-6 lg:order-last">
-              <ul className="flex space-x-3 lg:space-x-0 lg:space-y-4 lg:flex-col lg:items-center">
-                <li>
-                  <a
-                    href="#"
-                    className="inline-flex items-center justify-center w-10 h-10 text-gray-900 transition-all duration-200 border border-gray-200 rounded-full hover:bg-gray-900 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
-                  >
-                    <span className="sr-only"> Discord </span>
-                    <svg
-                      className="w-5 h-5"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M14.82 4.26a10.14 10.14 0 0 0-.53 1.1 14.66 14.66 0 0 0-4.58 0 10.14 10.14 0 0 0-.53-1.1 16 16 0 0 0-4.13 1.3 17.33 17.33 0 0 0-3 11.59 16.6 16.6 0 0 0 5.07 2.59A12.89 12.89 0 0 0 8.23 18a9.65 9.65 0 0 1-1.71-.83 3.39 3.39 0 0 0 .42-.33 11.66 11.66 0 0 0 10.12 0q.21.18.42.33a10.84 10.84 0 0 1-1.71.84 12.41 12.41 0 0 0 1.08 1.78 16.44 16.44 0 0 0 5.06-2.59 17.22 17.22 0 0 0-3-11.59 16.09 16.09 0 0 0-4.09-1.35zM8.68 14.81a1.94 1.94 0 0 1-1.8-2 1.93 1.93 0 0 1 1.8-2 1.93 1.93 0 0 1 1.8 2 1.93 1.93 0 0 1-1.8 2zm6.64 0a1.94 1.94 0 0 1-1.8-2 1.93 1.93 0 0 1 1.8-2 1.92 1.92 0 0 1 1.8 2 1.92 1.92 0 0 1-1.8 2z"></path>
-                    </svg>
-                  </a>
-                </li>
-
-                <li>
-                  <a
-                    href="#"
-                    title=""
-                    className="inline-flex items-center justify-center w-10 h-10 text-gray-900 transition-all duration-200 border border-gray-200 rounded-full hover:bg-gray-900 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
-                  >
-                    <span className="sr-only"> Twitter </span>
-                    <svg
-                      className="w-5 h-5"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M19.633 7.997c.013.175.013.349.013.523 0 5.325-4.053 11.461-11.46 11.461-2.282 0-4.402-.661-6.186-1.809.324.037.636.05.973.05a8.07 8.07 0 0 0 5.001-1.721 4.036 4.036 0 0 1-3.767-2.793c.249.037.499.062.761.062.361 0 .724-.05 1.061-.137a4.027 4.027 0 0 1-3.23-3.953v-.05c.537.299 1.16.486 1.82.511a4.022 4.022 0 0 1-1.796-3.354c0-.748.199-1.434.548-2.032a11.457 11.457 0 0 0 8.306 4.215c-.062-.3-.1-.611-.1-.923a4.026 4.026 0 0 1 4.028-4.028c1.16 0 2.207.486 2.943 1.272a7.957 7.957 0 0 0 2.556-.973 4.02 4.02 0 0 1-1.771 2.22 8.073 8.073 0 0 0 2.319-.624 8.645 8.645 0 0 1-2.019 2.083z"></path>
-                    </svg>
-                  </a>
-                </li>
-
-                <li>
-                  <a
-                    href="#"
-                    title=""
-                    className="inline-flex items-center justify-center w-10 h-10 text-gray-900 transition-all duration-200 border border-gray-200 rounded-full hover:bg-gray-900 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
-                  >
-                    <span className="sr-only"> Telegram </span>
-                    <svg
-                      className="w-5 h-5"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="m20.665 3.717-17.73 6.837c-1.21.486-1.203 1.161-.222 1.462l4.552 1.42 10.532-6.645c.498-.303.953-.14.579.192l-8.533 7.701h-.002l.002.001-.314 4.692c.46 0 .663-.211.921-.46l2.211-2.15 4.599 3.397c.848.467 1.457.227 1.668-.785l3.019-14.228c.309-1.239-.473-1.8-1.282-1.434z"></path>
-                    </svg>
-                  </a>
-                </li>
-
-                <li>
-                  <a
-                    href="#"
-                    title=""
-                    className="inline-flex items-center justify-center w-10 h-10 text-gray-900 transition-all duration-200 border border-gray-200 rounded-full hover:bg-gray-900 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
-                  >
-                    <span className="sr-only"> LinkedIn </span>
-                    <svg
-                      className="w-5 h-5"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path d="M20 3H4a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1zM8.339 18.337H5.667v-8.59h2.672v8.59zM7.003 8.574a1.548 1.548 0 1 1 0-3.096 1.548 1.548 0 0 1 0 3.096zm11.335 9.763h-2.669V14.16c0-.996-.018-2.277-1.388-2.277-1.39 0-1.601 1.086-1.601 2.207v4.248h-2.667v-8.59h2.56v1.174h.037c.355-.675 1.227-1.387 2.524-1.387 2.704 0 3.203 1.778 3.203 4.092v4.71z"></path>
-                    </svg>
-                  </a>
-                </li>
-              </ul>
-            </div>
-
             <div className="hidden lg:block lg:col-span-2"></div>
-
-            <article className="prose lg:col-span-8 max-w-none prose-gray prose-blockquote:px-8 prose-blockquote:py-3 prose-blockquote:lg:text-xl prose-blockquote:font-medium prose-blockquote:text-gray-900 prose-blockquote:border-gray-900 prose-blockquote:border-l-2 prose-blockquote:lg:leading-9 prose-blockquote:not-italic prose-blockquote:bg-gray-100 prose-blockquote:text-lg prose-blockquote:leading-8 text-black">
-              <p>{getUser?.organization?.description}</p>
+            <article className=" prose lg:col-span-8 max-w-none prose-gray prose-blockquote:px-8 prose-blockquote:py-3 prose-blockquote:lg:text-xl prose-blockquote:font-medium prose-blockquote:text-gray-900 prose-blockquote:border-gray-900 prose-blockquote:border-l-2 prose-blockquote:lg:leading-9 prose-blockquote:not-italic prose-blockquote:bg-gray-100 prose-blockquote:text-lg prose-blockquote:leading-8 text-black">
+              <p className="text-cente">
+                {getUser?.organization?.description ? (
+                  <HtmlParser html={getUser?.organization?.description} />
+                ) : null}
+              </p>
             </article>
           </div>
         </div>
       </section>
-      <Footer />
+      <footer className="py-12 bg-white sm:py-16 text-2xl lg:py-20">
+        <h2 className="w-auto font-bold text-center h-8 mx-auto">
+          {getUser?.organization?.name}
+        </h2>
+        <div className="px-4 mx-auto text-white max-w-7xl sm:px-6 lg:px-8">
+          <ul className="flex flex-wrap items-center justify-center space-x-12 md:space-x-16 mt-14">
+            <h2 className="inline-flex mt-8 -ml-12 text-lg font-medium text-gray-900 transition-all duration-200 transform font-pj hover:-translate-y-1 hover:text-gray-600 sm:ml-0 sm:mt-0">
+              City: {getUser?.profile?.city}
+            </h2>
+            <h2 className="inline-flex mt-8 -ml-12 text-lg font-medium text-gray-900 transition-all duration-200 transform font-pj hover:-translate-y-1 hover:text-gray-600 sm:ml-0 sm:mt-0">
+              Adresse: {getUser?.profile?.address}
+            </h2>
+            <h2 className="inline-flex mt-8 -ml-12 text-lg font-medium text-gray-900 transition-all duration-200 transform font-pj hover:-translate-y-1 hover:text-gray-600 sm:ml-0 sm:mt-0">
+              Email: {getUser?.email}
+            </h2>
+            <h2 className="inline-flex mt-8 -ml-12 text-lg font-medium text-gray-900 transition-all duration-200 transform font-pj hover:-translate-y-1 hover:text-gray-600 sm:ml-0 sm:mt-0">
+              Phone: {getUser?.profile?.phone}
+            </h2>
+          </ul>
+
+          <ul className="flex items-center justify-center mt-12 space-x-3">
+            <li>
+              <a
+                href="#"
+                target="_blank"
+                className="inline-flex items-center justify-center w-10 h-10 text-gray-900 transition-all duration-200 rounded-full hover:bg-gray-100 focus:outline-none focus:bg-gray-200 focus:ring-2 focus:ring-offset-2 focus:ring-gray-200"
+                rel="noopener"
+              >
+                <svg
+                  className="w-6 h-6"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path d="M13.397 20.997v-8.196h2.765l.411-3.209h-3.176V7.548c0-.926.258-1.56 1.587-1.56h1.684V3.127A22.336 22.336 0 0 0 14.201 3c-2.444 0-4.122 1.492-4.122 4.231v2.355H7.332v3.209h2.753v8.202h3.312z"></path>
+                </svg>
+              </a>
+            </li>
+
+            <li>
+              <a
+                href="#"
+                target="_blank"
+                className="inline-flex items-center justify-center w-10 h-10 text-gray-900 transition-all duration-200 rounded-full hover:bg-gray-100 focus:outline-none focus:bg-gray-200 focus:ring-2 focus:ring-offset-2 focus:ring-gray-200"
+                rel="noopener"
+              >
+                <svg
+                  className="w-6 h-6"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path d="M11.999 7.377a4.623 4.623 0 1 0 0 9.248 4.623 4.623 0 0 0 0-9.248zm0 7.627a3.004 3.004 0 1 1 0-6.008 3.004 3.004 0 0 1 0 6.008z"></path>
+                  <circle cx="16.806" cy="7.207" r="1.078"></circle>
+                  <path d="M20.533 6.111A4.605 4.605 0 0 0 17.9 3.479a6.606 6.606 0 0 0-2.186-.42c-.963-.042-1.268-.054-3.71-.054s-2.755 0-3.71.054a6.554 6.554 0 0 0-2.184.42 4.6 4.6 0 0 0-2.633 2.632 6.585 6.585 0 0 0-.419 2.186c-.043.962-.056 1.267-.056 3.71 0 2.442 0 2.753.056 3.71.015.748.156 1.486.419 2.187a4.61 4.61 0 0 0 2.634 2.632 6.584 6.584 0 0 0 2.185.45c.963.042 1.268.055 3.71.055s2.755 0 3.71-.055a6.615 6.615 0 0 0 2.186-.419 4.613 4.613 0 0 0 2.633-2.633c.263-.7.404-1.438.419-2.186.043-.962.056-1.267.056-3.71s0-2.753-.056-3.71a6.581 6.581 0 0 0-.421-2.217zm-1.218 9.532a5.043 5.043 0 0 1-.311 1.688 2.987 2.987 0 0 1-1.712 1.711 4.985 4.985 0 0 1-1.67.311c-.95.044-1.218.055-3.654.055-2.438 0-2.687 0-3.655-.055a4.96 4.96 0 0 1-1.669-.311 2.985 2.985 0 0 1-1.719-1.711 5.08 5.08 0 0 1-.311-1.669c-.043-.95-.053-1.218-.053-3.654 0-2.437 0-2.686.053-3.655a5.038 5.038 0 0 1 .311-1.687c.305-.789.93-1.41 1.719-1.712a5.01 5.01 0 0 1 1.669-.311c.951-.043 1.218-.055 3.655-.055s2.687 0 3.654.055a4.96 4.96 0 0 1 1.67.311 2.991 2.991 0 0 1 1.712 1.712 5.08 5.08 0 0 1 .311 1.669c.043.951.054 1.218.054 3.655 0 2.436 0 2.698-.043 3.654h-.011z"></path>
+                </svg>
+              </a>
+            </li>
+          </ul>
+
+          <p className="text-base font-normal text-center text-gray-600 mt-7 font-pj">
+            &copy; {new Date().getFullYear()}.{' '}
+            {process.env.NEXT_PUBLIC_NAME_SITE}. All rights reserved.
+          </p>
+        </div>
+      </footer>
     </>
   );
 }

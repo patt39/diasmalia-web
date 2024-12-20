@@ -1,5 +1,5 @@
 export type WeaningsModel = {
-  createdAt: string;
+  createdAt: Date;
   id: string;
   litter: number;
   animal: {

@@ -95,7 +95,7 @@ export function ViewLocation() {
                 {t.formatMessage({ id: 'UTIL.COME_BACK' })}
               </span>
             </ButtonInput>
-            <h4 className="text-xl text-zinc-950 font-bold text-center ml-auto">
+            <h4 className="text-xl text-zinc-950 font-bold text-center ml-96">
               {getOneLocation?.animalType?.name === 'Porciculture'
                 ? t.formatMessage({ id: 'LOGE' })
                 : getOneLocation?.animalType?.name === 'Cuniculture'

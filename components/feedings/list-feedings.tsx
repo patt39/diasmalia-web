@@ -35,7 +35,7 @@ const ListFeedings = ({ item, index }: { item: any; index: number }) => {
         <TableCell>
           {item?.animal?.productionPhase === 'GROWTH' ? (
             <p className="font-medium">
-              {t.formatMessage({ id: 'PRODUCTIONTYPE.GROWTH' })}
+              {t.formatMessage({ id: 'PRODUCTIONPHASE.GROWTH' })}
             </p>
           ) : item?.animal?.productionPhase === 'FATTENING' ? (
             <p className="font-medium">

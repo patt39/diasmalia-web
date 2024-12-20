@@ -79,18 +79,18 @@ const Parameters = ({
               x-chunk="dashboard-06-chunk-0"
               className="dark:border-gray-800"
             >
-              <CardHeader></CardHeader>
+              <CardHeader>
+                <h4 className="text-xl text-zinc-950 text-center  font-mediun">
+                  Sélectionner les paramètres du batiment
+                </h4>
+              </CardHeader>
               <CardContent>
                 <Table>
                   <TableHeader>
                     <TableRow className="dark:border-gray-800">
-                      <CardHeader>
-                        <h4 className="text-xl text-zinc-950 text-center  font-mediun">
-                          Sélectionner les paramètres du batiment
-                        </h4>
-                      </CardHeader>
-                      <TableHead>Image</TableHead>
-                      <TableHead>Tool</TableHead>
+                      <TableHead></TableHead>
+                      <TableHead>Photo</TableHead>
+                      <TableHead>Paramètre</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>

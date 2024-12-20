@@ -92,7 +92,7 @@ const CagesList = ({ item, index }: { item: any; index: number }) => {
             <div>
               <h2 className="text-sm flex items-center font-medium text-gray-500">
                 <Bone className="h-3.5 w-3.5  hover:shadow-xxl mr-1" />
-                Morts: {item?.death}
+                {t.formatMessage({ id: 'ANIMALTYPE.DEATHS' })}: {item?.death}
               </h2>
               <h2 className="text-sm flex items-center font-medium text-gray-500">
                 <Grid className="h-3.5 w-3.5  hover:shadow-xxl mr-1" />
@@ -101,11 +101,10 @@ const CagesList = ({ item, index }: { item: any; index: number }) => {
               {getOneAnimal?.productionPhase === 'LAYING' ? (
                 <h2 className="text-sm flex items-center font-medium text-gray-500">
                   <Egg className="h-3.5 w-3.5  hover:shadow-xxl mr-1" />
-                  Oeufs rammassés: {item?.eggHarvested}
+                  {t.formatMessage({ id: ' ANIMAL.EGGHAVESTED' })}:{' '}
+                  {item?.eggHarvested}
                 </h2>
-              ) : (
-                ''
-              )}
+              ) : null}
             </div>
           </div>
           <div className="grid grid-cols-1 mt-6 sm:mt-2 px-20 sm:grid-cols-2 xl:grid-cols-3 sm:gap-8 xl:gap-12">
@@ -127,7 +126,7 @@ const CagesList = ({ item, index }: { item: any; index: number }) => {
                 <DropdownMenuItem onClick={() => setIsEggHarvesting(true)}>
                   <Egg className="size-4 text-gray-600 hover:text-indigo-600" />
                   <span className="ml-2 cursor-pointer hover:text-indigo-600">
-                    EggHarvesting
+                    {t.formatMessage({ id: 'ANIMALTYPE.EGGHAVESTING' })}
                   </span>
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => setIsEdit(true)}>

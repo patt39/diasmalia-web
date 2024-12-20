@@ -1,10 +1,18 @@
 import { GetAnimalsAPI } from '@/api-site/animals';
 import { CreateOrUpdateOneBreedingAPI } from '@/api-site/breedings';
-import { useReactHookForm } from '@/components/hooks';
-import { ButtonInput, ButtonLoadMore } from '@/components/ui-setting';
+import { useInputState, useReactHookForm } from '@/components/hooks';
+import {
+  ButtonInput,
+  ButtonLoadMore,
+  SearchInput,
+} from '@/components/ui-setting';
 import { LoadingFile } from '@/components/ui-setting/ant';
 import { ErrorFile } from '@/components/ui-setting/ant/error-file';
-import { SelectInput, TextAreaInput } from '@/components/ui-setting/shadcn';
+import {
+  SelectInput,
+  TextAreaInput,
+  TextInput,
+} from '@/components/ui-setting/shadcn';
 import {
   Select,
   SelectContent,
@@ -37,14 +45,16 @@ const schema = yup.object({
 const CreateBreedings = ({
   showModal,
   setShowModal,
+  location,
 }: {
   showModal: boolean;
   setShowModal: any;
-  breeding?: any;
+  location?: any;
 }) => {
-  const { t, control, handleSubmit, errors, hasErrors, setHasErrors } =
+  const { control, handleSubmit, errors, hasErrors, setHasErrors } =
     useReactHookForm({ schema });
   const { query } = useRouter();
+  const { t, search, handleSetSearch } = useInputState();
   const animalTypeId = String(query?.animalTypeId);
 
   const { ref, inView } = useInView();
@@ -83,6 +93,7 @@ const CreateBreedings = ({
     hasNextPage,
     fetchNextPage,
   } = GetAnimalsAPI({
+    search,
     take: 10,
     sort: 'desc',
     gender: 'FEMALE',
@@ -97,6 +108,7 @@ const CreateBreedings = ({
     isError: isErrorMaleAnimals,
     data: dataMaleAnimals,
   } = GetAnimalsAPI({
+    search,
     take: 10,
     sort: 'desc',
     gender: 'MALE',
@@ -104,6 +116,21 @@ const CreateBreedings = ({
     sortBy: 'createdAt',
     productionPhase: 'REPRODUCTION',
     animalTypeId: animalTypeId,
+  });
+
+  const {
+    isLoading: isLoadingLocationMales,
+    isError: isErrorLocationMales,
+    data: dataMalesLocation,
+  } = GetAnimalsAPI({
+    search,
+    take: 10,
+    sort: 'desc',
+    gender: 'MALE',
+    status: 'ACTIVE',
+    sortBy: 'createdAt',
+    productionPhase: 'REPRODUCTION',
+    animalTypeId: location?.animalTypeId,
   });
 
   useEffect(() => {
@@ -159,117 +186,203 @@ const CreateBreedings = ({
                 )}
 
                 <div className="flex items-center my-2 space-x-10">
-                  <div className="w-80">
-                    <Label>
-                      Sélectionner un male
-                      <span className="text-red-600">*</span>
-                    </Label>
-                    <Controller
-                      control={control}
-                      name="codeMale"
-                      render={({ field: { value, onChange } }) => (
-                        <Select
-                          onValueChange={onChange}
-                          name={'codeMale'}
-                          value={value}
-                        >
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="select male" />
-                          </SelectTrigger>
-                          <SelectContent className="dark:border-gray-800">
-                            <SelectGroup>
-                              <SelectLabel>Codes</SelectLabel>
-                              {isLoadingAnimals ? (
-                                <LoadingFile />
-                              ) : isErrorAnimals ? (
-                                <ErrorFile
-                                  title="404"
-                                  description="Error finding data please try again..."
+                  {location?.id ? (
+                    <div className="w-80">
+                      <Label>
+                        Sélectionner un male
+                        <span className="text-red-600">*</span>
+                      </Label>
+                      <Controller
+                        control={control}
+                        name="codeMale"
+                        render={({ field: { value, onChange } }) => (
+                          <Select
+                            onValueChange={onChange}
+                            name={'codeMale'}
+                            value={value}
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="select male" />
+                            </SelectTrigger>
+                            <SelectContent className="dark:border-gray-800">
+                              <div className="mr-auto items-center gap-2">
+                                <SearchInput
+                                  placeholder="Search by code"
+                                  onChange={handleSetSearch}
                                 />
-                              ) : Number(
-                                  dataMaleAnimals?.pages[0]?.data?.total,
-                                ) <= 0 ? (
-                                <ErrorFile description="Don't have male animals created yet please do" />
-                              ) : (
-                                dataMaleAnimals?.pages
-                                  .flatMap((page: any) => page?.data?.value)
-                                  .map((item, index) => (
-                                    <>
-                                      <SelectItem
-                                        key={index}
-                                        value={item?.code}
-                                      >
-                                        {item?.code}
-                                      </SelectItem>
-                                    </>
-                                  ))
-                              )}
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
-                  </div>
-                  <div className="w-80">
-                    <Label>
-                      Sélectionner une female
-                      <span className="text-red-600">*</span>
-                    </Label>
-                    <Controller
-                      control={control}
-                      name="codeFemale"
-                      render={({ field: { value, onChange } }) => (
-                        <Select
-                          onValueChange={onChange}
-                          name={'codeFemale'}
-                          value={value}
-                        >
-                          <SelectTrigger className="w-full">
-                            <SelectValue placeholder="select female" />
-                          </SelectTrigger>
-                          <SelectContent className="dark:border-gray-800">
-                            <SelectGroup>
-                              <SelectLabel>Codes</SelectLabel>
-                              {isLoadingMaleAnimals ? (
-                                <LoadingFile />
-                              ) : isErrorMaleAnimals ? (
-                                <ErrorFile
-                                  title="404"
-                                  description="Error finding data please try again..."
-                                />
-                              ) : Number(
-                                  dataFemaleAnimals?.pages[0]?.data?.total,
-                                ) <= 0 ? (
-                                <ErrorFile description="Don't have female animals created yet please do" />
-                              ) : (
-                                dataFemaleAnimals?.pages
-                                  .flatMap((page: any) => page?.data?.value)
-                                  .map((item, index) => (
-                                    <>
-                                      <SelectItem
-                                        key={index}
-                                        value={item?.code}
-                                      >
-                                        {item?.code}
-                                      </SelectItem>
-                                    </>
-                                  ))
-                              )}
-                              {hasNextPage && (
-                                <div className="mx-auto mt-4 justify-center text-center">
-                                  <ButtonLoadMore
-                                    ref={ref}
-                                    isFetchingNextPage={isFetchingNextPage}
-                                    onClick={() => fetchNextPage()}
+                              </div>
+                              <SelectGroup>
+                                <SelectLabel>Codes</SelectLabel>
+                                {isLoadingLocationMales ? (
+                                  <LoadingFile />
+                                ) : isErrorLocationMales ? (
+                                  <ErrorFile
+                                    title="404"
+                                    description="Error finding data please try again..."
                                   />
-                                </div>
-                              )}
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
-                  </div>
+                                ) : Number(
+                                    dataMalesLocation?.pages[0]?.data?.total,
+                                  ) <= 0 ? (
+                                  <ErrorFile description="Don't have male animals created yet please do" />
+                                ) : (
+                                  dataMalesLocation?.pages
+                                    .flatMap((page: any) => page?.data?.value)
+                                    .map((item, index) => (
+                                      <>
+                                        <SelectItem
+                                          key={index}
+                                          value={item?.code}
+                                        >
+                                          {item?.code}
+                                        </SelectItem>
+                                      </>
+                                    ))
+                                )}
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        )}
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-80">
+                      <Label>
+                        Sélectionner un male
+                        <span className="text-red-600">*</span>
+                      </Label>
+                      <Controller
+                        control={control}
+                        name="codeMale"
+                        render={({ field: { value, onChange } }) => (
+                          <Select
+                            onValueChange={onChange}
+                            name={'codeMale'}
+                            value={value}
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="select male" />
+                            </SelectTrigger>
+                            <SelectContent className="dark:border-gray-800">
+                              <div className="mr-auto items-center gap-2">
+                                <SearchInput
+                                  placeholder="Search by code"
+                                  onChange={handleSetSearch}
+                                />
+                              </div>
+                              <SelectGroup>
+                                <SelectLabel>Codes</SelectLabel>
+                                {isLoadingAnimals ? (
+                                  <LoadingFile />
+                                ) : isErrorAnimals ? (
+                                  <ErrorFile
+                                    title="404"
+                                    description="Error finding data please try again..."
+                                  />
+                                ) : Number(
+                                    dataMaleAnimals?.pages[0]?.data?.total,
+                                  ) <= 0 ? (
+                                  <ErrorFile description="Don't have male animals created yet please do" />
+                                ) : (
+                                  dataMaleAnimals?.pages
+                                    .flatMap((page: any) => page?.data?.value)
+                                    .map((item, index) => (
+                                      <>
+                                        <SelectItem
+                                          key={index}
+                                          value={item?.code}
+                                        >
+                                          {item?.code}
+                                        </SelectItem>
+                                      </>
+                                    ))
+                                )}
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        )}
+                      />
+                    </div>
+                  )}
+                  {location?.id ? (
+                    <div className="w-80">
+                      <Label>Female code</Label>
+                      <TextInput
+                        control={control}
+                        type="text"
+                        name="codeFemale"
+                        defaultValue={`${location?.animals?.[0]?.code}`}
+                        errors={errors}
+                        disabled
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-80">
+                      <Label>
+                        Sélectionner une female
+                        <span className="text-red-600">*</span>
+                      </Label>
+                      <Controller
+                        control={control}
+                        name="codeFemale"
+                        render={({ field: { value, onChange } }) => (
+                          <Select
+                            onValueChange={onChange}
+                            name={'codeFemale'}
+                            value={value}
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="select female" />
+                            </SelectTrigger>
+                            <SelectContent className="dark:border-gray-800">
+                              <div className="mr-auto items-center gap-2">
+                                <SearchInput
+                                  placeholder="Search by code"
+                                  onChange={handleSetSearch}
+                                />
+                              </div>
+                              <SelectGroup>
+                                <SelectLabel>Codes</SelectLabel>
+                                {isLoadingMaleAnimals ? (
+                                  <LoadingFile />
+                                ) : isErrorMaleAnimals ? (
+                                  <ErrorFile
+                                    title="404"
+                                    description="Error finding data please try again..."
+                                  />
+                                ) : Number(
+                                    dataFemaleAnimals?.pages[0]?.data?.total,
+                                  ) <= 0 ? (
+                                  <ErrorFile description="Don't have female animals created yet please do" />
+                                ) : (
+                                  dataFemaleAnimals?.pages
+                                    .flatMap((page: any) => page?.data?.value)
+                                    .map((item, index) => (
+                                      <>
+                                        <SelectItem
+                                          key={index}
+                                          value={item?.code}
+                                        >
+                                          {item?.code}
+                                        </SelectItem>
+                                      </>
+                                    ))
+                                )}
+                                {hasNextPage && (
+                                  <div className="mx-auto mt-4 justify-center text-center">
+                                    <ButtonLoadMore
+                                      ref={ref}
+                                      isFetchingNextPage={isFetchingNextPage}
+                                      onClick={() => fetchNextPage()}
+                                    />
+                                  </div>
+                                )}
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        )}
+                      />
+                    </div>
+                  )}
                 </div>
                 <div className="my-2">
                   <Label>

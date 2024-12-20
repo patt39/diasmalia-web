@@ -1,4 +1,3 @@
-import { GetOneDeathAPI } from '@/api-site/deaths';
 import { XIcon } from 'lucide-react';
 import { Textarea } from '../ui/textarea';
 
@@ -11,10 +10,6 @@ const ViewDeath = ({
   setShowModal: any;
   death?: any;
 }) => {
-  const { data: GetOneDeath } = GetOneDeathAPI({
-    deathId: death?.id,
-  });
-
   return (
     <>
       {showModal ? (
@@ -32,7 +27,7 @@ const ViewDeath = ({
             <form className="mt-4">
               <div className="flex-auto justify-center p-2">
                 <div className="mb-4">
-                  <Textarea defaultValue={GetOneDeath?.note} disabled />
+                  <Textarea defaultValue={death?.note} disabled />
                 </div>
               </div>
             </form>

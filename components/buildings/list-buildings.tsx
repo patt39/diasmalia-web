@@ -35,7 +35,7 @@ const ListBuildings = ({ item, index }: { item: any; index: number }) => {
   const { t, isOpen, setIsOpen, userStorage } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
   const [isBulkOpen, setIsBulkOpen] = useState<boolean>(false);
-  const [isParameters, setIsParameters] = useState(false);
+  const [isCheckParameters, setIsCheckParameters] = useState(false);
   const [isBuildingParameters, setIsBuildingParameters] = useState(false);
 
   const { isPending: loading, mutateAsync: deleteMutation } =
@@ -90,14 +90,12 @@ const ListBuildings = ({ item, index }: { item: any; index: number }) => {
             <Tooltip>
               <TooltipTrigger asChild>
                 <Link
-                  className="flex items-center justify-center space-x-2"
+                  className="flex items-center justify-center space-x-4"
                   href={`/building/${item?.id}`}
                 >
                   <div className="justify-items-center">
-                    <House className="h-10 w-10  hover:shadow-xxl" />
-                  </div>
-                  <div>
-                    <h2 className="mt-2 flex items-center text-sm font-medium text-gray-500 h-4">
+                    <House className="h-10 w-10  hover:shadow-xxl items-center" />
+                    <h2 className="text-sm font-medium text-gray-500">
                       {item?.squareMeter}m<sup>2</sup>
                     </h2>
                   </div>
@@ -170,9 +168,17 @@ const ListBuildings = ({ item, index }: { item: any; index: number }) => {
                 <DropdownMenuItem onClick={() => setIsBuildingParameters(true)}>
                   <Settings className="size-4 text-gray-600 hover:text-purple-600" />
                   <span className="ml-2 cursor-pointer hover:text-indigo-600">
-                    Paramètres
+                    {t.formatMessage({ id: 'PARAMETERS' })}
                   </span>
                 </DropdownMenuItem>
+                {item?._count?.assignMaterials < 8 ? (
+                  <DropdownMenuItem onClick={() => setIsCheckParameters(true)}>
+                    <Settings className="size-4 text-gray-600 hover:text-purple-600" />
+                    <span className="ml-2 cursor-pointer hover:text-indigo-600">
+                      {t.formatMessage({ id: 'CHECK.PARAMETERS' })}
+                    </span>
+                  </DropdownMenuItem>
+                ) : null}
                 {userStorage?.role === 'SUPERADMIN' &&
                 item?._count?.locations == 0 ? (
                   <DropdownMenuItem onClick={() => setIsOpen(true)}>
@@ -209,11 +215,11 @@ const ListBuildings = ({ item, index }: { item: any; index: number }) => {
           setShowModal={setIsBulkOpen}
         />
       ) : null}
-      {isParameters ? (
+      {isCheckParameters ? (
         <Parameters
           building={item}
-          showModal={isParameters}
-          setShowModal={setIsParameters}
+          showModal={isCheckParameters}
+          setShowModal={setIsCheckParameters}
         />
       ) : null}
       {isBuildingParameters ? (

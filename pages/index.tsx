@@ -24,8 +24,8 @@ export default function Home() {
     <>
       <Head>
         <title>
-          Live stock management app for complete monitoring |{' '}
-          {process.env.NEXT_PUBLIC_NAME_SITE}
+          Live stock management app for complete monitoring in short and long
+          distances | {process.env.NEXT_PUBLIC_NAME_SITE}
         </title>
       </Head>
       <div className="overflow-x-hidden bg-gray-50">

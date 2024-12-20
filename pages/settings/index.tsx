@@ -13,14 +13,17 @@ import { Testimonial } from '@/components/settings/testimonial';
 import { UpdateFormPassword } from '@/components/settings/update-form-password';
 import { UpdateFormProfile } from '@/components/settings/update-form-profile';
 import { UpdateOrganization } from '@/components/settings/update-organization';
-import { Card } from '@/components/ui/card';
+import { ButtonInput } from '@/components/ui-setting';
+import { Card, CardHeader } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import { PrivateComponent } from '@/components/util/private-component';
-import { Fuel, Images, Tractor, UserPen } from 'lucide-react';
+import { Fuel, Images, MoveLeftIcon, Tractor, UserPen } from 'lucide-react';
+import { useRouter } from 'next/router';
 
 export function Settings() {
-  const { userStorage } = useInputState();
+  const { t, userStorage } = useInputState();
+  const { back } = useRouter();
 
   const { data: profile } = GetOneProfileAPI({
     profileId: userStorage?.profile?.id,
@@ -46,8 +49,25 @@ export function Settings() {
       >
         <div>
           <div className="flex min-h-screen w-full flex-col">
+            <CardHeader>
+              <div className="flex items-center">
+                <ButtonInput
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    back();
+                  }}
+                  icon={<MoveLeftIcon className="size-4" />}
+                >
+                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                    {t.formatMessage({ id: 'UTIL.COME_BACK' })}
+                  </span>
+                </ButtonInput>
+              </div>
+            </CardHeader>
             <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-              <div className="py-6">
+              <div>
                 <div className="mb-8 px-4 mx-auto sm:px-6 md:px-8">
                   <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
                 </div>

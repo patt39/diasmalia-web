@@ -1,4 +1,3 @@
-import { GetOneTreatmentAPI } from '@/api-site/treatment';
 import { XIcon } from 'lucide-react';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
@@ -13,10 +12,6 @@ const ViewTreatment = ({
   setShowModal: any;
   treatment?: any;
 }) => {
-  const { data: getOneTreatment } = GetOneTreatmentAPI({
-    treatmentId: treatment?.id,
-  });
-
   return (
     <>
       {showModal ? (
@@ -35,23 +30,23 @@ const ViewTreatment = ({
               <div className="flex-auto justify-center p-2">
                 <div className="mb-4 flex items-center space-x-2">
                   <Label htmlFor="text">Code:</Label>
-                  <Input disabled value={getOneTreatment?.animal?.code} />
+                  <Input disabled value={treatment?.animal?.code} />
                 </div>
                 <div className="mb-4 flex items-center space-x-2">
                   <Label>Treatment:</Label>
-                  <Input disabled value={getOneTreatment?.name} />
+                  <Input disabled value={treatment?.name} />
                 </div>
                 <div className="mb-4 flex items-center space-x-2">
                   <Label>Diagnostic:</Label>
-                  <Input disabled value={getOneTreatment?.diagnosis} />
+                  <Input disabled value={treatment?.diagnosis} />
                 </div>
                 <div className="mb-4 flex items-center space-x-4">
                   <Label>Medication:</Label>
-                  <Input disabled value={getOneTreatment.health?.name} />
+                  <Input disabled value={treatment.health?.name} />
                 </div>
                 <Label>Observation</Label>
                 <div className="mb-4 disabled">
-                  <Textarea value={getOneTreatment?.note} disabled />
+                  <Textarea value={treatment?.note} disabled />
                 </div>
               </div>
             </form>

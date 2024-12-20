@@ -1,42 +1,8 @@
 export type FarrowingsModel = {
-  createdAt: string;
+  createdAt: Date;
   id: string;
-  image: any;
-  death: string;
-  weight: string;
-  litter: string;
+  death: number;
+  weight: number;
+  litter: number;
   note: string;
-  animal: {
-    select: {
-      id: string;
-      code: string;
-      productionPhase: string;
-      weight: number;
-      electronicCode: string;
-      status: string;
-      gender: string;
-      animalTypeId: string;
-      animalType: {
-        select: {
-          name: string;
-        };
-      };
-      location: {
-        select: {
-          code: string;
-        };
-      };
-      breed: {
-        select: {
-          name: string;
-        };
-      };
-    };
-  };
-  animalTypeId: string;
-  animalType: {
-    select: {
-      name: string;
-    };
-  };
 };

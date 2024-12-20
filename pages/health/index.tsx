@@ -197,7 +197,7 @@ export function TabHealth() {
                               ) : Number(
                                   dataAssignedTypes?.pages[0]?.data?.total,
                                 ) <= 0 ? (
-                                <ErrorFile description="Don't have location codes" />
+                                <ErrorFile description="Don't have medication in box please add" />
                               ) : (
                                 dataAssignedTypes?.pages
                                   .flatMap((page: any) => page?.data?.value)

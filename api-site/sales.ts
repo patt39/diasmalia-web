@@ -7,28 +7,6 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 
-export const GetOneSaleAPI = (payload: { saleId: string }) => {
-  const { saleId } = payload;
-  const { data, isError, isLoading, status, isPending, refetch } = useQuery({
-    queryKey: ['sale', saleId],
-    queryFn: async () =>
-      await makeApiCall({
-        action: 'getOneSale',
-        urlParams: { saleId },
-      }),
-    refetchOnWindowFocus: false,
-  });
-
-  return {
-    data: data?.data as any,
-    isError,
-    isLoading,
-    status,
-    isPending,
-    refetch,
-  };
-};
-
 export const GetBestSaleChannelAPI = (payload: { animalTypeId: string }) => {
   const { animalTypeId } = payload;
   const { data, isError, isLoading, status, isPending, refetch } = useQuery({

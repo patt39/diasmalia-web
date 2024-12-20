@@ -1,5 +1,5 @@
 export type TreatmentsModel = {
-  createdAt: string;
+  createdAt: Date;
   id: string;
   note: string;
   dose: number;
@@ -16,7 +16,7 @@ export type TreatmentsModel = {
 };
 
 export type TreatmentAvesModel = {
-  createdAt: string;
+  createdAt: Date;
   id: string;
   note: string;
   dose: number;
@@ -33,7 +33,7 @@ export type TreatmentAvesModel = {
 };
 
 export type TreatmentsPostModel = {
-  createdAt: string;
+  createdAt: Date;
   id: string;
   note: string;
   dose: number;

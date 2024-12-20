@@ -1,4 +1,3 @@
-import { GetOneGestationAPI } from '@/api-site/gestation';
 import { XIcon } from 'lucide-react';
 import { Textarea } from '../ui/textarea';
 
@@ -11,10 +10,6 @@ const ViewGestation = ({
   setShowModal: any;
   gestation?: any;
 }) => {
-  const { data: getOneGestation } = GetOneGestationAPI({
-    gestationId: gestation?.id,
-  });
-
   return (
     <>
       {showModal ? (
@@ -32,7 +27,7 @@ const ViewGestation = ({
             <form className="mt-6">
               <div className="flex-auto justify-center p-2">
                 <div className="mb-4 disabled">
-                  <Textarea defaultValue={getOneGestation?.note} disabled />
+                  <Textarea defaultValue={gestation?.note} disabled />
                 </div>
               </div>
             </form>

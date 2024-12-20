@@ -473,8 +473,7 @@ export function AnimalSaleProfile() {
                           <AccordionTrigger>{item?.name}</AccordionTrigger>
                           <AccordionContent>
                             <div>
-                              Date administration:{' '}
-                              {formatDateDDMMYY(item?.createdAt)}{' '}
+                              Date: {formatDateDDMMYY(item?.createdAt)}{' '}
                             </div>
                             <div>Diagnostic: {item?.diagnosis} </div>
                             <div>

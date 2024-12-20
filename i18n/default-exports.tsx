@@ -94,6 +94,10 @@ export const reproductionProductionPhases = [
   { id: 'REPRODUCTION', name: 'REPRODUCTION', lang: 'fr' },
   { id: 'GESTATION', name: 'GESTATION', lang: 'en' },
   { id: 'GESTATION', name: 'GESTATION', lang: 'fr' },
+  { id: 'LACTATION', name: 'LACTATION', lang: 'en' },
+  { id: 'LACTATION', name: 'LACTATION', lang: 'fr' },
+  { id: 'PRESEVRAGE', name: 'PRE-WEANING', lang: 'en' },
+  { id: 'PRESEVRAGE', name: 'PRESEVRAGE', lang: 'fr' },
 ];
 
 export const growthProductionPhases = [

@@ -1,3 +1,4 @@
+import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import {
   BriefcaseMedical,
@@ -233,10 +234,9 @@ const VerticalNavDashboard = ({ user }: Props) => {
                     {item?.title}
                     {item?.title === 'Suggestions' ? (
                       <div className="ml-2">
-                        <span className="relative flex size-3">
-                          <span className="absolute inline-flex size-full animate-ping rounded-full bg-green-400 opacity-75"></span>
-                          <span className="relative inline-flex size-3 rounded-full bg-green-500"></span>
-                        </span>
+                        <Badge variant="default">
+                          {user?.organization?._count?.suggestions ?? 0}
+                        </Badge>
                       </div>
                     ) : null}
                   </Link>

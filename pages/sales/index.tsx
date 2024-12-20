@@ -440,7 +440,7 @@ export function Sales() {
                                 ) : Number(
                                     dataAssignedTypes?.pages[0]?.data?.total,
                                   ) <= 0 ? (
-                                  <ErrorFile description="Don't have location codes" />
+                                  <ErrorFile description="Don't have animal types" />
                                 ) : (
                                   dataAssignedTypes?.pages
                                     .flatMap((page: any) => page?.data?.value)
@@ -479,7 +479,6 @@ export function Sales() {
                         </Button>
                       </div>
                     ) : null}
-
                     <div className="ml-auto flex items-center gap-2">
                       <TooltipProvider>
                         <Tooltip>
@@ -597,7 +596,7 @@ export function Sales() {
                         description="Error finding data please try again..."
                       />
                     ) : Number(dataSales?.data?.total) <= 0 ? (
-                      <ErrorFile description="Don't have tasks yet" />
+                      <ErrorFile description="Don't have sales" />
                     ) : (
                       dataSales?.data?.value.map((item: any, index: number) => (
                         <>

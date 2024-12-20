@@ -53,9 +53,7 @@ const ListFinances = ({ item, index }: { item: any; index: number }) => {
             })}{' '}
             {userStorage?.profile?.currency?.symbol}
           </TableCell>
-        ) : (
-          ''
-        )}
+        ) : null}
         <TableCell>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

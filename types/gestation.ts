@@ -1,5 +1,5 @@
 export type GestationsModel = {
-  createdAt: string;
+  createdAt: Date;
   id: string;
   note: string;
   farrowingDate: Date;

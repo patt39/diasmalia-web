@@ -28,7 +28,6 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { ActionModalDialog } from '../ui-setting/shadcn';
-import { ActionModalConfirmeDialog } from '../ui-setting/shadcn/action-modal-confirme-dialog';
 import { Badge } from '../ui/badge';
 import {
   Tooltip,
@@ -41,8 +40,7 @@ import { AvesLocationParameters } from './list-location-parameters';
 import { UpdateAvesLocations } from './update-aves-locations';
 
 const ListAvesLocations = ({ item, index }: { item: any; index: number }) => {
-  const { t, isOpen, setIsOpen, isConfirmOpen, setIsConfirmOpen, userStorage } =
-    useInputState();
+  const { t, isOpen, setIsOpen, userStorage } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
   const [isParameters, setIsParameters] = useState(false);
   const [isLocationParameters, setIsLocationParameters] = useState(false);
@@ -66,19 +64,15 @@ const ListAvesLocations = ({ item, index }: { item: any; index: number }) => {
     }
   };
 
-  const { isPending: loadingConfirme, mutateAsync: saveMutation } =
-    ChangeLocationStatusAPI();
+  const { mutateAsync: saveMutation } = ChangeLocationStatusAPI();
 
   const changeItem = async (item: any) => {
-    setIsConfirmOpen(true);
     try {
       await saveMutation({ locationId: item?.id });
       AlertSuccessNotification({
         text: 'Status changed successfully',
       });
-      setIsConfirmOpen(false);
     } catch (error: any) {
-      setIsConfirmOpen(true);
       AlertDangerNotification({
         text: `${error.response.data.message}`,
       });
@@ -178,7 +172,7 @@ const ListAvesLocations = ({ item, index }: { item: any; index: number }) => {
               <TooltipTrigger asChild>
                 <div
                   className="flex items-center justify-center space-x-2 cursor-pointer"
-                  onClick={() => setIsParameters(true)}
+                  onClick={() => setIsLocationParameters(true)}
                 >
                   <div>
                     <h2 className="text-sm font-medium text-gray-500 h-4">
@@ -288,17 +282,16 @@ const ListAvesLocations = ({ item, index }: { item: any; index: number }) => {
                       {t.formatMessage({ id: 'TABANIMAL.EDIT' })}
                     </span>
                   </DropdownMenuItem>
-
-                  <DropdownMenuItem
-                    onClick={() => setIsLocationParameters(true)}
-                  >
-                    <Settings className="size-4 text-gray-600 hover:text-purple-600" />
-                    <span className="ml-2 cursor-pointer hover:text-indigo-600">
-                      Paramètres
-                    </span>
-                  </DropdownMenuItem>
+                  {item?._count?.assignMaterials < 8 ? (
+                    <DropdownMenuItem onClick={() => setIsParameters(true)}>
+                      <Settings className="size-4 text-gray-600 hover:text-purple-600" />
+                      <span className="ml-2 cursor-pointer hover:text-indigo-600">
+                        {t.formatMessage({ id: 'PARAMETERS' })}
+                      </span>
+                    </DropdownMenuItem>
+                  ) : null}
                   {item?._count?.animals === 0 ? (
-                    <DropdownMenuItem onClick={() => setIsConfirmOpen(true)}>
+                    <DropdownMenuItem onClick={() => changeItem(item)}>
                       <BadgeCheck className="size-4 text-gray-600 hover:text-yellow-600 cursor-pointer" />
                       <span className="ml-2 cursor-pointer hover:text-yellow-400">
                         {t.formatMessage({ id: 'CHANGE.STATUS' })}
@@ -327,14 +320,6 @@ const ListAvesLocations = ({ item, index }: { item: any; index: number }) => {
         setIsOpen={setIsOpen}
         onClick={() => deleteItem(item)}
       />
-      {isConfirmOpen ? (
-        <ActionModalConfirmeDialog
-          loading={loadingConfirme}
-          isConfirmOpen={isConfirmOpen}
-          setIsConfirmOpen={setIsConfirmOpen}
-          onClick={() => changeItem(item)}
-        />
-      ) : null}
       {isEdit ? (
         <UpdateAvesLocations
           location={item}

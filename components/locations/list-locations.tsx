@@ -18,6 +18,7 @@ import {
   ArrowLeftRight,
   BadgeCheck,
   Bone,
+  Drama,
   Droplets,
   Eclipse,
   Grid2X2,
@@ -34,6 +35,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { CreateBulkAnimals } from '../animals/create-bulk-animal';
 import { OffspringsIdentification } from '../animals/offsprings-identification';
+import { CreateBreedings } from '../breedings/create-breedings';
 import { CreateOrUpdateDeaths } from '../deaths/create-or-update-deaths';
 import { CreateFarrowings } from '../farrowings/create-farrowings';
 import { CreateOrUpdateFattenings } from '../fattenings/create-or-update-fattenings';
@@ -42,7 +44,6 @@ import { CreateOrUpdateIsolations } from '../isolations/create-or-update-isolati
 import { BulkCreateTreatments } from '../treatments/bulk-create-treatments';
 import { CreateTreatments } from '../treatments/create-treatments';
 import { ActionModalDialog } from '../ui-setting/shadcn';
-import { ActionModalConfirmeDialog } from '../ui-setting/shadcn/action-modal-confirme-dialog';
 import { Badge } from '../ui/badge';
 import {
   Tooltip,
@@ -55,8 +56,7 @@ import { AnimalsChangeLocations } from './change-animals-locations';
 import { UpdateLocations } from './update-locations';
 
 const ListLocations = ({ item, index }: { item: any; index: number }) => {
-  const { t, isOpen, setIsOpen, isConfirmOpen, setIsConfirmOpen } =
-    useInputState();
+  const { t, isOpen, setIsOpen } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
   const [isDeath, setIsDeath] = useState(false);
   const [isBulkOpen, setIsBulkOpen] = useState<boolean>(false);
@@ -67,6 +67,7 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
   const [isFarrowing, setIsFarrowing] = useState(false);
   const [isIsolation, setIsIsolation] = useState(false);
   const [isWeaning, setIsWeaning] = useState(false);
+  const [isBreeding, setIsBreeding] = useState(false);
   const [isIdentification, setIsIdentification] = useState(false);
   const [isGrowthTreatment, setIsGrowthTreatment] = useState(false);
   const [isChangeLocation, setIsChangeLocation] = useState(false);
@@ -90,19 +91,15 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
     }
   };
 
-  const { isPending: loadingConfirme, mutateAsync: saveMutation } =
-    ChangeLocationStatusAPI();
+  const { mutateAsync: saveMutation } = ChangeLocationStatusAPI();
 
   const changeItem = async (item: any) => {
-    setIsConfirmOpen(true);
     try {
       await saveMutation({ locationId: item?.id });
       AlertSuccessNotification({
         text: 'Status changed successfully',
       });
-      setIsConfirmOpen(false);
     } catch (error: any) {
-      setIsConfirmOpen(true);
       AlertDangerNotification({
         text: `${error.response.data.message}`,
       });
@@ -318,7 +315,8 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
                           {item?.productionPhase}
                         </p>
                       )}
-                      {item?.productionPhase === 'LACTATION' ? (
+                      {item?.productionPhase === 'LACTATION' &&
+                      item?._count?.animals === 1 ? (
                         <p className="text-xs font-normal text-gray-500">
                           {t.formatMessage({ id: 'LITTER' })}:{' '}
                           {getOneFarrowing?.litter}
@@ -423,7 +421,8 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
                     </span>
                   </DropdownMenuItem>
                 ) : null}
-                {item?.productionPhase == 'LACTATION' ? (
+                {item?.productionPhase == 'LACTATION' &&
+                item?._count?.animals === 1 ? (
                   <DropdownMenuItem onClick={() => setIsMotherTreatment(true)}>
                     <Hospital className="size-4 text-gray-600 hover:text-lime-600" />
                     <span className="ml-2 cursor-pointer hover:text-lime-600">
@@ -461,7 +460,9 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
                   </DropdownMenuItem>
                 ) : null}
                 {item?._count?.animals !== 0 &&
-                ['GROWTH', 'FATTENING'].includes(item?.productionPhase) ? (
+                ['GROWTH', 'FATTENING', 'LACTATION'].includes(
+                  item?.productionPhase,
+                ) ? (
                   <DropdownMenuItem onClick={() => setIsDeath(true)}>
                     <Bone className="size-4 text-gray-600 hover:text-emerald-600" />
                     <span className="ml-2 cursor-pointer hover:text-emerald-600">
@@ -475,6 +476,18 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
                     <Eclipse className="size-4 text-gray-600 hover:text-emerald-600" />
                     <span className="ml-2 cursor-pointer hover:text-emerald-600">
                       {t.formatMessage({ id: 'ANIMALTYPE.ISOLATIONS' })}
+                    </span>
+                  </DropdownMenuItem>
+                ) : null}
+                {item?._count?.animals === 1 &&
+                item?.productionPhase === 'REPRODUCTION' &&
+                item?.animals?.[0]?.gender == 'FEMALE' ? (
+                  <DropdownMenuItem onClick={() => setIsBreeding(true)}>
+                    <Drama className="size-4 text-gray-600 hover:text-yellow-600 cursor-pointer" />
+                    <span className="ml-2 cursor-pointer hover:text-yellow-400">
+                      {t.formatMessage({
+                        id: 'ANIMALTYPE.ANIMALS.BREEDINGS.CREATE',
+                      })}
                     </span>
                   </DropdownMenuItem>
                 ) : null}
@@ -520,7 +533,7 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
                   </span>
                 </DropdownMenuItem>
                 {item?._count?.animals === 0 ? (
-                  <DropdownMenuItem onClick={() => setIsConfirmOpen(true)}>
+                  <DropdownMenuItem onClick={() => changeItem(item)}>
                     <BadgeCheck className="size-4 text-gray-600 hover:text-sky-600" />
                     <span className="ml-2 cursor-pointer hover:text-sky-400">
                       {t.formatMessage({ id: 'CHANGE.STATUS' })}
@@ -548,14 +561,7 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
           onClick={() => deleteItem(item)}
         />
       ) : null}
-      {isConfirmOpen ? (
-        <ActionModalConfirmeDialog
-          loading={loadingConfirme}
-          isConfirmOpen={isConfirmOpen}
-          setIsConfirmOpen={setIsConfirmOpen}
-          onClick={() => changeItem(item)}
-        />
-      ) : null}
+
       {isEdit ? (
         <UpdateLocations
           location={item}
@@ -621,6 +627,7 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
       ) : null}
       {isWeaning ? (
         <CreateOrUpdateWeanings
+          location={item}
           showModal={isWeaning}
           setShowModal={setIsWeaning}
         />
@@ -644,6 +651,13 @@ const ListLocations = ({ item, index }: { item: any; index: number }) => {
           location={item}
           showModal={isGrowthTreatment}
           setShowModal={setIsGrowthTreatment}
+        />
+      ) : null}
+      {isBreeding ? (
+        <CreateBreedings
+          location={item}
+          showModal={isBreeding}
+          setShowModal={setIsBreeding}
         />
       ) : null}
     </>

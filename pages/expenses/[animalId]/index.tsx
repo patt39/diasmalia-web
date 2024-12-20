@@ -1,5 +1,5 @@
 import { GetOneAnimalAPI } from '@/api-site/animals';
-import { GetTreatmentsAPI } from '@/api-site/treatment';
+import { GetFinancesAPI } from '@/api-site/finances';
 import { useInputState } from '@/components/hooks';
 import { LayoutDashboard } from '@/components/layouts/dashboard';
 
@@ -22,7 +22,7 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 
-export function AnimalTreatments() {
+export function Expenses() {
   const { t, userStorage } = useInputState();
   const { ref, inView } = useInView();
   const { query, back } = useRouter();
@@ -33,18 +33,18 @@ export function AnimalTreatments() {
   });
 
   const {
-    isLoading: isLoadingTreatments,
-    isError: isErrorTreatments,
-    data: dataTreatments,
+    isLoading: isLoadingFinances,
+    isError: isErrorFinances,
+    data: dataFinances,
     isFetchingNextPage,
     hasNextPage,
     fetchNextPage,
-  } = GetTreatmentsAPI({
+  } = GetFinancesAPI({
     take: 10,
     sort: 'desc',
+    type: 'EXPENSE',
     sortBy: 'createdAt',
-    animalId: animalId,
-    animalTypeId: getOneAnimal?.animalTypeId,
+    animalId: getOneAnimal?.id,
     organizationId: userStorage?.organizationId,
   });
 
@@ -88,79 +88,53 @@ export function AnimalTreatments() {
                 {t.formatMessage({ id: 'UTIL.COME_BACK' })}
               </span>
             </ButtonInput>
-          </div>
-          <div className="flex items-center">
-            <div className="ml-60 flex flex-col items-center gap-1 text-center">
-              {[
-                'Porciculture',
-                'Bovins',
-                'Cuniculture',
-                'Caprins',
-                'Ovins',
-              ].includes(getOneAnimal?.animalType?.name) ? (
-                <h4 className="mx-auto text-2xl font-semibold text-zinc-600">
-                  {t.formatMessage({ id: 'TREATMENT.PAGE' })}{' '}
-                  {getOneAnimal?.code}
+            <div className="flex items-center">
+              <div className="ml-60 flex flex-col items-center gap-1 text-center">
+                <h4 className="ml-20  text-2xl font-bold text-zinc-600">
+                  {t.formatMessage({ id: 'EXPENSE.HISTORY' })}
                 </h4>
-              ) : (
-                <h4 className="mx-auto  text-2xl font-bold text-zinc-600">
-                  {t.formatMessage({ id: 'AVES.TREATMENT.PAGE' })}{' '}
-                  {getOneAnimal?.code}
-                </h4>
-              )}
+              </div>
             </div>
-            <div className="ml-auto text-xl font-semibold text-zinc-600"></div>
           </div>
         </CardHeader>
         <div className="flex min-h-screen w-full flex-col">
           <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-            {isLoadingTreatments ? (
+            {isLoadingFinances ? (
               <LoadingFile />
-            ) : isErrorTreatments ? (
+            ) : isErrorFinances ? (
               <ErrorFile
                 title="404"
                 description="Error finding data please try again..."
               />
-            ) : Number(dataTreatments?.pages[0]?.data?.total) <= 0 ? (
-              <ErrorFile
-                description={t.formatMessage({ id: 'TREATMENT.EMPTY' })}
-              />
+            ) : Number(dataFinances?.pages[0]?.data?.total) <= 0 ? (
+              <ErrorFile description="Don't have expenses yet" />
             ) : (
-              dataTreatments?.pages
+              dataFinances?.pages
                 .flatMap((page: any) => page?.data?.value)
                 .map((item, index) => (
                   <>
                     <Accordion type="single" collapsible key={index}>
                       <AccordionItem value="item-1">
-                        <AccordionTrigger>{item?.name}</AccordionTrigger>
+                        <AccordionTrigger>
+                          {formatDateDDMMYY(item?.createdAt)}
+                        </AccordionTrigger>
                         <AccordionContent>
-                          <div>
-                            Administraté le: {formatDateDDMMYY(item?.createdAt)}{' '}
+                          <div>{item?.detail} </div>
+                          <div className="font-bold mt-2">
+                            Amount:{' '}
+                            {Number(
+                              String(item?.amount).slice(1),
+                            ).toLocaleString('en-US')}{' '}
+                            {userStorage?.profile?.currency?.symbol}
                           </div>
-                          <div>Diagnostic: {item?.diagnosis} </div>
-                          <div>
-                            Medication: {item?.health?.name?.toLowerCase()}{' '}
-                          </div>
-                          {item?.dose !== null ? (
-                            <div> Dose: {item?.dose ?? 0} </div>
-                          ) : null}
-                          <div>
-                            {t.formatMessage({ id: 'SALE.METHOD' })}:{' '}
-                            {item?.method.toLowerCase()}
-                          </div>
-                          {item?.note !== null ? (
-                            <div>
-                              Observation: {item?.note ?? 'Observation'}{' '}
-                            </div>
-                          ) : null}
-                          <div>
+                          <div className="mt-2">
                             Par:{' '}
                             {firstLetterToUpperCase(
                               userStorage?.profile?.firstName,
                             )}{' '}
                             {firstLetterToUpperCase(
                               userStorage?.profile?.lastName,
-                            )}{' '}
+                            )}
                           </div>
                         </AccordionContent>
                       </AccordionItem>
@@ -177,6 +151,13 @@ export function AnimalTreatments() {
                 />
               </div>
             )}
+            <div className="font-bold mt-2 ml-auto mr-10">
+              {t.formatMessage({ id: 'EXPENSE.TOTAL' })}:{' '}
+              {Number(
+                String(getOneAnimal?.totalExpenses ?? 0).slice(1),
+              ).toLocaleString('en-US')}{' '}
+              {userStorage?.profile?.currency?.symbol}
+            </div>
           </main>
           <DashboardFooter />
         </div>
@@ -184,4 +165,4 @@ export function AnimalTreatments() {
     </>
   );
 }
-export default PrivateComponent(AnimalTreatments);
+export default PrivateComponent(Expenses);

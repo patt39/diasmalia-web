@@ -1,5 +1,5 @@
 export type IncubationsModel = {
-  createdAt: string;
+  createdAt: Date;
   id: string;
   dueDate: Date;
   quantityStart: number;

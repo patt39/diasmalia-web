@@ -1,4 +1,3 @@
-import { ViewTaskAPI } from '@/api-site/task';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -16,9 +15,6 @@ const ViewTask = ({
   task?: any;
 }) => {
   const t = useIntl();
-  const { data: getTask } = ViewTaskAPI({
-    taskId: task?.id,
-  });
 
   return (
     <>
@@ -38,42 +34,42 @@ const ViewTask = ({
               <div className="flex-auto justify-center p-2">
                 <div className="w-full my-2">
                   <Label>Type</Label>
-                  <Input type="text" defaultValue={getTask?.type} disabled />
+                  <Input type="text" defaultValue={task?.type} disabled />
                 </div>
-                {getTask?.type === 'SPECIFIC' ? (
+                {task?.type === 'SPECIFIC' ? (
                   <div className="flex items-center mb-2 space-x-4">
                     <div className="w-80">
                       <Label>{t.formatMessage({ id: 'ASSIGNE.TO' })}</Label>
                       <Input
-                        defaultValue={`${getTask?.contributor?.user?.profile?.firstName} ${getTask?.contributor?.user?.profile?.lastName}`}
+                        defaultValue={`${task?.contributor?.user?.profile?.firstName} ${task?.contributor?.user?.profile?.lastName}`}
                         disabled
                       />
                     </div>
                     <div className="w-80">
                       <Label>{t.formatMessage({ id: 'DUEDATE' })}</Label>
                       <Input
-                        value={formatDateDDMMYY(getTask?.dueDate) || 'N/A'}
+                        value={formatDateDDMMYY(task?.dueDate) || 'N/A'}
                         disabled
                       />
                     </div>
                   </div>
                 ) : null}
-                {getTask?.type === 'GENERIC' ? (
+                {task?.type === 'GENERIC' ? (
                   <div className="my-2">
                     <Label>{t.formatMessage({ id: 'ASSIGNE.TO' })}</Label>
                     <Input
-                      defaultValue={`${getTask?.contributor?.user?.profile?.firstName} ${getTask?.contributor?.user?.profile?.lastName}`}
+                      defaultValue={`${task?.contributor?.user?.profile?.firstName} ${task?.contributor?.user?.profile?.lastName}`}
                       disabled
                     />
                   </div>
                 ) : null}
                 <div className="mb-2">
                   <Label> {t.formatMessage({ id: 'TITLE' })}</Label>
-                  <Input defaultValue={getTask?.title} disabled />
+                  <Input defaultValue={task?.title} disabled />
                 </div>
                 <div className="mb-4">
                   <Label>Description</Label>
-                  <Textarea defaultValue={getTask?.description} disabled />
+                  <Textarea defaultValue={task?.description} disabled />
                 </div>
               </div>
             </form>

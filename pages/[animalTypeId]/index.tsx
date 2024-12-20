@@ -412,13 +412,15 @@ export function Index() {
                       <TabsTrigger value="treatments">
                         {t.formatMessage({ id: 'ANIMALTYPE.CARE' })}
                       </TabsTrigger>
-                      <TabsTrigger value="analytics">Statistiques</TabsTrigger>
+                      <TabsTrigger value="analytics">
+                        {t.formatMessage({ id: 'STATISTICS' })}
+                      </TabsTrigger>
                     </TabsList>
                   ) : [
-                      'Pondeuses',
                       'Dinde',
                       'Canard',
                       'Pintarde',
+                      'Pondeuses',
                       'Poulets Brahma',
                       'Poulets Goliaths',
                     ].includes(animalType?.name) ? (
@@ -475,7 +477,9 @@ export function Index() {
                       <TabsTrigger value="aves-feedings">
                         {t.formatMessage({ id: 'ANIMALTYPE.FEEDINGS' })}
                       </TabsTrigger>
-                      {animalByType?.productionPhase === 'LAYING' ? (
+                      {['LAYING', 'GROWTH'].includes(
+                        animalByType?.productionPhase,
+                      ) ? (
                         <>
                           <TabsTrigger value="egg-harvestings">
                             {t.formatMessage({ id: 'ANIMALTYPE.EGGHAVESTING' })}

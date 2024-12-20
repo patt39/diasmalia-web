@@ -330,7 +330,7 @@ const CreateBulkAvestreatments = ({
                               ) : Number(
                                   dataTreatments?.pages[0]?.data?.total,
                                 ) <= 0 ? (
-                                <ErrorFile description="Don't have active animals yet" />
+                                <ErrorFile description="Don't have medication yet please add" />
                               ) : (
                                 dataTreatments?.pages
                                   .flatMap((page: any) => page?.data?.value)

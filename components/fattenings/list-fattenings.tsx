@@ -22,7 +22,7 @@ import { TableCell, TableRow } from '../ui/table';
 import { CreateOrUpdateFattenings } from './create-or-update-fattenings';
 
 const ListFattenings = ({ item, index }: { item: any; index: number }) => {
-  const { t, isOpen, setIsOpen, setLoading } = useInputState();
+  const { t, isOpen, setIsOpen } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
 
   const { isPending: loading, mutateAsync: deleteMutation } =

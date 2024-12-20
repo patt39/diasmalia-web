@@ -3,31 +3,8 @@ import { makeApiCall, PaginationRequest } from '@/utils';
 import {
   useInfiniteQuery,
   useMutation,
-  useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
-
-export const GetOneHealthAPI = (payload: { healthId: string }) => {
-  const { healthId } = payload;
-  const { data, isError, isLoading, status, isPending, refetch } = useQuery({
-    queryKey: ['health', healthId],
-    queryFn: async () =>
-      await makeApiCall({
-        action: 'getOneHealth',
-        urlParams: { healthId },
-      }),
-    refetchOnWindowFocus: false,
-  });
-
-  return {
-    data: data?.data as any,
-    isError,
-    isLoading,
-    status,
-    isPending,
-    refetch,
-  };
-};
 
 export const CreateHealthAPI = ({
   onSuccess,

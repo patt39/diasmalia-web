@@ -1,4 +1,4 @@
-import { updateUpdatePasswordAPI } from '@/api-site/user';
+import { updatePasswordAPI } from '@/api-site/user';
 import { UserUpdatePasswordFormModel } from '@/types/user';
 import { AlertDangerNotification, AlertSuccessNotification } from '@/utils';
 import { SubmitHandler } from 'react-hook-form';
@@ -32,7 +32,7 @@ const UpdateFormPassword = () => {
     setLoading(true);
     setHasErrors(undefined);
     try {
-      await updateUpdatePasswordAPI({ ...payload });
+      await updatePasswordAPI({ ...payload });
       setHasErrors(false);
       setLoading(false);
       AlertSuccessNotification({
@@ -86,7 +86,6 @@ const UpdateFormPassword = () => {
                   errors={errors}
                 />
               </div>
-
               <div className="mt-2">
                 <TextPasswordInput
                   label="Confirm password"

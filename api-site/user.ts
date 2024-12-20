@@ -334,12 +334,12 @@ export const deleteOneUserAPI = async (options: { userId: string }) => {
   });
 };
 
-export const updateUpdatePasswordAPI = async (body: {
+export const updatePasswordAPI = async (body: {
   password: string;
   passwordConfirm: string;
 }): Promise<any> => {
   await makeApiCall({
-    action: 'updateUpdatePassword',
+    action: 'updatePassword',
     body: body,
   });
 };

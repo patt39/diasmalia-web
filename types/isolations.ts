@@ -1,5 +1,5 @@
 export type IsolationsModel = {
-  createdAt: string;
+  createdAt: Date;
   id: string;
   note: string;
   number: number;

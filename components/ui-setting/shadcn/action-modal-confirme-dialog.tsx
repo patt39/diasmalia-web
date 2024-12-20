@@ -39,11 +39,11 @@ const ActionModalConfirmeDialog = ({
         <AlertDialogTrigger asChild>{buttonDialog}</AlertDialogTrigger>
         <AlertDialogContent className="dark:border-gray-900">
           <AlertDialogHeader>
-            <AlertDialogTitle>
+            <AlertDialogTitle className="text-center">
               {t.formatMessage({ id: 'ALERT.TITLE' })}
             </AlertDialogTitle>
           </AlertDialogHeader>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 mt-2">
             <ButtonInput
               type="button"
               className="w-full"

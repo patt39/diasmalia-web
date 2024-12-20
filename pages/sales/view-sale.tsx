@@ -1,4 +1,3 @@
-import { GetOneSaleAPI } from '@/api-site/sales';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -15,9 +14,6 @@ const ViewSale = ({
   sale?: any;
 }) => {
   const t = useIntl();
-  const { data: getOneSale } = GetOneSaleAPI({
-    saleId: sale?.id,
-  });
 
   return (
     <>
@@ -45,47 +41,44 @@ const ViewSale = ({
                   'Quails',
                   'Pisciculture',
                   'Poulet de chair',
-                ].includes(getOneSale?.animalType?.name) ? (
+                ].includes(sale?.animalType?.name) ? (
                   <div className="mb-2 items-center space-x-1">
                     <Label htmlFor="text">Code de la bande</Label>
                     <Input
-                      defaultValue={getOneSale?.animal?.code || 'N/A'}
+                      defaultValue={sale?.animal?.code || 'N/A'}
                       disabled
                     />
                   </div>
                 ) : null}
                 <div className="mb-2 items-center space-x-1">
                   <Label htmlFor="text">Client</Label>
-                  <Input defaultValue={getOneSale?.soldTo || 'N/A'} disabled />
+                  <Input defaultValue={sale?.soldTo || 'N/A'} disabled />
                 </div>
                 <div className="flex items-center space-x-4">
                   <div className="mb-2 w-80">
                     <Label htmlFor="text">Email</Label>
-                    <Input defaultValue={getOneSale?.email || 'N/A'} disabled />
+                    <Input defaultValue={sale?.email || 'N/A'} disabled />
                   </div>
                   <div className="mb-2 w-80">
                     <Label htmlFor="text">Phone</Label>
-                    <Input defaultValue={getOneSale?.phone || 'N/A'} disabled />
+                    <Input defaultValue={sale?.phone || 'N/A'} disabled />
                   </div>
                 </div>
                 <div className="flex items-center space-x-4">
                   <div className="mb-2 w-80">
                     <Label htmlFor="text">Address</Label>
-                    <Input
-                      defaultValue={getOneSale?.address || 'N/A'}
-                      disabled
-                    />
+                    <Input defaultValue={sale?.address || 'N/A'} disabled />
                   </div>
                   <div className="mb-2 w-80">
                     <Label>{t.formatMessage({ id: 'SALE.CHANNEL' })}</Label>
-                    <Input disabled type="text" value={getOneSale?.method} />
+                    <Input disabled type="text" value={sale?.method} />
                   </div>
                 </div>
-                {getOneSale?.note !== null ? (
+                {sale?.note !== null ? (
                   <>
                     <Label>{t.formatMessage({ id: 'SALE.DETAIL' })}</Label>
                     <div className="mb-2">
-                      <Textarea defaultValue={getOneSale?.note} disabled />
+                      <Textarea defaultValue={sale?.note} disabled />
                     </div>
                   </>
                 ) : null}

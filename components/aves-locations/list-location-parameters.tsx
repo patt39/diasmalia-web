@@ -85,8 +85,8 @@ const AvesLocationParameters = ({
                   <TableHeader>
                     <TableRow className="dark:border-gray-800">
                       <TableHead></TableHead>
-                      <TableHead>Image</TableHead>
-                      <TableHead>Tool</TableHead>
+                      <TableHead>Photo</TableHead>
+                      <TableHead>Paramètre</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>

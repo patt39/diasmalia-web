@@ -155,7 +155,7 @@ const TabFarrowings = ({ animalTypeId }: { animalTypeId: string }) => {
                   description="Error finding data please try again..."
                 />
               ) : Number(dataFarrowings?.data?.total) <= 0 ? (
-                <ErrorFile description="Don't have farrowings created yet please do" />
+                <ErrorFile description="Don't have farrowings created yet" />
               ) : (
                 dataFarrowings?.data?.value.map((item: any, index: number) => (
                   <>

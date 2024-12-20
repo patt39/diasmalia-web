@@ -52,14 +52,12 @@ const CreateOrUpdateWeanings = ({
   showModal,
   setShowModal,
   weaning,
-  animal,
   location,
 }: {
   showModal: boolean;
   setShowModal: any;
   weaning?: any;
   location?: any;
-  animal?: any;
 }) => {
   const {
     t,
@@ -228,7 +226,7 @@ const CreateOrUpdateWeanings = ({
                   </div>
                 )}
 
-                {!weaning?.id ? (
+                {!weaning?.id && dataAnimal ? (
                   <div className="mb-2 items-center">
                     <Label>{t.formatMessage({ id: 'VIEW.MOTHER' })}</Label>
                     <TextInput
@@ -244,12 +242,12 @@ const CreateOrUpdateWeanings = ({
                 <div className="flex items-center space-x-4 my-2">
                   <div className="w-full">
                     <Label>
-                      Sélectionner les animaux à sevrer
+                      Sélectionner les petits à sevrer
                       <span className="text-red-600">*</span>
                     </Label>
                     <Select>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="select animals" />
+                        <SelectValue placeholder="select offsprings for weaning" />
                       </SelectTrigger>
                       <SelectContent className="dark:border-gray-800">
                         <SelectGroup>

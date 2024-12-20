@@ -18,7 +18,6 @@ import {
 import { AlertDangerNotification, AlertSuccessNotification } from '@/utils';
 import {
   Anvil,
-  Backpack,
   Calendar,
   MoreHorizontal,
   PencilIcon,
@@ -151,12 +150,6 @@ const ListFeedStock = ({ item, index }: { item: any; index: number }) => {
               <TooltipTrigger asChild>
                 <div className="flex items-center justify-center space-x-6 mt-2 cursor-pointer">
                   <div onClick={() => setIsComposition(true)}>
-                    {item?.number !== 0 ? (
-                      <h2 className="mb-2 items-center flex text-base font-bold text-gray-500 h-4">
-                        <Backpack className="h-3.5 w-3.5 hover:shadow-xxl" />{' '}
-                        {t.formatMessage({ id: 'BAGS' })}: {item?.number}
-                      </h2>
-                    ) : null}
                     <h2 className="mb-2 flex items-center text-base font-bold text-gray-500 h-4 space-x-2">
                       <Anvil className="h-3.5 w-3.5  hover:shadow-xxl" />
                       {t.formatMessage({ id: 'TABANIMAL.WEIGHT' })}:{' '}

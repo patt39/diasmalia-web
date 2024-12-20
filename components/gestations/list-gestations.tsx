@@ -96,9 +96,7 @@ const ListGestations = ({ item, index }: { item: any; index: number }) => {
                     {t.formatMessage({ id: 'BREEDING.RECHECK' })}
                   </span>
                 </DropdownMenuItem>
-              ) : (
-                ''
-              )}
+              ) : null}
               <DropdownMenuItem onClick={() => setIsFarrowing(true)}>
                 <Origami className="size-4 text-gray-600 hover:text-violet-600" />
                 <span className="ml-2 cursor-pointer hover:text-violet-600">

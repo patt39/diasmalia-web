@@ -1,9 +1,7 @@
-import { GetOneHealthAPI } from '@/api-site/health';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { XIcon } from 'lucide-react';
-import { useIntl } from 'react-intl';
 
 const ViewHealth = ({
   showModal,
@@ -14,11 +12,6 @@ const ViewHealth = ({
   setShowModal: any;
   health?: any;
 }) => {
-  const t = useIntl();
-  const { data: getHealth } = GetOneHealthAPI({
-    healthId: health?.id,
-  });
-
   return (
     <>
       {showModal ? (
@@ -37,11 +30,11 @@ const ViewHealth = ({
               <div className="flex-auto justify-center p-2">
                 <div className="mb-2">
                   <Label>Name</Label>
-                  <Input defaultValue={getHealth?.name} disabled />
+                  <Input defaultValue={health?.name} disabled />
                 </div>
                 <div className="mb-4">
                   <Label>Description</Label>
-                  <Textarea defaultValue={getHealth?.description} disabled />
+                  <Textarea defaultValue={health?.description} disabled />
                 </div>
               </div>
             </form>

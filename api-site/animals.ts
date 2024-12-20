@@ -7,6 +7,14 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 
+export const ReportPdfDownloadAPI = async (payload: { animalId: string }) => {
+  const { animalId } = payload;
+  const data = await makeApiCall({
+    action: 'downloadReportPdf',
+    urlParams: { animalId },
+  });
+  return data;
+};
 export const GetAnimalStatisticsAPI = (payload: {
   animalTypeId?: string;
   periode?: string;
@@ -32,6 +40,15 @@ export const GetAnimalStatisticsAPI = (payload: {
     isPending,
     refetch,
   };
+};
+
+export const DownloadReportAPI = async (payload: { animalId: string }) => {
+  const { animalId } = payload;
+  const data = await makeApiCall({
+    action: 'downloadReportPdf',
+    urlParams: { animalId },
+  });
+  return data;
 };
 
 export const ChangeProductionStatusAPI = ({

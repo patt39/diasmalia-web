@@ -1,5 +1,5 @@
 export type EggHarvestingsModel = {
-  createdAt: string;
+  createdAt: Date;
   id: string;
   size: string;
   quantity: number;

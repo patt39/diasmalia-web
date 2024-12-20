@@ -1,4 +1,4 @@
-import { GetOneFinanceAPI } from '@/api-site/finances';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { XIcon } from 'lucide-react';
@@ -12,10 +12,6 @@ const ViewFinance = ({
   setShowModal: any;
   finance?: any;
 }) => {
-  const { data: getOneFinance } = GetOneFinanceAPI({
-    financeId: finance.id,
-  });
-
   return (
     <>
       {showModal ? (
@@ -30,9 +26,21 @@ const ViewFinance = ({
                 <XIcon />
               </span>
             </button>
-            <div className="mt-8 mb-4">
+            {finance?.animal !== null ? (
+              <div className="flex space-x-4 my-4 w-full">
+                <div className="w-80">
+                  <Label>Bande</Label>
+                  <Input defaultValue={finance?.animal?.code} disabled />
+                </div>
+                <div className="w-80">
+                  <Label>Type</Label>
+                  <Input defaultValue={finance?.animalType?.name} disabled />
+                </div>
+              </div>
+            ) : null}
+            <div>
               <Label>Details</Label>
-              <Textarea defaultValue={getOneFinance.detail} disabled />
+              <Textarea defaultValue={finance?.detail} disabled />
             </div>
           </div>
         </div>

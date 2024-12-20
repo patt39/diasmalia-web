@@ -1,4 +1,3 @@
-import { GetOneTreatmentAPI } from '@/api-site/treatment';
 import { XIcon } from 'lucide-react';
 import { useIntl } from 'react-intl';
 import { Input } from '../ui/input';
@@ -15,9 +14,6 @@ const ViewAvesTreatment = ({
   treatment?: any;
 }) => {
   const t = useIntl();
-  const { data: getOneTreatment } = GetOneTreatmentAPI({
-    treatmentId: treatment?.id,
-  });
 
   return (
     <>
@@ -37,15 +33,15 @@ const ViewAvesTreatment = ({
               <div className="flex-auto justify-center p-2">
                 <div className="mb-2">
                   <Label>{t.formatMessage({ id: 'TREATMENT.NAME' })}</Label>
-                  <Input disabled type="text" value={getOneTreatment?.name} />
+                  <Input disabled type="text" value={treatment?.name} />
                 </div>
                 <div className="mb-2">
                   <Label>Diagnostic</Label>
-                  <Input disabled value={getOneTreatment?.diagnosis} />
+                  <Input disabled value={treatment?.diagnosis} />
                 </div>
                 <div className="mb-2 disabled">
                   <Label htmlFor="text">Observation</Label>
-                  <Textarea defaultValue={getOneTreatment?.note} disabled />
+                  <Textarea defaultValue={treatment?.note} disabled />
                 </div>
               </div>
             </form>

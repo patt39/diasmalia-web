@@ -17,7 +17,6 @@ import {
 import { PaginationPage } from '@/utils';
 import { ListFilter, Salad } from 'lucide-react';
 import { useState } from 'react';
-import { formatWeight } from '../../utils/formate-date';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -77,15 +76,11 @@ const TabAvesFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button variant="outline">
-                    {formatWeight(animalStatistics?.sumFeedings) ?? 0}
+                    {animalStatistics?.sumFeedings ?? 0}kg
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent className="dark:border-gray-800">
-                  <p>
-                    {t.formatMessage({ id: 'ANIMALTYPE.TOOLTIP' })}{' '}
-                    {formatWeight(animalStatistics?.sumFeedings)}
-                    {''} {t.formatMessage({ id: 'ANIMALTYPE.FEEDING' })}
-                  </p>
+                  <p>{t.formatMessage({ id: 'ANIMALTYPE.FEEDING' })}</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
@@ -151,7 +146,7 @@ const TabAvesFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
           <Table>
             <TableHeader>
               <TableRow className="dark:border-gray-800">
-                <TableHead>Code</TableHead>
+                <TableHead>Bande</TableHead>
                 <TableHead>
                   {t.formatMessage({ id: 'TABFEEDING.FEEDTYPE' })}
                 </TableHead>
@@ -175,7 +170,8 @@ const TabAvesFeedings = ({ animalTypeId }: { animalTypeId: string }) => {
                   title="404"
                   description="Error finding data please try again..."
                 />
-              ) : Number(dataFeedings?.data?.total) <= 0 ? (
+              ) : Number(dataFeedings?.data?.total) <= 0 ||
+                Number(dataFeedings?.data?.total_value) <= 0 ? (
                 <ErrorFile description="Don't have feedings created yet please do" />
               ) : (
                 dataFeedings?.data?.value.map((item: any, index: number) => (

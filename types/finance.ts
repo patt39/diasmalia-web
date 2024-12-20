@@ -1,5 +1,5 @@
 export type FinancesModel = {
-  createdAt: string;
+  createdAt: Date;
   id: string;
   slug: string;
   amount: number;

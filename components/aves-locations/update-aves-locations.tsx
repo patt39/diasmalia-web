@@ -23,7 +23,8 @@ const schema = yup.object({
   manger: yup.number().optional(),
   through: yup.number().optional(),
   cages: yup.number().optional(),
-  nest: yup.number().optional(),
+  addCages: yup.string().optional(),
+  //nest: yup.number().optional(),
 });
 
 const UpdateAvesLocations = ({
@@ -59,6 +60,7 @@ const UpdateAvesLocations = ({
       const fields = [
         'code',
         'nest',
+        'addCages',
         'productionPhase',
         'squareMeter',
         'manger',

@@ -89,8 +89,8 @@ const AvesParameters = ({
                   <TableHeader>
                     <TableRow className="dark:border-gray-800">
                       <TableHead></TableHead>
-                      <TableHead>Image</TableHead>
-                      <TableHead>Tool</TableHead>
+                      <TableHead>Photo</TableHead>
+                      <TableHead>Paramètre</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -102,7 +102,7 @@ const AvesParameters = ({
                         description="Error finding data please try again..."
                       />
                     ) : Number(dataMaterials?.pages[0]?.data?.total) <= 0 ? (
-                      <ErrorFile description="Don't have tasks yet" />
+                      <ErrorFile description="Havn't yet checked parameters please do" />
                     ) : (
                       dataMaterials?.pages
                         .flatMap((page: any) => page?.data?.value)

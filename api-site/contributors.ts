@@ -4,9 +4,31 @@ import { makeApiCall, PaginationRequest } from '@/utils';
 import {
   useInfiniteQuery,
   useMutation,
+  useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
 
+export const GetOneContributorAPI = (payload: { contributorId?: string }) => {
+  const { contributorId } = payload;
+  const { data, isError, isLoading, status, isPending, refetch } = useQuery({
+    queryKey: ['contributor', { ...payload }],
+    queryFn: async () =>
+      await makeApiCall({
+        action: 'getOneContributor',
+        urlParams: { contributorId },
+      }),
+    refetchOnWindowFocus: false,
+  });
+
+  return {
+    data: data?.data as any,
+    isError,
+    isLoading,
+    status,
+    isPending,
+    refetch,
+  };
+};
 export const GetContributorsAPI = (
   payload: {
     search?: string;

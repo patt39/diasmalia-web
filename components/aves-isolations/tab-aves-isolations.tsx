@@ -179,7 +179,7 @@ const TabAvesIsolations = ({ animalTypeId }: { animalTypeId: string }) => {
           <Table>
             <TableHeader>
               <TableRow className="dark:border-gray-800">
-                <TableHead>Code</TableHead>
+                <TableHead>Bande</TableHead>
                 <TableHead>
                   {t.formatMessage({ id: 'AVESDEATH.NUMBER' })}
                 </TableHead>

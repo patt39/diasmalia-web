@@ -10,7 +10,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { TableCell, TableRow } from '@/components/ui/table';
-import { ViewSale } from '@/pages/sales/view-sale';
 import {
   AlertDangerNotification,
   AlertSuccessNotification,
@@ -26,6 +25,7 @@ import {
 import { useState } from 'react';
 import { UpdateSales } from '../../pages/sales/update-sales';
 import { ActionModalDialog } from '../ui-setting/shadcn';
+import { ViewAvesSale } from './view-sale';
 
 const ListAvesSales = ({ item, index }: { item: any; index: number }) => {
   const { t, isOpen, setIsOpen, userStorage } = useInputState();
@@ -41,6 +41,9 @@ const ListAvesSales = ({ item, index }: { item: any; index: number }) => {
       link.href = response.config.url;
       link.click();
       link.remove();
+      AlertSuccessNotification({
+        text: 'Pdf downloaded successfully',
+      });
     } catch (error) {
       console.log(error);
     }
@@ -149,7 +152,7 @@ const ListAvesSales = ({ item, index }: { item: any; index: number }) => {
         <UpdateSales sale={item} showModal={isEdit} setShowModal={setIsEdit} />
       ) : null}
       {isView ? (
-        <ViewSale sale={item} showModal={isView} setShowModal={setIsView} />
+        <ViewAvesSale sale={item} showModal={isView} setShowModal={setIsView} />
       ) : null}
     </>
   );

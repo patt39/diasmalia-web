@@ -300,7 +300,7 @@ const CreateBulkAvesFeedings = ({
                               />
                             ) : Number(dataFeedStock?.pages[0]?.data?.total) <=
                               0 ? (
-                              <ErrorFile description="Don't have active animals yet" />
+                              <ErrorFile description="Don't have feed stock please add" />
                             ) : (
                               dataFeedStock?.pages
                                 .flatMap((page: any) => page?.data?.value)

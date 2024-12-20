@@ -7,28 +7,6 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 
-export const ViewTaskAPI = (payload: { taskId: string }) => {
-  const { taskId } = payload;
-  const { data, isError, isLoading, status, isPending, refetch } = useQuery({
-    queryKey: ['task', taskId],
-    queryFn: async () =>
-      await makeApiCall({
-        action: 'viewTask',
-        urlParams: { taskId },
-      }),
-    refetchOnWindowFocus: false,
-  });
-
-  return {
-    data: data?.data as any,
-    isError,
-    isLoading,
-    status,
-    isPending,
-    refetch,
-  };
-};
-
 export const AssigneTaskAPI = ({
   onSuccess,
   onError,

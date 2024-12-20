@@ -1,4 +1,3 @@
-import { GetOneIsolationAPI } from '@/api-site/isolations';
 import { XIcon } from 'lucide-react';
 import { useIntl } from 'react-intl';
 import { Input } from '../ui/input';
@@ -15,9 +14,6 @@ const ViewAvesIsolation = ({
   isolation?: any;
 }) => {
   const t = useIntl();
-  const { data: getOneIsolation } = GetOneIsolationAPI({
-    isolationId: isolation?.id,
-  });
 
   return (
     <>
@@ -36,30 +32,30 @@ const ViewAvesIsolation = ({
             <form className="mt-4">
               <div className="flex-auto justify-center p-2">
                 {['Poulet de chair', 'Pisciculture', 'Pondeuses'].includes(
-                  getOneIsolation?.animalType?.name,
+                  isolation?.animalType?.name,
                 ) ? (
                   <div className="my-4">
                     <Label>
                       {t.formatMessage({ id: 'NUMBER.ANIMALS' })}
                       <span className="text-red-600">*</span>
                     </Label>
-                    <Input defaultValue={getOneIsolation?.number} disabled />
+                    <Input defaultValue={isolation?.number} disabled />
                   </div>
-                ) : getOneIsolation?.male !== 0 ? (
+                ) : isolation?.male !== 0 ? (
                   <div className="my-4">
                     <Label>
                       {t.formatMessage({ id: 'ANIMAL.MALES' })}:
                       <span className="text-red-600">*</span>
                     </Label>
-                    <Input defaultValue={getOneIsolation?.male} disabled />
+                    <Input defaultValue={isolation?.male} disabled />
                   </div>
-                ) : getOneIsolation?.female !== 0 ? (
+                ) : isolation?.female !== 0 ? (
                   <div className="my-4">
                     <Label>
                       {t.formatMessage({ id: 'ANIMAL.FEMALES' })}:
                       <span className="text-red-600">*</span>
                     </Label>
-                    <Input defaultValue={getOneIsolation?.female} disabled />
+                    <Input defaultValue={isolation?.female} disabled />
                   </div>
                 ) : (
                   <div className="my-4 flex items-center space-x-1">
@@ -67,16 +63,16 @@ const ViewAvesIsolation = ({
                       {t.formatMessage({ id: 'ANIMAL.MALES' })}:
                       <span className="text-red-600">*</span>
                     </Label>
-                    <Input defaultValue={getOneIsolation?.male} disabled />
+                    <Input defaultValue={isolation?.male} disabled />
                     <Label>
                       {t.formatMessage({ id: 'ANIMAL.FEMALES' })}:
                       <span className="text-red-600">*</span>
                     </Label>
-                    <Input defaultValue={getOneIsolation?.female} disabled />
+                    <Input defaultValue={isolation?.female} disabled />
                   </div>
                 )}
                 <div className="mb-4">
-                  <Textarea placeholder={getOneIsolation?.note} disabled />
+                  <Textarea placeholder={isolation?.note} disabled />
                 </div>
               </div>
             </form>

@@ -139,18 +139,21 @@ const HorizontalNavDashboard = ({ user, showDrawer }: Props) => {
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuGroup>
-                          <DropdownMenuItem
-                            onClick={() =>
-                              push(`/entreprise/${user?.userId}/show`)
-                            }
-                          >
-                            <span className="cursor-pointer  hover:text-orange-600">
-                              Entreprise
-                            </span>
-                            <DropdownMenuShortcut>
-                              <UserPen className="h-3.5 w-3.5  hover:shadow-xxl  hover:text-orange-600" />
-                            </DropdownMenuShortcut>
-                          </DropdownMenuItem>
+                          {user?.organization?._count?.images !== 0 &&
+                          user?.organization?.description !== null ? (
+                            <DropdownMenuItem
+                              onClick={() =>
+                                push(`/entreprise/${user?.userId}/show`)
+                              }
+                            >
+                              <span className="cursor-pointer  hover:text-orange-600">
+                                Entreprise
+                              </span>
+                              <DropdownMenuShortcut>
+                                <UserPen className="h-3.5 w-3.5  hover:shadow-xxl  hover:text-orange-600" />
+                              </DropdownMenuShortcut>
+                            </DropdownMenuItem>
+                          ) : null}
                           {user?.role === 'ADMIN' ? (
                             <DropdownMenuItem
                               onClick={() => push(`/tasks/${user?.id}`)}

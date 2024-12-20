@@ -114,7 +114,7 @@ const TabFeedStock = () => {
                           />
                         ) : Number(dataAssignedTypes?.pages[0]?.data?.total) <=
                           0 ? (
-                          <ErrorFile description="Don't have location codes" />
+                          <ErrorFile description="Don't have feed in stock yet please add" />
                         ) : (
                           dataAssignedTypes?.pages
                             .flatMap((page: any) => page?.data?.value)

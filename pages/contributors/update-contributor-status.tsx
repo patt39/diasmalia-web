@@ -97,56 +97,8 @@ const UpdateContributorStatus = ({
                     </div>
                   </div>
                 )}
-                {/* <div className="my-2 flex items-center space-x-4">
-                  <div className="w-80">
-                    <Label>{t.formatMessage({ id: 'FIRST.NAME' })}</Label>
-                    <TextInput
-                      control={control}
-                      type="text"
-                      name="firstName"
-                      errors={errors}
-                    />
-                  </div>
-                  <div className="w-80">
-                    <Label>{t.formatMessage({ id: 'LAST.NAME' })}</Label>
-                    <TextInput
-                      control={control}
-                      type="text"
-                      name="lastName"
-                      errors={errors}
-                    />
-                  </div>
-                </div>
+
                 <div className="my-2 flex items-center space-x-4">
-                  <div className="w-80">
-                    <Label>Email</Label>
-                    <TextInput
-                      control={control}
-                      type="text"
-                      name="email"
-                      errors={errors}
-                    />
-                  </div>
-                  <div className="w-80">
-                    <Label>Phone</Label>
-                    <TextInput
-                      control={control}
-                      type="number"
-                      name="phone"
-                      errors={errors}
-                    />
-                  </div>
-                </div> */}
-                <div className="my-2 flex items-center space-x-4">
-                  {/* <div className="w-80">
-                    <Label>Role</Label>
-                    <TextInput
-                      control={control}
-                      type="text"
-                      name="occupation"
-                      errors={errors}
-                    />
-                  </div> */}
                   <div className="w-full ">
                     <Label>Change status</Label>
                     <span className="text-red-600">*</span>

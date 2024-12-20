@@ -116,6 +116,7 @@ const UpdateGestations = ({
                       errors={errors}
                       valueType="key"
                       name="method"
+                      defaultValue={`${gestation?.method}`}
                       dataItem={checkPregnancyMethod.filter(
                         (i) => i?.lang === locale,
                       )}

@@ -55,13 +55,11 @@ const BulkCreateTreatments = ({
   showModal,
   setShowModal,
   location,
-  farrowing,
   animal,
 }: {
   showModal: boolean;
   setShowModal: any;
   location?: any;
-  farrowing?: any;
   animal?: any;
 }) => {
   const {
@@ -159,7 +157,7 @@ const BulkCreateTreatments = ({
     status: 'ACTIVE',
     sortBy: 'createdAt',
     productionPhase: 'GROWTH',
-    locationId: farrowing?.animal?.location?.id,
+    locationId: location?.id,
     animalTypeId: getOneBuilding?.animalTypeId,
   });
 
@@ -236,88 +234,6 @@ const BulkCreateTreatments = ({
                   </div>
                 )}
                 {location?.id && location?.productionPhase === 'LACTATION' ? (
-                  <div className="flex items-center space-x-4 w-full">
-                    <div className="mb-2 w-full mt-2">
-                      <Label>
-                        Sélectionner les animaux à soigner
-                        <span className="text-red-600">*</span>
-                      </Label>
-                      <Select>
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="select animals" />
-                        </SelectTrigger>
-                        <SelectContent className="dark:border-gray-800">
-                          <SelectGroup>
-                            {isLoadingGrowthAnimals ? (
-                              <LoadingFile />
-                            ) : isErrorGrowthAnimals ? (
-                              <ErrorFile
-                                title="404"
-                                description="Error finding data please try again..."
-                              />
-                            ) : Number(
-                                dataGrowthAnimals?.pages[0]?.data?.total,
-                              ) <= 0 ? (
-                              <ErrorFile description="Don't have active animals created yet please do" />
-                            ) : (
-                              dataGrowthAnimals?.pages
-                                .flatMap((page: any) => page?.data?.value)
-                                .map((item) => (
-                                  <>
-                                    <Controller
-                                      key={item?.code}
-                                      control={control}
-                                      name="animals"
-                                      render={({ field: { ...field } }) => (
-                                        <>
-                                          <div
-                                            className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow"
-                                            key={item?.code}
-                                          >
-                                            <Checkbox
-                                              checked={field?.value?.includes(
-                                                item?.code,
-                                              )}
-                                              onCheckedChange={(checked) => {
-                                                return checked
-                                                  ? field.onChange([
-                                                      ...(field.value || []),
-                                                      item?.code,
-                                                    ])
-                                                  : field?.onChange(
-                                                      field?.value?.filter(
-                                                        (value: any) =>
-                                                          value !== item?.code,
-                                                      ),
-                                                    );
-                                              }}
-                                            />
-                                            <div className="space-y-1 leading-none">
-                                              <Label>{item?.code}</Label>
-                                            </div>
-                                          </div>
-                                        </>
-                                      )}
-                                    />
-                                  </>
-                                ))
-                            )}
-                            {hasNextPage && (
-                              <div className="mx-auto mt-4 justify-center text-center">
-                                <ButtonLoadMore
-                                  ref={ref}
-                                  isFetchingNextPage={isFetchingNextPage}
-                                  onClick={() => fetchNextPage()}
-                                />
-                              </div>
-                            )}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                ) : farrowing?.id &&
-                  farrowing?.animal?.productionPhase !== 'GROWTH' ? (
                   <div className="flex items-center space-x-4 w-full">
                     <div className="mb-2 w-full mt-2">
                       <Label>

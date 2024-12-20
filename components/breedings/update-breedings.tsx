@@ -29,8 +29,8 @@ import { Label } from '../ui/label';
 const schema = yup.object({
   codeMale: yup.string().optional(),
   codeFemale: yup.string().optional(),
-  method: yup.string().required('method is required'),
-  note: yup.string().required('note is a required field'),
+  method: yup.string().optional(),
+  note: yup.string().optional(),
 });
 
 const UpdateBreedings = ({
@@ -60,6 +60,7 @@ const UpdateBreedings = ({
       fields?.forEach((field: any) => setValue(field, breeding[field]));
     }
   }, [breeding, setValue]);
+  console.log('breeding ==>', breeding);
 
   // Update data
   const { isPending: loading, mutateAsync: saveMutation } =
@@ -251,6 +252,7 @@ const UpdateBreedings = ({
                     errors={errors}
                     valueType="text"
                     name="method"
+                    defaultValue={`${breeding?.method}`}
                     dataItem={[
                       { id: 1, name: 'NATURAL' },
                       { id: 2, name: 'INVITRO' },

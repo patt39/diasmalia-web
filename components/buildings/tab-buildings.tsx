@@ -116,7 +116,7 @@ const TabBuildings = ({ animalTypeId }: { animalTypeId: string }) => {
                 description="Error finding data please try again..."
               />
             ) : Number(dataBuildings?.pages[0]?.data?.total) <= 0 ? (
-              <ErrorFile description="Don't have locations created yet please do" />
+              <ErrorFile description="Don't have buildings created yet please do" />
             ) : (
               dataBuildings?.pages
                 .flatMap((page: any) => page?.data?.value)
@@ -139,11 +139,7 @@ const TabBuildings = ({ animalTypeId }: { animalTypeId: string }) => {
         </div>
       </section>
       {isOpen ? (
-        <CreateBuilding
-          building={animalTypeId}
-          showModal={isOpen}
-          setShowModal={setIsOpen}
-        />
+        <CreateBuilding showModal={isOpen} setShowModal={setIsOpen} />
       ) : null}
     </>
   );

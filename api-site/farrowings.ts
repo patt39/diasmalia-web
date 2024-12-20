@@ -7,26 +7,32 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 
-export const GetOneFarrowingAPI = (payload: { farrowingId: string }) => {
-  const { farrowingId } = payload;
-  const { data, isError, isLoading, status, isPending, refetch } = useQuery({
-    queryKey: ['farrowing', farrowingId],
+export const GetFarrowingsAnalyticAPI = (payload: {
+  periode?: string;
+  days?: string;
+  months?: string;
+  year?: string;
+  animalId?: string;
+  animalTypeId?: string;
+  organizationId?: string;
+}) => {
+  const { year, months, days, organizationId, animalId, animalTypeId } =
+    payload;
+  return useQuery({
+    queryKey: ['farrowings-analytics', { ...payload }],
     queryFn: async () =>
       await makeApiCall({
-        action: 'getOneFarrowing',
-        urlParams: { farrowingId },
+        action: 'getFarrowingsAnalytics',
+        queryParams: {
+          days,
+          year,
+          months,
+          animalId,
+          animalTypeId,
+          organizationId,
+        },
       }),
-    refetchOnWindowFocus: false,
   });
-
-  return {
-    data: data?.data as any,
-    isError,
-    isLoading,
-    status,
-    isPending,
-    refetch,
-  };
 };
 
 export const GetOneFarrowingByAnimalIdAPI = (payload: { animalId: string }) => {
@@ -62,20 +68,12 @@ export const CreateOrUpdateOneFarrowingAPI = ({
   const queryClient = useQueryClient();
   const result = useMutation({
     mutationKey: queryKey,
-    mutationFn: async (payload: FarrowingsModel & { farrowingId?: string }) => {
-      const { farrowingId, image } = payload;
-      let data = new FormData();
-
-      data.append('death', `${payload.death ?? ''}`);
-      // data.append('weight', `${payload.weight ?? ''}`);
-      // data.append('litter', `${payload.litter ?? ''}`);
-      data.append('note', `${payload.note ?? ''}`);
-      data.append('image', image);
-
+    mutationFn: async (payload: FarrowingsModel & { farrowingId: string }) => {
+      const { farrowingId } = payload;
       return farrowingId
         ? await makeApiCall({
             action: 'updateOneFarrowing',
-            body: data,
+            body: payload,
             urlParams: { farrowingId },
           })
         : await makeApiCall({

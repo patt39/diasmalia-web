@@ -225,11 +225,7 @@ const TabBreedings = ({ animalTypeId }: { animalTypeId: string }) => {
         </CardContent>
       </main>
       {isOpen ? (
-        <CreateBreedings
-          breeding={animalTypeId}
-          showModal={isOpen}
-          setShowModal={setIsOpen}
-        />
+        <CreateBreedings showModal={isOpen} setShowModal={setIsOpen} />
       ) : null}
     </>
   );

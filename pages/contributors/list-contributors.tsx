@@ -120,7 +120,9 @@ const ListContributors = ({ item, index }: { item: any; index: number }) => {
               : item?.user?.profile?.occupation}
           </TableCell>
         ) : (
-          <TableCell className="md:table-cell">Consultant</TableCell>
+          <TableCell className="md:table-cell">
+            {t.formatMessage({ id: 'CONSULTANTE' })}
+          </TableCell>
         )}
         <TableCell className="md:table-cell">
           {item?.role === 'ADMIN' ? (

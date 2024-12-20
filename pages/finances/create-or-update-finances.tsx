@@ -28,10 +28,12 @@ const CreateOrUpdateFinances = ({
   showModal,
   setShowModal,
   finance,
+  animal,
 }: {
   showModal: boolean;
   setShowModal: any;
   finance?: any;
+  animal?: any;
 }) => {
   const {
     t,
@@ -50,6 +52,13 @@ const CreateOrUpdateFinances = ({
       fields?.forEach((field: any) => setValue(field, finance[field]));
     }
   }, [finance, setValue]);
+
+  useEffect(() => {
+    if (animal) {
+      const fields = ['code'];
+      fields?.forEach((field: any) => setValue(field, animal[field]));
+    }
+  }, [animal, setValue]);
 
   // Create or Update data
   const { isPending: loading, mutateAsync: saveMutation } =
@@ -108,27 +117,65 @@ const CreateOrUpdateFinances = ({
                   </div>
                 )}
 
-                <div className="mb-2">
-                  <Label>Type de transaction</Label>
-                  <SelectInput
-                    control={control}
-                    errors={errors}
-                    placeholder="transaction type"
-                    valueType="key"
-                    name="type"
-                    dataItem={financeType.filter((i) => i?.lang === locale)}
-                  />
-                </div>
-                <div className="my-2">
-                  <Label>Montant</Label>
-                  <TextInput
-                    control={control}
-                    type="number"
-                    name="amount"
-                    placeholder="amount"
-                    errors={errors}
-                  />
-                </div>
+                {animal?.id ? (
+                  <div className="flex items-center space-x-2">
+                    <div className="w-60">
+                      <Label>Bande</Label>
+                      <TextInput
+                        control={control}
+                        type="text"
+                        name="code"
+                        errors={errors}
+                        disabled
+                      />
+                    </div>
+                    <div className="w-60">
+                      <Label>Type</Label>
+                      <TextInput
+                        control={control}
+                        type="text"
+                        name="type"
+                        defaultValue="EXPENSE"
+                        errors={errors}
+                        disabled
+                      />
+                    </div>
+                    <div className="my-2">
+                      <Label>Montant</Label>
+                      <TextInput
+                        control={control}
+                        type="number"
+                        name="amount"
+                        placeholder="amount"
+                        errors={errors}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div className="mb-2">
+                      <Label>Type de transaction</Label>
+                      <SelectInput
+                        control={control}
+                        errors={errors}
+                        placeholder="transaction type"
+                        valueType="key"
+                        name="type"
+                        dataItem={financeType.filter((i) => i?.lang === locale)}
+                      />
+                    </div>
+                    <div className="my-2">
+                      <Label>Montant</Label>
+                      <TextInput
+                        control={control}
+                        type="number"
+                        name="amount"
+                        placeholder="amount"
+                        errors={errors}
+                      />
+                    </div>
+                  </>
+                )}
                 <div className="mb-4">
                   <TextAreaInput
                     control={control}

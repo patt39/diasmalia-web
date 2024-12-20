@@ -3,31 +3,8 @@ import { makeApiCall, PaginationRequest } from '@/utils';
 import {
   useInfiniteQuery,
   useMutation,
-  useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
-
-export const GetOneIsolationAPI = (payload: { isolationId: string }) => {
-  const { isolationId } = payload;
-  const { data, isError, isLoading, status, isPending, refetch } = useQuery({
-    queryKey: ['isolation', isolationId],
-    queryFn: async () =>
-      await makeApiCall({
-        action: 'getOneIsolation',
-        urlParams: { isolationId },
-      }),
-    refetchOnWindowFocus: false,
-  });
-
-  return {
-    data: data?.data as any,
-    isError,
-    isLoading,
-    status,
-    isPending,
-    refetch,
-  };
-};
 
 export const CreateOrUpdateOneIsolationAPI = ({
   onSuccess,

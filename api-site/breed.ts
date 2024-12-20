@@ -2,31 +2,8 @@ import { makeApiCall, PaginationRequest } from '@/utils';
 import {
   useInfiniteQuery,
   useMutation,
-  useQuery,
   useQueryClient,
 } from '@tanstack/react-query';
-
-export const GetOneBreedAPI = (payload: { breedId: string }) => {
-  const { breedId } = payload;
-  const { data, isError, isLoading, status, isPending, refetch } = useQuery({
-    queryKey: ['breed', breedId],
-    queryFn: async () =>
-      await makeApiCall({
-        action: 'getOneBreed',
-        urlParams: { breedId },
-      }),
-    refetchOnWindowFocus: false,
-  });
-
-  return {
-    data: data?.data as any,
-    isError,
-    isLoading,
-    status,
-    isPending,
-    refetch,
-  };
-};
 
 export const CreateOrUpdateOneBreedingAPI = ({
   onSuccess,

@@ -7,9 +7,9 @@ import {
   ClipboardList,
   FolderArchive,
   FolderDot,
+  HomeIcon,
   LogOut,
   Settings,
-  UserPen,
   Wallet,
 } from 'lucide-react';
 import Image from 'next/image';
@@ -41,7 +41,7 @@ const Header = () => {
 
   return (
     <>
-      <header className="relative py-4 md:py-6">
+      <header className="relative py-4 md:py-6 bg-white">
         <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
           <div className="relative flex items-center justify-between">
             <div className="flex xl:ml-0">
@@ -179,17 +179,13 @@ const Header = () => {
                             <DropdownMenuSeparator />
                             <DropdownMenuGroup>
                               <DropdownMenuItem
-                                onClick={() =>
-                                  push(
-                                    `/entreprise/${userStorage?.userId}/show`,
-                                  )
-                                }
+                                onClick={() => push(`/dashboard`)}
                               >
-                                <span className="cursor-pointer  hover:text-orange-600">
-                                  Entreprise
+                                <span className="cursor-pointer  hover:text-lime-600">
+                                  {t.formatMessage({ id: 'MENU.DASHBOARD' })}
                                 </span>
                                 <DropdownMenuShortcut>
-                                  <UserPen className="h-3.5 w-3.5  hover:shadow-xxl  hover:text-orange-600" />
+                                  <HomeIcon className="h-3.5 w-3.5  hover:shadow-xxl  hover:text-lime-600" />
                                 </DropdownMenuShortcut>
                               </DropdownMenuItem>
                               {userStorage?.role === 'ADMIN' ? (

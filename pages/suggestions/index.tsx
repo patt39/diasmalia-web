@@ -1,4 +1,4 @@
-import { GetFaqsAPI } from '@/api-site/faq';
+import { DeleteOneSuggestionAPI, GetSuggestionsAPI } from '@/api-site/faq';
 import { useInputState } from '@/components/hooks';
 import { LayoutDashboard } from '@/components/layouts/dashboard';
 
@@ -15,6 +15,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipProvider } from '@/components/ui/tooltip';
 import { PrivateComponent } from '@/components/util/private-component';
+import { AlertDangerNotification, AlertSuccessNotification } from '@/utils';
 import { MoveLeftIcon, TrashIcon } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
@@ -26,17 +27,33 @@ export function Suggestions() {
   const { back } = useRouter();
 
   const {
-    isLoading: isLoadingFaqs,
-    isError: isErrorFaqs,
-    data: dataFaqs,
+    isLoading: isLoadingSuggestions,
+    isError: isErrorSuggestions,
+    data: dataSuggestions,
     isFetchingNextPage,
     hasNextPage,
     fetchNextPage,
-  } = GetFaqsAPI({
+  } = GetSuggestionsAPI({
     take: 10,
     sort: 'desc',
     sortBy: 'createdAt',
+    organizationId: userStorage?.organizationId,
   });
+
+  const { mutateAsync: saveMutation } = DeleteOneSuggestionAPI();
+
+  const deleteItem = async (item: any) => {
+    try {
+      await saveMutation({ suggestionId: item?.id });
+      AlertSuccessNotification({
+        text: 'Suggestion deleted successfully',
+      });
+    } catch (error: any) {
+      AlertDangerNotification({
+        text: `${error.response.data.message}`,
+      });
+    }
+  };
 
   useEffect(() => {
     let fetching = false;
@@ -90,17 +107,17 @@ export function Suggestions() {
             </p>
           </div>
           <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">
-            {isLoadingFaqs ? (
+            {isLoadingSuggestions ? (
               <LoadingFile />
-            ) : isErrorFaqs ? (
+            ) : isErrorSuggestions ? (
               <ErrorFile
                 title="404"
                 description="Error finding data please try again..."
               />
-            ) : Number(dataFaqs?.pages[0]?.data?.total) <= 0 ? (
-              <ErrorFile description="Sorry no faqs yet" />
+            ) : Number(dataSuggestions?.pages[0]?.data?.total) <= 0 ? (
+              <ErrorFile description="Sorry no suggestions yet" />
             ) : (
-              dataFaqs?.pages
+              dataSuggestions?.pages
                 .flatMap((page: any) => page?.data?.value)
                 .map((item, index) => (
                   <>
@@ -111,23 +128,22 @@ export function Suggestions() {
                       key={index}
                     >
                       <AccordionItem value="item-1">
-                        <AccordionTrigger>{item?.title} </AccordionTrigger>
-                        <AccordionContent>
-                          {item?.description}
-                          <div className="mx-auto">
-                            <TooltipProvider>
-                              <Tooltip>
-                                <Button
-                                  variant={'link'}
-                                  size="default"
-                                  className="cursor-pointer"
-                                >
-                                  <TrashIcon className="size-4 text-red-800 hover:text-red-600" />
-                                </Button>
-                              </Tooltip>
-                            </TooltipProvider>
-                          </div>
-                        </AccordionContent>
+                        <AccordionTrigger>
+                          {item?.title}{' '}
+                          <TooltipProvider>
+                            <Tooltip>
+                              <Button
+                                onClick={() => deleteItem(item)}
+                                variant={'link'}
+                                size="default"
+                                className="cursor-pointer ml-auto"
+                              >
+                                <TrashIcon className="size-4 text-red-800 hover:text-red-600" />
+                              </Button>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </AccordionTrigger>
+                        <AccordionContent>{item?.message}</AccordionContent>
                       </AccordionItem>
                     </Accordion>
                   </>

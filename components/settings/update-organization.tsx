@@ -1,6 +1,7 @@
 import { GetOrganizationAPI, UpdateOrganizationAPI } from '@/api-site/user';
 import { OrganizationModel } from '@/types/user';
 import { AlertDangerNotification, AlertSuccessNotification } from '@/utils';
+import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { SubmitHandler } from 'react-hook-form';
 import * as yup from 'yup';
@@ -15,15 +16,9 @@ const schema = yup.object({
   description: yup.string().required('description is required'),
 });
 const UpdateOrganization = () => {
-  const {
-    control,
-    handleSubmit,
-    errors,
-    loading,
-    setValue,
-    hasErrors,
-    setHasErrors,
-  } = useReactHookForm({ schema });
+  const { control, handleSubmit, errors, setValue, hasErrors, setHasErrors } =
+    useReactHookForm({ schema });
+  const { push } = useRouter();
   const { userStorage } = useInputState();
   const { data: organization } = GetOrganizationAPI({
     userId: userStorage?.userId,
@@ -37,7 +32,8 @@ const UpdateOrganization = () => {
   }, [organization, setValue]);
 
   // Update data
-  const { mutateAsync: saveMutation } = UpdateOrganizationAPI();
+  const { isPending: loading, mutateAsync: saveMutation } =
+    UpdateOrganizationAPI();
 
   const onSubmit: SubmitHandler<OrganizationModel> = async (
     payload: OrganizationModel,
@@ -46,8 +42,9 @@ const UpdateOrganization = () => {
     try {
       await saveMutation({
         ...payload,
-        animalId: organization?.id,
+        organizationId: organization?.id,
       });
+      push(`/entreprise/${organization?.userId}/show`);
       setHasErrors(false);
       AlertSuccessNotification({
         text: 'Informations updated successfully',

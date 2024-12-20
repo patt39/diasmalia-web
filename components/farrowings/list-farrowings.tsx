@@ -10,19 +10,9 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { formatDateDDMMYY } from '@/utils';
-import {
-  Eye,
-  Hospital,
-  IdCard,
-  MilkOff,
-  MoreHorizontal,
-  PencilIcon,
-} from 'lucide-react';
+import { Eye, MilkOff, MoreHorizontal, PencilIcon } from 'lucide-react';
 import { useState } from 'react';
 import { formatWeight } from '../../utils/formate-date';
-import { CreateBulkAnimals } from '../animals/create-bulk-animal';
-import { BulkCreateTreatments } from '../treatments/bulk-create-treatments';
-import { CreateTreatments } from '../treatments/create-treatments';
 import { TableCell, TableRow } from '../ui/table';
 import { CreateOrUpdateWeanings } from '../weanings/create-or-update-weaning';
 import { UpdateFarrowings } from './update-farrowings';
@@ -33,15 +23,10 @@ const ListFarrowings = ({ item, index }: { item: any; index: number }) => {
   const [isEdit, setIsEdit] = useState(false);
   const [isView, setIsView] = useState(false);
   const [isWeaning, setIsWeaning] = useState(false);
-  const [isIdentification, setIsIdentification] = useState(false);
-  const [isTreatment, setIsTreatment] = useState(false);
-  const [isGrowthTreatment, setIsGrowthTreatment] = useState(false);
 
   const { data: getOneWeaning } = GetOneWeaningAPI({
     farrowingId: item?.id,
   });
-
-  const offspringsAlive = Number(item?.litter - item?.dead);
 
   return (
     <>
@@ -88,32 +73,6 @@ const ListFarrowings = ({ item, index }: { item: any; index: number }) => {
                   </span>
                 </DropdownMenuItem>
               ) : null}
-              <DropdownMenuItem onClick={() => setIsTreatment(true)}>
-                <Hospital className="size-4 text-gray-600 hover:text-lime-600" />
-                <span className="ml-2 cursor-pointer hover:text-lime-600">
-                  {t.formatMessage({ id: 'FEMALE.CARE' })}
-                </span>
-              </DropdownMenuItem>
-              {item?.animal?.location?._count?.animals ===
-                Number(offspringsAlive + 1) &&
-              item?.animalType?.name !== 'Cuniculture' ? (
-                <DropdownMenuItem onClick={() => setIsGrowthTreatment(true)}>
-                  <Hospital className="size-4 text-gray-600 hover:text-green-600" />
-                  <span className="ml-2 cursor-pointer hover:text-green-600">
-                    {t.formatMessage({ id: 'OFFSPRINGS.CARE' })}
-                  </span>
-                </DropdownMenuItem>
-              ) : null}
-              {item?.animal?.location?._count?.animals !==
-                Number(offspringsAlive + 1) &&
-              item?.animalType?.name !== 'Cuniculture' ? (
-                <DropdownMenuItem onClick={() => setIsIdentification(true)}>
-                  <IdCard className="size-4 text-gray-600 hover:text-fuchsia-600" />
-                  <span className="ml-2 cursor-pointer hover:text-fuchsia-600">
-                    {t.formatMessage({ id: 'OFFSPRING.IDENTIFICATION' })}
-                  </span>
-                </DropdownMenuItem>
-              ) : null}
             </DropdownMenuContent>
           </DropdownMenu>
         </TableCell>
@@ -134,34 +93,9 @@ const ListFarrowings = ({ item, index }: { item: any; index: number }) => {
       ) : null}
       {isWeaning ? (
         <CreateOrUpdateWeanings
-          animal={item}
           weaning={item?.animalTypeId}
           showModal={isWeaning}
           setShowModal={setIsWeaning}
-        />
-      ) : null}
-      {isIdentification ? (
-        <CreateBulkAnimals
-          farrowing={item}
-          location={item?.animalTypeId}
-          showModal={isIdentification}
-          setShowModal={setIsIdentification}
-        />
-      ) : null}
-      {isTreatment ? (
-        <CreateTreatments
-          animal={item}
-          farrowing={item}
-          showModal={isTreatment}
-          setShowModal={setIsTreatment}
-        />
-      ) : null}
-      {isGrowthTreatment ? (
-        <BulkCreateTreatments
-          farrowing={item}
-          location={item}
-          showModal={isGrowthTreatment}
-          setShowModal={setIsGrowthTreatment}
         />
       ) : null}
     </>

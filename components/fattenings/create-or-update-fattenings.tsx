@@ -165,21 +165,23 @@ const CreateOrUpdateFattenings = ({
           <div className="relative m-auto max-h-screen w-full max-w-2xl overflow-y-scroll rounded-xl bg-white  p-5 shadow-lg dark:bg-[#121212]">
             <div className="flex mb-0">
               <div className="mr-auto">
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button variant="outline">
-                        {countSelectedAnimals || 0}
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent className="dark:border-gray-800">
-                      <p>
-                        {countSelectedAnimals}
-                        {t.formatMessage({ id: 'ANIMAL.SELECTED.COUNT' })}
-                      </p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                {!fattening?.id ? (
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button variant="outline">
+                          {countSelectedAnimals || 0}
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent className="dark:border-gray-800">
+                        <p>
+                          {countSelectedAnimals}
+                          {t.formatMessage({ id: 'ANIMAL.SELECTED.COUNT' })}
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                ) : null}
               </div>
               <div className="justify-end">
                 <button
@@ -348,10 +350,11 @@ const CreateOrUpdateFattenings = ({
                     </div>
                   </>
                 ) : null}
-                {fattening.id ? (
+                {fattening?.id ? (
                   <div className="mb-4">
                     <Label>
-                      {t.formatMessage({ id: 'TABFATTENING.ACTUALWEIGHTEDIT' })}
+                      {t.formatMessage({ id: 'TABFATTENING.ACTUALWEIGHTEDIT' })}{' '}
+                      (gram)
                     </Label>
                     <TextInput
                       control={control}

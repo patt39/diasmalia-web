@@ -35,7 +35,7 @@ import {
 const schema = yup.object({
   code: yup.string().optional(),
   note: yup.string().optional(),
-  dose: yup.number().optional(),
+  dose: yup.string().optional(),
   diagnosis: yup.string().optional(),
   healthId: yup.string().optional(),
   name: yup.string().required('name is required'),
@@ -306,7 +306,7 @@ const UpdateAvestreatments = ({
                     </Label>
                     <TextInput
                       control={control}
-                      type="number"
+                      type="text"
                       name="dose"
                       placeholder="doses"
                       errors={errors}

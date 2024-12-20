@@ -9,19 +9,17 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { formatDateDDMMYY } from '@/utils';
-import { Check, Eye, MoreHorizontal, PencilIcon } from 'lucide-react';
+import { Check, MoreHorizontal, PencilIcon } from 'lucide-react';
 import { useState } from 'react';
 import { Badge } from '../ui/badge';
 import { TableCell, TableRow } from '../ui/table';
 import { CheckPregnancy } from './check-pregnancy';
 import { UpdateBreedings } from './update-breedings';
-import { ViewBreeding } from './view-breeding';
 
 const ListBreedings = ({ item, index }: { item: any; index: number }) => {
   const { t } = useInputState();
   const [isEdit, setIsEdit] = useState(false);
   const [isCheck, setIsCheck] = useState(false);
-  const [isView, setIsView] = useState(false);
 
   return (
     <>
@@ -70,12 +68,6 @@ const ListBreedings = ({ item, index }: { item: any; index: number }) => {
                   </span>
                 </DropdownMenuItem>
               ) : null}
-              <DropdownMenuItem onClick={() => setIsView(true)}>
-                <Eye className="size-4 text-gray-600 hover:text-indigo-600" />
-                <span className="ml-2 cursor-pointer hover:text-indigo-600">
-                  {t.formatMessage({ id: 'TABANIMAL.VIEW' })}
-                </span>
-              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </TableCell>
@@ -92,13 +84,6 @@ const ListBreedings = ({ item, index }: { item: any; index: number }) => {
           breeding={item}
           showModal={isCheck}
           setShowModal={setIsCheck}
-        />
-      ) : null}
-      {isView ? (
-        <ViewBreeding
-          breeding={item}
-          showModal={isView}
-          setShowModal={setIsView}
         />
       ) : null}
     </>

@@ -45,9 +45,7 @@ const CreateTreatments = ({
 }: {
   showModal: boolean;
   setShowModal: any;
-  farrowing?: any;
   location?: any;
-  animal?: any;
 }) => {
   const { t, control, handleSubmit, errors, hasErrors, setHasErrors, locale } =
     useReactHookForm({ schema });
@@ -143,7 +141,7 @@ const CreateTreatments = ({
                     control={control}
                     type="text"
                     name="code"
-                    defaultValue={`${dataAnimal?.pages[0]?.data?.value?.[0]?.code}`}
+                    defaultValue={`${location?.animals?.[0].code}`}
                     errors={errors}
                     disabled
                   />
@@ -247,7 +245,7 @@ const CreateTreatments = ({
                       control={control}
                       type="text"
                       name="dose"
-                      placeholder="doses"
+                      placeholder="ex 0,2ml"
                       errors={errors}
                     />
                   </div>
